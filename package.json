@@ -1,0 +1,24 @@
+{
+  "name": "memesearch",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "get-images.js",
+  "scripts": {
+    "eslint": "eslint src/ services/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "klntsky",
+  "license": "ISC",
+  "dependencies": {
+    "@elastic/elasticsearch": "^8.11.0",
+    "amqplib": "^0.10.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "ocr-space-api-wrapper": "^2.3.0",
+    "ramda": "^0.29.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  }
+}

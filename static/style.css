@@ -1,0 +1,22 @@
+#container {
+    margin: 0 auto;
+    width: 900px;
+}
+
+#search-container {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#search-field {
+    width: 800px;
+}
+
+body {
+    background-color: #EEE;
+}
+
+.result-image {
+    max-width: 300px;
+    max-height: 300px;
+}
