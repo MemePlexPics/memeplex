@@ -27,10 +27,6 @@ export const getAfter = async function* (channelName, timestamp) {
         console.log('fetching', url);
         const response = await fetch(url);
         const messages = (await response.json()).response.messages;
-        console.log('processing');
-        for (const message of messages) {
-            console.log(message.date);
-        }
         for (const message of messages) {
             if (message.date <= timestamp) {
                 break loop;

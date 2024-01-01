@@ -1,5 +1,4 @@
 import express from 'express';
-import * as fastifyStatic from '@fastify/static';
 import * as path from 'path';
 import 'dotenv/config';
 import { getElasticClient } from '../src/utils.js';

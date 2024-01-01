@@ -31,11 +31,13 @@ const main = async () => {
                 const text = processText(
                     await recognizeTextOcrSpace(payload.fileName, language)
                 );
-                texts.push({ language, text });
-                const textFile = await buildImageTextPath(payload, language);
-                const textContents = text;
-                await fs.writeFile(textFile, textContents);
-                console.log('recognized:', language, textContents);
+                if (text) {
+                    texts.push({ language, text });
+                    const textFile = await buildImageTextPath(payload, language);
+                    const textContents = text;
+                    await fs.writeFile(textFile, textContents);
+                    console.log('recognized:', language, textContents);
+                }
             }
 
             const doc = {
