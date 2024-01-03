@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import {
     ELASTIC_INDEX
-} from './const.js';
-import { getElasticClient } from './utils.js';
+} from '../src/const.js';
+import { getElasticClient } from '../src/utils.js';
+import { buildElasticQuery } from '../src/elastic.js';
 import * as readline from 'readline';
 import process from 'process';
 
@@ -15,14 +16,8 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', async (line) => {
-    const res = await client.search({
-        index: ELASTIC_INDEX,
-        query: {
-            match: {
-                eng: line,
-            }
-        }
-    });
+    const query = buildElasticQuery(line);
+    const res = await client.search(query);
 
     for (const hit of res.hits.hits) {
         console.log(hit._source);

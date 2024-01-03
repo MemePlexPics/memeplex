@@ -12,4 +12,6 @@ export const TG_API_PAGE_LIMIT = (process.env.TG_API_PAGE_LIMIT * 1) || 10;
 // Rate limit for tg API calls
 export const TG_API_RATE_LIMIT = (process.env.TG_API_RATE_LIMIT * 1) || 5001;
 export const ELASTIC_INDEX = 'image_text';
+export const ELASTIC_FUZZINESS = 2;
+export const ELASTIC_PAGE_SIZE = 20;
 export const MAX_SEARCH_QUERY_LENGTH = 300;

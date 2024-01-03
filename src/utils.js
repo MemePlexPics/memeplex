@@ -50,7 +50,7 @@ function getRandomElement(arr) {
 }
 
 export function chooseRandomOCRSpaceKey () {
-    const keys = process.env.OCR_SPACE_API_KEYS;
+    let keys = process.env.OCR_SPACE_API_KEYS;
     if (typeof keys === 'undefined') {
         throw "specify OCR_SPACE_API_KEYS";
     }

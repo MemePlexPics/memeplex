@@ -19,8 +19,10 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
         res = await ocrSpace(fileName, {
             apiKey,
             language,
-            OCREngine: '2' // see here for engine descriptions: http://ocr.space/OCRAPI
+            OCREngine: language == 'eng' ? '2' : '1'
+            // see here for engine descriptions: http://ocr.space/OCRAPI
         });
+        console.log(res);
     } catch(error) {
         if (error?.response?.status === 403) {
             console.log('403 from ocr.space, waiting before retrying...');

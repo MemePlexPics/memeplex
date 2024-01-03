@@ -3,8 +3,8 @@
 // - errors are being thrown instead of logged
 // - ESM instead of CommonJS
 import * as fs from 'fs';
-import * as axios from 'axios';
-import * as FormData from 'form-data';
+import axios from 'axios';
+import FormData from 'form-data';
 
 /**
  * Detect the input type between url, file path or base64 image
