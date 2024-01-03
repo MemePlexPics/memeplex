@@ -16,6 +16,7 @@
 - Set up ElasticSearch - set `ELASTIC_ENDPOINT` in `.env`
 - Run `./scripts/create-index.js` to create an ElasticSearch index
 - Set up RabbitMQ - set `AMQP_ENDPOINT` in `.env`
+- `mkdir -p data/{phashes,media}`
 
 ## Startup
 

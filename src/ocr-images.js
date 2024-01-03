@@ -1,20 +1,35 @@
 import 'dotenv/config';
 import process from 'process';
 import { mkdir } from 'fs/promises';
-import { ocrSpace } from 'ocr-space-api-wrapper';
+import { ocrSpace } from './ocr-space.js';
+import { delay, chooseRandomOCRSpaceKey } from './utils.js';
+import { OCR_SPACE_403_DELAY } from './const.js';
 import * as R from 'ramda';
 
 export const buildImageTextPath = async ({ channelName, messageId, photoId }, language) => {
-    const directory = './data/' + channelName + '/';
+    const directory = './data/media/' + channelName + '/';
     await mkdir(directory, { recursive: true });
     return directory + messageId + '-' + photoId + '-' + language +'.txt';
 };
 
 export const recognizeTextOcrSpace = async (fileName, language) => {
-    const res = await ocrSpace(fileName, {
-        apiKey: process.env.OCR_SPACE_API_KEY,
-        language
-    });
+    let res;
+    const apiKey = chooseRandomOCRSpaceKey();
+    try {
+        res = await ocrSpace(fileName, {
+            apiKey,
+            language,
+            OCREngine: '2' // see here for engine descriptions: http://ocr.space/OCRAPI
+        });
+    } catch(error) {
+        if (error?.response?.status === 403) {
+            console.log('403 from ocr.space, waiting before retrying...');
+            await delay(OCR_SPACE_403_DELAY);
+            return await recognizeTextOcrSpace(fileName, language);
+        } else {
+            console.error(error);
+        }
+    }
 
     let text = [];
     for (const result of res.ParsedResults) {

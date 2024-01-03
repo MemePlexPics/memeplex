@@ -17,14 +17,14 @@ export const buildImageUrl = ({ channelName, messageId, photoId }) => {
 };
 
 export const buildImagePath = async ({ channelName, messageId, photoId }) => {
-    const directory = './data/' + channelName + '/';
+    const directory = './data/media/' + channelName + '/';
     await mkdir(directory, { recursive: true });
     return directory + messageId + '-' + photoId + '.jpg';
 };
 
 const pipelineAsync = promisify(pipeline);
 
-async function downloadFile(url, dest) {
+export async function downloadFile(url, dest) {
     const response = await fetch(url);
     if (!response.ok)
         throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
