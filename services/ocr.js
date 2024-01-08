@@ -63,6 +63,7 @@ const main = async () => {
             fileName: payload.fileName,
             channelName: payload.channelName,
             messageId: payload.messageId,
+            date: payload.date
         };
 
         for (const text of texts) {
