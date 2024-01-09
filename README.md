@@ -20,6 +20,7 @@
 
 ## Startup
 
-- `node ./src/parse-channels.js`
-- `node ./services/downloader.js`
-- `node ./services/ocr.js`
+- `node ./src/parse-channels.js` - Telegram parser
+- `node ./services/downloader.js` - Image file downloader
+- `node ./services/ocr.js` - ocr API caller
+- `node ./services/server.js` - web server
