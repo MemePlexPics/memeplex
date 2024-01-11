@@ -37,6 +37,9 @@ services:
     extends:
       file: ../TelegramApiServer/docker-compose.yml
       service: api
+    env_file:
+      - ../TelegramApiServer/.env.docker
+      - ./.env
     depends_on:
       - mysql
 
