@@ -1,0 +1,59 @@
+services:
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    container_name: memesearch-elastic
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: false
+    mem_limit: 1GB
+    ports:
+      - 9200:9200
+    volumes:
+      - "./data/elastic:/usr/share/elasticsearch/data"
+
+  rabbitmq:
+    image: rabbitmq:3
+    hostname: rabbitmq
+    container_name: memesearch-rabbitmq
+    ports:
+      - 5672:5672
+    volumes:
+      - "./data/rabbitmq:/var/lib/rabbitmq/mnesia/"
+
+  # Extended containers
+
+  mysql:
+    container_name: memesearch-mysql
+    networks:
+      - telegram-api-server
+    extends:
+      file: ../TelegramApiServer/docker-compose.yml
+      service: mysql
+
+  telegram-api-server:
+    container_name: api
+    networks:
+      - telegram-api-server
+    extends:
+      file: ../TelegramApiServer/docker-compose.yml
+      service: api
+    depends_on:
+      - mysql
+
+  telegram-rss:
+    container_name: memesearch-telegram-rss
+    networks:
+      - telegram-api-server
+    extends:
+      file: ../TelegramRSS/docker-compose.yml
+      service: telegram-rss
+    depends_on:
+      - telegram-api-server
+
+networks:
+  default:
+    driver: bridge
+    name: memesearch
+  telegram-api-server:
+    driver: bridge
+    name: telegram-api-server
