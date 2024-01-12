@@ -1,6 +1,5 @@
 /* global Buffer */
 import 'dotenv/config';
-import amqplib from 'amqplib';
 import {
     CYCLE_SLEEP_TIMEOUT,
     AMQP_IMAGE_DATA_CHANNEL,
@@ -12,11 +11,10 @@ import {
     setChannelLastTimestamp,
     getTrackedChannels,
 } from '../src/channel-watcher.js';
-import { delay, loopRetrying } from '../src/utils.js';
+import { delay, loopRetryingAndLogging } from '../src/utils.js';
 import process from 'process';
 
-// yields posts from channelName after timestamp
-export const getAfter = async function* (channelName, timestamp) {
+export const getMessagesAfter = async function* (channelName, timestamp, logger) {
     let pageNumber = 0;
     loop: while (true) {
         try {
@@ -25,7 +23,7 @@ export const getAfter = async function* (channelName, timestamp) {
                     + '&data[limit]=' + TG_API_PAGE_LIMIT
                     + '&data[add_offset]=' + (pageNumber * TG_API_PAGE_LIMIT)
             );
-            console.log('checking', 'https://t.me/' + channelName);
+            logger.info(`checking https://t.me/${channelName}`);
             const response = await fetch(url);
             const messages = (await response.json()).response.messages;
 
@@ -35,7 +33,7 @@ export const getAfter = async function* (channelName, timestamp) {
                     break loop;
                 }
                 const messageId = message.id;
-                if (!message.media || !message.media.photo) { continue; }
+                if (!message.media || !message.media.photo) continue;
                 if (message.media.photo.id) {
                     yield {
                         channelName,
@@ -47,44 +45,37 @@ export const getAfter = async function* (channelName, timestamp) {
             }
             pageNumber++;
         } catch (e) {
-            console.error(e);
+            logger.error(e);
         }
         await delay(TG_API_RATE_LIMIT);
     }
 };
 
-const main = async () => {
-    const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
-
+export const main = async (conn, logger) => {
     const sendImageDataCh = await conn.createChannel();
+    
+    const channels = await getTrackedChannels();
+    logger.info(`fetching ${channels.length} channels`);
 
-    await loopRetrying(async () => {
-        const channels = await getTrackedChannels();
-        console.log('fetching channels:', channels);
-
-        for (const channel of channels) {
-            const channelName = channel.name;
-            let lastTs = await getChannelLastTimestamp(channelName);
-
-            for await (const entry of getAfter(channelName, lastTs)) {
-                console.log('new post image:', entry);
-                sendImageDataCh.sendToQueue(
-                    AMQP_IMAGE_DATA_CHANNEL,
-                    Buffer.from(JSON.stringify({
-                        ...entry,
-                        languages: channel.languages
-                    })),
-                    { persistent: true }
-                );
-                lastTs = Math.max(entry.date, lastTs);
-            }
-
-            await setChannelLastTimestamp(channelName, lastTs);
+    for (const channel of channels) {
+        const channelName = channel.name;
+        let lastTs = await getChannelLastTimestamp(channelName);
+        for await (const message of getMessagesAfter(channelName, lastTs, logger)) {
+            logger.info(`new post image: ${JSON.stringify(message)}`);
+            await loopRetryingAndLogging(async () => {
+                const imageData = Buffer.from(JSON.stringify({
+                    ...message,
+                    languages: channel.languages
+                }));
+                sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
+                return true;
+            }, logger);
+            lastTs = Math.max(message.date, lastTs);
         }
 
-        console.log('fetched all channels, sleeping');
-        await delay(CYCLE_SLEEP_TIMEOUT);
-    });
-};
+        await setChannelLastTimestamp(channelName, lastTs);
+    }
 
-main();
+    logger.notice('fetched all channels, sleeping');
+    await delay(CYCLE_SLEEP_TIMEOUT);
+};

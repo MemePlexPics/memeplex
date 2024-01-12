@@ -10,23 +10,23 @@ const client = await getElasticClient();
 async function health() {
     let connected = false;
     while (!connected) {
-        console.log("Connecting to Elasticsearch");
+        console.log('💬 Connecting to Elasticsearch');
         const health = await client.cluster.health({});
         connected = true;
-        console.log(health.body);
+        console.log('💬', health.body);
         return health;
     }
-};
+}
 
 async function createIndex(indexName) {
-  try {
-    const response = await client.indices.create({
-      index: indexName,
-    });
-    console.log("Index created:", response);
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
+    try {
+        const response = await client.indices.create({
+            index: indexName,
+        });
+        console.log('💬 Index created:', response);
+    } catch (error) {
+        console.error('❌ An error occurred:', error);
+    }
 }
 
 async function deleteIndex (indexName) {

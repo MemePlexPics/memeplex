@@ -8,11 +8,11 @@ const processSearchResponse = response => {
         let entryLink = document.createElement('a');
         let entryImage = document.createElement('img');
 
-        entryLink.href = "https://t.me/" + entry.channel + "/" + entry.message;
-        entryLink.target = "_blank";
+        entryLink.href = 'https://t.me/' + entry.channel + '/' + entry.message;
+        entryLink.target = '_blank';
 
-        entryContainer.className = "result-container";
-        entryImage.className = "result-image";
+        entryContainer.className = 'result-container';
+        entryImage.className = 'result-image';
         entryImage.src = entry.fileName;
         results.appendChild(entryContainer);
         entryContainer.appendChild(entryLink);
@@ -26,7 +26,7 @@ const startSearch = async () => {
 
     const protocol = window.location.protocol;
     const host = window.location.host;
-    const path = "/search";
+    const path = '/search';
 
     const url = new URL(`${protocol}//${host}${path}`);
     url.searchParams.append('query', searchField.value);

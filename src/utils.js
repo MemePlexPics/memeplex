@@ -3,6 +3,8 @@ import { Client } from '@elastic/elasticsearch';
 import process from 'process';
 import { promises as fs } from 'fs';
 
+const LOOP_RETRYING_DELAY = parseInt(process.env.LOOP_RETRYING_DELAY);
+
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
@@ -30,16 +32,37 @@ export async function checkFileExists(file) {
     }
 }
 
-export async function loopRetrying (callback, delayMs=5_000) {
+export async function loopRetrying(callback, delayMs=LOOP_RETRYING_DELAY) {
     for (;;) {
         try {
             await callback();
         } catch (e) {
-            console.error(e);
+            console.error('❌', e);
             await delay(delayMs);
         }
     }
-};
+}
+
+export async function loopRetryingAndLogging(callback, logger, options={ delayMs: LOOP_RETRYING_DELAY, errorMeta: {} }) {
+    let lastError;
+    for (;;) {
+        try {
+            const result = await callback();
+            if (result) break;
+        } catch (e) {
+            if (!lastError || lastError.name !== e.name && lastError.message !== e.message) {
+                lastError = e;
+                logger.error({
+                    error: e.name,
+                    message: e.message,
+                    ...options.errorMeta,
+                });
+            }
+            console.error(e);
+            await delay(options.delayMs || LOOP_RETRYING_DELAY);
+        }
+    }
+}
 
 function getRandomElement(arr) {
     if (arr && arr.length) {
@@ -52,7 +75,7 @@ function getRandomElement(arr) {
 export function chooseRandomOCRSpaceKey () {
     let keys = process.env.OCR_SPACE_API_KEYS;
     if (typeof keys === 'undefined') {
-        throw "specify OCR_SPACE_API_KEYS";
+        throw 'specify OCR_SPACE_API_KEYS';
     }
 
     keys = keys.split(',');

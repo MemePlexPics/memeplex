@@ -22,14 +22,14 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
             OCREngine: language == 'eng' ? '2' : '1'
             // see here for engine descriptions: http://ocr.space/OCRAPI
         });
-        console.log(res);
+        console.log('💬', res);
     } catch(error) {
         if (error?.response?.status === 403) {
-            console.log('403 from ocr.space, waiting before retrying...');
+            console.log('❗️ 403 from ocr.space, waiting before retrying...');
             await delay(OCR_SPACE_403_DELAY);
             return await recognizeTextOcrSpace(fileName, language);
         } else {
-            console.error(error);
+            console.error('❌', error);
         }
     }
 
