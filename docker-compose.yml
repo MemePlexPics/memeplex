@@ -2,13 +2,12 @@ services:
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
     container_name: memesearch-elastic
+    restart: unless-stopped
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
+      # cluster.routing.allocation.disk.threshold_enabled: false
     mem_limit: 1GB
-    labels:
-      logging: "promtail"
-      logging_jobname: "container_logs"
     ports:
       - 9200:9200
     volumes:
@@ -18,32 +17,33 @@ services:
     image: rabbitmq:3
     hostname: rabbitmq
     container_name: memesearch-rabbitmq
-    labels:
-      logging: "promtail"
-      logging_jobname: "container_logs"
+    restart: unless-stopped
     ports:
       - 5672:5672
     volumes:
       - "./data/rabbitmq:/var/lib/rabbitmq/mnesia/"
 
   loki:
+    image: grafana/loki
     container_name: loki
     hostname: loki
-    image: grafana/loki
+    restart: unless-stopped
     ports:
       - 3100:3100
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
-      - ./loki:/etc/loki
+      - ./configs/loki.yaml:/etc/loki/local-config.yaml
+      - ./data/loki/chunks:/loki/chunks
   
   promtail:
+    image: grafana/promtail
     container_name: promtail
     hostname: promtail
-    image: grafana/promtail
+    restart: unless-stopped
     command: -config.file=/etc/promtail/docker-config.yaml
     volumes:
       - ./data/promtail:/var/lib/promtail
-      - ./promtail/docker-config.yaml:/etc/promtail/docker-config.yaml
+      - ./configs/promtail.yaml:/etc/promtail/docker-config.yaml
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - ./logs:/var/log
@@ -51,9 +51,10 @@ services:
       - loki
 
   grafana:
+    image: grafana/grafana
     container_name: grafana
     hostname: grafana
-    image: grafana/grafana
+    restart: unless-stopped
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -65,7 +66,7 @@ services:
     volumes:
       - ./data/grafana:/var/lib/grafana
       # - ./data/grafana/conf:/etc/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - loki
 

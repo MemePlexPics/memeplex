@@ -29,6 +29,13 @@ scrape_configs:
         labels:
           job: services
           __path__: /var/log/*.log
+    loki_push_api:
+      server:
+        http_listen_port: 3100
+  - job_name: docker
+    static_configs:
+      - targets: 
+        - host.docker.internal:9323
 
   #       filters:
   #         - name: label
