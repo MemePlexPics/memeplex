@@ -1,27 +1,56 @@
 /* global Buffer */
 import 'dotenv/config';
 import { promises as fs } from 'fs';
+import amqplib from 'amqplib';
 import * as imghash from 'imghash';
+import process from 'process';
 import {
     AMQP_IMAGE_DATA_CHANNEL,
     AMQP_IMAGE_FILE_CHANNEL,
 } from '../src/const.js';
-import { checkFileExists, loopRetryingAndLogging } from '../src/utils.js';
+import { checkFileExists, logError } from '../src/utils.js';
 import {
     buildImageUrl,
     buildImagePath,
     downloadFile
 } from '../src/download-images.js';
 
-export const main = async (conn, logger) => {
+const doesFileExist = async (logger, destination, url) => {
+    const doesImageExist = await checkFileExists(destination);
+
+    if (doesImageExist) {
+        logger.info(`Image already exists: ${destination}`);
+        return true;
+    }
+
+    await downloadFile(url, destination, logger);
+
+    // compute pHash
+    const pHash = await imghash.hash(destination);
+
+    // check if this pHash exists
+    const pHashFilePath = './data/phashes/' + pHash;
+    const doesExist = await checkFileExists(pHashFilePath);
+    if (doesExist) {
+        // if we have seen this phash, skip the image and remove
+        // the downloaded file
+        await fs.unlink(destination);
+        return true;
+    }
+    await fs.writeFile(pHashFilePath, '');
+    return false;
+};
+
+export const main = async (logger) => {
+    const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
     const sendImageFileCh = await conn.createChannel();
     const receiveImageDataCh = await conn.createChannel();
 
     await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
 
-    return receiveImageDataCh.consume(AMQP_IMAGE_DATA_CHANNEL, async (msg) => {
+    receiveImageDataCh.consume(AMQP_IMAGE_DATA_CHANNEL, async (msg) => {
         if (msg === null) {
-            logger.notice('Consumer cancelled by server');
+            logger.warn('Consumer cancelled by server');
             return;
         }
 
@@ -32,45 +61,23 @@ export const main = async (conn, logger) => {
         logger.info(`new image to download: ${payloadString}`);
         logger.info(`downloading: ${url} -> ${destination}`);
 
-        try {
-            const doesImageExist = await checkFileExists(destination);
-
-            if (doesImageExist) {
-                throw new Error(`Image already exists: ${destination}`);
-            }
-
-            await downloadFile(url, destination);
-
-            // compute pHash
-            const pHash = await imghash.hash(destination);
-
-            // check if this pHash exists
-            const pHashFilePath = './data/phashes/' + pHash;
-            const doesExist = await checkFileExists(pHashFilePath);
-            if (!doesExist) {
-                // if it does not, the image is new: process it
-                await fs.writeFile(pHashFilePath, '');
-                await loopRetryingAndLogging(async () => {
-                    sendImageFileCh.sendToQueue(
-                        AMQP_IMAGE_FILE_CHANNEL, Buffer.from(
-                            JSON.stringify({
-                                ...payload,
-                                fileName: destination
-                            })),
-                        { persistent: true }
-                    );
-                    return true;
-                }, logger);
-            } else {
-                // if we have seen this phash, skip the image and remove
-                // the downloaded file
-                await fs.unlink(destination);
-            }
-        } catch (e) {
-            // TODO: Looks a little confusing
-            logger.info(e.message);
+        const fileExist = await doesFileExist(logger, destination, url);
+        if (!fileExist) {
+            const content = Buffer.from(JSON.stringify({
+                ...payload,
+                fileName: destination
+            }));
+            sendImageFileCh.sendToQueue(
+                AMQP_IMAGE_FILE_CHANNEL,
+                content,
+                { persistent: true }
+            );
         }
 
-        receiveImageDataCh.ack(msg);
+        try {
+            receiveImageDataCh.ack(msg);
+        } catch(e) {
+            logError(logger, e);
+        }
     });
 };

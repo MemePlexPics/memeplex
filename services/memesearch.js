@@ -1,27 +1,40 @@
-import amqplib from 'amqplib';
 import winston from 'winston';
 import process from 'process';
 
 import { tgParser, downloader, ocr } from './index.js';
-import { loopRetryingAndLogging } from '../src/utils.js';
+import { loopRetrying, logError, delay } from '../src/utils.js';
+import { LOOP_RETRYING_DELAY } from '../src/const.js';
 
-// TODO: winston.loggers.add('category1' https://github.com/winstonjs/winston#working-with-multiple-loggers-in-winston
+const { combine, timestamp, json, simple } = winston.format;
+
+const loggers = winston.loggers;
+
 const getLogger = (service) => {
-    const logger = winston.createLogger({
-        transports: [
-            new winston.transports.File({ filename: `logs/${service}.log` }),
-        ],
-        defaultMeta: { service: service },
+    const transports = [
+        new winston.transports.File({
+            filename: `logs/${service}.log`,
+            lazy: true,
+            maxsize: 1024*1024*10, // bytes
+            maxFiles: 5,
+            tailable: true,
+            zippedArchive: true,
+        }),
+    ];
+    if (process.env.NODE_ENV !== 'production') transports.push(
+        new winston.transports.Console({ format: simple() })
+    );
+
+    loggers.add(service, {
+        format: combine(
+            timestamp(),
+            json(),
+        ),
+        defaultMeta: { service },
+        transports,
         exitOnError: false,
     });
 
-    if (process.env.NODE_ENV !== 'production') {
-        logger.add(new winston.transports.Console({
-            format: winston.format.simple(),
-        }));
-    }
-
-    return logger;
+    return loggers.get(service);
 };
 
 const loggerByService = {
@@ -30,11 +43,11 @@ const loggerByService = {
     ocr: getLogger('ocr'),
 };
 
-const startServices = async (amqpConn) => {
+const startServices = async () => {
     return Promise.all([
-        tgParser(amqpConn, loggerByService.tgParser),
-        downloader(amqpConn, loggerByService.downloader),
-        ocr(amqpConn, loggerByService.ocr),
+        tgParser(loggerByService.tgParser),
+        downloader(loggerByService.downloader),
+        ocr(loggerByService.ocr),
     ]);
 };
 
@@ -42,11 +55,12 @@ const main = async () => {
     const loggerMain = getLogger('main');
     loggerMain.info('Hello, MemeSearch');
 
-    await loopRetryingAndLogging(async () => {
-        const amqpConn = await amqplib.connect(process.env.AMQP_ENDPOINT);
+    await loopRetrying(async () => {
         loggerMain.info('Main loop started');
-        await startServices(amqpConn);
-    }, loggerMain);
+        await startServices()
+            .catch(e => logError(loggerMain, e));
+        await delay(LOOP_RETRYING_DELAY);
+    }, { logger: loggerMain });
 };
 
 main();

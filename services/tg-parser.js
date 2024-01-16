@@ -1,5 +1,6 @@
 /* global Buffer */
 import 'dotenv/config';
+import amqplib from 'amqplib';
 import {
     CYCLE_SLEEP_TIMEOUT,
     AMQP_IMAGE_DATA_CHANNEL,
@@ -11,7 +12,7 @@ import {
     setChannelLastTimestamp,
     getTrackedChannels,
 } from '../src/channel-watcher.js';
-import { delay, loopRetryingAndLogging } from '../src/utils.js';
+import { delay, logError, loopRetrying } from '../src/utils.js';
 import process from 'process';
 
 export const getMessagesAfter = async function* (channelName, timestamp, logger) {
@@ -24,7 +25,11 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
                     + '&data[add_offset]=' + (pageNumber * TG_API_PAGE_LIMIT)
             );
             logger.info(`checking https://t.me/${channelName}`);
-            const response = await fetch(url);
+            let response;
+            await loopRetrying(async () => {
+                response = await fetch(url);
+                return true;
+            }, { logger });
             const messages = (await response.json()).response.messages;
 
             for (const message of messages) {
@@ -45,13 +50,14 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
             }
             pageNumber++;
         } catch (e) {
-            logger.error(e);
+            logError(logger, e);
         }
         await delay(TG_API_RATE_LIMIT);
     }
 };
 
-export const main = async (conn, logger) => {
+export const main = async (logger) => {
+    const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
     const sendImageDataCh = await conn.createChannel();
     
     const channels = await getTrackedChannels();
@@ -62,20 +68,16 @@ export const main = async (conn, logger) => {
         let lastTs = await getChannelLastTimestamp(channelName);
         for await (const message of getMessagesAfter(channelName, lastTs, logger)) {
             logger.info(`new post image: ${JSON.stringify(message)}`);
-            await loopRetryingAndLogging(async () => {
-                const imageData = Buffer.from(JSON.stringify({
-                    ...message,
-                    languages: channel.languages
-                }));
-                sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
-                return true;
-            }, logger);
+            const imageData = Buffer.from(JSON.stringify({
+                ...message,
+                languages: channel.languages
+            }));
+            sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
             lastTs = Math.max(message.date, lastTs);
         }
-
-        await setChannelLastTimestamp(channelName, lastTs);
+        setChannelLastTimestamp(channelName, lastTs);
     }
 
-    logger.notice('fetched all channels, sleeping');
+    logger.warn('fetched all channels, sleeping');
     await delay(CYCLE_SLEEP_TIMEOUT);
 };

@@ -3,7 +3,7 @@ import { Client } from '@elastic/elasticsearch';
 import process from 'process';
 import { promises as fs } from 'fs';
 
-const LOOP_RETRYING_DELAY = parseInt(process.env.LOOP_RETRYING_DELAY);
+import { LOOP_RETRYING_DELAY } from './const.js';
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -23,6 +23,28 @@ export const getElasticClient = () => {
     return client;
 };
 
+export const connectToElastic = async (logger) => {
+    const getElasticClientUntilSuccess = async () => {
+        let connect;
+        await loopRetrying(async () => {
+            connect = getElasticClient();
+            return true;
+        }, { logger });
+        return connect;
+    };
+
+    let client = await getElasticClientUntilSuccess();
+
+    const reconnect = async () => {
+        client = await getElasticClientUntilSuccess();
+    };
+
+    return {
+        client,
+        reconnect,
+    };
+};
+
 export async function checkFileExists(file) {
     try {
         await fs.access(file);
@@ -32,34 +54,33 @@ export async function checkFileExists(file) {
     }
 }
 
-export async function loopRetrying(callback, delayMs=LOOP_RETRYING_DELAY) {
-    for (;;) {
-        try {
-            await callback();
-        } catch (e) {
-            console.error('❌', e);
-            await delay(delayMs);
-        }
+export async function logError(logger, e) {
+    if (logger) {
+        logger.error({
+            error: e.name,
+            message: e.message,
+            stack: e.stack,
+        });
+        return;
     }
+    console.error('❌', e);
 }
 
-export async function loopRetryingAndLogging(callback, logger, options={ delayMs: LOOP_RETRYING_DELAY, errorMeta: {} }) {
-    let lastError;
+export async function loopRetrying(
+    callback,
+    options = {
+        logger: undefined,
+        delayMs: LOOP_RETRYING_DELAY,
+        afterErrorCallback: async () => {},
+    }) {
     for (;;) {
         try {
             const result = await callback();
             if (result) break;
         } catch (e) {
-            if (!lastError || lastError.name !== e.name && lastError.message !== e.message) {
-                lastError = e;
-                logger.error({
-                    error: e.name,
-                    message: e.message,
-                    ...options.errorMeta,
-                });
-            }
-            console.error(e);
+            logError(options.logger, e);
             await delay(options.delayMs || LOOP_RETRYING_DELAY);
+            await options?.afterErrorCallback?.();
         }
     }
 }

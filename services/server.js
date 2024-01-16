@@ -1,7 +1,7 @@
 import express from 'express';
 import * as path from 'path';
 import 'dotenv/config';
-import { getElasticClient } from '../src/utils.js';
+import { connectToElastic, logError } from '../src/utils.js';
 import {
     ELASTIC_INDEX,
     MAX_SEARCH_QUERY_LENGTH
@@ -9,16 +9,21 @@ import {
 import winston from 'winston';
 
 const logger = winston.createLogger({
+    defaultMeta: { service: 'server' },
     transports: [
-        new winston.transports.File({ filename: 'logs/server.log' }),
+        new winston.transports.File({
+            filename: 'logs/server.log',
+            lazy: true,
+            maxsize: 1024*1024, // bytes
+        }),
     ],
 });
-
-const client = await getElasticClient();
 
 const app = express();
 app.use(express.static('static'));
 app.use('/data', express.static('data'));
+
+const { client, reconnect } = await connectToElastic();
 
 export const classifyQueryLanguage = query => {
     // TODO
@@ -49,10 +54,10 @@ app.get('/search', async (req, res) => {
         }
         return res.send(result);
     } catch (e) {
-        logger.error({
-            message: e,
-            suspect: 'elastic'
-        });
+        logError(logger, e);
+        if (e.message === 'connect ECONNREFUSED ::1:9200') {
+            await reconnect();
+        }
         return res.status(500).send();
     }
 });

@@ -22,6 +22,18 @@ async function createIndex(indexName) {
     try {
         const response = await client.indices.create({
             index: indexName,
+            mappings: {
+                properties: {
+                    timestamp: {
+                        type: 'date',
+                        format: 'strict_date_optional_time||epoch_second',
+                    },
+                    date: {
+                        type: 'date',
+                        format: 'strict_date_optional_time||epoch_second',
+                    },
+                },
+            },
         });
         console.log('💬 Index created:', response);
     } catch (error) {

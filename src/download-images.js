@@ -5,6 +5,7 @@ import { mkdir } from 'fs/promises';
 import { createWriteStream } from 'fs';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
+import { loopRetrying } from './utils.js';
 
 export const buildImageUrl = ({ channelName, messageId, photoId }) => {
     return process.env.TG_RSS_ENDPOINT + '/media/' + channelName + '/'
@@ -19,8 +20,12 @@ export const buildImagePath = async ({ channelName, messageId, photoId }) => {
 
 const pipelineAsync = promisify(pipeline);
 
-export async function downloadFile(url, dest) {
-    const response = await fetch(url);
+export async function downloadFile(url, dest, logger) {
+    let response;
+    await loopRetrying(async () => {
+        response = await fetch(url);
+        return true;
+    }, { logger });
     if (!response.ok)
         throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
     await pipelineAsync(response.body, createWriteStream(dest));
