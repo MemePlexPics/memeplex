@@ -6,6 +6,7 @@ import { createWriteStream } from 'fs';
 import { pipeline } from 'stream';
 import { promisify } from 'util';
 import { loopRetrying } from './utils.js';
+import { LOOP_RETRYING_DELAY } from './const.js';
 
 export const buildImageUrl = ({ channelName, messageId, photoId }) => {
     return process.env.TG_RSS_ENDPOINT + '/media/' + channelName + '/'
@@ -25,7 +26,10 @@ export async function downloadFile(url, dest, logger) {
     await loopRetrying(async () => {
         response = await fetch(url);
         return true;
-    }, { logger });
+    }, {
+        logger,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
     if (!response.ok)
         throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
     await pipelineAsync(response.body, createWriteStream(dest));

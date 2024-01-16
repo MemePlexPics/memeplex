@@ -3,8 +3,6 @@ import { Client } from '@elastic/elasticsearch';
 import process from 'process';
 import { promises as fs } from 'fs';
 
-import { LOOP_RETRYING_DELAY } from './const.js';
-
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
@@ -70,17 +68,23 @@ export async function loopRetrying(
     callback,
     options = {
         logger: undefined,
-        delayMs: LOOP_RETRYING_DELAY,
+        catchDelayMs: 0,
+        delayMs: 0,
         afterErrorCallback: async () => {},
     }) {
+    let isStarted = false;
     for (;;) {
         try {
+            if (isStarted) continue;
             const result = await callback();
             if (result) break;
         } catch (e) {
+            isStarted = false;
             logError(options.logger, e);
-            await delay(options.delayMs || LOOP_RETRYING_DELAY);
+            if (options.catchDelayMs) await delay(options.catchDelayMs);
             await options?.afterErrorCallback?.();
+        } finally {
+            if (options.delayMs) await delay(options.delayMs);
         }
     }
 }
@@ -96,7 +100,7 @@ function getRandomElement(arr) {
 export function chooseRandomOCRSpaceKey () {
     let keys = process.env.OCR_SPACE_API_KEYS;
     if (typeof keys === 'undefined') {
-        throw 'specify OCR_SPACE_API_KEYS';
+        throw 'specify OCR_SPACE_API_KEYS, a comma-separated list of ocs.space keys';
     }
 
     keys = keys.split(',');

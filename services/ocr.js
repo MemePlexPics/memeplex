@@ -8,13 +8,14 @@ import {
     ELASTIC_INDEX,
     OCR_RETRYING_DELAY,
     LOOP_RETRYING_DELAY,
+    EMPTY_QUEUE_RETRY_DELAY,
 } from '../src/const.js';
 import {
     processText,
     recognizeTextOcrSpace,
     buildImageTextPath,
 } from '../src/ocr-images.js';
-import { connectToElastic, delay, logError, loopRetrying } from '../src/utils.js';
+import { connectToElastic, delay, loopRetrying } from '../src/utils.js';
 
 const { client, reconnect } = await connectToElastic();
 
@@ -34,6 +35,55 @@ const getNewDoc = (payload, texts) => {
     return doc;
 };
 
+const recogniseText = async (msg, logger) => {
+    const payload = JSON.parse(msg.content.toString());
+        
+    // ocr using all the languages
+    const texts = [];
+
+    for (const language of payload.languages) {
+        let rawText;
+        await loopRetrying(async () => {
+            rawText = await recognizeTextOcrSpace(payload.fileName, language);
+            return true;
+        }, {
+            catchDelayMs: OCR_RETRYING_DELAY,
+            logger,
+        });
+
+        const text = processText(rawText);
+        if (text) {
+            texts.push({ language, text });
+            const textFile = await buildImageTextPath(payload, language);
+            const textContents = text;
+            await fs.writeFile(textFile, textContents);
+            logger.info(`recognized text: ${language} ${rawText}`);
+        } else {
+            logger.info(`text doesn't recognized: ${payload.fileName} (${language})`);
+        }
+    }
+
+    return {
+        payload,
+        texts,
+    };
+};
+
+const writeToElastic = async (payload, texts, logger) => {
+    await loopRetrying(async () => {
+        await client.index({
+            index: ELASTIC_INDEX,
+            document: getNewDoc(payload, texts),
+        });
+        await delay(LOOP_RETRYING_DELAY);
+        return true;
+    }, {
+        logger,
+        afterErrorCallback: async () => await reconnect(),
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
+};
+
 export const main = async (logger) => {
     const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
     const receiveImageFileCh = await conn.createChannel();
@@ -41,56 +91,15 @@ export const main = async (logger) => {
     await receiveImageFileCh.assertQueue(AMQP_IMAGE_FILE_CHANNEL, { durable: true });
     await receiveImageFileCh.prefetch(1); // let it process one message at a time
 
-    receiveImageFileCh.consume(AMQP_IMAGE_FILE_CHANNEL, async (msg) => {
-        if (msg === null) {
-            logger.warn('Consumer cancelled by server');
-            return;
+    for (;;) {
+        const msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
+        if (!msg) {
+            logger.info('Queue is empty');
+            await delay(EMPTY_QUEUE_RETRY_DELAY);
+            continue;
         }
-        
-        const payload = JSON.parse(msg.content.toString());
-        
-        // ocr using all the languages
-        const texts = [];
-        
-        for (const language of payload.languages) {
-            let rawText;
-            
-            await loopRetrying(async () => {
-                rawText = await recognizeTextOcrSpace(payload.fileName, language);
-                return true;
-            }, {
-                delayMs: OCR_RETRYING_DELAY,
-                logger,
-            });
-
-            const text = processText(rawText);
-            if (text) {
-                texts.push({ language, text });
-                const textFile = await buildImageTextPath(payload, language);
-                const textContents = text;
-                await fs.writeFile(textFile, textContents);
-                logger.info(`recognized text: ${language} ${rawText}`);
-            } else {
-                logger.info(`text doesn't recognized: ${payload.fileName} (${language})`);
-            }
-        }
-
-        // insert new document to elastic
-        await loopRetrying(async () => {
-            await client.index({
-                index: ELASTIC_INDEX,
-                document: getNewDoc(payload, texts),
-            });
-            await delay(LOOP_RETRYING_DELAY);
-            return true;
-        }, {
-            logger,
-            afterErrorCallback: async () => await reconnect()
-        });
-        try {
-            receiveImageFileCh.ack(msg);
-        } catch(e) {
-            logError(logger, e);
-        }
-    });
+        const { payload, texts } = await recogniseText(msg, logger);
+        await writeToElastic(payload, texts, logger);
+        receiveImageFileCh.ack(msg);
+    }
 };

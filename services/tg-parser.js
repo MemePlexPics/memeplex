@@ -5,7 +5,8 @@ import {
     CYCLE_SLEEP_TIMEOUT,
     AMQP_IMAGE_DATA_CHANNEL,
     TG_API_PAGE_LIMIT,
-    TG_API_RATE_LIMIT
+    TG_API_RATE_LIMIT,
+    LOOP_RETRYING_DELAY,
 } from '../src/const.js';
 import {
     getChannelLastTimestamp,
@@ -29,7 +30,10 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
             await loopRetrying(async () => {
                 response = await fetch(url);
                 return true;
-            }, { logger });
+            }, {
+                logger,
+                catchDelayMs: LOOP_RETRYING_DELAY,
+            });
             const messages = (await response.json()).response.messages;
 
             for (const message of messages) {

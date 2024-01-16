@@ -7,15 +7,16 @@ import process from 'process';
 import {
     AMQP_IMAGE_DATA_CHANNEL,
     AMQP_IMAGE_FILE_CHANNEL,
+    EMPTY_QUEUE_RETRY_DELAY,
 } from '../src/const.js';
-import { checkFileExists, logError } from '../src/utils.js';
+import { checkFileExists, delay } from '../src/utils.js';
 import {
     buildImageUrl,
     buildImagePath,
     downloadFile
 } from '../src/download-images.js';
 
-const doesFileExist = async (logger, destination, url) => {
+const doesFileExist = async (logger, destination, payload) => {
     const doesImageExist = await checkFileExists(destination);
 
     if (doesImageExist) {
@@ -23,6 +24,8 @@ const doesFileExist = async (logger, destination, url) => {
         return true;
     }
 
+    const url = buildImageUrl(payload);
+    logger.info(`downloading: ${url} -> ${destination}`);
     await downloadFile(url, destination, logger);
 
     // compute pHash
@@ -48,20 +51,17 @@ export const main = async (logger) => {
 
     await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
 
-    receiveImageDataCh.consume(AMQP_IMAGE_DATA_CHANNEL, async (msg) => {
-        if (msg === null) {
-            logger.warn('Consumer cancelled by server');
-            return;
+    for (;;) {
+        const msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
+        if (!msg) {
+            logger.info('Queue is empty');
+            await delay(EMPTY_QUEUE_RETRY_DELAY);
+            continue;
         }
-
-        const payloadString = msg.content.toString();
-        const payload = JSON.parse(payloadString);
-        const url = buildImageUrl(payload);
+        const payload = JSON.parse(msg.content.toString());
         const destination = await buildImagePath(payload);
-        logger.info(`new image to download: ${payloadString}`);
-        logger.info(`downloading: ${url} -> ${destination}`);
 
-        const fileExist = await doesFileExist(logger, destination, url);
+        const fileExist = await doesFileExist(logger, destination, payload);
         if (!fileExist) {
             const content = Buffer.from(JSON.stringify({
                 ...payload,
@@ -73,11 +73,6 @@ export const main = async (logger) => {
                 { persistent: true }
             );
         }
-
-        try {
-            receiveImageDataCh.ack(msg);
-        } catch(e) {
-            logError(logger, e);
-        }
-    });
+        receiveImageDataCh.ack(msg);
+    }
 };

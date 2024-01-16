@@ -20,7 +20,5 @@
 
 ## Startup
 
-- `node ./services/tg-parser.js` - Telegram parser
-- `node ./services/downloader.js` - Image file downloader
-- `node ./services/ocr.js` - ocr API caller
+- `node ./services/memesearch.js` - Telegram parser
 - `node ./services/server.js` - web server

@@ -25,6 +25,7 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
         console.log('💬', res);
     } catch(error) {
         if (error?.response?.status === 403) {
+            // "You may only perform this action upto maximum 180 number of times within 3600 seconds"
             console.log('❗️ 403 from ocr.space, waiting before retrying...');
             await delay(OCR_SPACE_403_DELAY);
             return await recognizeTextOcrSpace(fileName, language);

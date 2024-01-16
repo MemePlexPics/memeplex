@@ -2,7 +2,7 @@ import winston from 'winston';
 import process from 'process';
 
 import { tgParser, downloader, ocr } from './index.js';
-import { loopRetrying, logError, delay } from '../src/utils.js';
+import { loopRetrying } from '../src/utils.js';
 import { LOOP_RETRYING_DELAY } from '../src/const.js';
 
 const { combine, timestamp, json, simple } = winston.format;
@@ -43,24 +43,36 @@ const loggerByService = {
     ocr: getLogger('ocr'),
 };
 
-const startServices = async () => {
-    return Promise.all([
-        tgParser(loggerByService.tgParser),
-        downloader(loggerByService.downloader),
-        ocr(loggerByService.ocr),
-    ]);
+const startServices = async (loggerMain) => {
+    loopRetrying(async () => {
+        loggerMain.info('tgParser start');
+        await tgParser(loggerByService.tgParser);
+    }, {
+        logger: loggerByService.tgParser,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
+
+    loopRetrying(async () => {
+        loggerMain.info('downloader start');
+        await downloader(loggerByService.downloader);
+    }, {
+        logger: loggerByService.downloader,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
+
+    loopRetrying(async () => {
+        loggerMain.info('ocr start');
+        await ocr(loggerByService.ocr);
+    }, {
+        logger: loggerByService.ocr,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
 };
 
 const main = async () => {
     const loggerMain = getLogger('main');
     loggerMain.info('Hello, MemeSearch');
-
-    await loopRetrying(async () => {
-        loggerMain.info('Main loop started');
-        await startServices()
-            .catch(e => logError(loggerMain, e));
-        await delay(LOOP_RETRYING_DELAY);
-    }, { logger: loggerMain });
+    await startServices(loggerMain);
 };
 
 main();
