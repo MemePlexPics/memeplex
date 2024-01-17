@@ -72,14 +72,11 @@ export async function loopRetrying(
         delayMs: 0,
         afterErrorCallback: async () => {},
     }) {
-    let isStarted = false;
     for (;;) {
         try {
-            if (isStarted) continue;
             const result = await callback();
             if (result) break;
         } catch (e) {
-            isStarted = false;
             logError(options.logger, e);
             if (options.catchDelayMs) await delay(options.catchDelayMs);
             await options?.afterErrorCallback?.();

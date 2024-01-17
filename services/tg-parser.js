@@ -6,14 +6,13 @@ import {
     AMQP_IMAGE_DATA_CHANNEL,
     TG_API_PAGE_LIMIT,
     TG_API_RATE_LIMIT,
-    LOOP_RETRYING_DELAY,
 } from '../src/const.js';
 import {
     getChannelLastTimestamp,
     setChannelLastTimestamp,
     getTrackedChannels,
 } from '../src/channel-watcher.js';
-import { delay, logError, loopRetrying } from '../src/utils.js';
+import { delay, logError } from '../src/utils.js';
 import process from 'process';
 
 export const getMessagesAfter = async function* (channelName, timestamp, logger) {
@@ -26,14 +25,7 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
                     + '&data[add_offset]=' + (pageNumber * TG_API_PAGE_LIMIT)
             );
             logger.info(`checking https://t.me/${channelName}`);
-            let response;
-            await loopRetrying(async () => {
-                response = await fetch(url);
-                return true;
-            }, {
-                logger,
-                catchDelayMs: LOOP_RETRYING_DELAY,
-            });
+            const response = await fetch(url);
             const messages = (await response.json()).response.messages;
 
             for (const message of messages) {
@@ -64,12 +56,12 @@ export const main = async (logger) => {
     const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
     const sendImageDataCh = await conn.createChannel();
     
-    const channels = await getTrackedChannels();
+    const channels = getTrackedChannels();
     logger.info(`fetching ${channels.length} channels`);
 
     for (const channel of channels) {
         const channelName = channel.name;
-        let lastTs = await getChannelLastTimestamp(channelName);
+        let lastTs = getChannelLastTimestamp(channelName);
         for await (const message of getMessagesAfter(channelName, lastTs, logger)) {
             logger.info(`new post image: ${JSON.stringify(message)}`);
             const imageData = Buffer.from(JSON.stringify({
@@ -78,8 +70,8 @@ export const main = async (logger) => {
             }));
             sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
             lastTs = Math.max(message.date, lastTs);
+            setChannelLastTimestamp(channelName, lastTs);
         }
-        setChannelLastTimestamp(channelName, lastTs);
     }
 
     logger.warn('fetched all channels, sleeping');
