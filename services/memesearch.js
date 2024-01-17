@@ -4,6 +4,8 @@ import process from 'process';
 import { tgParser, downloader, ocr } from './index.js';
 import { loopRetrying } from '../src/utils.js';
 import { LOOP_RETRYING_DELAY } from '../src/const.js';
+import { inserOcrKeysToDb } from '../scripts/insert-keys-to-db.js';
+import { insertProxiesIntoDb } from '../scripts/insert-proxies-to-db.js';
 
 const { combine, timestamp, json, simple } = winston.format;
 
@@ -72,6 +74,10 @@ const startServices = async (loggerMain) => {
 const main = async () => {
     const loggerMain = getLogger('main');
     loggerMain.info('Hello, MemeSearch');
+    await inserOcrKeysToDb();
+    // TODO: Start as a service
+    insertProxiesIntoDb();
+    loggerMain.info('New OCR keys are inserted into DB');
     await startServices(loggerMain);
 };
 

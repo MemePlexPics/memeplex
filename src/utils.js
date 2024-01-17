@@ -1,11 +1,25 @@
 import 'dotenv/config';
 import { Client } from '@elastic/elasticsearch';
+import mysql from 'mysql2/promise';
 import process from 'process';
 import { promises as fs } from 'fs';
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+
+export const getMysqlClient = async () => {
+    // TODO: fix credentials
+    const client = await mysql.createConnection({
+        host: '127.0.0.1', //process.env.DB_HOST,
+        port: '9507',
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_DATABASE,
+    });
+
+    return client;
+};
 
 export const getElasticClient = () => {
     const client = new Client({

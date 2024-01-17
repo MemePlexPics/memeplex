@@ -18,3 +18,4 @@ export const MAX_SEARCH_QUERY_LENGTH = 300;
 export const LOOP_RETRYING_DELAY = 5_000;
 export const OCR_RETRYING_DELAY = 36_000;
 export const EMPTY_QUEUE_RETRY_DELAY = 10_000;
+export const PROXY_TEST_TIMEOUT = 5_000;

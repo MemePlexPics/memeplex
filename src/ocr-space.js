@@ -56,7 +56,7 @@ export async function ocrSpace(input, options = {}) {
     formData.append('OCREngine', String(OCREngine || '1'));
     const request = {
         method: 'POST',
-        url: String(ocrUrl || 'https://api.ocr.space/parse/image'),
+        url: String(ocrUrl || 'http://api.ocr.space/parse/image'),
         headers: {
             apikey: String(apiKey || 'helloworld'),
             ...formData.getHeaders(),
