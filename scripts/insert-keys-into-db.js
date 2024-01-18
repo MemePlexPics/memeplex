@@ -14,10 +14,13 @@ async function insertKey(connection, key) {
     }
 }
 
-export const inserOcrKeysToDb = async () => {
+export const insertOcrKeysIntoDb = async () => {
     const mysql = await getMysqlClient();
 
     const keys = process.env.OCR_SPACE_API_KEYS.split(',');
+    if (typeof keys === 'undefined') {
+        throw 'specify OCR_SPACE_API_KEYS, a comma-separated list of ocs.space keys';
+    }
 
     try {
         for (const key of keys) {
@@ -27,5 +30,3 @@ export const inserOcrKeysToDb = async () => {
         await mysql.end();
     }
 };
-
-await inserOcrKeysToDb();

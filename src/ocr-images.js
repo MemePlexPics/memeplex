@@ -1,8 +1,12 @@
 import 'dotenv/config';
-import process from 'process';
 import { mkdir } from 'fs/promises';
 import { ocrSpace } from './ocr-space.js';
-import { delay, chooseRandomOCRSpaceKey } from './utils.js';
+import {
+    delay,
+    chooseRandomOCRSpaceKey,
+    getMysqlClient,
+} from './utils.js';
+import { saveKeyTimeout, setProxyAvailability } from './mysql-queries.js';
 import { OCR_SPACE_403_DELAY } from './const.js';
 import * as R from 'ramda';
 
@@ -12,13 +16,31 @@ export const buildImageTextPath = async ({ channelName, messageId, photoId }, la
     return directory + messageId + '-' + photoId + '-' + language +'.txt';
 };
 
+const handleTimeout = async(mysql, apiKey, timeout) => {
+    const delayMs = Math.max(0, new Date(timeout) - new Date());
+    console.log(`💬 Key timeout: ${timeout}. Wait ${delayMs/1000} seconds`);
+    await delay(delayMs);
+    await saveKeyTimeout(mysql, apiKey, null);
+};
+
 export const recognizeTextOcrSpace = async (fileName, language) => {
     let res;
-    const apiKey = chooseRandomOCRSpaceKey();
+    const {
+        key: apiKey,
+        timeout,
+        proxy
+    } = await chooseRandomOCRSpaceKey();
+    const mysql = await getMysqlClient();
+    if (timeout) handleTimeout(mysql, apiKey, timeout);
     try {
+        const [host, port] = proxy.split(':');
         res = await ocrSpace(fileName, {
             apiKey,
             language,
+            proxy: {
+                host,
+                port
+            },
             OCREngine: language == 'eng' ? '2' : '1'
             // see here for engine descriptions: http://ocr.space/OCRAPI
         });
@@ -26,12 +48,17 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
     } catch(error) {
         if (error?.response?.status === 403) {
             // "You may only perform this action upto maximum 180 number of times within 3600 seconds"
-            console.log('❗️ 403 from ocr.space, waiting before retrying...');
+            // TODO: Find sended timeout field in response
+            console.log('❗️ 403 from ocr.space, waiting before retrying...', error);
             await delay(OCR_SPACE_403_DELAY);
             return await recognizeTextOcrSpace(fileName, language);
-        } else {
-            console.error('❌', error);
         }
+        if (error.message === 'socket hang up'
+            || error.message === 'connect ETIMEDOUT'
+            || error.name === 'AxiosError') {
+            await setProxyAvailability(mysql, proxy, false);
+        }
+        throw error;
     }
 
     let text = [];

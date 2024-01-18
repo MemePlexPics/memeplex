@@ -4,8 +4,9 @@ import process from 'process';
 import { tgParser, downloader, ocr } from './index.js';
 import { loopRetrying } from '../src/utils.js';
 import { LOOP_RETRYING_DELAY } from '../src/const.js';
-import { inserOcrKeysToDb } from '../scripts/insert-keys-to-db.js';
-import { insertProxiesIntoDb } from '../scripts/insert-proxies-to-db.js';
+import { insertOcrKeysIntoDb } from '../scripts/insert-keys-into-db.js';
+import { checkProxies } from '../scripts/check-proxies.js';
+import { findNewProxies } from '../scripts/find-new-proxies.js';
 
 const { combine, timestamp, json, simple } = winston.format;
 
@@ -23,7 +24,9 @@ const getLogger = (service) => {
         }),
     ];
     if (process.env.NODE_ENV !== 'production') transports.push(
-        new winston.transports.Console({ format: simple() })
+        new winston.transports.Console({
+            format: simple()
+        })
     );
 
     loggers.add(service, {
@@ -43,9 +46,11 @@ const loggerByService = {
     tgParser: getLogger('tg-parser'),
     downloader: getLogger('downloader'),
     ocr: getLogger('ocr'),
+    proxy: getLogger('proxy'),
 };
 
 const startServices = async (loggerMain) => {
+    // TODO: DRY
     loopRetrying(async () => {
         loggerMain.info('tgParser start');
         await tgParser(loggerByService.tgParser);
@@ -69,15 +74,22 @@ const startServices = async (loggerMain) => {
         logger: loggerByService.ocr,
         catchDelayMs: LOOP_RETRYING_DELAY,
     });
+
+    loopRetrying(async () => {
+        loggerMain.info('Proxy services started');
+        await checkProxies();
+        await findNewProxies();
+    }, {
+        logger: loggerByService.proxy,
+        delayMs: 3_600_000,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
 };
 
 const main = async () => {
     const loggerMain = getLogger('main');
     loggerMain.info('Hello, MemeSearch');
-    await inserOcrKeysToDb();
-    // TODO: Start as a service
-    insertProxiesIntoDb();
-    loggerMain.info('New OCR keys are inserted into DB');
+    await insertOcrKeysIntoDb();
     await startServices(loggerMain);
 };
 

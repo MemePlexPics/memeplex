@@ -83,6 +83,8 @@ services:
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
       MARIADB_AUTO_UPGRADE: 'yes'
+    env_file:
+      - ./.mysql.env
     command:
      - --skip-grant-tables
      - --innodb-buffer-pool-size=128M
@@ -100,6 +102,7 @@ services:
     env_file:
       - ../TelegramApiServer/.env.docker
       - ./.env
+      - ./.mysql.env
     depends_on:
       - mysql
 

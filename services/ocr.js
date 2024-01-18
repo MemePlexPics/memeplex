@@ -6,7 +6,6 @@ import process from 'process';
 import {
     AMQP_IMAGE_FILE_CHANNEL,
     ELASTIC_INDEX,
-    OCR_RETRYING_DELAY,
     LOOP_RETRYING_DELAY,
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../src/const.js';
@@ -37,19 +36,12 @@ const getNewDoc = (payload, texts) => {
 
 const recogniseText = async (msg, logger) => {
     const payload = JSON.parse(msg.content.toString());
-        
+
     // ocr using all the languages
     const texts = [];
 
     for (const language of payload.languages) {
-        let rawText;
-        await loopRetrying(async () => {
-            rawText = await recognizeTextOcrSpace(payload.fileName, language);
-            return true;
-        }, {
-            catchDelayMs: OCR_RETRYING_DELAY,
-            logger,
-        });
+        let rawText = await recognizeTextOcrSpace(payload.fileName, language);
 
         const text = processText(rawText);
         if (text) {

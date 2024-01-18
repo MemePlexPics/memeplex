@@ -2,7 +2,12 @@ import 'dotenv/config';
 import { Client } from '@elastic/elasticsearch';
 import mysql from 'mysql2/promise';
 import process from 'process';
+import  { performance } from 'perf_hooks';
+import axios from 'axios';
 import { promises as fs } from 'fs';
+
+import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from './const.js';
+import { getProxyForKey, getRandomKey } from './mysql-queries.js';
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -11,8 +16,8 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 export const getMysqlClient = async () => {
     // TODO: fix credentials
     const client = await mysql.createConnection({
-        host: '127.0.0.1', //process.env.DB_HOST,
-        port: '9507',
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
@@ -108,12 +113,48 @@ function getRandomElement(arr) {
     return null;
 }
 
-export function chooseRandomOCRSpaceKey () {
-    let keys = process.env.OCR_SPACE_API_KEYS;
-    if (typeof keys === 'undefined') {
-        throw 'specify OCR_SPACE_API_KEYS, a comma-separated list of ocs.space keys';
-    }
-
-    keys = keys.split(',');
-    return getRandomElement(keys);
+export async function chooseRandomOCRSpaceKey () {
+    const mysql = await getMysqlClient();
+    // Select a random key without timeout or with the early date
+    const keys = await getRandomKey(mysql);
+    const keyData = keys[0];
+    const finallKeyData = {
+        key: keyData.ocr_key,
+        timeout: keyData.timeout,
+    };
+    const findedProxy = await getProxyForKey(mysql, keyData.ocr_key);
+    if (!findedProxy)
+        throw new Error('There are no available free proxies');
+    finallKeyData.proxy = findedProxy.address;
+    if (!finallKeyData.proxy)
+        throw new Error(`❌ Proxy for ${finallKeyData.key} isn't finded`);
+    
+    console.log(`💬 ${finallKeyData.key} ${finallKeyData.proxy} ${findedProxy.speed}ms`);
+    return finallKeyData;
 }
+
+export const getProxySpeed = async (ip, port) => {
+    const proxy = `${ip}:${port}`;
+    try {
+        const start = performance.now();
+        const response = await axios.get(PROXY_TESTING_FILE, {
+            timeout: PROXY_TEST_TIMEOUT,
+            proxy: {
+                host: ip,
+                port
+            }
+        });
+        const end = performance.now();
+
+        if (response.status != 200)
+            throw new Error(`status ${response.status}`, response?.data);
+
+        const speed = parseInt(end - start);
+        console.log(`✅ Proxy ${proxy} is working. Speed: ${speed}ms`);
+
+        return speed;
+    } catch (error) {
+        console.log(`❌ Proxy ${proxy} is not working. Error: ${error.message}`);
+        return;
+    }
+};

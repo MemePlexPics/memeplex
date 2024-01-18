@@ -9,7 +9,8 @@ import {
     AMQP_IMAGE_FILE_CHANNEL,
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../src/const.js';
-import { checkFileExists, delay } from '../src/utils.js';
+import { selectPHash, insertPHash } from '../src/mysql-queries.js';
+import { checkFileExists, delay, getMysqlClient } from '../src/utils.js';
 import {
     buildImageUrl,
     buildImagePath,
@@ -31,16 +32,16 @@ const doesFileExist = async (logger, destination, payload) => {
     // compute pHash
     const pHash = await imghash.hash(destination);
 
+    const mysql = await getMysqlClient();
     // check if this pHash exists
-    const pHashFilePath = './data/phashes/' + pHash;
-    const doesExist = await checkFileExists(pHashFilePath);
+    const doesExist = await selectPHash(mysql, pHash);
     if (doesExist) {
         // if we have seen this phash, skip the image and remove
         // the downloaded file
         await fs.unlink(destination);
         return true;
     }
-    await fs.writeFile(pHashFilePath, '');
+    await insertPHash(mysql, pHash);
     return false;
 };
 
