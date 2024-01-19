@@ -2,9 +2,11 @@ services:
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
     container_name: memesearch-elastic
+    restart: unless-stopped
     environment:
       discovery.type: single-node
       xpack.security.enabled: false
+      # cluster.routing.allocation.disk.threshold_enabled: false
     mem_limit: 1GB
     ports:
       - 9200:9200
@@ -15,10 +17,58 @@ services:
     image: rabbitmq:3
     hostname: rabbitmq
     container_name: memesearch-rabbitmq
+    restart: unless-stopped
     ports:
       - 5672:5672
     volumes:
       - "./data/rabbitmq:/var/lib/rabbitmq/mnesia/"
+
+  loki:
+    image: grafana/loki
+    container_name: loki
+    hostname: loki
+    restart: unless-stopped
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/local-config.yaml
+    volumes:
+      - ./configs/loki.yaml:/etc/loki/local-config.yaml
+      - ./data/loki/chunks:/loki/chunks
+  
+  promtail:
+    image: grafana/promtail
+    container_name: promtail
+    hostname: promtail
+    restart: unless-stopped
+    command: -config.file=/etc/promtail/docker-config.yaml
+    volumes:
+      - ./data/promtail:/var/lib/promtail
+      - ./configs/promtail.yaml:/etc/promtail/docker-config.yaml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./logs:/var/log
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    hostname: grafana
+    restart: unless-stopped
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      # - GF_SECURITY_ADMIN_PASSWORD=admin
+      # - GF_SECURITY_ADMIN_USER=admin
+    ports:
+      - 3001:3000
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+      # - ./data/grafana/conf:/etc/grafana
+      - ./configs/grafana/provisioning:/etc/grafana/provisioning
+    depends_on:
+      - loki
 
   # Extended containers
 

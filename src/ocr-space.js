@@ -67,4 +67,4 @@ export async function ocrSpace(input, options = {}) {
     };
     const { data } = await axios(request);
     return data;
-};
+}

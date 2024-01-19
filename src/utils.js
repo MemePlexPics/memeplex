@@ -21,6 +21,28 @@ export const getElasticClient = () => {
     return client;
 };
 
+export const connectToElastic = async (logger) => {
+    const getElasticClientUntilSuccess = async () => {
+        let connect;
+        await loopRetrying(async () => {
+            connect = getElasticClient();
+            return true;
+        }, { logger });
+        return connect;
+    };
+
+    let client = await getElasticClientUntilSuccess();
+
+    const reconnect = async () => {
+        client = await getElasticClientUntilSuccess();
+    };
+
+    return {
+        client,
+        reconnect,
+    };
+};
+
 export async function checkFileExists(file) {
     try {
         await fs.access(file);
@@ -30,16 +52,39 @@ export async function checkFileExists(file) {
     }
 }
 
-export async function loopRetrying (callback, delayMs=5_000) {
+export async function logError(logger, e) {
+    if (logger) {
+        logger.error({
+            error: e.name,
+            message: e.message,
+            stack: e.stack,
+        });
+        return;
+    }
+    console.error('❌', e);
+}
+
+export async function loopRetrying(
+    callback,
+    options = {
+        logger: undefined,
+        catchDelayMs: 0,
+        delayMs: 0,
+        afterErrorCallback: async () => {},
+    }) {
     for (;;) {
         try {
-            await callback();
+            const result = await callback();
+            if (result) break;
         } catch (e) {
-            console.error(e);
-            await delay(delayMs);
+            logError(options.logger, e);
+            if (options.catchDelayMs) await delay(options.catchDelayMs);
+            await options?.afterErrorCallback?.();
+        } finally {
+            if (options.delayMs) await delay(options.delayMs);
         }
     }
-};
+}
 
 function getRandomElement(arr) {
     if (arr && arr.length) {
@@ -52,7 +97,7 @@ function getRandomElement(arr) {
 export function chooseRandomOCRSpaceKey () {
     let keys = process.env.OCR_SPACE_API_KEYS;
     if (typeof keys === 'undefined') {
-        throw "specify OCR_SPACE_API_KEYS";
+        throw 'specify OCR_SPACE_API_KEYS, a comma-separated list of ocs.space keys';
     }
 
     keys = keys.split(',');
