@@ -46,7 +46,8 @@ const loggerByService = {
     tgParser: getLogger('tg-parser'),
     downloader: getLogger('downloader'),
     ocr: getLogger('ocr'),
-    proxy: getLogger('proxy'),
+    proxyChecker: getLogger('proxy-checker'),
+    proxyFinder: getLogger('proxy-finder'),
 };
 
 const startServices = async (loggerMain) => {
@@ -76,12 +77,20 @@ const startServices = async (loggerMain) => {
     });
 
     loopRetrying(async () => {
-        loggerMain.info('Proxy services started');
-        await checkProxies();
-        await findNewProxies();
+        loggerMain.info('Proxy checker started');
+        await checkProxies(loggerByService.proxyChecker);
     }, {
-        logger: loggerByService.proxy,
-        delayMs: 3_600_000,
+        logger: loggerByService.proxyChecker,
+        delayMs: 1000*60*60, // Once in 1 hr
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
+
+    loopRetrying(async () => {
+        loggerMain.info('Proxy finder started');
+        await findNewProxies(loggerByService.proxyFinder);
+    }, {
+        logger: loggerByService.proxyFinder,
+        delayMs: 1000*60*60*6, // Once in 6 hr
         catchDelayMs: LOOP_RETRYING_DELAY,
     });
 };
@@ -93,4 +102,4 @@ const main = async () => {
     await startServices(loggerMain);
 };
 
-main();
+await main();

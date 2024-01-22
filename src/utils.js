@@ -5,6 +5,7 @@ import process from 'process';
 import  { performance } from 'perf_hooks';
 import axios from 'axios';
 import { promises as fs } from 'fs';
+import { SocksProxyAgent } from 'socks-proxy-agent';
 
 import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from './const.js';
 import { getProxyForKey, getRandomKey } from './mysql-queries.js';
@@ -126,6 +127,7 @@ export async function chooseRandomOCRSpaceKey () {
     if (!findedProxy)
         throw new Error('There are no available free proxies');
     finallKeyData.proxy = findedProxy.address;
+    finallKeyData.protocol = findedProxy.protocol;
     if (!finallKeyData.proxy)
         throw new Error(`❌ Proxy for ${finallKeyData.key} isn't finded`);
     
@@ -133,28 +135,39 @@ export async function chooseRandomOCRSpaceKey () {
     return finallKeyData;
 }
 
-export const getProxySpeed = async (ip, port) => {
+export const getProxySpeed = async (ip, port, protocol, repeats = 1) => {
     const proxy = `${ip}:${port}`;
+    const requestOptions = {
+        timeout: PROXY_TEST_TIMEOUT,
+    };
     try {
-        const start = performance.now();
-        const response = await axios.get(PROXY_TESTING_FILE, {
-            timeout: PROXY_TEST_TIMEOUT,
-            proxy: {
+        if (protocol === 'http') {
+            requestOptions.proxy = {
                 host: ip,
                 port
-            }
-        });
-        const end = performance.now();
+            };
+        } else {
+            requestOptions.httpAgent = new SocksProxyAgent(`socks://${proxy}`, { protocol });
+        }
+        const axiosClient = axios.create(requestOptions);
+        const measuredSpeeds = [];
+        for (let i = 0; i < repeats; i++) {
+            const start = performance.now();
+            const response = await axiosClient.get(PROXY_TESTING_FILE);
+            const end = performance.now();
 
-        if (response.status != 200)
-            throw new Error(`status ${response.status}`, response?.data);
+            if (response.status != 200)
+                throw new Error(`status ${response.status}`, response?.data);
 
-        const speed = parseInt(end - start);
-        console.log(`✅ Proxy ${proxy} is working. Speed: ${speed}ms`);
+            measuredSpeeds.push(end - start);
+        }
+        const speed = measuredSpeeds.reduce((acc, speed) => acc + speed, 0) / repeats;
+        const roundedSpeed = parseInt(speed);
+        console.log(`✅ Proxy ${proxy} (${protocol}) is working. Speed: ${roundedSpeed}ms`);
 
-        return speed;
+        return roundedSpeed;
     } catch (error) {
-        console.log(`❌ Proxy ${proxy} is not working. Error: ${error.message}`);
+        console.log(`❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`);
         return;
     }
 };

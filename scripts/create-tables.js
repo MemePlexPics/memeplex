@@ -8,17 +8,22 @@ const createTables = async () => {
         await mysql.query(`
             CREATE OR REPLACE TABLE ocr_keys (
                 ocr_key VARCHAR(255) PRIMARY KEY,
-                timeout DATETIME
+                timeout DATETIME NULL
             )
         `);
         console.log('💬 ocr_keys table created');
 
         await mysql.query(`
             CREATE OR REPLACE TABLE proxies (
-                address VARCHAR(255) PRIMARY KEY,
-                availability BOOLEAN,
-                ocr_key VARCHAR(255),
-                speed INT NULL
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                address VARCHAR(64) NOT NULL,
+                protocol VARCHAR(10) NOT NULL,
+                availability BOOLEAN NOT NULL,
+                ocr_key VARCHAR(255) NULL,
+                speed INT NOT NULL,
+
+                FOREIGN KEY (ocr_key) REFERENCES ocr_keys(ocr_key),
+                UNIQUE KEY unique_address_protocol (address, protocol)
             )
         `);
         console.log('💬 proxies table created');

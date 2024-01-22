@@ -6,7 +6,6 @@ import process from 'process';
 import {
     AMQP_IMAGE_FILE_CHANNEL,
     ELASTIC_INDEX,
-    LOOP_RETRYING_DELAY,
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../src/const.js';
 import {
@@ -14,9 +13,9 @@ import {
     recognizeTextOcrSpace,
     buildImageTextPath,
 } from '../src/ocr-images.js';
-import { connectToElastic, delay, loopRetrying } from '../src/utils.js';
+import { connectToElastic, delay } from '../src/utils.js';
 
-const { client, reconnect } = await connectToElastic();
+const { client } = await connectToElastic();
 
 const getNewDoc = (payload, texts) => {
     const doc = {
@@ -61,21 +60,6 @@ const recogniseText = async (msg, logger) => {
     };
 };
 
-const writeToElastic = async (payload, texts, logger) => {
-    await loopRetrying(async () => {
-        await client.index({
-            index: ELASTIC_INDEX,
-            document: getNewDoc(payload, texts),
-        });
-        await delay(LOOP_RETRYING_DELAY);
-        return true;
-    }, {
-        logger,
-        afterErrorCallback: async () => await reconnect(),
-        catchDelayMs: LOOP_RETRYING_DELAY,
-    });
-};
-
 export const main = async (logger) => {
     const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
     const receiveImageFileCh = await conn.createChannel();
@@ -91,7 +75,10 @@ export const main = async (logger) => {
             continue;
         }
         const { payload, texts } = await recogniseText(msg, logger);
-        await writeToElastic(payload, texts, logger);
+        await client.index({
+            index: ELASTIC_INDEX,
+            document: getNewDoc(payload, texts),
+        });
         receiveImageFileCh.ack(msg);
     }
 };

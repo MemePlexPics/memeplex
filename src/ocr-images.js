@@ -28,7 +28,8 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
     const {
         key: apiKey,
         timeout,
-        proxy
+        proxy,
+        protocol
     } = await chooseRandomOCRSpaceKey();
     const mysql = await getMysqlClient();
     if (timeout) handleTimeout(mysql, apiKey, timeout);
@@ -37,26 +38,26 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
         res = await ocrSpace(fileName, {
             apiKey,
             language,
-            proxy: {
-                host,
-                port
-            },
+            host,
+            port,
+            protocol,
             OCREngine: language == 'eng' ? '2' : '1'
             // see here for engine descriptions: http://ocr.space/OCRAPI
         });
         console.log('💬', res);
     } catch(error) {
         if (error?.response?.status === 403) {
-            // "You may only perform this action upto maximum 180 number of times within 3600 seconds"
             // TODO: Find sended timeout field in response
-            console.log('❗️ 403 from ocr.space, waiting before retrying...', error);
-            await delay(OCR_SPACE_403_DELAY);
-            return await recognizeTextOcrSpace(fileName, language);
+            console.log(`❗️ 403 from ocr.space for key ${apiKey}`, error);
+            await saveKeyTimeout(mysql, apiKey, Date.now() + OCR_SPACE_403_DELAY);
         }
         if (error.message === 'socket hang up'
             || error.message === 'connect ETIMEDOUT'
-            || error.name === 'AxiosError') {
-            await setProxyAvailability(mysql, proxy, false);
+            || error.name === 'AxiosError'
+            || error.message.startsWith('connect ECONNREFUSED')
+            || error.message.startsWith('read ECONNRESET')
+        ) {
+            await setProxyAvailability(mysql, proxy, protocol, false);
         }
         throw error;
     }
