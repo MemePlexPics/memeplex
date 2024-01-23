@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>MemeSearch</title>
     <link rel="stylesheet" href="./style.css">
+    <meta name="description" content="Meme search service" />
   </head>
   <body>
     <div id="container">
-      <img id="logo" src="./logo_600.png" />
+      <!-- <img id="logo" src="./logo_600.png" /> -->
+      <div id="logo">MemeSearch</div>
       <div id="search-container">
         <input id="search-field" type="text" placeholder="Search meme images by caption">
         <input id="search-button" type="button" value="Search">
@@ -13,7 +16,8 @@
       <div id="results">
       </div>
     </div>
-    <div id="loader" class="hide"></div>    
+    <div id="loader" class="hide"></div>
+    <button id="scroll-to-top" title="Go to top">^</button>
 
     <script src="./main.js"></script>
   </body>

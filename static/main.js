@@ -88,6 +88,26 @@ const startSearch = async () => {
     }
 };
 
+const handleInfinityScroll = () => {
+    if (
+        document.documentElement.scrollTop
+            + document.documentElement.clientHeight
+            >= document.documentElement.scrollHeight - 5
+        && pageOptions.currentFrom <= pageOptions.total
+    ) {
+        startSearch();
+    }
+};
+
+const handleScrollToTopBtn = () => {
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
+    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        scrollToTopBtn.style.display = 'flex';
+    } else {
+        scrollToTopBtn.style.display = 'none';
+    }
+};
+
 const onClickSearch = () => {
     resetPage();
     startSearch();
@@ -99,27 +119,23 @@ const onPressEnter = (event) => {
     startSearch();
 };
 
-const onInfinityScroll = () => {
-    const {
-        scrollTop,
-        scrollHeight,
-        clientHeight
-    } = document.documentElement;
+const onScroll = () => {
+    handleInfinityScroll();
+    handleScrollToTopBtn();
+};
 
-    if (
-        scrollTop + clientHeight >= scrollHeight - 5
-        && pageOptions.currentFrom <= pageOptions.total
-    ) {
-        startSearch();
-    }
+const onClickScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const init = () => {
     const searchField = document.getElementById('search-field');
     const searchButton = document.getElementById('search-button');
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
     searchButton.addEventListener('click', onClickSearch);
     searchField.addEventListener('keypress', onPressEnter);
-    window.addEventListener('scroll', onInfinityScroll);
+    scrollToTopBtn.addEventListener('click', onClickScrollToTop);
+    window.addEventListener('scroll', onScroll);
 };
 
 init();

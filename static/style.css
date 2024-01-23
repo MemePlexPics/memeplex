@@ -1,27 +1,46 @@
 :root {
     --loader-size: 100px;
     --color-white: #EEE;
+    --color-gray: #b5b5b5;
     --color-black: #222;
     --color-green: #00FF4A;
 }
 
 body {
-    background: linear-gradient(var(--color-black) 0%, #444 50%, var(--color-black) 100%);
+    background: linear-gradient(var(--color-black) 0%, #444 100%);
+    background-attachment: fixed;
     height: 100vh;
     margin: 0px;
 }
 
 #container {
     margin: 0 auto;
-    width: 90vw;
+    /* width: 90vw; */
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    padding: 14px 0;
+    padding: 14px 5vw;
 }
 
 #logo {
-    /* max-width: 420px; */
+    font-family: verdana;
+    font-size: 4em;
+    font-weight: 600;
+    color: var(--color-white);
+    text-shadow: 1px 1px 1px #919191,
+        1px 2px 1px #919191,
+        1px 3px 1px #919191,
+        1px 4px 1px #919191,
+        1px 5px 1px #919191,
+        1px 6px 1px #919191,
+        1px 7px 1px #919191,
+        1px 8px 1px #919191,
+        1px 9px 1px #919191,
+        1px 10px 1px #919191,
+    1px 18px 6px rgba(16,16,16,0.4),
+    1px 22px 10px rgba(16,16,16,0.2),
+    1px 25px 35px rgba(16,16,16,0.2),
+    1px 30px 60px rgba(16,16,16,0.4);
 }
 
 #search-container {
@@ -37,7 +56,7 @@ body {
     background-color: var(--color-black);
     border-radius: 8px;
     color: var(--color-white);
-    border-color: #b5b5b5;
+    border-color: var(--color-gray);
 }
 
 #search-button {
@@ -45,7 +64,7 @@ body {
     background-color: var(--color-black);
     border-radius: 8px;
     color: var(--color-white);
-    border-color: #b5b5b5;
+    border-color: var(--color-gray);
     padding: 0 8px;
 }
 
@@ -59,6 +78,7 @@ body {
 .result-image {
     max-width: 300px;
     max-height: 300px;
+    user-select: none;
 }
 
 .result-image:hover {
@@ -88,6 +108,31 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+#scroll-to-top {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    border: none;
+    outline: none;
+    background-color: var(--color-gray);
+    color: var(--color-black);
+    cursor: pointer;
+    padding: 17px;
+    border-radius: 50%;
+    font-size: 46px;
+    height: 60px;
+    width: 60px;
+    justify-content: center;
+    align-items: center;
+    font-weight: 900;
+}
+  
+#scroll-to-top:hover {
+    background-color: var(--color-green);
+    color: var(--color-black);
 }
 
 .hide {
