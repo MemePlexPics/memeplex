@@ -114,6 +114,19 @@ function getRandomElement(arr) {
     return null;
 }
 
+export function getDateUtc() {
+    const now = new Date();
+    const utcNow = new Date(now.getTime() + now.getTimezoneOffset() * 60000);
+    return utcNow;
+}
+
+export function dateToYyyyMmDdHhMmSs(date) {
+    return new Date(date)
+        .toISOString()
+        .slice(0,19)
+        .replace('T', ' ');
+}
+
 export async function chooseRandomOCRSpaceKey () {
     const mysql = await getMysqlClient();
     // Select a random key without timeout or with the early date
@@ -130,8 +143,8 @@ export async function chooseRandomOCRSpaceKey () {
     finallKeyData.protocol = findedProxy.protocol;
     if (!finallKeyData.proxy)
         throw new Error(`❌ Proxy for ${finallKeyData.key} isn't finded`);
-    
-    console.log(`💬 ${finallKeyData.key} ${finallKeyData.proxy} ${findedProxy.speed}ms`);
+
+    console.log(`💬 ${finallKeyData.key} ${finallKeyData.proxy} (${finallKeyData.protocol}) ${findedProxy.speed}ms`);
     return finallKeyData;
 }
 

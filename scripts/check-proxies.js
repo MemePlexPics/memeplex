@@ -18,7 +18,7 @@ export const checkProxies = async(logger = console) => {
         // To avoid losing the last measured speed (was it good proxy or na-h)
         const preservedSpeed = speed || proxy.speed;
         await updateProxyInDb(mysql, proxy.address, proxy.protocol, !!speed, preservedSpeed);
-        logger.info(`✅ Proxy ${proxy.address} (${proxy.protocol}) updated in DB!`);
+        logger.verbose(`✅ Proxy ${proxy.address} (${proxy.protocol}) updated in DB!`);
     }
     logger.info('💬 All unavailable proxies are checked');
     mysql.end();

@@ -15,8 +15,6 @@ import {
 } from '../src/ocr-images.js';
 import { connectToElastic, delay } from '../src/utils.js';
 
-const { client } = await connectToElastic();
-
 const getNewDoc = (payload, texts) => {
     const doc = {
         timestamp: Math.floor(Date.now() / 1000),
@@ -40,7 +38,7 @@ const recogniseText = async (msg, logger) => {
     const texts = [];
 
     for (const language of payload.languages) {
-        let rawText = await recognizeTextOcrSpace(payload.fileName, language);
+        let rawText = await recognizeTextOcrSpace(payload.fileName, language, logger);
 
         const text = processText(rawText);
         if (text) {
@@ -48,9 +46,9 @@ const recogniseText = async (msg, logger) => {
             const textFile = await buildImageTextPath(payload, language);
             const textContents = text;
             await fs.writeFile(textFile, textContents);
-            logger.info(`recognized text: ${language} ${rawText}`);
+            logger.verbose(`recognized text: ${language} ${rawText}`);
         } else {
-            logger.info(`text doesn't recognized: ${payload.fileName} (${language})`);
+            logger.verbose(`text doesn't recognized: ${payload.fileName} (${language})`);
         }
     }
 
@@ -61,6 +59,7 @@ const recogniseText = async (msg, logger) => {
 };
 
 export const main = async (logger) => {
+    const { client } = await connectToElastic();
     const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
     const receiveImageFileCh = await conn.createChannel();
 
@@ -74,11 +73,16 @@ export const main = async (logger) => {
             await delay(EMPTY_QUEUE_RETRY_DELAY);
             continue;
         }
-        const { payload, texts } = await recogniseText(msg, logger);
-        await client.index({
-            index: ELASTIC_INDEX,
-            document: getNewDoc(payload, texts),
-        });
-        receiveImageFileCh.ack(msg);
+        try {
+            const { payload, texts } = await recogniseText(msg, logger);
+            await client.index({
+                index: ELASTIC_INDEX,
+                document: getNewDoc(payload, texts),
+            });
+            receiveImageFileCh.ack(msg);
+        } catch(e) {
+            receiveImageFileCh.nack(msg);
+            throw e;
+        }
     }
 };

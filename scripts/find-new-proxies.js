@@ -1,11 +1,10 @@
 import { getMysqlClient, getProxySpeed } from '../src/utils.js';
 import { findExistedProxy, insertProxyToDb } from '../src/mysql-queries.js';
+import { PROXY_LIST_API_URL } from '../src/const.js';
 
-const PROXIES_API_URL = 'https://api.proxyscrape.com/v3/free-proxy-list/get?request=displayproxies&proxy_format=ipport&format=json';
-
-const getProxies = async (logger) => {
+const getProxies = async () => {
     try {
-        const response = await fetch(PROXIES_API_URL);
+        const response = await fetch(PROXY_LIST_API_URL);
         const proxies = (await response.json()).proxies;
         return proxies
             .filter(proxy =>
@@ -21,33 +20,30 @@ const getProxies = async (logger) => {
                 };
             });
     } catch (error) {
-        logger.error('❌ Error fetching proxies:', error.message);
+        throw new Error(`❌ Error fetching proxies: ${error.message}`);
     }
 };
 
-export const findNewProxies = async (logger = console) => {
-    const mysql = await getMysqlClient();
-    const proxies = await getProxies(logger);
-    if (!proxies) {
-        return;
-    }
+export const findNewProxies = async (logger) => {
+    let mysql;
+    const proxies = await getProxies();
     logger.info(`💬 Proxy list fetched. ${proxies.length} entities`);
     try {
         logger.info('💬 Start testing');
 
         for (const proxy of proxies) {
+            mysql = await getMysqlClient();
             const proxyString = `${proxy.ip}:${proxy.port}`;
-            logger.info(`💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`);
+            logger.verbose(`💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`);
             const finded = await findExistedProxy(mysql, proxyString, proxy.protocol);
             if (finded) continue;
 
             const speed = await getProxySpeed(proxy.ip, proxy.port, proxy.protocol, 5);
             if (!speed) continue;
             await insertProxyToDb(mysql, proxyString, proxy.protocol, !!speed, speed);
-            logger.info(`✅ Proxy ${proxyString} (${proxy.protocol}) inserted into DB`);
+            logger.verbose(`✅ Proxy ${proxyString} (${proxy.protocol}) inserted into DB`);
         }
-    } catch(e) {
-        logger.error('❌', e);
+        logger.info('💬 Testing completed');
     } finally {
         mysql.end();
     }

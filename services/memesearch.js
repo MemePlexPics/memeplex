@@ -2,7 +2,7 @@ import winston from 'winston';
 import process from 'process';
 
 import { tgParser, downloader, ocr } from './index.js';
-import { loopRetrying } from '../src/utils.js';
+import { loopRetrying, delay } from '../src/utils.js';
 import { LOOP_RETRYING_DELAY } from '../src/const.js';
 import { insertOcrKeysIntoDb } from '../scripts/insert-keys-into-db.js';
 import { checkProxies } from '../scripts/check-proxies.js';
@@ -34,6 +34,7 @@ const getLogger = (service) => {
             timestamp(),
             json(),
         ),
+        level: 'verbose',
         defaultMeta: { service },
         transports,
         exitOnError: false,
@@ -79,18 +80,18 @@ const startServices = async (loggerMain) => {
     loopRetrying(async () => {
         loggerMain.info('Proxy checker started');
         await checkProxies(loggerByService.proxyChecker);
+        await delay(1000*60*60); // Once in 1 hr
     }, {
         logger: loggerByService.proxyChecker,
-        delayMs: 1000*60*60, // Once in 1 hr
         catchDelayMs: LOOP_RETRYING_DELAY,
     });
 
     loopRetrying(async () => {
         loggerMain.info('Proxy finder started');
         await findNewProxies(loggerByService.proxyFinder);
+        await delay(1000*60*60*6); // Once in 6 hr
     }, {
         logger: loggerByService.proxyFinder,
-        delayMs: 1000*60*60*6, // Once in 6 hr
         catchDelayMs: LOOP_RETRYING_DELAY,
     });
 };

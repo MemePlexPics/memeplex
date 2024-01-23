@@ -73,8 +73,6 @@ services:
   mysql:
     image: mariadb:11.1
     container_name: memesearch-mysql
-    networks:
-      - telegram-api-server
     restart: unless-stopped
     ports:
       - "127.0.0.1:9507:3306"
@@ -94,8 +92,6 @@ services:
 
   telegram-api-server:
     container_name: api
-    networks:
-      - telegram-api-server
     extends:
       file: ../TelegramApiServer/docker-compose.yml
       service: api
@@ -108,8 +104,6 @@ services:
 
   telegram-rss:
     container_name: memesearch-telegram-rss
-    networks:
-      - telegram-api-server
     extends:
       file: ../TelegramRSS/docker-compose.yml
       service: telegram-rss
@@ -120,6 +114,3 @@ networks:
   default:
     driver: bridge
     name: memesearch
-  telegram-api-server:
-    driver: bridge
-    name: telegram-api-server

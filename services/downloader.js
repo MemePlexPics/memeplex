@@ -21,12 +21,12 @@ const doesFileExist = async (logger, destination, payload) => {
     const doesImageExist = await checkFileExists(destination);
 
     if (doesImageExist) {
-        logger.info(`Image already exists: ${destination}`);
+        logger.verbose(`Image already exists: ${destination}`);
         return true;
     }
 
     const url = buildImageUrl(payload);
-    logger.info(`downloading: ${url} -> ${destination}`);
+    logger.verbose(`downloading: ${url} -> ${destination}`);
     await downloadFile(url, destination, logger);
 
     // compute pHash
@@ -59,21 +59,26 @@ export const main = async (logger) => {
             await delay(EMPTY_QUEUE_RETRY_DELAY);
             continue;
         }
-        const payload = JSON.parse(msg.content.toString());
-        const destination = await buildImagePath(payload);
+        try {
+            const payload = JSON.parse(msg.content.toString());
+            const destination = await buildImagePath(payload);
 
-        const fileExist = await doesFileExist(logger, destination, payload);
-        if (!fileExist) {
-            const content = Buffer.from(JSON.stringify({
-                ...payload,
-                fileName: destination
-            }));
-            sendImageFileCh.sendToQueue(
-                AMQP_IMAGE_FILE_CHANNEL,
-                content,
-                { persistent: true }
-            );
+            const fileExist = await doesFileExist(logger, destination, payload);
+            if (!fileExist) {
+                const content = Buffer.from(JSON.stringify({
+                    ...payload,
+                    fileName: destination
+                }));
+                sendImageFileCh.sendToQueue(
+                    AMQP_IMAGE_FILE_CHANNEL,
+                    content,
+                    { persistent: true }
+                );
+            }
+            receiveImageDataCh.ack(msg);
+        } catch(e) {
+            receiveImageDataCh.nack(msg);
+            throw e;
         }
-        receiveImageDataCh.ack(msg);
     }
 };

@@ -5,6 +5,8 @@ import {
     delay,
     chooseRandomOCRSpaceKey,
     getMysqlClient,
+    getDateUtc,
+    dateToYyyyMmDdHhMmSs
 } from './utils.js';
 import { saveKeyTimeout, setProxyAvailability } from './mysql-queries.js';
 import { OCR_SPACE_403_DELAY } from './const.js';
@@ -16,14 +18,19 @@ export const buildImageTextPath = async ({ channelName, messageId, photoId }, la
     return directory + messageId + '-' + photoId + '-' + language +'.txt';
 };
 
-const handleTimeout = async(mysql, apiKey, timeout) => {
-    const delayMs = Math.max(0, new Date(timeout) - new Date());
-    console.log(`💬 Key timeout: ${timeout}. Wait ${delayMs/1000} seconds`);
-    await delay(delayMs);
+const handleTimeout = async(apiKey, timeout, logger) => {
+    const mysql = await getMysqlClient();
+    const utcNow = getDateUtc();
+    const delayMs = Math.max(0, new Date(timeout) - utcNow);
+    if (delayMs !== 0) {
+        logger.info(`💬 Key timeout: ${timeout}. Wait ${delayMs/1000} seconds`);
+        logger.error('There are no keys without timeout');
+        await delay(delayMs);
+    }
     await saveKeyTimeout(mysql, apiKey, null);
 };
 
-export const recognizeTextOcrSpace = async (fileName, language) => {
+export const recognizeTextOcrSpace = async (fileName, language, logger) => {
     let res;
     const {
         key: apiKey,
@@ -31,8 +38,7 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
         proxy,
         protocol
     } = await chooseRandomOCRSpaceKey();
-    const mysql = await getMysqlClient();
-    if (timeout) handleTimeout(mysql, apiKey, timeout);
+    if (timeout) handleTimeout(apiKey, timeout, logger);
     try {
         const [host, port] = proxy.split(':');
         res = await ocrSpace(fileName, {
@@ -47,19 +53,28 @@ export const recognizeTextOcrSpace = async (fileName, language) => {
         console.log('💬', res);
     } catch(error) {
         if (error?.response?.status === 403) {
-            // TODO: Find sended timeout field in response
-            console.log(`❗️ 403 from ocr.space for key ${apiKey}`, error);
-            await saveKeyTimeout(mysql, apiKey, Date.now() + OCR_SPACE_403_DELAY);
+            const mysql = await getMysqlClient();
+            logger.info(`❗️ 403 from ocr.space for key ${apiKey}`, error);
+            const newTimeout = dateToYyyyMmDdHhMmSs(Date.now() + OCR_SPACE_403_DELAY);
+            await saveKeyTimeout(mysql, apiKey, newTimeout);
         }
         if (error.message === 'socket hang up'
             || error.message === 'connect ETIMEDOUT'
             || error.name === 'AxiosError'
             || error.message.startsWith('connect ECONNREFUSED')
             || error.message.startsWith('read ECONNRESET')
+            || error.message.startsWith('connect ETIMEDOUT')
         ) {
+            const mysql = await getMysqlClient();
             await setProxyAvailability(mysql, proxy, protocol, false);
         }
         throw error;
+    }
+
+    if (!Array.isArray(res?.ParsedResults)) {
+        const mysql = await getMysqlClient();
+        await setProxyAvailability(mysql, proxy, protocol, false);
+        throw new Error(`Invalid res.ParsedResults, probably dead proxy ${proxy} (${protocol})`, res);
     }
 
     let text = [];

@@ -13,3 +13,13 @@ datasources:
     jsonData:
       index: image_text
       timeField: timestamp
+  - name: MySQL
+    type: mysql
+    url: mysql:3306
+    user: root
+    jsonData:
+      database: MadelineProto
+      maxOpenConns: 100
+      maxIdleConns: 100
+      maxIdleConnsAuto: true
+      connMaxLifetime: 14400
