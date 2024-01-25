@@ -15,7 +15,6 @@ export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 export const getMysqlClient = async () => {
-    // TODO: fix credentials
     const client = await mysql.createConnection({
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
@@ -148,7 +147,7 @@ export async function chooseRandomOCRSpaceKey () {
     return finallKeyData;
 }
 
-export const getProxySpeed = async (ip, port, protocol, repeats = 1) => {
+export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => {
     const proxy = `${ip}:${port}`;
     const requestOptions = {
         timeout: PROXY_TEST_TIMEOUT,
@@ -176,11 +175,11 @@ export const getProxySpeed = async (ip, port, protocol, repeats = 1) => {
         }
         const speed = measuredSpeeds.reduce((acc, speed) => acc + speed, 0) / repeats;
         const roundedSpeed = parseInt(speed);
-        console.log(`✅ Proxy ${proxy} (${protocol}) is working. Speed: ${roundedSpeed}ms`);
+        logger.verbose(`✅ Proxy ${proxy} (${protocol}) is working. Average response time: ${roundedSpeed}ms`);
 
         return roundedSpeed;
     } catch (error) {
-        console.log(`❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`);
+        logger.verbose(`❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`);
         return;
     }
 };

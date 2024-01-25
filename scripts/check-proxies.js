@@ -1,7 +1,7 @@
 import { getMysqlClient, getProxySpeed } from '../src/utils.js';
 import { updateProxyInDb } from '../src/mysql-queries.js';
 
-export const checkProxies = async(logger = console) => {
+export const checkProxies = async(logger) => {
     const mysql = await getMysqlClient();
     const [proxies] = await mysql.execute(`
         SELECT * FROM proxies
@@ -14,7 +14,7 @@ export const checkProxies = async(logger = console) => {
     logger.info(`💬 There are ${proxies.length} unavailable proxies`);
     for (const proxy of proxies) {
         const [ip, port] = proxy.address.split(':');
-        const speed = await getProxySpeed(ip, port, proxy.protocol, 5);
+        const speed = await getProxySpeed(ip, port, proxy.protocol, 5, logger);
         // To avoid losing the last measured speed (was it good proxy or na-h)
         const preservedSpeed = speed || proxy.speed;
         await updateProxyInDb(mysql, proxy.address, proxy.protocol, !!speed, preservedSpeed);

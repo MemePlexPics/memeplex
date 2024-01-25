@@ -38,7 +38,7 @@ export const findNewProxies = async (logger) => {
             const finded = await findExistedProxy(mysql, proxyString, proxy.protocol);
             if (finded) continue;
 
-            const speed = await getProxySpeed(proxy.ip, proxy.port, proxy.protocol, 5);
+            const speed = await getProxySpeed(proxy.ip, proxy.port, proxy.protocol, 5, logger);
             if (!speed) continue;
             await insertProxyToDb(mysql, proxyString, proxy.protocol, !!speed, speed);
             logger.verbose(`✅ Proxy ${proxyString} (${proxy.protocol}) inserted into DB`);
