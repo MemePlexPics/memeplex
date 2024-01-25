@@ -1,7 +1,6 @@
 const pageOptions = {
-    currentFrom: 0,
-    size: 30,
-    total: null,
+    currentPage: 1,
+    totalPages: 0,
 };
 
 const setLoader = (state = true) => {
@@ -54,8 +53,8 @@ const processSearchResponse = (response) => {
 const resetPage = () => {
     const results = document.getElementById('results');
     results.textContent = '';
-    pageOptions.currentFrom = 0;
-    pageOptions.total = null;
+    pageOptions.currentPage = 1;
+    pageOptions.totalPages = 0;
 };
 
 const startSearch = async () => {
@@ -68,18 +67,17 @@ const startSearch = async () => {
 
     const url = new URL(`${protocol}//${host}${path}`);
     url.searchParams.append('query', searchField.value);
-    url.searchParams.append('from', pageOptions.currentFrom);
-    url.searchParams.append('size', pageOptions.size);
+    url.searchParams.append('page', pageOptions.currentPage);
 
     // Make the GET request using the Fetch API
     try {
         const response = await fetch(url);
         const responseContents = await response.json();
-        const { result, total } = responseContents;
+        const { result, totalPages } = responseContents;
         if (result.length) processSearchResponse(result);
         else processEmptyResponse();
-        pageOptions.total = total;
-        pageOptions.currentFrom += pageOptions.size;
+        pageOptions.totalPages = totalPages;
+        pageOptions.currentPage += 1;
     } catch(e) {
         console.error(e);
         processErrorResponse();
@@ -93,7 +91,7 @@ const handleInfinityScroll = () => {
         document.documentElement.scrollTop
             + document.documentElement.clientHeight
             >= document.documentElement.scrollHeight - 5
-        && pageOptions.currentFrom <= pageOptions.total
+        && pageOptions.currentPage <= pageOptions.totalPages
     ) {
         startSearch();
     }

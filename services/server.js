@@ -4,7 +4,8 @@ import 'dotenv/config';
 import { connectToElastic, logError } from '../src/utils.js';
 import {
     ELASTIC_INDEX,
-    MAX_SEARCH_QUERY_LENGTH
+    MAX_SEARCH_QUERY_LENGTH,
+    SEARCH_PAGE_SIZE
 }  from '../src/const.js';
 import winston from 'winston';
 
@@ -28,10 +29,10 @@ const { client, reconnect } = await connectToElastic();
 export const classifyQueryLanguage = query => {
     const russianCharacters = /[а-яА-Я]/;
     const englishCharacters = /[a-zA-Z]/;
-    
+
     const hasRussian = russianCharacters.test(query);
     const hasEnglish = englishCharacters.test(query);
-    
+
     if (hasRussian) {
         return 'rus';
     } else if (hasEnglish) {
@@ -42,15 +43,16 @@ export const classifyQueryLanguage = query => {
 
 app.get('/search', async (req, res) => {
     const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH);
-    const { from, size } = req.query;
+    const page = parseInt(req.query.page);
+    const from = (page - 1) * SEARCH_PAGE_SIZE;
     const language = classifyQueryLanguage(query);
     const result = [];
 
     try {
         const elasticRes = await client.search({
             index: ELASTIC_INDEX,
-            from: parseInt(from),
-            size: parseInt(size),
+            from,
+            size: SEARCH_PAGE_SIZE,
             query: {
                 match: {
                     [language]: query,
@@ -67,7 +69,7 @@ app.get('/search', async (req, res) => {
         }
         return res.send({
             result,
-            total: elasticRes.hits.total.value,
+            totalPages: Math.ceil(elasticRes.hits.total.value / SEARCH_PAGE_SIZE),
         });
     } catch (e) {
         logError(logger, e);

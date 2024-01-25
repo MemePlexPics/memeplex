@@ -2,8 +2,8 @@
     --loader-size: 100px;
     --color-white: #EEE;
     --color-gray: #b5b5b5;
+    --color-light-gray: #d3d3d3;
     --color-black: #222;
-    --color-green: #00FF4A;
 }
 
 body {
@@ -20,27 +20,6 @@ body {
     flex-flow: column nowrap;
     align-items: center;
     padding: 14px 5vw;
-}
-
-#logo {
-    font-family: verdana;
-    font-size: 4em;
-    font-weight: 600;
-    color: var(--color-white);
-    text-shadow: 1px 1px 1px #919191,
-        1px 2px 1px #919191,
-        1px 3px 1px #919191,
-        1px 4px 1px #919191,
-        1px 5px 1px #919191,
-        1px 6px 1px #919191,
-        1px 7px 1px #919191,
-        1px 8px 1px #919191,
-        1px 9px 1px #919191,
-        1px 10px 1px #919191,
-    1px 18px 6px rgba(16,16,16,0.4),
-    1px 22px 10px rgba(16,16,16,0.2),
-    1px 25px 35px rgba(16,16,16,0.2),
-    1px 30px 60px rgba(16,16,16,0.4);
 }
 
 #search-container {
@@ -82,7 +61,7 @@ body {
 }
 
 .result-image:hover {
-    outline: 3px solid var(--color-green);
+    outline: 3px solid var(--color-light-gray);
     transform: scale(1.5);
     transform-origin: center
 }
@@ -95,7 +74,7 @@ body {
 
 #loader {
     border: 8px solid var(--color-black);
-    border-top: 8px solid var(--color-green);
+    border-top: 8px solid var(--color-light-gray);
     border-radius: 50%;
     width: var(--loader-size);
     height: var(--loader-size);
@@ -131,7 +110,7 @@ body {
 }
   
 #scroll-to-top:hover {
-    background-color: var(--color-green);
+    background-color: var(--color-light-gray);
     color: var(--color-black);
 }
 
