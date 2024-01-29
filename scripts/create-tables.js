@@ -36,7 +36,7 @@ const createTables = async () => {
                 timestamp INT NOT NULL
             )
         `);
-        console.log('💬 ocr_keys table created');
+        console.log('💬 channels table created');
 
         await mysql.query(`
             CREATE OR REPLACE TABLE phashes (
