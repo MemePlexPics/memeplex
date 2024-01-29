@@ -28,7 +28,12 @@ body {
     margin-bottom: 40px;
 }
 
-#search-field {
+.label {
+    font-size: 30px;
+    color: var(--color-white);
+}
+
+.input {
     max-width: 800px;
     width: 70vw;
     font-size: 30px;
@@ -38,7 +43,7 @@ body {
     border-color: var(--color-gray);
 }
 
-#search-button {
+.button {
     font-size: 30px;
     background-color: var(--color-black);
     border-radius: 8px;

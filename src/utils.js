@@ -9,6 +9,7 @@ import { SocksProxyAgent } from 'socks-proxy-agent';
 
 import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from './const.js';
 import { getProxyForKey, getRandomKey } from './mysql-queries.js';
+import { InfoMessage } from './custom-errors.js';
 
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -83,24 +84,37 @@ export async function logError(logger, e) {
     console.error('❌', e);
 }
 
+export async function logInfo(logger, e) {
+    if (logger) {
+        logger.info({
+            error: e.name,
+            message: e.message,
+            stack: e.stack,
+        });
+        return;
+    }
+    console.info('❌', e);
+}
+
 export async function loopRetrying(
     callback,
     options = {
         logger: undefined,
         catchDelayMs: 0,
-        delayMs: 0,
+        afterCallbackDelayMs: 0,
         afterErrorCallback: async () => {},
     }) {
     for (;;) {
         try {
             const result = await callback();
+            if (options.afterCallbackDelayMs)
+                await delay(options.afterCallbackDelayMs);
             if (result) break;
         } catch (e) {
-            logError(options.logger, e);
+            if (e instanceof InfoMessage) logInfo(options.logger, e);
+            else logError(options.logger, e);
             if (options.catchDelayMs) await delay(options.catchDelayMs);
             await options?.afterErrorCallback?.();
-        } finally {
-            if (options.delayMs) await delay(options.delayMs);
         }
     }
 }

@@ -26,3 +26,37 @@ export const PROXY_TEST_TIMEOUT = 5_000;
 export const PROXY_TESTING_FILE = 'http://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_272x92dp.png';
 // API to get list of free proxy servers
 export const PROXY_LIST_API_URL = 'https://api.proxyscrape.com/v3/free-proxy-list/get?request=displayproxies&proxy_format=ipport&format=json';
+// Available OCR languages
+export const OCR_LANGUAGES = [
+    'ara', // Arabic
+    'bul', // Bulgarian
+    'chs', // Chinese (Simplified)
+    'cht', // Chinese (Traditional)
+    'cze', // Czech
+    'dan', // Danish
+    'dut', // Dutch
+    'eng', // English
+    'fin', // Finnish
+    'fre', // French
+    'ger', // German
+    'gre', // Greek
+    'hin', // Hindi
+    'hrv', // Croatian
+    'hun', // Hungarian
+    'ita', // Italian
+    'jpn', // Japanese
+    'kan', // Kannada
+    'kor', // Korean
+    'per', // Persian (Fari)
+    'pol', // Polish
+    'por', // Portuguese
+    'rus', // Russian
+    'slv', // Slovenian
+    'spa', // Spanish
+    'swe', // Swedish
+    'tai', // Thai
+    'tam', // Tamil
+    'tel', // Telugu
+    'tur', // Turkish
+    'vie', // Vietnamese
+];

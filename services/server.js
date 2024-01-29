@@ -1,12 +1,23 @@
 import express from 'express';
 import * as path from 'path';
+import process from 'process';
 import 'dotenv/config';
-import { connectToElastic, logError } from '../src/utils.js';
+import {
+    connectToElastic,
+    logError,
+    getMysqlClient,
+} from '../src/utils.js';
 import {
     ELASTIC_INDEX,
     MAX_SEARCH_QUERY_LENGTH,
-    SEARCH_PAGE_SIZE
+    SEARCH_PAGE_SIZE,
+    OCR_LANGUAGES
 }  from '../src/const.js';
+import {
+    insertChannel,
+    selectChannel,
+    updateChannelAvailability,
+} from '../src/mysql-queries.js';
 import winston from 'winston';
 
 const logger = winston.createLogger({
@@ -23,6 +34,7 @@ const logger = winston.createLogger({
 const app = express();
 app.use(express.static('static'));
 app.use('/data', express.static('data'));
+app.use(express.json());
 
 const { client, reconnect } = await connectToElastic();
 
@@ -77,6 +89,31 @@ app.get('/search', async (req, res) => {
             await reconnect();
         }
         return res.status(500).send();
+    }
+});
+
+app.post('/addChannel', async (req, res) => {
+    const { channel, langs, password } = req.body;
+    if (!channel || !password)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD)
+        return res.status(403).send();
+    const languages = langs || 'eng';
+    if (languages.split(',').find(language => !OCR_LANGUAGES.includes(language))) {
+        return res.status(500).send({
+            error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join()}`
+        });
+    }
+    try {
+        const mysql = await getMysqlClient();
+        const existedChannel = await selectChannel(mysql, channel);
+        if (existedChannel)
+            await updateChannelAvailability(mysql, channel, true);
+        else
+            await insertChannel(mysql, channel, languages);
+        return res.send();
+    } catch(e) {
+        return res.status(500).send(e);
     }
 });
 

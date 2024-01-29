@@ -29,6 +29,16 @@ const createTables = async () => {
         console.log('💬 proxies table created');
 
         await mysql.query(`
+            CREATE OR REPLACE TABLE channels (
+                name VARCHAR(255) PRIMARY KEY,
+                langs VARCHAR(255) NOT NULL,
+                availability BOOLEAN NOT NULL,
+                timestamp INT NOT NULL
+            )
+        `);
+        console.log('💬 ocr_keys table created');
+
+        await mysql.query(`
             CREATE OR REPLACE TABLE phashes (
                 phash VARCHAR(255) PRIMARY KEY
             )

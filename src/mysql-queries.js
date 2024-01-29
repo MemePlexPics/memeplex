@@ -109,3 +109,47 @@ export async function selectPHash(mysql, pHash) {
 export async function insertPHash(mysql, pHash) {
     await mysql.query('INSERT INTO phashes (phash) VALUES (?)', pHash);
 }
+
+export async function insertChannel(mysql, name, langs, availability = true) {
+    const timestamp = (Date.now()/1000 - 24 * 3600) | 0;
+    await mysql.query(`
+        INSERT INTO channels (
+            name,
+            langs,
+            availability,
+            timestamp
+        ) VALUES (?, ?, ?, ?)
+    `, [name, langs, availability, timestamp]);
+}
+
+export async function selectChannel(mysql, name) {
+    const [results] = await mysql.query(`
+        SELECT * FROM channels
+        WHERE name = ?
+    `, [name]);
+    return results?.[0];
+}
+
+export async function selectAvailableChannels(mysql) {
+    const [results] = await mysql.query(`
+        SELECT * FROM channels
+        WHERE availability IS TRUE
+    `);
+    return results;
+}
+
+export async function updateChannelTimestamp(mysql, name, timestamp) {
+    await mysql.query(`
+        UPDATE channels
+        SET timestamp = ?
+        WHERE name = ?
+    `, [timestamp, name]);
+}
+
+export async function updateChannelAvailability(mysql, name, availability) {
+    await mysql.query(`
+        UPDATE channels
+        SET availability = ?
+        WHERE name = ?
+    `, [availability, name]);
+}
