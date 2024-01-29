@@ -57,7 +57,7 @@ export const recognizeTextOcrSpace = async (fileName, language, logger) => {
             const mysql = await getMysqlClient();
             const newTimeout = dateToYyyyMmDdHhMmSs(Date.now() + OCR_SPACE_403_DELAY);
             await saveKeyTimeout(mysql, apiKey, newTimeout);
-            throw new InfoMessage(`❗️ 403 from ocr.space for key ${apiKey}`, error);
+            throw new InfoMessage(`❗️ 403 from ocr.space for key ${apiKey}, ${error.name}: ${error.message}`);
         }
         if (
             error.name === 'AxiosError'
@@ -70,13 +70,13 @@ export const recognizeTextOcrSpace = async (fileName, language, logger) => {
         ) {
             const mysql = await getMysqlClient();
             await setProxyAvailability(mysql, proxy, protocol, false);
-            throw new InfoMessage('Proxy error', error);
+            throw new InfoMessage(`Proxy error:, ${error.name} ${error.message}`);
         }
         throw error;
     }
 
     if (res.IsErroredOnProcessing)
-        throw new Error(res);
+        throw new Error(res?.ErrorMessage?.join());
 
     if (!Array.isArray(res?.ParsedResults)) {
         const mysql = await getMysqlClient();
