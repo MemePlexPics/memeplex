@@ -24,7 +24,7 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
                     + '&data[limit]=' + TG_API_PAGE_LIMIT
                     + '&data[add_offset]=' + (pageNumber * TG_API_PAGE_LIMIT)
             );
-            logger.info(`checking https://t.me/${channelName}`);
+            logger.verbose(`checking https://t.me/${channelName}`);
             const response = await fetch(url);
             const messages = (await response.json()).response.messages;
 
@@ -63,7 +63,7 @@ export const main = async (logger) => {
         const channelName = channel.name;
         let lastTs = getChannelLastTimestamp(channelName);
         for await (const message of getMessagesAfter(channelName, lastTs, logger)) {
-            logger.info(`new post image: ${JSON.stringify(message)}`);
+            logger.verbose(`new post image: ${JSON.stringify(message)}`);
             const imageData = Buffer.from(JSON.stringify({
                 ...message,
                 languages: channel.languages
@@ -74,6 +74,6 @@ export const main = async (logger) => {
         }
     }
 
-    logger.warn('fetched all channels, sleeping');
+    logger.info('fetched all channels, sleeping');
     await delay(CYCLE_SLEEP_TIMEOUT);
 };

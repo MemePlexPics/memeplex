@@ -2,8 +2,11 @@ import winston from 'winston';
 import process from 'process';
 
 import { tgParser, downloader, ocr } from './index.js';
-import { loopRetrying } from '../src/utils.js';
+import { loopRetrying, delay } from '../src/utils.js';
 import { LOOP_RETRYING_DELAY } from '../src/const.js';
+import { insertOcrKeysIntoDb } from '../scripts/insert-keys-into-db.js';
+import { checkProxies } from '../scripts/check-proxies.js';
+import { findNewProxies } from '../scripts/find-new-proxies.js';
 
 const { combine, timestamp, json, simple } = winston.format;
 
@@ -21,7 +24,9 @@ const getLogger = (service) => {
         }),
     ];
     if (process.env.NODE_ENV !== 'production') transports.push(
-        new winston.transports.Console({ format: simple() })
+        new winston.transports.Console({
+            format: simple()
+        })
     );
 
     loggers.add(service, {
@@ -29,6 +34,7 @@ const getLogger = (service) => {
             timestamp(),
             json(),
         ),
+        level: 'verbose',
         defaultMeta: { service },
         transports,
         exitOnError: false,
@@ -41,9 +47,12 @@ const loggerByService = {
     tgParser: getLogger('tg-parser'),
     downloader: getLogger('downloader'),
     ocr: getLogger('ocr'),
+    proxyChecker: getLogger('proxy-checker'),
+    proxyFinder: getLogger('proxy-finder'),
 };
 
 const startServices = async (loggerMain) => {
+    // TODO: DRY
     loopRetrying(async () => {
         loggerMain.info('tgParser start');
         await tgParser(loggerByService.tgParser);
@@ -67,12 +76,31 @@ const startServices = async (loggerMain) => {
         logger: loggerByService.ocr,
         catchDelayMs: LOOP_RETRYING_DELAY,
     });
+
+    loopRetrying(async () => {
+        loggerMain.info('Proxy checker started');
+        await checkProxies(loggerByService.proxyChecker);
+        await delay(1000*60*60); // Once in 1 hr
+    }, {
+        logger: loggerByService.proxyChecker,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
+
+    loopRetrying(async () => {
+        loggerMain.info('Proxy finder started');
+        await findNewProxies(loggerByService.proxyFinder);
+        await delay(1000*60*60*6); // Once in 6 hr
+    }, {
+        logger: loggerByService.proxyFinder,
+        catchDelayMs: LOOP_RETRYING_DELAY,
+    });
 };
 
 const main = async () => {
     const loggerMain = getLogger('main');
     loggerMain.info('Hello, MemeSearch');
+    await insertOcrKeysIntoDb();
     await startServices(loggerMain);
 };
 
-main();
+await main();

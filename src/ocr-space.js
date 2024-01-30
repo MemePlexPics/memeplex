@@ -5,6 +5,7 @@
 import * as fs from 'fs';
 import axios from 'axios';
 import FormData from 'form-data';
+import { SocksProxyAgent } from 'socks-proxy-agent';
 
 /**
  * Detect the input type between url, file path or base64 image
@@ -31,6 +32,7 @@ export async function ocrSpace(input, options = {}) {
         apiKey, ocrUrl, language, isOverlayRequired,
         filetype, detectOrientation, isCreateSearchablePdf,
         isSearchablePdfHideTextLayer, scale, isTable, OCREngine,
+        host, port, protocol
     } = options;
     const formData = new FormData();
     const detectedInput = detectInput(input);
@@ -56,7 +58,7 @@ export async function ocrSpace(input, options = {}) {
     formData.append('OCREngine', String(OCREngine || '1'));
     const request = {
         method: 'POST',
-        url: String(ocrUrl || 'https://api.ocr.space/parse/image'),
+        url: String(ocrUrl || 'http://api.ocr.space/parse/image'),
         headers: {
             apikey: String(apiKey || 'helloworld'),
             ...formData.getHeaders(),
@@ -65,6 +67,14 @@ export async function ocrSpace(input, options = {}) {
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
     };
-    const { data } = await axios(request);
-    return data;
+    if (protocol === 'http') {
+        request.proxy = {
+            host,
+            port
+        };
+    } else {
+        request.httpAgent = new SocksProxyAgent(`socks://${host}:${port}`, { protocol });
+    }
+    const response = await axios(request);
+    return response.data;
 }

@@ -70,33 +70,40 @@ services:
     depends_on:
       - loki
 
-  # Extended containers
-
   mysql:
+    image: mariadb:11.1
     container_name: memesearch-mysql
-    networks:
-      - telegram-api-server
-    extends:
-      file: ../TelegramApiServer/docker-compose.yml
-      service: mysql
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9507:3306"
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
+      MARIADB_AUTO_UPGRADE: 'yes'
+    env_file:
+      - ./.mysql.env
+    command:
+     - --skip-grant-tables
+     - --innodb-buffer-pool-size=128M
+     - --wait_timeout=65
+
+  # Extended containers
 
   telegram-api-server:
     container_name: api
-    networks:
-      - telegram-api-server
     extends:
       file: ../TelegramApiServer/docker-compose.yml
       service: api
     env_file:
       - ../TelegramApiServer/.env.docker
       - ./.env
+      - ./.mysql.env
     depends_on:
       - mysql
 
   telegram-rss:
     container_name: memesearch-telegram-rss
-    networks:
-      - telegram-api-server
     extends:
       file: ../TelegramRSS/docker-compose.yml
       service: telegram-rss
@@ -107,6 +114,3 @@ networks:
   default:
     driver: bridge
     name: memesearch
-  telegram-api-server:
-    driver: bridge
-    name: telegram-api-server

@@ -15,6 +15,7 @@
 - Set up TelegramRSS (needed to download image data) - set `TG_RSS_ENDPOINT` in `.env`
 - Set `ELASTIC_ENDPOINT` in `.env`
 - Run `./scripts/create-index.js` to create an ElasticSearch index
+- Run `./scripts/create-tables.js` to create MySQL tables
 - Set up RabbitMQ - set `AMQP_ENDPOINT` in `.env`
 - `npm run init`
 
