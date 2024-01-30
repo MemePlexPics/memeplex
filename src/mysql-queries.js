@@ -110,8 +110,7 @@ export async function insertPHash(mysql, pHash) {
     await mysql.query('INSERT INTO phashes (phash) VALUES (?)', pHash);
 }
 
-export async function insertChannel(mysql, name, langs, availability = true) {
-    const timestamp = (Date.now()/1000 - 24 * 3600) | 0;
+export async function insertChannel(mysql, name, langs, availability, timestamp) {
     await mysql.query(`
         INSERT INTO channels (
             name,

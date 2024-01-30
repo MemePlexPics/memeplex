@@ -52,11 +52,16 @@ body {
     padding: 0 8px;
 }
 
+.checkbox {
+    width: 20px;
+}
+
 #results {
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
     justify-content: center;
+    align-items: center;
 }
 
 .result-image {
@@ -68,7 +73,8 @@ body {
 .result-image:hover {
     outline: 3px solid var(--color-light-gray);
     transform: scale(1.5);
-    transform-origin: center
+    transform-origin: center;
+    transition: transform 0.3s;
 }
 
 #nothing-found,

@@ -11,6 +11,8 @@ export const OCR_SPACE_403_DELAY = 20_000; // 3600 / 180, the limit is 180 per h
 export const TG_API_PAGE_LIMIT = (process.env.TG_API_PAGE_LIMIT * 1) || 10;
 // Rate limit for tg API calls
 export const TG_API_RATE_LIMIT = (process.env.TG_API_RATE_LIMIT * 1) || 5001;
+// Start parse from date for tg API calls
+export const TG_API_PARSE_FROM_DATE = (Date.now()/1000 - 365 * 24 * 3600) | 0; // From 365 days ago
 export const ELASTIC_INDEX = 'image_text';
 export const ELASTIC_FUZZINESS = 2;
 export const ELASTIC_PAGE_SIZE = 20;
@@ -27,36 +29,4 @@ export const PROXY_TESTING_FILE = 'http://www.google.com/images/branding/googlel
 // API to get list of free proxy servers
 export const PROXY_LIST_API_URL = 'https://api.proxyscrape.com/v3/free-proxy-list/get?request=displayproxies&proxy_format=ipport&format=json';
 // Available OCR languages
-export const OCR_LANGUAGES = [
-    'ara', // Arabic
-    'bul', // Bulgarian
-    'chs', // Chinese (Simplified)
-    'cht', // Chinese (Traditional)
-    'cze', // Czech
-    'dan', // Danish
-    'dut', // Dutch
-    'eng', // English
-    'fin', // Finnish
-    'fre', // French
-    'ger', // German
-    'gre', // Greek
-    'hin', // Hindi
-    'hrv', // Croatian
-    'hun', // Hungarian
-    'ita', // Italian
-    'jpn', // Japanese
-    'kan', // Kannada
-    'kor', // Korean
-    'per', // Persian (Fari)
-    'pol', // Polish
-    'por', // Portuguese
-    'rus', // Russian
-    'slv', // Slovenian
-    'spa', // Spanish
-    'swe', // Swedish
-    'tai', // Thai
-    'tam', // Tamil
-    'tel', // Telugu
-    'tur', // Turkish
-    'vie', // Vietnamese
-];
+export const OCR_LANGUAGES = ['eng', 'rus'];

@@ -12,7 +12,7 @@
         <img id="logo" src="../logo_600.png" />
       </a>
       <div id="form-container">
-        <div class="channel-inputs">
+        <form id="channel-inputs" class="channel-inputs">
           <label class="label" for="channel">Channel:</label>
           <input
             id="channel"
@@ -21,14 +21,22 @@
             required="true"
             placeholder="@name or https://t.me/name"
           >
-          <label class="label" for="langs">Languages:</label>
-          <input
-            id="langs"
-            class="input"
-            type="text"
-            placeholder="eng,rus"
-          >
-        </div>
+          <label class="label" for="languages">Languages:</label>
+          <div id="languages">
+            <input
+              id="lang-eng"
+              class="checkbox"
+              type="checkbox"
+            >
+            <label class="label" for="lang-eng">English</label>
+            <input
+              id="lang-rus"
+              class="checkbox"
+              type="checkbox"
+            >
+            <label class="label" for="lang-rus">Russian</label>
+          </div>
+        </form>
         <input
           id="password"
           class="input"

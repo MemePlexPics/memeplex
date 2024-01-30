@@ -11,7 +11,8 @@ import {
     ELASTIC_INDEX,
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
-    OCR_LANGUAGES
+    OCR_LANGUAGES,
+    TG_API_PARSE_FROM_DATE
 }  from '../src/const.js';
 import {
     insertChannel,
@@ -98,19 +99,19 @@ app.post('/addChannel', async (req, res) => {
         return res.status(500).send();
     if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD)
         return res.status(403).send();
-    const languages = langs || 'eng';
-    if (languages.split(',').find(language => !OCR_LANGUAGES.includes(language))) {
+    if (langs.find(language => !OCR_LANGUAGES.includes(language))) {
         return res.status(500).send({
             error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join()}`
         });
     }
+    const languages = langs || ['eng'];
     try {
         const mysql = await getMysqlClient();
         const existedChannel = await selectChannel(mysql, channel);
         if (existedChannel)
             await updateChannelAvailability(mysql, channel, true);
         else
-            await insertChannel(mysql, channel, languages);
+            await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
         return res.send();
     } catch(e) {
         return res.status(500).send(e);

@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  gap: 4px;
 }
 
 #form-container {
@@ -9,4 +10,9 @@
   flex-direction: column;
   gap: 15px;
   padding-top: 40px;
+}
+
+#languages {
+  display: grid;
+  grid-template-columns: auto auto;
 }

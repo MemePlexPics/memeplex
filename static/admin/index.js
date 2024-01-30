@@ -8,10 +8,8 @@ const setLoader = (state = true) => {
 };
 
 const resetChannelAndLangs = () => {
-    const channelInput = document.getElementById('channel');
-    const langsInput = document.getElementById('langs');
-    channelInput.value = '';
-    langsInput.value = '';
+    const channelInputsForm = document.getElementById('channel-inputs');
+    channelInputsForm.reset();
 };
 
 const postChannel = async (channel, langs, password) => {
@@ -51,9 +49,20 @@ const postChannel = async (channel, langs, password) => {
     }
 };
 
+const getCheckedLangs = () => {
+    const langEng = document.getElementById('lang-eng');
+    const langRus = document.getElementById('lang-rus');
+    const langs = [];
+
+    if (langEng.checked) langs.push('eng');
+    if (langRus.checked) langs.push('rus');
+    return langs.length
+        ? langs
+        : null;
+};
+
 const init = () => {
     const channelInput = document.getElementById('channel');
-    const langsInput = document.getElementById('langs');
     const passwordInput = document.getElementById('password');
     const submitBtn = document.getElementById('submit-button');
     submitBtn.addEventListener('click', () => {
@@ -61,7 +70,7 @@ const init = () => {
             .replace('https://t.me/', '')
             .replace('@', '');
         const password = passwordInput.value;
-        const langs = langsInput.value;
+        const langs = getCheckedLangs();
         if (!channel || !password)
             return;
         postChannel(channel, langs, password);
