@@ -63,6 +63,7 @@ export const recognizeTextOcrSpace = async (fileName, language, logger) => {
             error.name === 'AxiosError'
             || error.message === 'socket hang up'
             || error.message === 'connect ETIMEDOUT'
+            || error.message === 'Proxy connection timed out'
             || error.message.startsWith('read ECONNRESET')
             || error.message.startsWith('connect ECONNREFUSED')
             || error.message.startsWith('connect ETIMEDOUT')

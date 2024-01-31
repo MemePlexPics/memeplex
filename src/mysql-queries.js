@@ -23,7 +23,7 @@ export async function updateProxyInDb(mysql, address, protocol, availability = f
 
 export async function findExistedProxy(mysql, proxy, protocol) {
     const [results] = await mysql.query(`
-        SELECT * FROM proxies
+        SELECT id FROM proxies
         WHERE
             address = ?
             AND protocol = ?
@@ -34,7 +34,11 @@ export async function findExistedProxy(mysql, proxy, protocol) {
 
 export async function getProxyForKey(mysql, key) {
     const [oldProxies] = await mysql.query(`
-            SELECT * FROM proxies
+            SELECT
+                address,
+                protocol,
+                speed
+            FROM proxies
             WHERE availability = 1
                 AND ocr_key = ?
             ORDER BY speed LIMIT 1
@@ -42,7 +46,11 @@ export async function getProxyForKey(mysql, key) {
     if (oldProxies.length)
         return oldProxies[0];
     const [freeAvailableProxies] = await mysql.execute(`
-            SELECT * FROM proxies
+            SELECT
+                address,
+                protocol,
+                speed
+            FROM proxies
             WHERE availability = 1
                 AND ocr_key IS NULL
             ORDER BY speed LIMIT 1
@@ -66,7 +74,10 @@ export async function setProxyAvailability(mysql, proxy, protocol, availability)
 
 export async function getRandomKey(mysql) {
     const [results] = await mysql.execute(`
-        SELECT * FROM ocr_keys
+        SELECT
+            ocr_key,
+            timeout
+        FROM ocr_keys
         ORDER BY
             CASE 
                 WHEN timeout IS NULL THEN RAND()
@@ -99,7 +110,7 @@ export async function saveKeyTimeout(mysql, key, timeout) {
 
 export async function selectPHash(mysql, pHash) {
     const [results] = await mysql.query(`
-        SELECT * FROM phashes
+        SELECT phash FROM phashes
         WHERE phash = ?
         LIMIT 1
     `, pHash);
@@ -123,7 +134,7 @@ export async function insertChannel(mysql, name, langs, availability, timestamp)
 
 export async function selectChannel(mysql, name) {
     const [results] = await mysql.query(`
-        SELECT * FROM channels
+        SELECT name FROM channels
         WHERE name = ?
     `, [name]);
     return results?.[0];
@@ -131,7 +142,11 @@ export async function selectChannel(mysql, name) {
 
 export async function selectAvailableChannels(mysql) {
     const [results] = await mysql.query(`
-        SELECT * FROM channels
+        SELECT
+            name,
+            langs,
+            timestamp
+        FROM channels
         WHERE availability IS TRUE
     `);
     return results;

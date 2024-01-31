@@ -2,12 +2,14 @@
     --loader-size: 100px;
     --color-white: #EEE;
     --color-gray: #b5b5b5;
+    --color-dark-gray: #746c5f;
     --color-light-gray: #d3d3d3;
-    --color-black: #222;
+    --color-black-1: #151617;
+    --color-black-2: #222;
 }
 
 body {
-    background: linear-gradient(var(--color-black) 0%, #444 100%);
+    background: linear-gradient(var(--color-black-2) 0%, #444 100%);
     background-attachment: fixed;
     height: 100vh;
     margin: 0px;
@@ -19,7 +21,7 @@ body {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    padding: 14px 5vw;
+    padding: 40px 5vw 14px 5vw;
 }
 
 #search-container {
@@ -37,18 +39,18 @@ body {
     max-width: 800px;
     width: 70vw;
     font-size: 30px;
-    background-color: var(--color-black);
+    background-color: var(--color-black-1);
     border-radius: 8px;
     color: var(--color-white);
-    border-color: var(--color-gray);
+    border-color: var(--color-dark-gray);
 }
 
 .button {
     font-size: 30px;
-    background-color: var(--color-black);
+    background-color: var(--color-black-1);
     border-radius: 8px;
     color: var(--color-white);
-    border-color: var(--color-gray);
+    border-color: var(--color-dark-gray);
     padding: 0 8px;
 }
 
@@ -68,13 +70,13 @@ body {
     max-width: 300px;
     max-height: 300px;
     user-select: none;
+    transition: transform 0.3s;
 }
 
 .result-image:hover {
     outline: 3px solid var(--color-light-gray);
     transform: scale(1.5);
     transform-origin: center;
-    transition: transform 0.3s;
 }
 
 #nothing-found,
@@ -84,7 +86,7 @@ body {
 }
 
 #loader {
-    border: 8px solid var(--color-black);
+    border: 8px solid var(--color-black-2);
     border-top: 8px solid var(--color-light-gray);
     border-radius: 50%;
     width: var(--loader-size);
@@ -108,7 +110,7 @@ body {
     border: none;
     outline: none;
     background-color: var(--color-gray);
-    color: var(--color-black);
+    color: var(--color-black-2);
     cursor: pointer;
     padding: 17px;
     border-radius: 50%;
@@ -122,7 +124,7 @@ body {
   
 #scroll-to-top:hover {
     background-color: var(--color-light-gray);
-    color: var(--color-black);
+    color: var(--color-black-2);
 }
 
 .hide {
