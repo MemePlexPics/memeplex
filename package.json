@@ -6,7 +6,7 @@
   "main": "get-images.js",
   "scripts": {
     "eslint": "eslint src/ services/",
-    "init": "npm install && mkdir -p data/media logs",
+    "init": "npm install && mkdir -p data/{media,elastic,grafana,loki,mysql,promtail,rabbitmq} && mkdir logs",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "klntsky",
