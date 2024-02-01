@@ -1,5 +1,6 @@
 :root {
     --loader-size: 100px;
+    --scroll-to-top-size: 60px;
     --color-white: #EEE;
     --color-gray: #b5b5b5;
     --color-dark-gray: #746c5f;
@@ -115,8 +116,8 @@ body {
     padding: 17px;
     border-radius: 50%;
     font-size: 46px;
-    height: 60px;
-    width: 60px;
+    height: var(--scroll-to-top-size);
+    width: var(--scroll-to-top-size);
     justify-content: center;
     align-items: center;
     font-weight: 900;
@@ -132,8 +133,15 @@ body {
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    :root {
+        --scroll-to-top-size: 10vw;
+    }
     .result-image {
-        max-width: initial;
+        max-width: 100%;
         max-height: initial;
+    }
+
+    #scroll-to-top {
+        font-size: 5rem;
     }
 }
