@@ -61,6 +61,10 @@ const handleImageRequest = async (url) => {
     setLoader();
     try {
         const response = await fetch(url);
+        if (response.status === 503) {
+            alert('Wait a few seconds before trying again');
+            return;
+        }
         const responseContents = await response.json();
         const { result, totalPages } = responseContents;
         if (result.length) processSearchResponse(result);
