@@ -27,7 +27,10 @@ const doesFileExist = async (logger, destination, payload) => {
 
     const url = buildImageUrl(payload);
     logger.verbose(`downloading: ${url} -> ${destination}`);
-    await downloadFile(url, destination, logger);
+    // Check if a message has been deleted from a channel
+    const isEmpty = await downloadFile(url, destination, logger) === null;
+    if (isEmpty)
+        return true;
 
     // compute pHash
     const pHash = await imghash.hash(destination);
