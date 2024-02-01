@@ -6,7 +6,7 @@ export const AMQP_IMAGE_DATA_CHANNEL = 'image_data';
 export const AMQP_IMAGE_FILE_CHANNEL = 'image_files';
 // how much time to sleep between fetching all data, ms
 export const CYCLE_SLEEP_TIMEOUT = (process.env.CYCLE_SLEEP_TIMEOUT * 1) || 30_000;
-export const OCR_SPACE_403_DELAY = 20_000; // 3600 / 180, the limit is 180 per hour
+export const OCR_SPACE_403_DELAY = 60_000; // 3600 / 180, the limit is 180 per hour
 // Page size for tg API calls
 export const TG_API_PAGE_LIMIT = (process.env.TG_API_PAGE_LIMIT * 1) || 10;
 // Rate limit for tg API calls
