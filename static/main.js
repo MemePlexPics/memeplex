@@ -57,19 +57,8 @@ const resetPage = () => {
     pageOptions.totalPages = 0;
 };
 
-const startSearch = async () => {
+const handleImageRequest = async (url) => {
     setLoader();
-    const searchField = document.getElementById('search-field');
-
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const path = '/search';
-
-    const url = new URL(`${protocol}//${host}${path}`);
-    url.searchParams.append('query', searchField.value);
-    url.searchParams.append('page', pageOptions.currentPage);
-
-    // Make the GET request using the Fetch API
     try {
         const response = await fetch(url);
         const responseContents = await response.json();
@@ -84,6 +73,30 @@ const startSearch = async () => {
     } finally {
         setLoader(false);
     }
+};
+
+const startSearch = async () => {
+    const searchField = document.getElementById('search-field');
+
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const path = '/search';
+
+    const url = new URL(`${protocol}//${host}${path}`);
+    url.searchParams.append('query', searchField.value);
+    url.searchParams.append('page', pageOptions.currentPage);
+
+    await handleImageRequest(url);
+};
+
+const getLatest = async () => {
+    const protocol = window.location.protocol;
+    const host = window.location.host;
+    const path = '/getLatest';
+
+    const url = new URL(`${protocol}//${host}${path}`);
+
+    await handleImageRequest(url);
 };
 
 const handleInfinityScroll = () => {
@@ -134,6 +147,7 @@ const init = () => {
     searchField.addEventListener('keypress', onPressEnter);
     scrollToTopBtn.addEventListener('click', onClickScrollToTop);
     window.addEventListener('scroll', onScroll);
+    getLatest();
 };
 
 init();

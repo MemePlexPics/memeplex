@@ -1,5 +1,4 @@
 import express from 'express';
-import * as path from 'path';
 import process from 'process';
 import 'dotenv/config';
 import {
@@ -12,7 +11,8 @@ import {
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
     OCR_LANGUAGES,
-    TG_API_PARSE_FROM_DATE
+    TG_API_PARSE_FROM_DATE,
+    GET_LATEST_LIMIT,
 }  from '../src/const.js';
 import {
     insertChannel,
@@ -23,11 +23,18 @@ import winston from 'winston';
 
 const logger = winston.createLogger({
     defaultMeta: { service: 'server' },
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json(),
+    ),
     transports: [
         new winston.transports.File({
             filename: 'logs/server.log',
             lazy: true,
-            maxsize: 1024*1024, // bytes
+            maxsize: 1024*1024*10, // bytes
+            maxFiles: 5,
+            tailable: true,
+            zippedArchive: true,
         }),
     ],
 });
@@ -54,14 +61,20 @@ export const classifyQueryLanguage = query => {
     return 'eng';
 };
 
-app.get('/search', async (req, res) => {
-    const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH);
-    const page = parseInt(req.query.page);
-    const from = (page - 1) * SEARCH_PAGE_SIZE;
-    const language = classifyQueryLanguage(query);
-    const result = [];
+const handleMethodError = async (error) => {
+    logError(logger, error);
+    if (error.message === 'connect ECONNREFUSED ::1:9200') {
+        await reconnect();
+    }
+};
 
+app.get('/search', async (req, res) => {
     try {
+        const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH);
+        const page = parseInt(req.query.page);
+        const from = (page - 1) * SEARCH_PAGE_SIZE;
+        const language = classifyQueryLanguage(query);
+
         const elasticRes = await client.search({
             index: ELASTIC_INDEX,
             from,
@@ -73,6 +86,7 @@ app.get('/search', async (req, res) => {
             }
         });
 
+        const result = [];
         for (const hit of elasticRes.hits.hits) {
             result.push({
                 fileName: hit._source.fileName,
@@ -85,10 +99,35 @@ app.get('/search', async (req, res) => {
             totalPages: Math.ceil(elasticRes.hits.total.value / SEARCH_PAGE_SIZE),
         });
     } catch (e) {
-        logError(logger, e);
-        if (e.message === 'connect ECONNREFUSED ::1:9200') {
-            await reconnect();
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/getLatest', async (req, res) => {
+    try {
+        const elasticRes = await client.search({
+            index: ELASTIC_INDEX,
+            size: GET_LATEST_LIMIT,
+            sort: {
+                timestamp: 'desc',
+            },
+        });
+
+        const result = [];
+        for (const hit of elasticRes.hits.hits) {
+            result.push({
+                fileName: hit._source.fileName,
+                channel: hit._source.channelName,
+                message: hit._source.messageId
+            });
         }
+        return res.send({
+            result,
+            totalPages: 1,
+        });
+    } catch (e) {
+        await handleMethodError(e);
         return res.status(500).send();
     }
 });
@@ -99,9 +138,9 @@ app.post('/addChannel', async (req, res) => {
         return res.status(500).send();
     if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD)
         return res.status(403).send();
-    if (langs.find(language => !OCR_LANGUAGES.includes(language))) {
+    if (langs?.find(language => !OCR_LANGUAGES.includes(language))) {
         return res.status(500).send({
-            error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join()}`
+            error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join(',')}`,
         });
     }
     const languages = langs || ['eng'];
@@ -114,6 +153,7 @@ app.post('/addChannel', async (req, res) => {
             await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
         return res.send();
     } catch(e) {
+        await handleMethodError(e);
         return res.status(500).send(e);
     }
 });
