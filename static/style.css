@@ -136,9 +136,15 @@ body {
     :root {
         --scroll-to-top-size: 10vw;
     }
+
+    .result-container {
+        width: 100%;
+    }
+
     .result-image {
         max-width: 100%;
         max-height: initial;
+        width: 100%;
     }
 
     #scroll-to-top {
