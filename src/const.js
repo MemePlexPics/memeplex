@@ -19,8 +19,6 @@ export const ELASTIC_PAGE_SIZE = 20;
 export const MAX_SEARCH_QUERY_LENGTH = 300;
 // Page size for /serach handler
 export const SEARCH_PAGE_SIZE = 30;
-// Size of the only page for /getLates handler
-export const GET_LATEST_LIMIT = 15;
 // Delay time for the loopRetrying() after an error is catched
 export const LOOP_RETRYING_DELAY = 5_000;
 // AMQP queue delay time for recheck after empty queue

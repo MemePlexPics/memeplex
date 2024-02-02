@@ -12,7 +12,6 @@ import {
     SEARCH_PAGE_SIZE,
     OCR_LANGUAGES,
     TG_API_PARSE_FROM_DATE,
-    GET_LATEST_LIMIT,
 }  from '../src/const.js';
 import {
     insertChannel,
@@ -106,9 +105,18 @@ app.get('/search', async (req, res) => {
 
 app.get('/getLatest', async (req, res) => {
     try {
+        const { from, to } = req.query;
         const elasticRes = await client.search({
             index: ELASTIC_INDEX,
-            size: GET_LATEST_LIMIT,
+            size: SEARCH_PAGE_SIZE,
+            query: {
+                range: {
+                    timestamp: {
+                        gt: from,
+                        lt: to,
+                    },
+                },
+            },
             sort: {
                 timestamp: 'desc',
             },
@@ -117,6 +125,7 @@ app.get('/getLatest', async (req, res) => {
         const result = [];
         for (const hit of elasticRes.hits.hits) {
             result.push({
+                timestamp: hit._source.timestamp,
                 fileName: hit._source.fileName,
                 channel: hit._source.channelName,
                 message: hit._source.messageId
@@ -124,7 +133,7 @@ app.get('/getLatest', async (req, res) => {
         }
         return res.send({
             result,
-            totalPages: 1,
+            totalPages: Math.ceil(elasticRes.hits.total.value / SEARCH_PAGE_SIZE),
         });
     } catch (e) {
         await handleMethodError(e);
