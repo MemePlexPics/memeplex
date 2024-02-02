@@ -105,49 +105,55 @@ const saveSearchQuery = () => {
 
 const startSearchByQuery = async () => {
     setLoader();
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const path = '/search';
-    const url = new URL(`${protocol}//${host}${path}`);
-    url.searchParams.append('query', pageOptions.query);
-    url.searchParams.append('page', pageOptions.currentPage);
+    try {
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const path = '/search';
+        const url = new URL(`${protocol}//${host}${path}`);
+        url.searchParams.append('query', pageOptions.query);
+        url.searchParams.append('page', pageOptions.currentPage);
 
-    const response = await handleImageRequest(url);
-    const { result, totalPages } = response;
-    if (result.length) processSearchResponse(result);
-    else processEmptyResponse();
-    pageOptions.totalPages = totalPages;
-    pageOptions.currentPage += 1;
-    setLoader(false);
+        const response = await handleImageRequest(url);
+        const { result, totalPages } = response;
+        if (result.length) processSearchResponse(result);
+        else processEmptyResponse();
+        pageOptions.totalPages = totalPages;
+        pageOptions.currentPage += 1;
+    } finally {
+        setLoader(false);
+    }
 };
 
 const getLatest = async (update = true) => {
     setLoader();
-    if (!updateLatestInterval)
-        updateLatestInterval = setInterval(handleUpdateLates, LATEST_UPDATE_TIME);
-    const protocol = window.location.protocol;
-    const host = window.location.host;
-    const path = '/getLatest';
-    console.log(update, pageOptions);
+    try {
+        if (!updateLatestInterval)
+            updateLatestInterval = setInterval(handleUpdateLates, LATEST_UPDATE_TIME);
+        const protocol = window.location.protocol;
+        const host = window.location.host;
+        const path = '/getLatest';
+        console.log(update, pageOptions);
 
-    const url = new URL(`${protocol}//${host}${path}`);
-    if (update) {
-        if (pageOptions.from) {
-            url.searchParams.append('from', pageOptions.to);
+        const url = new URL(`${protocol}//${host}${path}`);
+        if (update) {
+            if (pageOptions.from) {
+                url.searchParams.append('from', pageOptions.to);
+            }
+        } else {
+            if (pageOptions.to) {
+                url.searchParams.append('to', pageOptions.from);
+            }
         }
-    } else {
-        if (pageOptions.to) {
-            url.searchParams.append('to', pageOptions.from);
-        }
+
+        const response = await handleImageRequest(url);
+        const { result, totalPages } = response;
+        if (result.length)
+            processSearchResponse(result, update);
+        if (!update)
+            pageOptions.totalPages = totalPages;
+    } finally {
+        setLoader(false);
     }
-
-    const response = await handleImageRequest(url);
-    const { result, totalPages } = response;
-    if (result.length)
-        processSearchResponse(result, update);
-    if (!update)
-        pageOptions.totalPages = totalPages;
-    setLoader(false);
 };
 
 const handleInfinityScroll = () => {
