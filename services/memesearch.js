@@ -37,7 +37,7 @@ const getLogger = (service) => {
         level: 'verbose',
         defaultMeta: { service },
         transports,
-        exitOnError: false,
+        // exitOnError: false,
     });
 
     return loggers.get(service);
