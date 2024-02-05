@@ -128,8 +128,20 @@ body {
     color: var(--color-black-2);
 }
 
+#github {
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
 .hide {
     display: none;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) {
+    #github {
+        display: none;
+    }
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
