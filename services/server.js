@@ -145,8 +145,10 @@ app.post('/addChannel', async (req, res) => {
     const { channel, langs, password } = req.body;
     if (!channel || !password)
         return res.status(500).send();
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD)
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
         return res.status(403).send();
+    }
     if (langs?.find(language => !OCR_LANGUAGES.includes(language))) {
         return res.status(500).send({
             error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join(',')}`,
@@ -156,10 +158,13 @@ app.post('/addChannel', async (req, res) => {
     try {
         const mysql = await getMysqlClient();
         const existedChannel = await selectChannel(mysql, channel);
-        if (existedChannel)
+        if (existedChannel) {
+            logger.info(`${req.ip} updated the avialability of @${channel}`);
             await updateChannelAvailability(mysql, channel, true);
-        else
+        } else {
+            logger.info(`${req.ip} added @${channel}`);
             await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
+        }
         return res.send();
     } catch(e) {
         await handleMethodError(e);
@@ -169,6 +174,7 @@ app.post('/addChannel', async (req, res) => {
 
 const start = async () => {
     app.listen(3080, '127.0.0.1');
+    logger.info('Server started');
 };
 
 start();
