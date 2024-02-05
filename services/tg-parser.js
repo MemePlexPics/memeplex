@@ -17,6 +17,11 @@ import {
 } from '../src/mysql-queries.js';
 import process from 'process';
 
+const setChannelUnavailable = async (channelName) => {
+    const mysql = await getMysqlClient();
+    await updateChannelAvailability(mysql, channelName, false);
+};
+
 export const getMessagesAfter = async function* (channelName, timestamp, logger) {
     let pageNumber = 0;
     loop: while (true) {
@@ -28,13 +33,20 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
         logger.verbose(`checking https://t.me/${channelName}`);
         const response = await fetch(url);
         const responseJson = await response.json();
-        if (responseJson.success === false
-            && responseJson.errors.length
-            && responseJson.errors[0].exception === 'danog\\MadelineProto\\PeerNotInDbException'
-        ) {
-            const mysql = await getMysqlClient();
-            await updateChannelAvailability(mysql, channelName, false);
-            throw new Error(`❌ Channel ${channelName} is not available`);
+        if (responseJson.success === false) {
+            const isDeleted =
+                responseJson.errors.length
+                && responseJson.errors[0].exception === 'danog\\MadelineProto\\PeerNotInDbException';
+            const isInvalid = responseJson.errors[0].message === 'CHANNEL_INVALID';
+            if (isDeleted) {
+                await setChannelUnavailable(channelName);
+                throw new Error(`❌ Channel ${channelName} is not available`);
+            }
+            if (isInvalid) {
+                await setChannelUnavailable(channelName);
+                throw new Error(`❌ Channel ${channelName} is: CHANNEL_INVALID (Telegram exception)`);
+            }
+            throw new Error(`❌ ${channelName} ${timestamp} ${JSON.stringify(responseJson.errors)}`);
         }
 
         for (const message of responseJson.response.messages) {
