@@ -50,14 +50,10 @@ const processSearchResponse = (response, toTop = false) => {
         entryLink.href = 'https://t.me/' + entry.channel + '/' + entry.message;
         entryLink.target = '_blank';
 
-        if (pageOptions.query === '' && entry.timestamp) {
-            if (!pageOptions.from || entry.timestamp < pageOptions.from) pageOptions.from = entry.timestamp;
-            if (!pageOptions.to || entry.timestamp > pageOptions.to) pageOptions.to = entry.timestamp;
-        }
-
         entryContainer.className = 'result-container';
         entryImage.className = 'result-image';
         entryImage.src = entry.fileName;
+
         if (toTop)
             results.prepend(entryContainer);
         else
@@ -132,7 +128,6 @@ const getLatest = async (update = true) => {
         const protocol = window.location.protocol;
         const host = window.location.host;
         const path = '/getLatest';
-        console.log(update, pageOptions);
 
         const url = new URL(`${protocol}//${host}${path}`);
         if (update) {
@@ -147,6 +142,12 @@ const getLatest = async (update = true) => {
 
         const response = await handleImageRequest(url);
         const { result, totalPages } = response;
+
+        if (!pageOptions.from || response.from < pageOptions.from)
+            pageOptions.from = response.from;
+        if (!pageOptions.to || response.to > pageOptions.to)
+            pageOptions.to = response.to;
+
         if (result.length)
             processSearchResponse(result, update);
         if (!update)

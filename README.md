@@ -30,4 +30,5 @@
 
 - Run `docker compose up -d` to start docker services
 - Run `node ./services/memesearch.js` - Telegram parser
-- Run `node ./services/server.js` - web server
+- Run `node ./services/servers/web.js` - web server
+- Run `node ./services/servers/tg-bot.js` - Telegram bot server
