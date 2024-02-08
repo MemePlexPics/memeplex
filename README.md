@@ -2,7 +2,11 @@
 
 [MemePlex](https://memeplex.pics/) is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма.
 
-- [Telegram channel](https://t.me/memeplex_pics)
+## Links
+
+- [Website](https://memeplex.pics/)
+- [Telegram bot](https://t.me/MemePlexBot)
+- [Telegram channel](https://t.me/memeplex_pics) (news and announcements)
 
 ## Requirements
 
