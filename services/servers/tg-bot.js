@@ -146,10 +146,9 @@ bot.use(rateLimit({
 }));
 
 bot.start(async (ctx) => {
-    await ctx.reply(`Welcome to [MemePlex](https://memeplex.pics)
+    await ctx.reply(`Welcome to [MemePlex](https://memeplex.pics)!
 
-Send me a text to search memes by caption.
-Or /get\_latest to see the latest memes`, { parse_mode: 'markdown' }
+Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
     );
 });
 
