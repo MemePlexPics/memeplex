@@ -86,7 +86,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -196,7 +197,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -246,7 +248,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -302,7 +304,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -328,7 +331,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -403,7 +406,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -488,7 +492,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": "Loki",
@@ -585,333 +589,8 @@
                     "value": 80
                   }
                 ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "level"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 72
-                  }
-                ]
               },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 151
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "message"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 589
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "error"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 116
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 0,
-            "y": 19
-          },
-          "id": 5,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "10.2.3",
-          "targets": [
-            {
-              "datasource": "Loki",
-              "editorMode": "builder",
-              "expr": "{filename=\"/var/log/tg-parser.log\"} |= ``",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "tg-parser",
-          "transformations": [
-            {
-              "id": "extractFields",
-              "options": {
-                "format": "json",
-                "jsonPaths": [],
-                "keepTime": true,
-                "replace": true,
-                "source": "Line"
-              }
-            },
-            {
-              "id": "filterByValue",
-              "options": {
-                "filters": [
-                  {
-                    "config": {
-                      "id": "notEqual",
-                      "options": {
-                        "value": ""
-                      }
-                    },
-                    "fieldName": "level"
-                  }
-                ],
-                "match": "all",
-                "type": "include"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "service": true,
-                  "timestamp": true
-                },
-                "includeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "level": 2,
-                  "message": 3,
-                  "service": 4,
-                  "timestamp": 1
-                },
-                "renameByName": {
-                  "timestamp": "Time"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "Loki",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "level"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 27
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 151
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "message"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 610
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "error"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 116
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 12,
-            "x": 12,
-            "y": 19
-          },
-          "id": 11,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "10.2.3",
-          "targets": [
-            {
-              "datasource": "Loki",
-              "editorMode": "builder",
-              "expr": "{filename=\"/var/log/downloader.log\"} |= ``",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "downloader",
-          "transformations": [
-            {
-              "id": "extractFields",
-              "options": {
-                "format": "json",
-                "jsonPaths": [],
-                "keepTime": true,
-                "replace": true,
-                "source": "Line"
-              }
-            },
-            {
-              "id": "filterByValue",
-              "options": {
-                "filters": [
-                  {
-                    "config": {
-                      "id": "notEqual",
-                      "options": {
-                        "value": ""
-                      }
-                    },
-                    "fieldName": "level"
-                  }
-                ],
-                "match": "all",
-                "type": "include"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "service": true,
-                  "timestamp": true
-                },
-                "includeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "level": 2,
-                  "message": 3,
-                  "service": 4,
-                  "timestamp": 1
-                },
-                "renameByName": {
-                  "timestamp": "Time"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "Loki",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
+              "unitScale": true
             },
             "overrides": [
               {
@@ -946,7 +625,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 462
+                    "value": 595
                   }
                 ]
               },
@@ -968,7 +647,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 19
           },
           "id": 12,
           "options": {
@@ -984,7 +663,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": "Loki",
@@ -1082,7 +761,336 @@
                     "value": 80
                   }
                 ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "level"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 27
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 151
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "message"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 610
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "error"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 116
+                  }
+                ]
               }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 19
+          },
+          "id": 11,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "datasource": "Loki",
+              "editorMode": "builder",
+              "expr": "{filename=\"/var/log/downloader.log\"} |= ``",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "downloader",
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "format": "json",
+                "jsonPaths": [],
+                "keepTime": true,
+                "replace": true,
+                "source": "Line"
+              }
+            },
+            {
+              "id": "filterByValue",
+              "options": {
+                "filters": [
+                  {
+                    "config": {
+                      "id": "notEqual",
+                      "options": {
+                        "value": ""
+                      }
+                    },
+                    "fieldName": "level"
+                  }
+                ],
+                "match": "all",
+                "type": "include"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "service": true,
+                  "timestamp": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "level": 2,
+                  "message": 3,
+                  "service": 4,
+                  "timestamp": 1
+                },
+                "renameByName": {
+                  "timestamp": "Time"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "Loki",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "level"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 72
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 151
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "message"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 589
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "error"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 116
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 27
+          },
+          "id": 5,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "datasource": "Loki",
+              "editorMode": "builder",
+              "expr": "{filename=\"/var/log/tg-parser.log\"} |= ``",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "tg-parser",
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "format": "json",
+                "jsonPaths": [],
+                "keepTime": true,
+                "replace": true,
+                "source": "Line"
+              }
+            },
+            {
+              "id": "filterByValue",
+              "options": {
+                "filters": [
+                  {
+                    "config": {
+                      "id": "notEqual",
+                      "options": {
+                        "value": ""
+                      }
+                    },
+                    "fieldName": "level"
+                  }
+                ],
+                "match": "all",
+                "type": "include"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "service": true,
+                  "timestamp": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "level": 2,
+                  "message": 3,
+                  "service": 4,
+                  "timestamp": 1
+                },
+                "renameByName": {
+                  "timestamp": "Time"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "Loki",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1155,7 +1163,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": "Loki",
@@ -1165,7 +1173,7 @@
               "refId": "A"
             }
           ],
-          "title": "server",
+          "title": "web",
           "transformations": [
             {
               "id": "extractFields",
@@ -1175,24 +1183,6 @@
                 "keepTime": true,
                 "replace": true,
                 "source": "Line"
-              }
-            },
-            {
-              "id": "filterByValue",
-              "options": {
-                "filters": [
-                  {
-                    "config": {
-                      "id": "notEqual",
-                      "options": {
-                        "value": ""
-                      }
-                    },
-                    "fieldName": "level"
-                  }
-                ],
-                "match": "all",
-                "type": "include"
               }
             },
             {
@@ -1244,7 +1234,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1255,7 +1246,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 73
+                    "value": 69
                   }
                 ]
               },
@@ -1279,7 +1270,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 578
+                    "value": 584
                   }
                 ]
               },
@@ -1303,7 +1294,7 @@
             "x": 0,
             "y": 35
           },
-          "id": 17,
+          "id": 18,
           "options": {
             "cellHeight": "sm",
             "footer": {
@@ -1317,17 +1308,17 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": "Loki",
               "editorMode": "builder",
-              "expr": "{filename=\"/var/log/proxy-finder.log\"} |= ``",
+              "expr": "{filename=\"/var/log/proxy-checker.log\"} |= ``",
               "queryType": "range",
               "refId": "A"
             }
           ],
-          "title": "proxy-finder",
+          "title": "proxy-checker",
           "transformations": [
             {
               "id": "extractFields",
@@ -1408,7 +1399,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1419,7 +1411,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 69
+                    "value": 27
                   }
                 ]
               },
@@ -1431,7 +1423,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 153
+                    "value": 151
                   }
                 ]
               },
@@ -1443,7 +1435,7 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 558
+                    "value": 610
                   }
                 ]
               },
@@ -1467,7 +1459,7 @@
             "x": 12,
             "y": 35
           },
-          "id": 18,
+          "id": 23,
           "options": {
             "cellHeight": "sm",
             "footer": {
@@ -1481,17 +1473,163 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.1",
           "targets": [
             {
               "datasource": "Loki",
               "editorMode": "builder",
-              "expr": "{filename=\"/var/log/proxy-checker.log\"} |= ``",
+              "expr": "{filename=\"/var/log/tg-bot.log\"} |= ``",
               "queryType": "range",
               "refId": "A"
             }
           ],
-          "title": "proxy-checker",
+          "title": "tg-bot",
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "format": "json",
+                "jsonPaths": [],
+                "keepTime": true,
+                "replace": true,
+                "source": "Line"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "service": true,
+                  "timestamp": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "level": 2,
+                  "message": 3,
+                  "service": 4,
+                  "timestamp": 1
+                },
+                "renameByName": {
+                  "timestamp": "Time"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "Loki",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "level"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 73
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 153
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "message"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 578
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "error"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 116
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 43
+          },
+          "id": 17,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "10.3.1",
+          "targets": [
+            {
+              "datasource": "Loki",
+              "editorMode": "builder",
+              "expr": "{filename=\"/var/log/proxy-finder.log\"} |= ``",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "proxy-finder",
           "transformations": [
             {
               "id": "extractFields",
@@ -1560,10 +1698,7 @@
       "id": 8,
       "panels": [
         {
-          "datasource": {
-            "type": "loki",
-            "uid": "P8E80F9AEF21F6940"
-          },
+          "datasource": "Loki",
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1581,8 +1716,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1733,8 +1867,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1808,8 +1941,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1883,8 +2015,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1958,8 +2089,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2037,8 +2167,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2190,8 +2319,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2282,8 +2410,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2393,6 +2520,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 10,
+  "version": 1,
   "weekStart": ""
 }

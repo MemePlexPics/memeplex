@@ -16,11 +16,9 @@ const getLogger = (service) => {
     const transports = [
         new winston.transports.File({
             filename: `logs/${service}.log`,
-            lazy: true,
             maxsize: 1024*1024*10, // bytes
             maxFiles: 5,
             tailable: true,
-            zippedArchive: true,
         }),
     ];
     if (process.env.NODE_ENV !== 'production') transports.push(
@@ -37,7 +35,6 @@ const getLogger = (service) => {
         level: 'verbose',
         defaultMeta: { service },
         transports,
-        // exitOnError: false,
     });
 
     return loggers.get(service);

@@ -19,6 +19,8 @@ export const ELASTIC_PAGE_SIZE = 20;
 export const MAX_SEARCH_QUERY_LENGTH = 300;
 // Page size for /serach handler
 export const SEARCH_PAGE_SIZE = 30;
+// Page size for Telegram bot
+export const TG_BOT_PAGE_SIZE = 5;
 // Delay time for the loopRetrying() after an error is catched
 export const LOOP_RETRYING_DELAY = 5_000;
 // AMQP queue delay time for recheck after empty queue
