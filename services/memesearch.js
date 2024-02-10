@@ -2,8 +2,8 @@ import winston from 'winston';
 import process from 'process';
 
 import { tgParser, downloader, ocr } from './index.js';
-import { loopRetrying, delay } from '../src/utils.js';
-import { LOOP_RETRYING_DELAY } from '../src/const.js';
+import { loopRetrying } from '../src/utils.js';
+import { LOOP_RETRYING_DELAY, CYCLE_SLEEP_TIMEOUT } from '../src/const.js';
 import { insertOcrKeysIntoDb } from '../scripts/insert-keys-into-db.js';
 import { checkProxies } from '../scripts/check-proxies.js';
 import { findNewProxies } from '../scripts/find-new-proxies.js';
@@ -37,62 +37,55 @@ const getLogger = (service) => {
         level: 'verbose',
         defaultMeta: { service },
         transports,
-        exitOnError: false,
+        // exitOnError: false,
     });
 
     return loggers.get(service);
 };
 
-const loggerByService = {
-    tgParser: getLogger('tg-parser'),
-    downloader: getLogger('downloader'),
-    ocr: getLogger('ocr'),
-    proxyChecker: getLogger('proxy-checker'),
-    proxyFinder: getLogger('proxy-finder'),
-};
+const serviceSettings = [
+    {
+        name: 'tg-parser',
+        service: tgParser,
+        loggerSettings: {
+            afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
+        },
+    },
+    {
+        name: 'downloader',
+        service: downloader,
+    },
+    {
+        name: 'ocr',
+        service: ocr,
+    },
+    {
+        name: 'proxy-checker',
+        service: checkProxies,
+        loggerSettings: {
+            afterCallbackDelayMs: 1000*60*60, // Once in 1 hr
+        },
+    },
+    {
+        name: 'proxy-finder',
+        service: findNewProxies,
+        loggerSettings: {
+            afterCallbackDelayMs: 1000*60*60*6, // Once in 6 hr
+        },
+    },
+];
 
 const startServices = async (loggerMain) => {
-    // TODO: DRY
-    loopRetrying(async () => {
-        loggerMain.info('tgParser start');
-        await tgParser(loggerByService.tgParser);
-    }, {
-        logger: loggerByService.tgParser,
-        catchDelayMs: LOOP_RETRYING_DELAY,
-    });
-
-    loopRetrying(async () => {
-        loggerMain.info('downloader start');
-        await downloader(loggerByService.downloader);
-    }, {
-        logger: loggerByService.downloader,
-        catchDelayMs: LOOP_RETRYING_DELAY,
-    });
-
-    loopRetrying(async () => {
-        loggerMain.info('ocr start');
-        await ocr(loggerByService.ocr);
-    }, {
-        logger: loggerByService.ocr,
-        catchDelayMs: LOOP_RETRYING_DELAY,
-    });
-
-    loopRetrying(async () => {
-        loggerMain.info('Proxy checker started');
-        await checkProxies(loggerByService.proxyChecker);
-        await delay(1000*60*60); // Once in 1 hr
-    }, {
-        logger: loggerByService.proxyChecker,
-        catchDelayMs: LOOP_RETRYING_DELAY,
-    });
-
-    loopRetrying(async () => {
-        loggerMain.info('Proxy finder started');
-        await findNewProxies(loggerByService.proxyFinder);
-        await delay(1000*60*60*6); // Once in 6 hr
-    }, {
-        logger: loggerByService.proxyFinder,
-        catchDelayMs: LOOP_RETRYING_DELAY,
+    serviceSettings.forEach((service) => {
+        const logger = getLogger(service.name);
+        loopRetrying(async () => {
+            loggerMain.info(`${service.name} started`);
+            await service.service(logger);
+        }, {
+            logger,
+            catchDelayMs: LOOP_RETRYING_DELAY,
+            ...service?.loggerSettings,
+        });
     });
 };
 

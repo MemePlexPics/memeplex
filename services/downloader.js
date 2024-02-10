@@ -17,7 +17,7 @@ import {
     downloadFile
 } from '../src/download-images.js';
 
-const doesFileExist = async (logger, destination, payload) => {
+const isFileIgnored = async (logger, destination, payload) => {
     const doesImageExist = await checkFileExists(destination);
 
     if (doesImageExist) {
@@ -27,7 +27,10 @@ const doesFileExist = async (logger, destination, payload) => {
 
     const url = buildImageUrl(payload);
     logger.verbose(`downloading: ${url} -> ${destination}`);
-    await downloadFile(url, destination, logger);
+    // Check if a message has been deleted from a channel
+    const isEmpty = await downloadFile(url, destination, logger) === null;
+    if (isEmpty)
+        return true;
 
     // compute pHash
     const pHash = await imghash.hash(destination);
@@ -35,7 +38,9 @@ const doesFileExist = async (logger, destination, payload) => {
     const mysql = await getMysqlClient();
     // check if this pHash exists
     const doesExist = await selectPHash(mysql, pHash);
-    if (doesExist) {
+    // ocr.space has limit 1024 KB
+    const fileSize = (await fs.stat(destination)).size;
+    if (doesExist || fileSize > 1048576) {
         // if we have seen this phash, skip the image and remove
         // the downloaded file
         await fs.unlink(destination);
@@ -63,8 +68,8 @@ export const main = async (logger) => {
             const payload = JSON.parse(msg.content.toString());
             const destination = await buildImagePath(payload);
 
-            const fileExist = await doesFileExist(logger, destination, payload);
-            if (!fileExist) {
+            const isIgnored = await isFileIgnored(logger, destination, payload);
+            if (!isIgnored) {
                 const content = Buffer.from(JSON.stringify({
                     ...payload,
                     fileName: destination

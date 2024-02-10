@@ -21,8 +21,10 @@ const pipelineAsync = promisify(pipeline);
 
 export async function downloadFile(url, dest) {
     let response = await fetch(url);
+    if (response.statusText === 'Empty message') return null;
     if (!response.ok)
         throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
     await pipelineAsync(response.body, createWriteStream(dest));
     console.log('💬 Download completed');
+    return true;
 }
