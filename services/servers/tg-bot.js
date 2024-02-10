@@ -112,7 +112,7 @@ const onBotCommandGetLatest = async (ctx, update = true) => {
             ? 'There are no new memes since last request'
             : `${response.totalPages - 1} more ${update ? 'new pages' : 'pages in the past'}`;
         const buttons = Markup.inlineKeyboard([
-            Markup.button.callback('Load yonger', 'button_latest_younger'),
+            Markup.button.callback('Load newer', 'button_latest_newer'),
             Markup.button.callback('Load older', 'button_latest_older')
         ]);
         await ctx.reply(finalReplyText, buttons);
@@ -163,7 +163,7 @@ bot.action('button_search_more', onBotRecieveText);
 
 bot.action('button_latest_older', (ctx) => onBotCommandGetLatest(ctx, false));
 
-bot.action('button_latest_younger', (ctx) => onBotCommandGetLatest(ctx, true));
+bot.action('button_latest_newer', (ctx) => onBotCommandGetLatest(ctx, true));
 
 const start = async () => {
     bot.launch({
