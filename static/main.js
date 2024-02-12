@@ -76,17 +76,12 @@ const resetPage = () => {
 };
 
 const handleImageRequest = async (url) => {
-    try {
-        const response = await fetch(url);
-        if (response.status === 503) {
-            alert('Wait a few seconds before trying again');
-            return;
-        }
-        return await response.json();
-    } catch(e) {
-        console.error(e);
-        processErrorResponse();
+    const response = await fetch(url);
+    if (response.status === 503) {
+        alert('Wait a few seconds before trying again');
+        return;
     }
+    return await response.json();
 };
 
 const handleUpdateLates = () => {
@@ -115,6 +110,9 @@ const startSearchByQuery = async () => {
         else processEmptyResponse();
         pageOptions.totalPages = totalPages;
         pageOptions.currentPage += 1;
+    } catch(e) {
+        console.error(e);
+        processErrorResponse();
     } finally {
         setLoader(false);
     }
@@ -152,16 +150,23 @@ const getLatest = async (update = true) => {
             processSearchResponse(result, update);
         if (!update)
             pageOptions.totalPages = totalPages;
+    } catch(e) {
+        console.error(e);
     } finally {
         setLoader(false);
     }
 };
 
 const handleInfinityScroll = () => {
+    const isPortraitOrientation = window.matchMedia('(orientation: portrait)').matches;
+    const remainPxToUpdate = isPortraitOrientation
+        ? 5000
+        : 150;
+
     if (
         document.documentElement.scrollTop
             + document.documentElement.clientHeight
-            >= document.documentElement.scrollHeight - 5
+            >= document.documentElement.scrollHeight - remainPxToUpdate
         && pageOptions.currentPage <= pageOptions.totalPages
     ) {
         if (updateByScrollTimer) clearTimeout(updateByScrollTimer);
