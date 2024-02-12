@@ -1,5 +1,6 @@
 import {
     ELASTIC_INDEX,
+    ELASTIC_FUZZINESS,
 }  from '../../../constants/index.js';
 import { classifyQueryLanguage } from './index.js';
 
@@ -13,7 +14,10 @@ export const searchMemes = async (client, query, page, size) => {
         size,
         query: {
             match: {
-                [language]: query,
+                [language]: {
+                    query,
+                    fuzziness: ELASTIC_FUZZINESS,
+                },
             }
         }
     });
