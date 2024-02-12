@@ -7,10 +7,14 @@ import axios from 'axios';
 import { promises as fs } from 'fs';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 
-import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from './const.js';
-import { getProxyForKey, getRandomKey } from './mysql-queries.js';
+import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from '../constants/index.js';
+import { getProxyForKey, getRandomKey } from '../utils/mysql-queries/index.js';
 import { InfoMessage } from './custom-errors.js';
 
+export { InfoMessage } from './custom-errors.js';
+export { buildElasticQuery } from './buildElasticQuery.js';
+
+// TODO: split into files?
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;

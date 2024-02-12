@@ -1,6 +1,6 @@
 import {
     ELASTIC_INDEX,
-}  from '../../../src/const.js';
+}  from '../../../constants/index.js';
 import { classifyQueryLanguage } from './index.js';
 
 export const searchMemes = async (client, query, page, size) => {

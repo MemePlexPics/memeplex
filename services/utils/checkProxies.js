@@ -1,5 +1,5 @@
-import { getMysqlClient, getProxySpeed } from '../src/utils.js';
-import { updateProxyInDb } from '../src/mysql-queries.js';
+import { getMysqlClient, getProxySpeed } from '../../utils/index.js';
+import { updateProxyInDb } from '../../utils/mysql-queries/index.js';
 
 export const checkProxies = async(logger) => {
     const mysql = await getMysqlClient();

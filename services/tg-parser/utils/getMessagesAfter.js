@@ -1,26 +1,13 @@
-/* global Buffer */
 import 'dotenv/config';
-import amqplib from 'amqplib';
 import {
-    AMQP_IMAGE_DATA_CHANNEL,
     TG_API_PAGE_LIMIT,
     TG_API_RATE_LIMIT,
-} from '../src/const.js';
+} from '../../../constants/index.js';
 import {
     delay,
-    getMysqlClient
-} from '../src/utils.js';
-import {
-    selectAvailableChannels,
-    updateChannelTimestamp,
-    updateChannelAvailability,
-} from '../src/mysql-queries.js';
+} from '../../../utils/index.js';
 import process from 'process';
-
-const setChannelUnavailable = async (channelName) => {
-    const mysql = await getMysqlClient();
-    await updateChannelAvailability(mysql, channelName, false);
-};
+import { setChannelUnavailable } from './index.js';
 
 export const getMessagesAfter = async function* (channelName, timestamp, logger) {
     let pageNumber = 0;
@@ -68,27 +55,4 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
         pageNumber++;
         await delay(TG_API_RATE_LIMIT);
     }
-};
-
-export const main = async (logger) => {
-    const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
-    const mysql = await getMysqlClient();
-    const sendImageDataCh = await conn.createChannel();
-
-    const channels = await selectAvailableChannels(mysql);
-    logger.info(`fetching ${channels.length} channels`);
-
-    for (const { name, langs, timestamp } of channels) {
-        for await (const message of getMessagesAfter(name, timestamp, logger)) {
-            logger.verbose(`new post image: ${JSON.stringify(message)}`);
-            const imageData = Buffer.from(JSON.stringify({
-                ...message,
-                languages: langs.split(','),
-            }));
-            sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
-            if (message.date > timestamp) await updateChannelTimestamp(mysql, name, message.date);
-        }
-    }
-
-    logger.info('fetched all channels, sleeping');
 };

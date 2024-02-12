@@ -1,6 +1,6 @@
 import {
     ELASTIC_INDEX,
-}  from '../../../src/const.js';
+}  from '../../../constants/index.js';
 
 export const getLatestMemes = async (client, from, to, size) => {
     const elasticRes = await client.search({

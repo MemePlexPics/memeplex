@@ -1,3 +1,4 @@
+// TODO: split into files?
 export async function insertProxyToDb(mysql, address, protocol, availability, speed = null) {
     await mysql.query(`
         INSERT INTO proxies (

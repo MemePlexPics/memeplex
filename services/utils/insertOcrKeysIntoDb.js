@@ -1,7 +1,8 @@
 import process from 'process';
 
-import { getMysqlClient } from '../src/utils.js';
+import { getMysqlClient } from '../../utils/index.js';
 
+// TODO: move
 async function insertKeys(connection, keys) {
     const keyValues = [keys.map(key => [key])];
     const [ResultSetHeader] = await connection.query('INSERT IGNORE INTO ocr_keys (ocr_key) VALUES ?', keyValues);

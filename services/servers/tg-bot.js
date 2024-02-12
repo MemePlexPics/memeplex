@@ -3,11 +3,11 @@ import 'dotenv/config';
 import {
     connectToElastic,
     logError,
-} from '../../src/utils.js';
+} from '../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
     TG_BOT_PAGE_SIZE,
-}  from '../../src/const.js';
+}  from '../../constants/index.js';
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
 import { Telegraf, Markup, session } from 'telegraf';

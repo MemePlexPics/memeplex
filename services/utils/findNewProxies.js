@@ -1,28 +1,6 @@
-import { getMysqlClient, getProxySpeed } from '../src/utils.js';
-import { findExistedProxy, insertProxyToDb } from '../src/mysql-queries.js';
-import { PROXY_LIST_API_URL } from '../src/const.js';
-
-const getProxies = async () => {
-    try {
-        const response = await fetch(PROXY_LIST_API_URL);
-        const proxies = (await response.json()).proxies;
-        return proxies
-            .filter(proxy =>
-                proxy.alive
-                && proxy.anonymity !== 'transparent'
-            )
-            .sort((a, b) => a.timeout - b.timeout)
-            .map(data => {
-                return {
-                    ip: data.ip,
-                    port: data.port,
-                    protocol: data.protocol,
-                };
-            });
-    } catch (error) {
-        throw new Error(`❌ Error fetching proxies: ${error.message}`);
-    }
-};
+import { getMysqlClient, getProxySpeed } from '../../utils/index.js';
+import { findExistedProxy, insertProxyToDb } from '../../utils/mysql-queries/index.js';
+import { getProxies } from './index.js';
 
 export const findNewProxies = async (logger) => {
     let mysql;

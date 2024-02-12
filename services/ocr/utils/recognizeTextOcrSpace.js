@@ -1,35 +1,12 @@
-import 'dotenv/config';
-import { mkdir } from 'fs/promises';
-import { ocrSpace } from './ocr-space.js';
+import { ocrSpace, handleTimeout } from './index.js';
 import {
-    delay,
     chooseRandomOCRSpaceKey,
     getMysqlClient,
-    getDateUtc,
     dateToYyyyMmDdHhMmSs
-} from './utils.js';
-import { saveKeyTimeout, setProxyAvailability } from './mysql-queries.js';
-import { OCR_SPACE_403_DELAY } from './const.js';
-import { InfoMessage } from './custom-errors.js';
-import * as R from 'ramda';
-
-export const buildImageTextPath = async ({ channelName, messageId, photoId }, language) => {
-    const directory = './data/media/' + channelName + '/';
-    await mkdir(directory, { recursive: true });
-    return directory + messageId + '-' + photoId + '-' + language +'.txt';
-};
-
-const handleTimeout = async(apiKey, timeout, logger) => {
-    const mysql = await getMysqlClient();
-    const utcNow = getDateUtc();
-    const delayMs = Math.max(0, new Date(timeout) - utcNow);
-    if (delayMs !== 0) {
-        logger.info(`💬 Key timeout: ${timeout}. Wait ${delayMs/1000} seconds`);
-        logger.error('There are no keys without timeout');
-        await delay(delayMs);
-    }
-    await saveKeyTimeout(mysql, apiKey, null);
-};
+} from '../../../utils/index.js';
+import { saveKeyTimeout, setProxyAvailability } from '../../../utils/mysql-queries/index.js';
+import { OCR_SPACE_403_DELAY } from '../../../constants/index.js';
+import { InfoMessage } from '../../../utils/index.js';
 
 export const recognizeTextOcrSpace = async (fileName, language, logger) => {
     let res;
@@ -92,37 +69,3 @@ export const recognizeTextOcrSpace = async (fileName, language, logger) => {
     }
     return text.join(' ');
 };
-
-function punctuationToSpaces (inputString) {
-    const nonAsciiOrCyrillicRegex = /[\u0021-\u0040\u007B-\u007F]/g;
-
-    // Replace non-ASCII and non-Cyrillic characters with an empty string
-    return inputString.replace(nonAsciiOrCyrillicRegex, ' ');
-}
-
-function filterNonAsciiOrCyrillic(inputString) {
-    // Regular expression that matches non-ASCII and non-Cyrillic characters
-    const nonAsciiOrCyrillicRegex = /[^\u0000-\u007F\u0410-\u044F]/g;
-
-    // Replace non-ASCII and non-Cyrillic characters with an empty string
-    return inputString.replace(nonAsciiOrCyrillicRegex, '');
-}
-
-const toWords = text => text.split(/\s/g);
-
-const fromWords = words => words.join(' ');
-
-const lowerCase = string => string.toLowerCase();
-
-const allowedWords = new Set(['ai', 'agi']);
-
-const isLongWord = word => word.length >= 4 || allowedWords.has(word);
-
-export const processText = R.pipe(
-    lowerCase,
-    punctuationToSpaces,
-    filterNonAsciiOrCyrillic,
-    toWords,
-    R.filter(isLongWord),
-    fromWords
-);

@@ -1,4 +1,4 @@
-import { getMysqlClient } from '../src/utils.js';
+import { getMysqlClient } from '../utils/index.js';
 
 const createTables = async () => {
     let mysql;

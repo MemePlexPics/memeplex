@@ -1,11 +1,8 @@
 import 'dotenv/config';
-import {
-    ELASTIC_INDEX
-} from '../src/const.js';
-import { getElasticClient } from '../src/utils.js';
-import { buildElasticQuery } from '../src/elastic.js';
 import * as readline from 'readline';
 import process from 'process';
+
+import { getElasticClient, buildElasticQuery } from '../utils/index.js';
 
 const client = await getElasticClient();
 

@@ -1,0 +1,42 @@
+import 'dotenv/config';
+import { promises as fs } from 'fs';
+import * as imghash from 'imghash';
+import { selectPHash, insertPHash } from '../../../utils/mysql-queries/index.js';
+import { checkFileExists, getMysqlClient } from '../../../utils/index.js';
+import {
+    buildImageUrl,
+    downloadFile
+} from './index.js';
+
+export const isFileIgnored = async (logger, destination, payload) => {
+    const doesImageExist = await checkFileExists(destination);
+
+    if (doesImageExist) {
+        logger.verbose(`Image already exists: ${destination}`);
+        return true;
+    }
+
+    const url = buildImageUrl(payload);
+    logger.verbose(`downloading: ${url} -> ${destination}`);
+    // Check if a message has been deleted from a channel
+    const isEmpty = await downloadFile(url, destination, logger) === null;
+    if (isEmpty)
+        return true;
+
+    // compute pHash
+    const pHash = await imghash.hash(destination);
+
+    const mysql = await getMysqlClient();
+    // check if this pHash exists
+    const doesExist = await selectPHash(mysql, pHash);
+    // ocr.space has limit 1024 KB
+    const fileSize = (await fs.stat(destination)).size;
+    if (doesExist || fileSize > 1048576) {
+        // if we have seen this phash, skip the image and remove
+        // the downloaded file
+        await fs.unlink(destination);
+        return true;
+    }
+    await insertPHash(mysql, pHash);
+    return false;
+};

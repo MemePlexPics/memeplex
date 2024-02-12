@@ -5,18 +5,18 @@ import {
     connectToElastic,
     logError,
     getMysqlClient,
-} from '../../src/utils.js';
+} from '../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
     OCR_LANGUAGES,
     TG_API_PARSE_FROM_DATE,
-}  from '../../src/const.js';
+}  from '../../constants/index.js';
 import {
     insertChannel,
     selectChannel,
     updateChannelAvailability,
-} from '../../src/mysql-queries.js';
+} from '../../utils/mysql-queries/index.js';
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
 

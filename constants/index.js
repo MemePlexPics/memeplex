@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import process from 'process';
 
+// TODO: split into files?
 // rabbitmq channel names
 export const AMQP_IMAGE_DATA_CHANNEL = 'image_data';
 export const AMQP_IMAGE_FILE_CHANNEL = 'image_files';
