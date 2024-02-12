@@ -2,7 +2,9 @@ import 'dotenv/config';
 import * as readline from 'readline';
 import process from 'process';
 
-import { getElasticClient, buildElasticQuery } from '../utils/index.js';
+import { getElasticClient } from '../utils/index.js';
+import { ELASTIC_PAGE_SIZE } from '../constants/index.js';
+import { searchMemes } from '../services/servers/utils/index.js';
 
 const client = await getElasticClient();
 
@@ -13,12 +15,8 @@ const rl = readline.createInterface({
 });
 
 rl.on('line', async (line) => {
-    const query = buildElasticQuery(line);
-    const res = await client.search(query);
-
-    for (const hit of res.hits.hits) {
-        console.log(hit._source);
-    }
+    const res = await searchMemes(client, line, 1, ELASTIC_PAGE_SIZE);
+    console.log(res);
 });
 
 rl.once('close', () => {
