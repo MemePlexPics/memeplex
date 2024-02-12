@@ -12,6 +12,8 @@ const pageOptions = {
 let updateLatestInterval = 0;
 let updateByScrollTimer = 0;
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const setLoader = (state = true) => {
     const loader = document.getElementById('loader');
     if (state) {
@@ -78,8 +80,8 @@ const resetPage = () => {
 const handleImageRequest = async (url) => {
     const response = await fetch(url);
     if (response.status === 503) {
-        alert('Wait a few seconds before trying again');
-        return;
+        await delay(2000);
+        return await handleImageRequest(url);
     }
     return await response.json();
 };
