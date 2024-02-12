@@ -50,14 +50,10 @@ const processSearchResponse = (response, toTop = false) => {
         entryLink.href = 'https://t.me/' + entry.channel + '/' + entry.message;
         entryLink.target = '_blank';
 
-        if (pageOptions.query === '' && entry.timestamp) {
-            if (!pageOptions.from || entry.timestamp < pageOptions.from) pageOptions.from = entry.timestamp;
-            if (!pageOptions.to || entry.timestamp > pageOptions.to) pageOptions.to = entry.timestamp;
-        }
-
         entryContainer.className = 'result-container';
         entryImage.className = 'result-image';
         entryImage.src = entry.fileName;
+
         if (toTop)
             results.prepend(entryContainer);
         else
@@ -80,17 +76,12 @@ const resetPage = () => {
 };
 
 const handleImageRequest = async (url) => {
-    try {
-        const response = await fetch(url);
-        if (response.status === 503) {
-            alert('Wait a few seconds before trying again');
-            return;
-        }
-        return await response.json();
-    } catch(e) {
-        console.error(e);
-        processErrorResponse();
+    const response = await fetch(url);
+    if (response.status === 503) {
+        alert('Wait a few seconds before trying again');
+        return;
     }
+    return await response.json();
 };
 
 const handleUpdateLates = () => {
@@ -119,6 +110,9 @@ const startSearchByQuery = async () => {
         else processEmptyResponse();
         pageOptions.totalPages = totalPages;
         pageOptions.currentPage += 1;
+    } catch(e) {
+        console.error(e);
+        processErrorResponse();
     } finally {
         setLoader(false);
     }
@@ -132,7 +126,6 @@ const getLatest = async (update = true) => {
         const protocol = window.location.protocol;
         const host = window.location.host;
         const path = '/getLatest';
-        console.log(update, pageOptions);
 
         const url = new URL(`${protocol}//${host}${path}`);
         if (update) {
@@ -147,20 +140,33 @@ const getLatest = async (update = true) => {
 
         const response = await handleImageRequest(url);
         const { result, totalPages } = response;
+
+        if (!pageOptions.from || response.from < pageOptions.from)
+            pageOptions.from = response.from;
+        if (!pageOptions.to || response.to > pageOptions.to)
+            pageOptions.to = response.to;
+
         if (result.length)
             processSearchResponse(result, update);
         if (!update)
             pageOptions.totalPages = totalPages;
+    } catch(e) {
+        console.error(e);
     } finally {
         setLoader(false);
     }
 };
 
 const handleInfinityScroll = () => {
+    const isPortraitOrientation = window.matchMedia('(orientation: portrait)').matches;
+    const remainPxToUpdate = isPortraitOrientation
+        ? 5000
+        : 150;
+
     if (
         document.documentElement.scrollTop
             + document.documentElement.clientHeight
-            >= document.documentElement.scrollHeight - 5
+            >= document.documentElement.scrollHeight - remainPxToUpdate
         && pageOptions.currentPage <= pageOptions.totalPages
     ) {
         if (updateByScrollTimer) clearTimeout(updateByScrollTimer);
