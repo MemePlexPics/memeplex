@@ -1,12 +1,12 @@
 {
-  "name": "memesearch",
+  "name": "memeplex",
   "type": "module",
   "version": "1.0.0",
-  "description": "",
-  "main": "get-images.js",
+  "description": "MemePlex is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма",
+  "main": "services/memesearch.js",
   "scripts": {
     "eslint": "eslint src/ services/",
-    "init": "npm install && mkdir -p data/{media,elastic,grafana,loki,mysql,promtail,rabbitmq} && mkdir logs && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
+    "init": "npm install && mkdir -p logs data/{elastic,grafana,loki,mysql,promtail,rabbitmq} && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "klntsky",

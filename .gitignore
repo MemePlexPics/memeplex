@@ -1,5 +1,5 @@
 *.env
 /node_modules/
 /data/
-/state/
 /logs/
+/frontend/static/media
