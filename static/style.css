@@ -74,12 +74,6 @@ body {
     transition: transform 0.3s;
 }
 
-.result-image:hover {
-    outline: 3px solid var(--color-light-gray);
-    transform: scale(1.5);
-    transform-origin: center;
-}
-
 #nothing-found,
 #error-response {
     color: var(--color-white);
@@ -136,6 +130,14 @@ body {
 
 .hide {
     display: none;
+}
+
+@media (pointer: fine) and (hover: hover) {
+    .result-image:hover {
+        outline: 3px solid var(--color-light-gray);
+        transform: scale(1.5);
+        transform-origin: center;
+    }
 }
 
 @media only screen and (hover: none) and (pointer: coarse) {
