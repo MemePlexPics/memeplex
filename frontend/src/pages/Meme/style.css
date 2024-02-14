@@ -2,24 +2,31 @@
   padding-top: 30px;
   display: flex;
   flex-direction: row;
-  flex: 1 1;
   gap: 20px;
   height: 100%;
 }
 
+.meme-image {
+  width: 50rem;
+}
+
 .meme-description {
     color: var(--color-white);
-    font-size: 36px;
+    font-size: 30px;
 
     h3 {
-      font-size: .9em;
+      font-size: 1em;
     }
     h4 {
-      font-size: .8em;
+      font-size: .9em;
     }
     
     p {
-      font-size: .7em;
+      font-size: .8em;
+    }
+
+    h4, p {
+      margin: 0;
     }
 
     .link-source {

@@ -29,6 +29,7 @@
 - Run `docker compose up -d` to start docker services
 - Run `node ./scripts/create-index.js` to create an ElasticSearch index
 - Run `node ./scripts/create-tables.js` to create MySQL tables
+- Run `npm run build` to build a frontend static
 
 ## Startup
 
