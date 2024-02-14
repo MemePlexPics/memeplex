@@ -4,8 +4,8 @@ import {
 } from "react-router-dom"
 
 import { Layout } from './components'
-import './style.css'
 import { Admin, Home, Meme } from "./pages"
+import './style.css'
 
 const router = createBrowserRouter([
   {
