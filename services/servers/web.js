@@ -1,5 +1,7 @@
 import express from 'express';
 import process from 'process';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import 'dotenv/config';
 import {
     connectToElastic,
@@ -17,12 +19,12 @@ import {
     selectChannel,
     updateChannelAvailability,
 } from '../../utils/mysql-queries/index.js';
-import { searchMemes, getLatestMemes } from './utils/index.js';
+import { searchMemes, getLatestMemes, getMeme } from './utils/index.js';
 import winston from 'winston';
 
 const app = express();
 
-app.use(express.static('static'));
+app.use(express.static('frontend/dist'));
 app.use('/data', express.static('data'));
 app.use(express.json());
 
@@ -74,6 +76,21 @@ app.get('/getLatest', async (req, res) => {
     }
 });
 
+app.get('/getMeme', async (req, res) => {
+    const { id } = req.query;
+    try {
+        const meme = await getMeme(client, id);
+        return res.send(meme);
+    } catch (e) {
+        if (e.meta.statusCode === 404) {
+            await handleMethodError({ message: `Meme with id "${id}" not found` });
+            return res.status(204).send();
+        }
+        await handleMethodError(e);
+        return res.status(500).send(e);
+    }
+});
+
 app.post('/addChannel', async (req, res) => {
     const { channel, langs, password } = req.body;
     if (!channel || !password)
@@ -103,6 +120,10 @@ app.post('/addChannel', async (req, res) => {
         await handleMethodError(e);
         return res.status(500).send(e);
     }
+});
+
+app.get('/*', async (req, res) => {
+    res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'frontend', 'dist', 'index.html'));
 });
 
 const start = async () => {

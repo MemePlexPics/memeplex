@@ -1,6 +1,7 @@
 import {
     ELASTIC_INDEX,
 }  from '../../../constants/index.js';
+import { getMemeResponseEntity } from './index.js';
 
 export const getLatestMemes = async (client, from, to, size) => {
     const elasticRes = await client.search({
@@ -31,11 +32,7 @@ export const getLatestMemes = async (client, from, to, size) => {
         const timestamp = hit._source.timestamp;
         if (!response.from || timestamp < response.from) response.from = timestamp;
         if (!response.to || timestamp > response.to) response.to = timestamp;
-        response.result.push({
-            fileName: hit._source.fileName,
-            channel: hit._source.channelName,
-            message: hit._source.messageId
-        });
+        response.result.push(getMemeResponseEntity(hit._id, hit._source));
     }
 
     return response;

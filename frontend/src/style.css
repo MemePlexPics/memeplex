@@ -16,34 +16,25 @@ body {
     margin: 0px;
 }
 
-#container {
+#root {
     margin: 0 auto;
     /* width: 90vw; */
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     padding: 40px 5vw 14px 5vw;
+    max-height: calc(100% - 54px);
 }
 
 #search-container {
-    margin-top: 30px;
+    padding-top: 30px;
     text-align: center;
-    margin-bottom: 40px;
+    padding-bottom: 40px;
 }
 
 .label {
     font-size: 30px;
     color: var(--color-white);
-}
-
-.input {
-    max-width: 800px;
-    width: 70vw;
-    font-size: 30px;
-    background-color: var(--color-black-1);
-    border-radius: 8px;
-    color: var(--color-white);
-    border-color: var(--color-dark-gray);
 }
 
 .button {
@@ -74,58 +65,9 @@ body {
     transition: transform 0.3s;
 }
 
-#nothing-found,
-#error-response {
-    color: var(--color-white);
-    font-size: 30px;
-}
-
-#loader {
-    border: 8px solid var(--color-black-2);
-    border-top: 8px solid var(--color-light-gray);
-    border-radius: 50%;
-    width: var(--loader-size);
-    height: var(--loader-size);
-    animation: spin 1s linear infinite;
-    position: fixed;
-    top: 80vh;
-    left: calc(50vw - (var(--loader-size) / 2));
-}
-
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
-}
-
-#scroll-to-top {
-    display: none;
-    position: fixed;
-    bottom: 20px;
-    right: 30px;
-    border: none;
-    outline: none;
-    background-color: var(--color-gray);
-    color: var(--color-black-2);
-    cursor: pointer;
-    padding: 17px;
-    border-radius: 50%;
-    font-size: 46px;
-    height: var(--scroll-to-top-size);
-    width: var(--scroll-to-top-size);
-    justify-content: center;
-    align-items: center;
-    font-weight: 900;
-}
-  
-#scroll-to-top:hover {
-    background-color: var(--color-light-gray);
-    color: var(--color-black-2);
-}
-
-#github {
-    position: fixed;
-    top: 0;
-    right: 0;
 }
 
 .hide {
@@ -137,12 +79,6 @@ body {
         outline: 3px solid var(--color-light-gray);
         transform: scale(1.5);
         transform-origin: center;
-    }
-}
-
-@media only screen and (hover: none) and (pointer: coarse) {
-    #github {
-        display: none;
     }
 }
 

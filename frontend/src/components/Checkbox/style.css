@@ -1,0 +1,9 @@
+.input {
+    max-width: 800px;
+    width: 70vw;
+    font-size: 30px;
+    background-color: var(--color-black-1);
+    border-radius: 8px;
+    color: var(--color-white);
+    border-color: var(--color-dark-gray);
+}
