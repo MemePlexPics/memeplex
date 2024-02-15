@@ -6,7 +6,7 @@
   "main": "services/memesearch.js",
   "scripts": {
     "eslint": "eslint services/ scripts/ utils/ constants/",
-    "init": "npm install && mkdir -p logs data/{media,elastic,grafana,loki,mysql,promtail,rabbitmq} && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
+    "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,elastic,grafana,loki,mysql,promtail,rabbitmq} && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "build": "npm --prefix ./frontend run build && cp -r ./frontend/src/public/* ./frontend/dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
