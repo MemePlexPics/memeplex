@@ -35,6 +35,10 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
             }
             throw new Error(`❌ ${channelName} ${timestamp} ${JSON.stringify(responseJson.errors)}`);
         }
+        if (responseJson.response.messages.length === 0) {
+            logger.error(`Channel @${channelName} is empty`);
+            break loop;
+        }
 
         for (const message of responseJson.response.messages) {
             if (message.date <= timestamp) {
