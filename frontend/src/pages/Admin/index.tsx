@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
-import { Checkbox, Input } from '../../components'
+import { Button, Checkbox, Input } from '../../components'
 import './style.css'
-import { getUrl } from '../../utils'
+import { getTgChannelName, getUrl } from '../../utils'
 
 export const Admin = () => {
   const [newChannelModel, setNewChannelModel] = useState({
@@ -13,12 +13,10 @@ export const Admin = () => {
   })
 
   const onClickSubmit = async () => {
-    const channel = newChannelModel.name
-      .replace('https://t.me/', '')
-      .replace('@', '');
-    const password = newChannelModel.password;
+    const channel = getTgChannelName(newChannelModel.name)
+    const password = newChannelModel.password
     if (!channel || !password)
-        return;
+        return
     const response = await fetch(getUrl('/addChannel'), {
       method: 'POST',
       headers: {
@@ -26,21 +24,22 @@ export const Admin = () => {
       },
       body: JSON.stringify({
         channel,
-        // @ts-ignore
+        // @ts-ignore // TODO: types
         langs: ['rus', 'eng'].filter(lang => newChannelModel[lang]),
         password,
       })
     })
     if (response.status === 403) {
       setNewChannelModel({ ...newChannelModel, password: '' });
-      return;
-  }
-  if (response.status === 500) {
-      const error = await response.json();
-      console.error(error);
-      return;
-  }
-  setNewChannelModel({ ...newChannelModel, name: '', rus: false, eng: false });
+      return
+    }
+    localStorage.setItem('isAdmin', '1')
+    if (response.status === 500) {
+        const error = await response.json()
+        console.error(error)
+        return
+    }
+    setNewChannelModel({ ...newChannelModel, name: '', rus: false, eng: false })
   }
 
   return (
@@ -109,9 +108,7 @@ export const Admin = () => {
           }
         )}
       />
-      <Input
-        id="submit-button"
-        className="button"
+      <Button
         type="submit"
         value="Submit"
         onClick={onClickSubmit}

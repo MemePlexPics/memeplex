@@ -17,6 +17,12 @@ type TData<GData> =
     status: number
     state: 'error'
 }
+| {
+    data: null
+    error: null
+    status: null
+    state: 'idle'
+}
 
 export type TUseFetch<GData> = TData<GData> & {
     isLoading: boolean

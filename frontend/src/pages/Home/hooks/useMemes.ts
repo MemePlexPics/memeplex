@@ -4,16 +4,17 @@ import { useAtom } from 'jotai'
 import { useInfinityScroll } from "../../../hooks"
 import { EMemesOperation, pageOptionsDefault } from "./constants"
 import { delay, getUrl } from "../../../utils"
-import { useFetch } from "../../../hooks/useFetch"
+import { useFetch } from "../../../hooks"
 import { IGetLatest } from "../../../services/types"
 import { memesAtom, pageOptionsAtom } from "../../../store/atoms"
 
-export const useMemes = (query?: string) => {
+export const useMemes = (query: string) => {
     const [url, setUrl] = useState<URL>(getUrl('/getLatest'))
     const [memes, setMemes] = useAtom(memesAtom)
     const [operation, setOperation] = useState<EMemesOperation>(EMemesOperation.INIT)
     const [pageOptions, setPageOptions] = useAtom(pageOptionsAtom)
-    const request = useFetch<IGetLatest>(url, {
+    const request = useFetch<IGetLatest>(() => url, {
+        deps: [url],
         getCached:
             () => operation === EMemesOperation.INIT && memes.length
                 ? {
@@ -28,11 +29,11 @@ export const useMemes = (query?: string) => {
     const savePageOptions = () => {
         if (request.state !== 'success') return
         if (query) {
-            setPageOptions({
+            setPageOptions(() => ({
                 ...pageOptions,
                 totalPages: request.data.totalPages,
                 currentPage: pageOptions.currentPage + 1,
-            })
+            }))
         } else {
             if (operation !== EMemesOperation.UPDATE)
                 setPageOptions(prev => ({ ...prev, totalPages: request.data.totalPages }))
@@ -52,6 +53,7 @@ export const useMemes = (query?: string) => {
     }
 
     const getLatest = () => {
+        if (operation === EMemesOperation.INIT) return
         if (operation === EMemesOperation.IDLE) return
         if (operation === EMemesOperation.DELAY) return
         const params: Record<Exclude<EMemesOperation, EMemesOperation.IDLE | EMemesOperation.DELAY>, Record<string, string | undefined> | undefined> = {
@@ -101,17 +103,21 @@ export const useMemes = (query?: string) => {
             savePageOptions()
             setOperation(() => EMemesOperation.IDLE)
         } else if (request.status === 503) retryRequest()
+        else if (request.state === 'idle' && memes.length) setOperation(() => EMemesOperation.IDLE)
     }, [request.isLoading])
 
     useEffect(() => {
-        setPageOptions(() => ({ ...pageOptionsDefault }))
-        setOperation(() => EMemesOperation.REINIT)
+        if (!EMemesOperation.INIT || query !== pageOptions.query) {
+            setPageOptions(() => ({ ...pageOptionsDefault, query }))
+            setOperation(() => EMemesOperation.REINIT)
+        }
         if (query) return
         const updateLatestInterval = handleAutoUpdates()
         return () => clearInterval(updateLatestInterval)
     }, [query])
 
     useEffect(() => {
+        if (operation === EMemesOperation.INIT && memes.length) return
         if (operation === EMemesOperation.IDLE) return
         else if (operation === EMemesOperation.DELAY) return
         else if (operation === EMemesOperation.NEXT) getNextPage()

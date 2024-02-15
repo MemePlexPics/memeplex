@@ -2,22 +2,25 @@ import { useEffect, useState } from "react"
 import { TUseFetch } from "./types"
 
 export const useFetch = <GData>(
-    url: URL | RequestInfo,
+    urlCb: () => URL | RequestInfo | undefined,
     options?: {
         method?: 'GET' | 'POST'
         body?: unknown
+        deps?: unknown[]
         getCached?: () => GData | null
     }
 ): TUseFetch<GData> => {
-    const [state, setState] = useState<TUseFetch<GData>['state']>('loading')
+    const [state, setState] = useState<TUseFetch<GData>['state']>('idle')
     const [data, setData] = useState<GData>()
     const [error, setError] = useState<Error>()
     const [status, setStatus] = useState<number>()
-  
+
     useEffect(() => {
         const abortController = new AbortController()
 
         const fetchData = async () => {
+            const url = urlCb()
+            if (!url) return
             setState('loading')
             try {
                 const cached = options?.getCached?.()
@@ -62,7 +65,7 @@ export const useFetch = <GData>(
         return () => {
             abortController.abort()
         }
-    }, [url])
+    }, options?.deps)
 
     // @ts-ignore
     return {

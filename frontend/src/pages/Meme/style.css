@@ -7,31 +7,16 @@
 }
 
 .meme-image {
-  width: 50rem;
+  width: 50%;
 }
 
 .meme-description {
     color: var(--color-white);
-    font-size: 30px;
-
-    h3 {
-      font-size: 1em;
-    }
-    h4 {
-      font-size: .9em;
-    }
-    
-    p {
-      font-size: .8em;
-    }
-
-    h4, p {
-      margin: 0;
-    }
+    font-size: 26px;
+    width: 50%;
 
     .link-source {
       color: inherit;
-      font-size: .8em;
     }
 }
 
@@ -39,4 +24,19 @@
 .nothing-found {
     color: var(--color-white);
     font-size: 30px;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+  #meme {
+    flex-direction: column-reverse;
+  }
+
+  .meme-image,
+  .meme-description {
+    width: initial;
+  }
+
+  .meme-description {
+    font-size: 36px;
+  }
 }

@@ -5,8 +5,8 @@
   "description": "MemePlex is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма",
   "main": "services/memesearch.js",
   "scripts": {
-    "eslint": "eslint src/ services/",
-    "init": "npm install && mkdir -p logs data/{elastic,grafana,loki,mysql,promtail,rabbitmq} && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
+    "eslint": "eslint services/ scripts/ utils/ constants/",
+    "init": "npm install && mkdir -p logs data/{media,elastic,grafana,loki,mysql,promtail,rabbitmq} && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "build": "npm --prefix ./frontend run build && cp -r ./frontend/src/public/* ./frontend/dist/",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

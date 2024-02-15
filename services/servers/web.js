@@ -13,11 +13,15 @@ import {
     SEARCH_PAGE_SIZE,
     OCR_LANGUAGES,
     TG_API_PARSE_FROM_DATE,
+    CHANNEL_LIST_PAGE_SIZE,
 }  from '../../constants/index.js';
 import {
     insertChannel,
     selectChannel,
     updateChannelAvailability,
+    getChannels,
+    getChannelsCount,
+    insertChannelSuggestion,
 } from '../../utils/mysql-queries/index.js';
 import { searchMemes, getLatestMemes, getMeme } from './utils/index.js';
 import winston from 'winston';
@@ -25,7 +29,7 @@ import winston from 'winston';
 const app = express();
 
 app.use(express.static('frontend/dist'));
-app.use('/data', express.static('data'));
+app.use('/data/media', express.static('data/media'));
 app.use(express.json());
 
 const { client, reconnect } = await connectToElastic();
@@ -76,6 +80,22 @@ app.get('/getLatest', async (req, res) => {
     }
 });
 
+app.get('/getChannelList', async (req, res) => {
+    try {
+        const { page } = req.query;
+        const mysql = await getMysqlClient();
+        const channels = await getChannels(mysql, page, CHANNEL_LIST_PAGE_SIZE);
+        const count = await getChannelsCount(mysql);
+        return res.send({
+            result: channels.map(channel => channel.name),
+            totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
+        });
+    } catch (e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
 app.get('/getMeme', async (req, res) => {
     const { id } = req.query;
     try {
@@ -114,6 +134,27 @@ app.post('/addChannel', async (req, res) => {
         } else {
             logger.info(`${req.ip} added @${channel}`);
             await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
+        }
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send(e);
+    }
+});
+
+app.post('/suggestChannel', async (req, res) => {
+    const { channel } = req.body;
+    if (!channel)
+        return res.status(500).send();
+    try {
+        const mysql = await getMysqlClient();
+        const existedChannel = await selectChannel(mysql, channel);
+        if (existedChannel) {
+            logger.info(`${req.ip} updated the avialability of @${channel}`);
+            await updateChannelAvailability(mysql, channel, true);
+        } else {
+            logger.info(`${req.ip} added @${channel} to suggested`);
+            await insertChannelSuggestion(mysql, channel);
         }
         return res.send();
     } catch(e) {

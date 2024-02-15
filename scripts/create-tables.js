@@ -39,6 +39,13 @@ const createTables = async () => {
         console.log('💬 channels table created');
 
         await mysql.query(`
+            CREATE OR REPLACE TABLE channel_suggestions (
+                name VARCHAR(255) PRIMARY KEY
+            )
+        `);
+        console.log('💬 channel_suggestions table created');
+
+        await mysql.query(`
             CREATE OR REPLACE TABLE phashes (
                 phash VARCHAR(255) PRIMARY KEY
             )

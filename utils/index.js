@@ -16,9 +16,6 @@ export { InfoMessage } from './custom-errors.js';
 // TODO: split into files?
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// TODO: move somewhere?
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
-
 export const getMysqlClient = async () => {
     const client = await mysql.createConnection({
         host: process.env.DB_HOST,

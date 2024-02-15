@@ -1,8 +1,11 @@
 import { useState } from "react"
-import { Input } from ".."
+import { Button, Input } from ".."
 
-export const MemeSearchForm = (props: { onUpdate: (query: string) => void }) => {
-    const [query, setQuery] = useState('')
+export const MemeSearchForm = (props: {
+    query: string
+    onUpdate: (query: string) => void
+}) => {
+    const [query, setQuery] = useState(props.query)
 
     const onClickSearch = () => props.onUpdate(query)
 
@@ -23,9 +26,7 @@ export const MemeSearchForm = (props: { onUpdate: (query: string) => void }) => 
                 onChange={onChangeQuery}
                 onKeyDown={onKeyDown}
             />
-            <Input
-                className="button"
-                type="button"
+            <Button
                 value="Search"
                 onClick={onClickSearch}
             />

@@ -1,0 +1,26 @@
+label {
+    color: var(--color-white);
+    font-size: 30px;
+}
+
+ol {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+li a,
+li::marker {
+    color: var(--color-white);
+    font-size: 24px;
+}
+
+li a {
+    text-decoration: none;
+    padding: 0;
+}
+
+li a:hover {
+    text-decoration: underline;
+}

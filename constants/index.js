@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import process from 'process';
 
 // TODO: split into files?
@@ -22,6 +21,8 @@ export const MAX_SEARCH_QUERY_LENGTH = 300;
 export const SEARCH_PAGE_SIZE = 30;
 // Page size for Telegram bot
 export const TG_BOT_PAGE_SIZE = 5;
+// Page size for /getChannelList handler
+export const CHANNEL_LIST_PAGE_SIZE = 100;
 // Delay time for the loopRetrying() after an error is catched
 export const LOOP_RETRYING_DELAY = 5_000;
 // AMQP queue delay time for recheck after empty queue

@@ -1,6 +1,8 @@
 :root {
     --loader-size: 100px;
     --scroll-to-top-size: 60px;
+    --hamburger-icon-width: 30px;
+    --hamburger-icon-height: 20px;
     --color-white: #EEE;
     --color-gray: #b5b5b5;
     --color-dark-gray: #746c5f;
@@ -27,7 +29,6 @@ body {
 }
 
 #search-container {
-    padding-top: 30px;
     text-align: center;
     padding-bottom: 40px;
 }
@@ -35,15 +36,6 @@ body {
 .label {
     font-size: 30px;
     color: var(--color-white);
-}
-
-.button {
-    font-size: 30px;
-    background-color: var(--color-black-1);
-    border-radius: 8px;
-    color: var(--color-white);
-    border-color: var(--color-dark-gray);
-    padding: 0 8px;
 }
 
 .checkbox {
@@ -85,6 +77,8 @@ body {
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
     :root {
         --scroll-to-top-size: 10vw;
+        --hamburger-icon-width: 6vw;
+        --hamburger-icon-height: 4vw;
     }
 
     .result-container {

@@ -1,5 +1,5 @@
 import { useRef, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, NavLink } from "react-router-dom"
 import classnames from 'classnames'
 
 import { HamburgerIcon } from ".."
@@ -22,6 +22,15 @@ export const SidebarMenu = () => {
             <HamburgerIcon isActive={isFolded} onClick={() => setIsFolded(!isFolded)} />
             {!isFolded
                 ? <ul className="sidebar-menu">
+                    {localStorage.getItem('isAdmin') === '1'
+                        ? <li>
+                            <NavLink to='/admin'>Admin page</NavLink>
+                        </li>
+                        : null
+                    }
+                    <li>
+                        <NavLink to='/channelList'>Channel list</NavLink>
+                    </li>
                     <li>
                         <Link to='https://t.me/MemePlex_Pics' target="_blank">Telegram channel</Link>
                     </li>

@@ -1,10 +1,11 @@
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider,
 } from "react-router-dom"
 
 import { Layout } from './components'
-import { Admin, Home, Meme } from "./pages"
+import { Admin, ChannelList, Home, Meme } from "./pages"
 import './style.css'
 
 const router = createBrowserRouter([
@@ -21,10 +22,18 @@ const router = createBrowserRouter([
         element: <Meme />,
       },
       {
+        path: 'channelList',
+        element: <ChannelList />,
+      },
+      {
         path: 'admin',
         element: <Admin />,
-      }
+      },
     ],
+  },
+  {
+    path: '*',
+    element: <Navigate to="/" replace />,
   },
 ])
 

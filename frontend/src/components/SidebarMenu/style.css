@@ -28,3 +28,12 @@
     color: var(--color-white);
     text-decoration: none;
 }
+
+.sidebar a.active {
+    color: var(--color-dark-gray);
+}
+
+.hamburger {
+    height: var(--hamburger-icon-height);
+    width: var(--hamburger-icon-width);
+}

@@ -1,5 +1,5 @@
 #scroll-to-top {
-    display: none;
+    display: flex;
     position: fixed;
     bottom: 20px;
     right: 30px;

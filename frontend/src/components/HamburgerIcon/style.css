@@ -9,6 +9,6 @@
 
 .hamburger .line {
     width: 100%;
-    height: 3px;
-    background-color: gray;
+    height: 15%;
+    background-color: var(--color-gray);
 }

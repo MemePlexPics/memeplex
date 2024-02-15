@@ -22,7 +22,7 @@ export const recogniseText = async (msg, logger) => {
             await fs.writeFile(textFile, textContents);
             logger.verbose(`recognized text: ${language} ${rawText}`);
         } else {
-            logger.verbose(`text doesn't recognized: ${payload.fileName} (${language})`);
+            logger.verbose(`text wasn't recognized: ${payload.fileName} (${language})`);
         }
     }
 
