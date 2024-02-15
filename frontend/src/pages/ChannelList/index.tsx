@@ -46,7 +46,7 @@ export const ChannelList = () => {
             </div>
             {!request.isLoading 
                 ? <div id='channel-list'>
-                    <ol start={(page - 1) * 100}>
+                    <ol start={(page - 1) * 100 + 1}>
                         {request.data?.result.map(channel => (
                             <li>
                                 <Link to={`https://t.me/${channel}`}>
