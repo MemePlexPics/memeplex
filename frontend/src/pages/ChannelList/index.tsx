@@ -34,7 +34,7 @@ export const ChannelList = () => {
     }
 
     return (
-        <>
+        <div id="channel-list-page">
             <div className="suggest-channel">
                 <label>Suggest channel: </label>
                 <Input
@@ -46,7 +46,7 @@ export const ChannelList = () => {
             </div>
             {!request.isLoading 
                 ? <div id='channel-list'>
-                    <ol>
+                    <ol start={(page - 1) * 100}>
                         {request.data?.result.map(channel => (
                             <li>
                                 <Link to={`https://t.me/${channel}`}>
@@ -65,6 +65,6 @@ export const ChannelList = () => {
                 : null
             }
             <Loader state={request.isLoading} />
-        </>
+        </div>
     )
 }

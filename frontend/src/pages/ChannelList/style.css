@@ -1,3 +1,7 @@
+#channel-list-page {
+    padding-bottom: 20px;
+}
+
 label {
     color: var(--color-white);
     font-size: 30px;
