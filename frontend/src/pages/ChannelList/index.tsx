@@ -18,8 +18,7 @@ export const ChannelListPage = () => {
             body: JSON.stringify({ channel })
         })
         if (response.status === 500) {
-            const error = await response.json()
-            console.error(error)
+            alert('An error occurred, please try again later')
             return
         }
         alert('Thank you for the suggestion!')

@@ -111,7 +111,7 @@ app.get('/getMeme', async (req, res) => {
             return res.status(204).send();
         }
         await handleMethodError(e);
-        return res.status(500).send(e);
+        return res.status(500).send();
     }
 });
 
@@ -143,7 +143,7 @@ app.post('/addChannel', async (req, res) => {
         return res.send();
     } catch(e) {
         await handleMethodError(e);
-        return res.status(500).send(e);
+        return res.status(500).send();
     }
 });
 
@@ -161,7 +161,7 @@ app.post('/removeChannel', async (req, res) => {
         return res.send();
     } catch(e) {
         await handleMethodError(e);
-        return res.status(500).send(e);
+        return res.status(500).send();
     }
 });
 
@@ -182,7 +182,7 @@ app.post('/suggestChannel', async (req, res) => {
         return res.send();
     } catch(e) {
         await handleMethodError(e);
-        return res.status(500).send(e);
+        return res.status(500).send();
     }
 });
 
@@ -200,7 +200,7 @@ app.post('/proceedChannelSuggestion', async (req, res) => {
         return res.send();
     } catch(e) {
         await handleMethodError(e);
-        return res.status(500).send(e);
+        return res.status(500).send();
     }
 });
 

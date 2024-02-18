@@ -29,8 +29,6 @@ export const AdminPage = () => {
       }
       localStorage.setItem('isAdmin', '1')
       if (response.status === 500) {
-          const error = await response.json()
-          console.error(error)
           return false
       }
     setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
@@ -61,8 +59,6 @@ export const AdminPage = () => {
     }
     localStorage.setItem('isAdmin', '1')
     if (response.status === 500 || !response.ok) {
-        const error = await response.json()
-        console.error(error)
         return false
     }
     setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
@@ -88,8 +84,6 @@ export const AdminPage = () => {
     }
     localStorage.setItem('isAdmin', '1')
     if (response.status === 500 || !response.ok) {
-        const error = await response.json()
-        console.error(error)
         return false
     }
     setChannelsUpdateSwitch(!channelsUpdateSwitch)
@@ -97,7 +91,7 @@ export const AdminPage = () => {
   }
 
   return (
-    <>
+    <div className='admin-page'>
       <Input
           id="password"
           className="input"
@@ -113,6 +107,6 @@ export const AdminPage = () => {
       <ChannelSuggestionList updateSwitch={suggestionsUpdateSwitch} onSuggestionAction={onSuggestionAction} />
       <h2>Channels</h2>
       <ChannelList isAdmin updateSwitch={channelsUpdateSwitch} onRemoveChannel={onRemoveChannel} />
-    </>
+    </div>
   )
 }
