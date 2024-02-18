@@ -15,3 +15,8 @@
   display: grid;
   grid-template-columns: auto auto;
 }
+
+h2 {
+  color: var(--color-gray);
+  font-size: var(--font-size-big);
+}

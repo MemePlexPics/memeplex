@@ -1,6 +1,10 @@
 export { getChannels } from './getChannels.js';
 export { getChannelsCount } from './getChannelsCount.js';
 export { insertChannelSuggestion } from './insertChannelSuggestion.js';
+export { removeChannel } from './removeChannel.js';
+export { proceedChannelSuggestion } from './proceedChannelSuggestion.js';
+export { getChannelSuggestions } from './getChannelSuggestions.js';
+export { getChannelSuggestionsCount } from './getChannelSuggestionsCount.js';
 
 // TODO: split into files?
 export async function insertProxyToDb(mysql, address, protocol, availability, speed = null) {

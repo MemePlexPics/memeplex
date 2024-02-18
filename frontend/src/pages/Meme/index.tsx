@@ -8,7 +8,7 @@ import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
 import { Loader } from "../../components"
 
-export const Meme = () => {
+export const MemePage = () => {
     const { id } = useParams()
     const memes = useAtomValue(memesAtom)
     const request = useFetch<IMeme>(

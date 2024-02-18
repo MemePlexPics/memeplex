@@ -12,7 +12,7 @@
 
 .meme-description {
     color: var(--color-white);
-    font-size: 26px;
+    font-size: var(--font-size-normal);
     width: 50%;
 
     .link-source {
@@ -23,7 +23,7 @@
 .unexisted-meme,
 .nothing-found {
     color: var(--color-white);
-    font-size: 30px;
+    font-size: var(--font-size-big);
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
@@ -37,6 +37,6 @@
   }
 
   .meme-description {
-    font-size: 36px;
+    font-size: var(--font-size-normal);
   }
 }

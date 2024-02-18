@@ -1,5 +1,6 @@
 .button {
-  font-size: 30px;
+  display: flex;
+  font-size: var(--font-size-big);
   background-color: var(--color-black-1);
   border-radius: 8px;
   color: var(--color-white);
@@ -8,11 +9,17 @@
   text-align: center;
   text-decoration: none;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
 }
 
 .button[disabled],
 .button.isActive {
   cursor: default;
+}
+
+.button[hidden] {
+  display: none;
 }
 
 .button.isActive {

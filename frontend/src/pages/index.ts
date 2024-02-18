@@ -1,4 +1,4 @@
-export { Home } from './Home'
-export { Admin } from './Admin'
-export { Meme } from './Meme'
-export { ChannelList } from './ChannelList'
+export { HomePage } from './Home'
+export { AdminPage } from './Admin'
+export { MemePage } from './Meme'
+export { ChannelListPage } from './ChannelList'

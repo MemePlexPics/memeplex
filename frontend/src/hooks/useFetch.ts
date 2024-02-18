@@ -73,6 +73,7 @@ export const useFetch = <GData>(
       error: state === 'error' && error ? error : null,
       status: status && ['success', 'error'].includes(state) ? status : null,
       state,
+      isLoaded: state === 'success',
       isLoading: state === 'loading',
       isError: state === 'error',
     }

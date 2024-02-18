@@ -1,5 +1,5 @@
-import { useRef, useState } from "react"
-import { Link, NavLink } from "react-router-dom"
+import { useEffect, useRef, useState } from "react"
+import { Link, NavLink, useLocation } from "react-router-dom"
 import classnames from 'classnames'
 
 import { HamburgerIcon } from ".."
@@ -9,10 +9,15 @@ import { useClickOutside } from "../../hooks"
 export const SidebarMenu = () => {
     const [isFolded, setIsFolded] = useState(true)
     const sidebarRef = useRef<HTMLDivElement>(null)
+    const location = useLocation()
 
     useClickOutside(sidebarRef, () => {
         setIsFolded(true)
     })
+
+    useEffect(() => {
+        setIsFolded(true)
+    }, [location])
 
     return (
         <div

@@ -1,7 +1,8 @@
-export const getChannelsCount = async (mysql) => {
+export const getChannelsCount = async (mysql, onlyAvailable) => {
+    const filter = onlyAvailable ? 'WHERE availability IS TRUE' : '';
     const [[results]] = await mysql.query(`
         SELECT COUNT(*) FROM channels
-        WHERE availability IS TRUE
+        ${filter}
     `);
     return results['COUNT(*)'];
 };

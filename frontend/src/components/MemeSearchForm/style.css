@@ -1,0 +1,6 @@
+#search-container {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 40px;
+    gap: 4px;
+}

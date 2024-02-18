@@ -26,5 +26,6 @@ type TData<GData> =
 
 export type TUseFetch<GData> = TData<GData> & {
     isLoading: boolean
+    isLoaded: boolean
     isError: boolean
 }

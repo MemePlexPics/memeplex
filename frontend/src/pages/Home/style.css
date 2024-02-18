@@ -1,5 +1,5 @@
 .nothing-found,
 .error-response {
     color: var(--color-white);
-    font-size: 30px;
+    font-size: var(--font-size-big);
 }

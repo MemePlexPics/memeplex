@@ -40,7 +40,8 @@ const createTables = async () => {
 
         await mysql.query(`
             CREATE OR REPLACE TABLE channel_suggestions (
-                name VARCHAR(255) PRIMARY KEY
+                name VARCHAR(255) PRIMARY KEY,
+                processed BOOLEAN NULL
             )
         `);
         console.log('💬 channel_suggestions table created');

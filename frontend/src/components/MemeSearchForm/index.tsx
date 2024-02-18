@@ -1,6 +1,8 @@
 import { useState } from "react"
 import { Button, Input } from ".."
 
+import './style.css'
+
 export const MemeSearchForm = (props: {
     query: string
     onUpdate: (query: string) => void

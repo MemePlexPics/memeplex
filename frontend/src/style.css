@@ -3,12 +3,21 @@
     --scroll-to-top-size: 60px;
     --hamburger-icon-width: 30px;
     --hamburger-icon-height: 20px;
+    --font-size-normal: 26px;
+    --font-size-big: 30px;
     --color-white: #EEE;
     --color-gray: #b5b5b5;
     --color-dark-gray: #746c5f;
     --color-light-gray: #d3d3d3;
     --color-black-1: #151617;
     --color-black-2: #222;
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: local('OpenSans'), url(./fonts/OpenSans-VariableFont_wdth\,wght.ttf) format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 body {
@@ -26,15 +35,11 @@ body {
     align-items: center;
     padding: 40px 5vw 14px 5vw;
     max-height: calc(100% - 54px);
-}
-
-#search-container {
-    text-align: center;
-    padding-bottom: 40px;
+    font-family: OpenSans, sans-serif;
 }
 
 .label {
-    font-size: 30px;
+    font-size: var(--font-size-big);
     color: var(--color-white);
 }
 
@@ -79,6 +84,8 @@ body {
         --scroll-to-top-size: 10vw;
         --hamburger-icon-width: 6vw;
         --hamburger-icon-height: 4vw;
+        --font-size-normal: 30px;
+        --font-size-big: 36px;
     }
 
     .result-container {

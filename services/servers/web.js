@@ -22,6 +22,10 @@ import {
     getChannels,
     getChannelsCount,
     insertChannelSuggestion,
+    removeChannel,
+    proceedChannelSuggestion,
+    getChannelSuggestions,
+    getChannelSuggestionsCount,
 } from '../../utils/mysql-queries/index.js';
 import { searchMemes, getLatestMemes, getMeme } from './utils/index.js';
 import winston from 'winston';
@@ -82,12 +86,12 @@ app.get('/getLatest', async (req, res) => {
 
 app.get('/getChannelList', async (req, res) => {
     try {
-        const { page } = req.query;
+        const { page, onlyAvailable } = req.query;
         const mysql = await getMysqlClient();
-        const channels = await getChannels(mysql, page, CHANNEL_LIST_PAGE_SIZE);
-        const count = await getChannelsCount(mysql);
+        const channels = await getChannels(mysql, page, onlyAvailable, CHANNEL_LIST_PAGE_SIZE);
+        const count = await getChannelsCount(mysql, onlyAvailable);
         return res.send({
-            result: channels.map(channel => channel.name),
+            result: channels,
             totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
         });
     } catch (e) {
@@ -134,7 +138,26 @@ app.post('/addChannel', async (req, res) => {
         } else {
             logger.info(`${req.ip} added @${channel}`);
             await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
+            await proceedChannelSuggestion(mysql, channel);
         }
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send(e);
+    }
+});
+
+app.post('/removeChannel', async (req, res) => {
+    const { channel, password } = req.body;
+    if (!channel || !password)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        await removeChannel(mysql, channel);
         return res.send();
     } catch(e) {
         await handleMethodError(e);
@@ -160,6 +183,40 @@ app.post('/suggestChannel', async (req, res) => {
     } catch(e) {
         await handleMethodError(e);
         return res.status(500).send(e);
+    }
+});
+
+app.post('/proceedChannelSuggestion', async (req, res) => {
+    const { channel, password } = req.body;
+    if (!channel || !password)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        await proceedChannelSuggestion(mysql, channel);
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send(e);
+    }
+});
+
+app.get('/getChannelSuggestionList', async (req, res) => {
+    try {
+        const { page } = req.query;
+        const mysql = await getMysqlClient();
+        const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE);
+        const count = await getChannelSuggestionsCount(mysql);
+        return res.send({
+            result: channels,
+            totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
+        });
+    } catch (e) {
+        await handleMethodError(e);
+        return res.status(500).send();
     }
 });
 

@@ -4,27 +4,21 @@
 
 label {
     color: var(--color-white);
-    font-size: 30px;
+    font-size: var(--font-size-big);
 }
 
-ol {
+.suggest-channel {
     display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    gap: 2px;
+    gap: 4px;
 }
 
-li a,
-li::marker {
-    color: var(--color-white);
-    font-size: 24px;
+.suggest-channel-input {
+    display: flex;
+    justify-content: center;
 }
 
-li a {
-    text-decoration: none;
-    padding: 0;
-}
-
-li a:hover {
-    text-decoration: underline;
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .suggest-channel {
+        flex-direction: column;
+    }
 }

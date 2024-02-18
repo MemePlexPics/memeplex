@@ -5,7 +5,12 @@ import {
 } from "react-router-dom"
 
 import { Layout } from './components'
-import { Admin, ChannelList, Home, Meme } from "./pages"
+import {
+  AdminPage,
+  ChannelListPage,
+  HomePage,
+  MemePage
+} from "./pages"
 import './style.css'
 
 const router = createBrowserRouter([
@@ -15,19 +20,19 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <HomePage />,
       },
       {
         path: 'memes/:id',
-        element: <Meme />,
+        element: <MemePage />,
       },
       {
         path: 'channelList',
-        element: <ChannelList />,
+        element: <ChannelListPage />,
       },
       {
         path: 'admin',
-        element: <Admin />,
+        element: <AdminPage />,
       },
     ],
   },

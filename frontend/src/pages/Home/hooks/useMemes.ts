@@ -132,6 +132,7 @@ export const useMemes = (query: string) => {
     return {
         memes,
         isLoading: operation !== EMemesOperation.IDLE,
+        isLoaded: request.isLoaded,
         isError: operation === EMemesOperation.IDLE && request?.state === 'error',
         getLatestUpdate,
         getNextPage,
