@@ -27,7 +27,12 @@ import {
     getChannelSuggestions,
     getChannelSuggestionsCount,
 } from '../../utils/mysql-queries/index.js';
-import { searchMemes, getLatestMemes, getMeme } from './utils/index.js';
+import {
+    searchMemes,
+    getLatestMemes,
+    getMeme,
+    downloadTelegramChannelAvatar,
+} from './utils/index.js';
 import winston from 'winston';
 
 const app = express();
@@ -208,6 +213,23 @@ app.get('/getChannelSuggestionList', async (req, res) => {
             result: channels,
             totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
         });
+    } catch (e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/data/media/_avatars/:channelName', async (req, res) => {
+    try {
+        const [channelName] = req.params.channelName.split('.jpg');
+        const destination = await downloadTelegramChannelAvatar(channelName);
+        if (destination === false) {
+            logger.error(`Avatar for @${channelName} wasn't downloaded`);
+            return res.status(204).send();
+        }
+        if (destination === null)
+            return res.status(204).send();
+        return res.sendFile(destination);
     } catch (e) {
         await handleMethodError(e);
         return res.status(500).send();

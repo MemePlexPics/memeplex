@@ -13,6 +13,7 @@ import { InfoMessage } from './custom-errors.js';
 
 export { InfoMessage } from './custom-errors.js';
 export { getTgChannelName } from './getTgChannelName.js';
+export { downloadFile } from './downloadFile.js';
 
 // TODO: split into files?
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));

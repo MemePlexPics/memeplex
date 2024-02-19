@@ -2,10 +2,13 @@ import 'dotenv/config';
 import { promises as fs } from 'fs';
 import * as imghash from 'imghash';
 import { selectPHash, insertPHash } from '../../../utils/mysql-queries/index.js';
-import { checkFileExists, getMysqlClient } from '../../../utils/index.js';
+import {
+    checkFileExists,
+    getMysqlClient,
+    downloadFile,
+} from '../../../utils/index.js';
 import {
     buildImageUrl,
-    downloadFile
 } from './index.js';
 
 export const isFileIgnored = async (logger, destination, payload) => {
