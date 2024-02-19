@@ -30,7 +30,10 @@ export const tgParser = async (logger) => {
                 languages: langs.split(','),
             }));
             sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
-            if (message.date > timestamp) await updateChannelTimestamp(mysql, name, message.date);
+            if (message.date > timestamp) {
+                const mysql = await getMysqlClient();
+                await updateChannelTimestamp(mysql, name, message.date);
+            }
         }
     }
 
