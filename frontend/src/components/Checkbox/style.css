@@ -7,3 +7,7 @@
     color: var(--color-white);
     border-color: var(--color-dark-gray);
 }
+
+.checkbox {
+    width: 20px;
+}

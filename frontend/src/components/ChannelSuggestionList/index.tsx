@@ -34,7 +34,7 @@ export const ChannelSuggestionList = (props: {
                 {request.data?.result.length 
                     ? request.data?.result.map(channel => (
                         <li key={channel.name}>
-                            <Link to={`https://t.me/${channel.name}`}>
+                            <Link to={`https://t.me/${channel.name}`} target="_blank">
                                 @{channel.name}
                             </Link>
                                 <div className="channel-actions">

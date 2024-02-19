@@ -1,24 +1,15 @@
 #scroll-to-top {
-    display: flex;
     position: fixed;
     bottom: 20px;
     right: 30px;
-    border: none;
-    outline: none;
-    background-color: var(--color-gray);
-    color: var(--color-black-2);
+    color: var(--color-gray);
     cursor: pointer;
-    padding: 17px;
-    border-radius: 50%;
-    font-size: 46px;
     height: var(--scroll-to-top-size);
     width: var(--scroll-to-top-size);
     justify-content: center;
     align-items: center;
-    font-weight: 900;
 }
   
 #scroll-to-top:hover {
-    background-color: var(--color-light-gray);
-    color: var(--color-black-2);
+    color: var(--color-light-gray);
 }

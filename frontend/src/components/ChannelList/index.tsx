@@ -47,7 +47,7 @@ export const ChannelList = (props: TChannelListProps) => {
                         ? <h3 style={{ color: 'white' }}>Nothing found</h3>
                         : request.data.result.map(channel => (
                             <li key={channel.name}>
-                                <Link to={`https://t.me/${channel.name}`}>
+                                <Link to={`https://t.me/${channel.name}`} target="_blank">
                                     @{channel.name}
                                 </Link>
                                 {props.isAdmin

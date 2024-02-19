@@ -32,6 +32,10 @@ li:hover .channel-actions {
     display: flex;
     padding-left: 8px;
     gap: 8px;
+
+    svg {
+        cursor: pointer;
+    }
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {

@@ -52,8 +52,6 @@ export const AddChannelForm = (props: {
                 <div id="languages">
                     <Checkbox
                         id="lang-eng"
-                        className="checkbox"
-                        type="checkbox"
                         checked={newChannelModel.eng}
                         onChange={(state) =>
                             setNewChannelModel(
@@ -67,8 +65,6 @@ export const AddChannelForm = (props: {
                     <label className="label" htmlFor="lang-eng">English</label>
                     <Checkbox
                         id="lang-rus"
-                        className="checkbox"
-                        type="checkbox"
                         checked={newChannelModel.rus}
                         onChange={(state) =>
                             setNewChannelModel(

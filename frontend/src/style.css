@@ -13,11 +13,27 @@
     --color-black-2: #222;
 }
 
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    :root {
+        --scroll-to-top-size: 10vw;
+        --hamburger-icon-width: 6vw;
+        --hamburger-icon-height: 4vw;
+        --font-size-normal: 30px;
+        --font-size-big: 36px;
+    }
+}
+
 @font-face {
     font-family: OpenSans;
-    src: local('OpenSans'), url(./fonts/OpenSans-VariableFont_wdth\,wght.ttf) format('truetype');
-    font-weight: normal;
-    font-style: normal;
+    src: local('OpenSans'), url(/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
+    /* font-weight: normal;
+    font-style: normal; */
+}
+
+@font-face {
+    font-family: OpenSans;
+    src: local('OpenSans'), url(/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
+    font-style: italic;
 }
 
 body {
@@ -29,7 +45,6 @@ body {
 
 #root {
     margin: 0 auto;
-    /* width: 90vw; */
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -43,62 +58,6 @@ body {
     color: var(--color-white);
 }
 
-.checkbox {
-    width: 20px;
-}
-
-#results {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    justify-content: center;
-    align-items: center;
-}
-
-.result-image {
-    max-width: 300px;
-    max-height: 300px;
-    user-select: none;
-    transition: transform 0.3s;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 .hide {
     display: none;
-}
-
-@media (pointer: fine) and (hover: hover) {
-    .result-image:hover {
-        outline: 3px solid var(--color-light-gray);
-        transform: scale(1.5);
-        transform-origin: center;
-    }
-}
-
-@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
-    :root {
-        --scroll-to-top-size: 10vw;
-        --hamburger-icon-width: 6vw;
-        --hamburger-icon-height: 4vw;
-        --font-size-normal: 30px;
-        --font-size-big: 36px;
-    }
-
-    .result-container {
-        width: 100%;
-    }
-
-    .result-image {
-        max-width: 100%;
-        max-height: initial;
-        width: 100%;
-    }
-
-    #scroll-to-top {
-        font-size: 5rem;
-    }
 }

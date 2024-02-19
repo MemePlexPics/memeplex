@@ -1,6 +1,8 @@
 import { Link } from 'react-router-dom'
 import { IMeme } from "../../types"
 
+import './style.css'
+
 export const MemeSearchResults = (props: { memes: IMeme[] }) => {
     return (
         <div id="results">
