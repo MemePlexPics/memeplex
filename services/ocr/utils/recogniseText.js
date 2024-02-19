@@ -16,7 +16,7 @@ export const recogniseText = async (msg, logger) => {
 
         const text = processText(rawText);
         if (text) {
-            texts.push({ language, text });
+            texts.push({ language, text, rawText });
             const textFile = await buildImageTextPath(payload, language);
             const textContents = text;
             await fs.writeFile(textFile, textContents);

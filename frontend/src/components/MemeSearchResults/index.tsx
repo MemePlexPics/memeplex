@@ -10,7 +10,7 @@ export const MemeSearchResults = (props: { memes: IMeme[] }) => {
                         <img
                             className="result-image"
                             src={meme.fileName}
-                            title={meme.text?.rus || meme.text?.eng}
+                            alt={meme.text?.rus || meme.text?.eng}
                         />
                     </Link>
                 </div>

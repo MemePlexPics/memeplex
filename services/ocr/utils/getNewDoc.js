@@ -9,6 +9,7 @@ export const getNewDoc = (payload, texts) => {
 
     for (const text of texts) {
         doc[text.language] = text.text;
+        doc[text.language + '_original'] = text.rawText;
     }
 
     return doc;
