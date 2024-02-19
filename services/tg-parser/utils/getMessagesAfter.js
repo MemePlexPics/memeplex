@@ -55,7 +55,7 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
             const messageId = message.id;
             if (!message.media || !message.media.photo) continue;
             if (message.media.photo.id) {
-                const forwardedFrom = chats[message.fwd_from.from_id];
+                const forwardedFrom = chats[message?.fwd_from?.from_id];
                 if (forwardedFrom) {
                     const mysql = await getMysqlClient();
                     const response = await insertChannelSuggestion(mysql, forwardedFrom);
