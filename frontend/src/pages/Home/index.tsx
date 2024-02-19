@@ -13,11 +13,12 @@ export const HomePage = () => {
     return (
         <>
             <MemeSearchForm query={query} onUpdate={(query) => setQuery(query)} />
-            {data.isLoaded
-                ? data.memes.length
+            {data.isLoaded && !data.memes.length
+                ? <p className='nothing-found'>Nothing found</p>
+                : data.memes.length
                     ? <MemeSearchResults memes={data.memes} />
-                    : <p className='nothing-found'>Nothing found</p>
-                : null}
+                    : null
+            }
             {data.isError
                 ? <p className='error-response'>An error occurred, please try again later</p>
                 : null

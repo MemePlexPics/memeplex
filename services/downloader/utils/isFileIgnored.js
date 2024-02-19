@@ -29,7 +29,7 @@ export const isFileIgnored = async (logger, destination, payload) => {
     const mysql = await getMysqlClient();
     // check if this pHash exists
     const doesExist = await selectPHash(mysql, pHash);
-    // ocr.space has limit 1024 KB
+    // ocr.space has a limit of 1024 KB
     const fileSize = (await fs.stat(destination)).size;
     if (doesExist || fileSize > 1048576) {
         // if we have seen this phash, skip the image and remove

@@ -42,24 +42,26 @@ export const ChannelList = (props: TChannelListProps) => {
     return (
         <div id='channel-list'>
             <ul>
-                {request.data?.result.length
-                    ? request.data?.result.map(channel => (
-                        <li key={channel.name}>
-                            <Link to={`https://t.me/${channel.name}`}>
-                                @{channel.name}
-                            </Link>
-                            {props.isAdmin
-                                ? <div className="channel-actions">
-                                    <FontAwesomeIcon
-                                        icon={faTrashCan}
-                                        color="red"
-                                        onClick={() => onClickRemove(channel.name)}
-                                    />
-                                </div>
-                                : null}
-                        </li>
-                    ))
-                    : <h3 style={{ color: 'white' }}>Nothing found</h3>
+                {request.isLoaded 
+                    ? !request.data?.result.length
+                        ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                        : request.data.result.map(channel => (
+                            <li key={channel.name}>
+                                <Link to={`https://t.me/${channel.name}`}>
+                                    @{channel.name}
+                                </Link>
+                                {props.isAdmin
+                                    ? <div className="channel-actions">
+                                        <FontAwesomeIcon
+                                            icon={faTrashCan}
+                                            color="red"
+                                            onClick={() => onClickRemove(channel.name)}
+                                        />
+                                    </div>
+                                    : null}
+                            </li>
+                        ))
+                    : null
                 }
             </ul>
             {request.data?.totalPages && request.data.totalPages > 1
