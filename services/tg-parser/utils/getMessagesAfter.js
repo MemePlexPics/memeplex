@@ -5,9 +5,13 @@ import {
 } from '../../../constants/index.js';
 import {
     delay,
+    getMysqlClient,
 } from '../../../utils/index.js';
 import process from 'process';
 import { setChannelUnavailable } from './index.js';
+import {
+    insertChannelSuggestion,
+} from '../../../utils/mysql-queries/index.js';
 
 export const getMessagesAfter = async function* (channelName, timestamp, logger) {
     let pageNumber = 0;
@@ -39,7 +43,10 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
             logger.error(`Channel @${channelName} is empty`);
             break loop;
         }
-
+        const chats = {};
+        for (const chat of responseJson.response.chats) {
+            chats['-100' + chat.id] = chat.username;
+        }
         for (const message of responseJson.response.messages) {
             if (message.date <= timestamp) {
                 // assuming they are ordered by message.date, decreasing
@@ -48,6 +55,12 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
             const messageId = message.id;
             if (!message.media || !message.media.photo) continue;
             if (message.media.photo.id) {
+                const forwardedFrom = chats[message.fwd_from.from_id];
+                if (forwardedFrom) {
+                    const mysql = await getMysqlClient();
+                    const response = await insertChannelSuggestion(mysql, forwardedFrom);
+                    if (response) logger.info(`Channel @${forwardedFrom} was automatically suggested (forward)`);
+                }
                 yield {
                     channelName,
                     messageId,

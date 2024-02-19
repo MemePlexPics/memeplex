@@ -171,14 +171,8 @@ app.post('/suggestChannel', async (req, res) => {
         return res.status(500).send();
     try {
         const mysql = await getMysqlClient();
-        const existedChannel = await selectChannel(mysql, channel);
-        if (existedChannel) {
-            logger.info(`${req.ip} updated the avialability of @${channel}`);
-            await updateChannelAvailability(mysql, channel, true);
-        } else {
-            logger.info(`${req.ip} added @${channel} to suggested`);
-            await insertChannelSuggestion(mysql, channel);
-        }
+        const response = await insertChannelSuggestion(mysql, channel);
+        if (response) logger.info(`${req.ip} added @${channel} to suggested`);
         return res.send();
     } catch(e) {
         await handleMethodError(e);

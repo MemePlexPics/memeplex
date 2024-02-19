@@ -1,5 +1,5 @@
 import { getMysqlClient, getProxySpeed } from '../../utils/index.js';
-import { findExistedProxy, insertProxyToDb } from '../../utils/mysql-queries/index.js';
+import { findExistedProxy, insertProxy } from '../../utils/mysql-queries/index.js';
 import { getProxies } from './index.js';
 
 export const findNewProxies = async (logger) => {
@@ -18,7 +18,7 @@ export const findNewProxies = async (logger) => {
 
             const speed = await getProxySpeed(proxy.ip, proxy.port, proxy.protocol, 5, logger);
             if (!speed) continue;
-            await insertProxyToDb(mysql, proxyString, proxy.protocol, !!speed, speed);
+            await insertProxy(mysql, proxyString, proxy.protocol, !!speed, speed);
             logger.verbose(`✅ Proxy ${proxyString} (${proxy.protocol}) inserted into DB`);
         }
         logger.info('💬 Testing completed');

@@ -16,8 +16,6 @@ import { Telegraf, Markup, session } from 'telegraf';
 import { message } from 'telegraf/filters';
 import rateLimit from 'telegraf-ratelimit';
 import {
-    selectChannel,
-    updateChannelAvailability,
     insertChannelSuggestion,
 } from '../../utils/mysql-queries/index.js';
 
@@ -138,14 +136,8 @@ const onBotCommandSuggestChannel = async (ctx) => {
 /suggest_channel name`);
     try {
         const mysql = await getMysqlClient();
-        const existedChannel = await selectChannel(mysql, channelName);
-        if (existedChannel) {
-            logUserAction(ctx, `updated the avialability of @${channelName}`);
-            await updateChannelAvailability(mysql, channelName, true);
-        } else {
-            logUserAction(ctx, `added @${channelName} to suggested`);
-            await insertChannelSuggestion(mysql, channelName);
-        }
+        const response = await insertChannelSuggestion(mysql, channelName);
+        if (response) logUserAction(ctx, `added @${channelName} to suggested`);
         return ctx.reply('Thank you for the suggestion!');
     } catch(e) {
         logError(logger, e);
