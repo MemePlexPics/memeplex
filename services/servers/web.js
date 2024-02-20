@@ -39,6 +39,7 @@ const app = express();
 
 app.use(express.static('frontend/dist'));
 app.use('/data/media', express.static('data/media'));
+app.use('/data/avatars', express.static('data/avatars'));
 app.use(express.json());
 
 const { client, reconnect } = await connectToElastic();
@@ -219,12 +220,12 @@ app.get('/getChannelSuggestionList', async (req, res) => {
     }
 });
 
-app.get('/data/media/_avatars/:channelName', async (req, res) => {
+app.get('/data/avatars/:channelName', async (req, res) => {
     try {
         const [channelName] = req.params.channelName.split('.jpg');
         const destination = await downloadTelegramChannelAvatar(channelName);
         if (destination === false) {
-            logger.error(`Avatar for @${channelName} wasn't downloaded`);
+            logger.error(`The avatar for @${channelName} wasn't downloaded`);
             return res.status(204).send();
         }
         if (destination === null)
