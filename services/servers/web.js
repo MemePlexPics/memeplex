@@ -7,6 +7,7 @@ import {
     connectToElastic,
     logError,
     getMysqlClient,
+    checkFileExists,
 } from '../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
@@ -222,15 +223,19 @@ app.get('/getChannelSuggestionList', async (req, res) => {
 
 app.get('/data/avatars/:channelName', async (req, res) => {
     try {
-        const [channelName] = req.params.channelName.split('.jpg');
-        const destination = await downloadTelegramChannelAvatar(channelName);
-        if (destination === false) {
-            logger.error(`The avatar for @${channelName} wasn't downloaded`);
-            return res.status(204).send();
+        const path = req.originalUrl;
+        const isExist = await checkFileExists(path);
+        if (!isExist) {
+            const [channelName] = req.params.channelName.split('.jpg');
+            const destination = await downloadTelegramChannelAvatar(channelName);
+            if (destination === false) {
+                logger.error(`The avatar for @${channelName} wasn't downloaded`);
+                return res.status(204).send();
+            }
+            if (destination === null)
+                return res.status(204).send();
         }
-        if (destination === null)
-            return res.status(204).send();
-        return res.sendFile(destination);
+        return res.sendFile(path, { root: './' });
     } catch (e) {
         await handleMethodError(e);
         return res.status(500).send();

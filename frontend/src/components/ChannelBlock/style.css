@@ -1,0 +1,55 @@
+.channel-block {
+    display: grid;
+    grid-template-columns: auto;
+    color: var(--color-white);
+    border-radius: 8px;
+    border: 1px solid var(--color-dark-gray);
+}
+
+.channel-block.isAdmin {
+    grid-template-columns: 80% auto;
+}
+
+.channel-info {
+    display: flex;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.avatar {
+    border-radius: 50%;
+    padding: 8px;
+    height: 46px;
+}
+
+.channel-name {
+    display: flex;
+    color: var(--color-white);
+    align-items: center;
+}
+
+.channel-block:hover {
+    border-color: var(--color-black-1);
+    background-color: var(--color-black-2);
+}
+
+.channel-actions {
+    display: none;
+}
+
+.channel-block.isAdmin:hover .channel-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    background-color: var(--color-black-1);
+
+    svg {
+        cursor: pointer;
+    }
+}
+
+@media only screen and (hover: none) and (pointer: coarse) {
+    .channel-block {
+        border: 0;
+    }
+}

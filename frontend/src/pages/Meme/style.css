@@ -40,3 +40,7 @@
     font-size: var(--font-size-normal);
   }
 }
+
+.channel-block {
+  max-width: 360px;
+}

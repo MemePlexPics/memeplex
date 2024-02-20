@@ -1,9 +1,6 @@
 import { useState } from "react"
-import { Link } from "react-router-dom"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 
-import { Loader, Pagination } from ".."
+import { ChannelBlock, Loader, Pagination } from ".."
 import { useFetch } from "../../hooks"
 import { getUrl } from "../../utils"
 
@@ -47,18 +44,10 @@ export const ChannelList = (props: TChannelListProps) => {
                         ? <h3 style={{ color: 'white' }}>Nothing found</h3>
                         : request.data.result.map(channel => (
                             <li key={channel.name}>
-                                <Link to={`https://t.me/${channel.name}`} target="_blank">
-                                    @{channel.name}
-                                </Link>
-                                {props.isAdmin
-                                    ? <div className="channel-actions">
-                                        <FontAwesomeIcon
-                                            icon={faTrashCan}
-                                            color="red"
-                                            onClick={() => onClickRemove(channel.name)}
-                                        />
-                                    </div>
-                                    : null}
+                                <ChannelBlock isAdmin={props.isAdmin} channel={channel.name} onClickRemove={props.isAdmin
+                                    ? () => onClickRemove(channel.name)
+                                    : undefined
+                                } />
                             </li>
                         ))
                     : null

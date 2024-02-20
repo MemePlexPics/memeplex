@@ -15,6 +15,7 @@ label {
 .suggest-channel-input {
     display: flex;
     justify-content: center;
+    gap: 4px;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {

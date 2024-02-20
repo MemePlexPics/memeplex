@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import { useAtomValue } from 'jotai'
 import { memesAtom } from "../../store/atoms"
 
@@ -6,7 +6,7 @@ import './style.css'
 import { useFetch } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
-import { Loader } from "../../components"
+import { ChannelBlock, Loader } from "../../components"
 
 export const MemePage = () => {
     const { id } = useParams()
@@ -47,13 +47,7 @@ export const MemePage = () => {
                 <div className="meme-source">
                     <p>
                         <b>Source: </b>
-                        <Link
-                            to={`https://t.me/${request.data.channel}/${request.data.message}`}
-                            target="_blank"
-                            className="link-source"
-                        >
-                            {`https://t.me/${request.data.channel}/${request.data.message}`}
-                        </Link>
+                        <ChannelBlock channel={request.data.channel} id={request.data.message} />
                     </p>
                 </div>
             </div>

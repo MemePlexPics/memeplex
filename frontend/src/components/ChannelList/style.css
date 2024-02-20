@@ -4,38 +4,7 @@ ul {
     list-style: none;
     font-size: var(--font-size-normal);
     padding-left: 0;
-}
-
-li {
-    display: flex;
-}
-
-li a,
-li::marker {
-    color: var(--color-white);
-}
-
-li a {
-    text-decoration: none;
-    padding: 0;
-}
-
-li a:hover {
-    text-decoration: underline;
-}
-
-.channel-actions {
-    display: none;
-}
-
-li:hover .channel-actions {
-    display: flex;
-    padding-left: 8px;
-    gap: 8px;
-
-    svg {
-        cursor: pointer;
-    }
+    gap: 4px;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
