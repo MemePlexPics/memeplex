@@ -72,10 +72,11 @@ export const useMemes = (query: string) => {
 
     const getNextPage = () => {
         if (!query) {
-            if (pageOptions.totalPages > 1) getLatest()
+            if (pageOptions.totalPages > 1)  return getLatest()
         } else {
-            if (pageOptions.currentPage < pageOptions.totalPages) searchByQuery()
+            if (pageOptions.currentPage < pageOptions.totalPages) return searchByQuery()
         }
+        setOperation(() => EMemesOperation.IDLE)
     }
 
     const retryRequest = () => {
@@ -126,7 +127,7 @@ export const useMemes = (query: string) => {
     }, [operation])
 
     useInfinityScroll(() => {
-        setOperation(() => EMemesOperation.NEXT)        
+        setOperation(() => EMemesOperation.NEXT)
     })
 
     return {
