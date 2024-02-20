@@ -18,8 +18,7 @@ export const recogniseText = async (msg, logger) => {
         if (text) {
             texts.push({ language, text, rawText });
             const textFile = await buildImageTextPath(payload, language);
-            const textContents = text;
-            await fs.writeFile(textFile, textContents);
+            await fs.writeFile(textFile, text);
             logger.verbose(`recognized text: ${language} ${rawText}`);
         } else {
             logger.verbose(`text wasn't recognized: ${payload.fileName} (${language})`);

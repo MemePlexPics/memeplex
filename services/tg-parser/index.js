@@ -22,12 +22,12 @@ export const tgParser = async (logger) => {
     const channels = await selectAvailableChannels(mysql);
     logger.info(`fetching ${channels.length} channels`);
 
-    for (const { name, langs, timestamp } of channels) {
+    for (const { name, /* langs, */ timestamp } of channels) {
         for await (const message of getMessagesAfter(name, timestamp, logger)) {
             logger.verbose(`new post image: ${JSON.stringify(message)}`);
             const imageData = Buffer.from(JSON.stringify({
                 ...message,
-                languages: langs.split(','),
+                languages: ['eng'], // langs.split(','),
             }));
             sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
             if (message.date > timestamp) {
