@@ -10,6 +10,7 @@ export const ChannelBlock = (props: {
     isAdmin?: boolean
     channel: string
     id?: string
+    className?: string
     onClickCheck?: (name: string) => unknown
     onClickRemove?: (name: string) => unknown
 }) => {
@@ -30,7 +31,7 @@ export const ChannelBlock = (props: {
     }
 
     return (
-        <div className={classNames("channel-block", { isAdmin: props.isAdmin })}>
+        <div className={classNames("channel-block", { isAdmin: props.isAdmin }, props.className)}>
             <Link
                 to={telegramLink}
                 target="_blank"

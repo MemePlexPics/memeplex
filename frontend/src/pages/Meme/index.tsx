@@ -1,12 +1,13 @@
 import { useParams } from "react-router-dom"
 import { useAtomValue } from 'jotai'
-import { memesAtom } from "../../store/atoms"
 
-import './style.css'
+import { memesAtom } from "../../store/atoms"
 import { useFetch } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
 import { ChannelBlock, Loader } from "../../components"
+
+import './style.css'
 
 export const MemePage = () => {
     const { id } = useParams()
@@ -47,7 +48,11 @@ export const MemePage = () => {
                 <div className="meme-source">
                     <p>
                         <b>Source: </b>
-                        <ChannelBlock channel={request.data.channel} id={request.data.message} />
+                        <ChannelBlock
+                            channel={request.data.channel}
+                            id={request.data.message}
+                            className='source-block'
+                        />
                     </p>
                 </div>
             </div>
