@@ -13,6 +13,10 @@ datasources:
     jsonData:
       index: image_text
       timeField: timestamp
+    basicAuth: true
+    secureJsonData:
+      basicAuthUser: ${ELASTIC_USERNAME}
+      basicAuthPassword: ${ELASTIC_PASSWORD}
   - name: MySQL
     type: mysql
     url: mysql:3306
