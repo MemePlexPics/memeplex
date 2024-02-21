@@ -37,3 +37,29 @@
 - Run `node ./services/memesearch.js` - Telegram parser
 - Run `node ./services/servers/web.js` - web server
 - Run `node ./services/servers/tg-bot.js` - Telegram bot server
+
+## Backup
+
+1. Files:
+
+```
+rsync --archive -progress --update user@host:remote_path local_path
+```
+
+2. ElasticSearch:
+
+```
+# Run to init a snapshot repository for ElasticSearch
+bash ./scripts/backup/init-elastic.sh
+
+# Run to start taking snapshot
+bash ./scripts/backup/elastic.sh
+
+# You should find the snapshot you took in the ./backup/elastic directory
+```
+
+3. Mysql:
+
+```
+ssh user@host "bash ./path_to_project/scripts/backup/mysql.sh" | gzip > memeplex_$(date +%Y%m%d-%H%M%S).sql.gz
+```
