@@ -16,8 +16,10 @@ export const ChannelBlock = (props: {
     onClickRemove?: (name: string) => unknown
 }) => {
     const imgSrc = `/data/avatars/${props.channel}.jpg`
-    const previewSubPath = props.isBrowserPreview ? 's' : undefined
-    const telegramLink = ['https://t.me', previewSubPath, props.channel, props.id].join('/')
+    const channelLink = props.isBrowserPreview
+        ? `s/${props.channel}`
+        : props.channel
+    const telegramLink = ['https://t.me', channelLink, props.id].join('/')
 
     const onClickRemove = () => {
         props.onClickRemove?.(props.channel)
