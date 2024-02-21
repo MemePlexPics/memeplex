@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import {
-    processText,
-    recognizeTextOcrSpace,
+    recogniseTextOcrSpace,
     buildImageTextPath,
 } from './index.js';
 
@@ -9,16 +8,15 @@ export const recogniseText = async (msg, logger) => {
     const payload = JSON.parse(msg.content.toString());
 
     // ocr using all the languages
-    const texts = [];
+    const texts = {};
 
     for (const language of payload.languages) {
-        let rawText = await recognizeTextOcrSpace(payload.fileName, language, logger);
+        let rawText = await recogniseTextOcrSpace(payload.fileName, language, logger);
 
-        const text = processText(rawText);
-        if (text) {
-            texts.push({ language, text, rawText });
+        if (rawText) {
+            texts[language] = rawText;
             const textFile = await buildImageTextPath(payload, language);
-            await fs.writeFile(textFile, text);
+            await fs.writeFile(textFile, rawText);
             logger.verbose(`recognized text: ${language} ${rawText}`);
         } else {
             logger.verbose(`text wasn't recognized: ${payload.fileName} (${language})`);

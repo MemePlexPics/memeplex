@@ -5,7 +5,6 @@ import { useState } from 'react'
 
 export const AdminPage = () => {
   const [password, setPassword] = useState('')
-  const [channel, setChannel] = useState('')
   const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
   const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
 
@@ -38,7 +37,7 @@ export const AdminPage = () => {
 
   const onSuggestionAction = async (channel: string, action: 'add' | 'remove') => {
     if (action === 'add') {
-      setChannel(channel)
+      onAddChannel(channel, [])
       return true
     }
     if (!channel || !password)
@@ -102,7 +101,7 @@ export const AdminPage = () => {
           onInput={setPassword}
       />
       <h2>Add channel</h2>
-      <AddChannelForm channel={channel} onAddChannel={onAddChannel} />
+      <AddChannelForm onAddChannel={onAddChannel} />
       <h2>Suggestions</h2>
       <ChannelSuggestionList updateSwitch={suggestionsUpdateSwitch} onSuggestionAction={onSuggestionAction} />
       <h2>Channels</h2>

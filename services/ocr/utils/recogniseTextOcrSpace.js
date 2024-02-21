@@ -8,7 +8,7 @@ import { saveKeyTimeout, setProxyAvailability } from '../../../utils/mysql-queri
 import { OCR_SPACE_403_DELAY } from '../../../constants/index.js';
 import { InfoMessage } from '../../../utils/index.js';
 
-export const recognizeTextOcrSpace = async (fileName, language, logger) => {
+export const recogniseTextOcrSpace = async (fileName, language, logger) => {
     let res;
     const {
         key: apiKey,

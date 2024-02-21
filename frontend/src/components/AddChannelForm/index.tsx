@@ -1,33 +1,19 @@
-import { useEffect, useState } from "react"
-import { Button, Checkbox, Input } from ".."
+import { useState } from "react"
+import { Button, Input } from ".."
 import { getTgChannelName } from "../../utils"
 
 import './style.css'
 
 export const AddChannelForm = (props: {
-    channel: string
     onAddChannel: (channel: string, langs: string[]) => Promise<boolean>
 }) => {
-    const [newChannelModel, setNewChannelModel] = useState({
-      name: '',
-      rus: false,
-      eng: false,
-    })
-  
-    const onClickSubmit = async () => {
-        const channel = getTgChannelName(newChannelModel.name)
-        // @ts-ignore // TODO: type
-        const langs = ['rus', 'eng'].filter(lang => newChannelModel[lang])
-        if (await props.onAddChannel(channel, langs))
-            setNewChannelModel({ ...newChannelModel, name: '', rus: false, eng: false })
-    }
+    const [channelValue, setChannelValue] = useState('')
 
-    useEffect(() => {
-        setNewChannelModel(() => ({
-            ...newChannelModel,
-            name: props.channel,
-        }))
-    }, [props.channel])
+    const onClickSubmit = async () => {
+        const channel = getTgChannelName(channelValue)
+        if (await props.onAddChannel(channel, ['eng']))
+            setChannelValue('')
+    }
 
     return (
         <div className="add-channel-form">
@@ -40,43 +26,9 @@ export const AddChannelForm = (props: {
                     type="text"
                     required
                     placeholder="@name or https://t.me/name"
-                    value={newChannelModel.name}
-                    onInput={(value) => setNewChannelModel(
-                    {
-                        ...newChannelModel,
-                        name: value,
-                    }
-                    )}
+                    value={channelValue}
+                    onInput={setChannelValue}
                 />
-                <label className="label" htmlFor="languages">Languages:</label>
-                <div id="languages">
-                    <Checkbox
-                        id="lang-eng"
-                        checked={newChannelModel.eng}
-                        onChange={(state) =>
-                            setNewChannelModel(
-                            {
-                                ...newChannelModel,
-                                eng: state,
-                            }
-                            )
-                        }
-                    />
-                    <label className="label" htmlFor="lang-eng">English</label>
-                    <Checkbox
-                        id="lang-rus"
-                        checked={newChannelModel.rus}
-                        onChange={(state) =>
-                            setNewChannelModel(
-                            {
-                                ...newChannelModel,
-                                rus: state,
-                            }
-                            )
-                        }
-                    />
-                    <label className="label" htmlFor="lang-rus">Russian</label>
-                </div>
                 </form>
                 <Button
                     type="submit"

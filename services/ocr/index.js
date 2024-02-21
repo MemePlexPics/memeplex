@@ -27,11 +27,12 @@ export const ocr = async (logger) => {
         }
         try {
             const { payload, texts } = await recogniseText(msg, logger);
-            if (texts.rus || texts.eng)
+            if (texts.eng) {
                 await client.index({
                     index: ELASTIC_INDEX,
                     document: getNewDoc(payload, texts),
                 });
+            }
             receiveImageFileCh.ack(msg);
         } catch(e) {
             receiveImageFileCh.nack(msg);

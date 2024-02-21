@@ -2,11 +2,10 @@ import {
     ELASTIC_INDEX,
     ELASTIC_FUZZINESS,
 }  from '../../../constants/index.js';
-import { classifyQueryLanguage, getMemeResponseEntity } from './index.js';
+import { getMemeResponseEntity } from './index.js';
 
 export const searchMemes = async (client, query, page, size) => {
     const from = (page - 1) * size;
-    const language = classifyQueryLanguage(query);
 
     const elasticRes = await client.search({
         index: ELASTIC_INDEX,
@@ -14,7 +13,7 @@ export const searchMemes = async (client, query, page, size) => {
         size,
         query: {
             match: {
-                [language]: {
+                eng: {
                     query,
                     fuzziness: ELASTIC_FUZZINESS,
                 },

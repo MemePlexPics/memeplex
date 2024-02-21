@@ -3,5 +3,5 @@ export interface IMeme {
     channel: string
     message: string
     fileName: string
-    text: Record<'rus' | 'eng', string>
+    text: Record<'eng', string>
 }
