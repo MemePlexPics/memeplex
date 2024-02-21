@@ -1,13 +1,18 @@
-#loader {
+.loader-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.loader {
     border: 8px solid var(--color-black-2);
     border-top: 8px solid var(--color-light-gray);
     border-radius: 50%;
     width: var(--loader-size);
     height: var(--loader-size);
     animation: spin 1s linear infinite;
-    position: fixed;
-    top: 80vh;
-    left: calc(50vw - (var(--loader-size) / 2));
+    position: absolute;
+    left: calc(50% - (var(--loader-size) / 2));
 }
 
 @keyframes spin {
