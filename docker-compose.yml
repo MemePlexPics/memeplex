@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       discovery.type: single-node
-      xpack.security.enabled: false
+      xpack.security.enabled: true
       # cluster.routing.allocation.disk.threshold_enabled: false
     mem_limit: 1GB
     ports:
