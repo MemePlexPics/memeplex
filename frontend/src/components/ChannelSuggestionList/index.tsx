@@ -33,6 +33,7 @@ export const ChannelSuggestionList = (props: {
                         <li key={channel.name}>
                             <ChannelBlock
                                 isAdmin
+                                isBrowserPreview
                                 channel={channel.name}
                                 onClickCheck={(name) => onClickAction(name, 'add')}
                                 onClickRemove={(name) => onClickAction(name, 'remove')}

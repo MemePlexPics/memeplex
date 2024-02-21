@@ -8,6 +8,7 @@ import classNames from "classnames"
 
 export const ChannelBlock = (props: {
     isAdmin?: boolean
+    isBrowserPreview?: boolean
     channel: string
     id?: string
     className?: string
@@ -15,7 +16,8 @@ export const ChannelBlock = (props: {
     onClickRemove?: (name: string) => unknown
 }) => {
     const imgSrc = `/data/avatars/${props.channel}.jpg`
-    const telegramLink = ['https://t.me', props.channel, props.id].join('/')
+    const previewSubPath = props.isBrowserPreview ? 's' : undefined
+    const telegramLink = ['https://t.me', previewSubPath, props.channel, props.id].join('/')
 
     const onClickRemove = () => {
         props.onClickRemove?.(props.channel)

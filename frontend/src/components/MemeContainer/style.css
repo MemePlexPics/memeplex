@@ -6,3 +6,19 @@
     user-select: none;
     transition: transform 0.3s;
 }
+
+@media (pointer: fine) and (hover: hover) {
+    .result-image:hover {
+        outline: 3px solid var(--color-light-gray);
+        transform: scale(1.5);
+        transform-origin: center;
+    }
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    .result-image {
+        max-width: 100%;
+        max-height: initial;
+        width: 100%;
+    }
+}
