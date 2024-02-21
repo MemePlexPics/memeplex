@@ -14,7 +14,7 @@
   "author": "klntsky",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.11.0",
+    "@elastic/elasticsearch": "^8.11.3",
     "amqplib": "^0.10.3",
     "axios": "^1.6.3",
     "dotenv": "^16.3.1",

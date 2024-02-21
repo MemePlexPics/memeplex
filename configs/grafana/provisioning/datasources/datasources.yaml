@@ -14,8 +14,8 @@ datasources:
       index: image_text
       timeField: timestamp
     basicAuth: true
+    basicAuthUser: ${ELASTIC_USERNAME}
     secureJsonData:
-      basicAuthUser: ${ELASTIC_USERNAME}
       basicAuthPassword: ${ELASTIC_PASSWORD}
   - name: MySQL
     type: mysql
