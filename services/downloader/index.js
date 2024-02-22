@@ -14,39 +14,46 @@ import {
 import { isFileIgnored } from './utils/index.js';
 
 export const downloader = async (logger) => {
-    const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
-    const sendImageFileCh = await conn.createChannel();
-    const receiveImageDataCh = await conn.createChannel();
+    let amqp, sendImageFileCh, receiveImageDataCh;
+    try {
+        amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
+        sendImageFileCh = await amqp.createChannel();
+        receiveImageDataCh = await amqp.createChannel();
 
-    await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
+        await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
 
-    for (;;) {
-        const msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
-        if (!msg) {
-            logger.info('Queue is empty');
-            await delay(EMPTY_QUEUE_RETRY_DELAY);
-            continue;
-        }
-        try {
-            const payload = JSON.parse(msg.content.toString());
-            const destination = await buildImagePath(payload);
-
-            const isIgnored = await isFileIgnored(logger, destination, payload);
-            if (!isIgnored) {
-                const content = Buffer.from(JSON.stringify({
-                    ...payload,
-                    fileName: destination
-                }));
-                sendImageFileCh.sendToQueue(
-                    AMQP_IMAGE_FILE_CHANNEL,
-                    content,
-                    { persistent: true }
-                );
+        for (;;) {
+            const msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
+            if (!msg) {
+                logger.info('Queue is empty');
+                await delay(EMPTY_QUEUE_RETRY_DELAY);
+                continue;
             }
-            receiveImageDataCh.ack(msg);
-        } catch(e) {
-            receiveImageDataCh.nack(msg);
-            throw e;
+            try {
+                const payload = JSON.parse(msg.content.toString());
+                const destination = await buildImagePath(payload);
+
+                const isIgnored = await isFileIgnored(logger, destination, payload);
+                if (!isIgnored) {
+                    const content = Buffer.from(JSON.stringify({
+                        ...payload,
+                        fileName: destination
+                    }));
+                    sendImageFileCh.sendToQueue(
+                        AMQP_IMAGE_FILE_CHANNEL,
+                        content,
+                        { persistent: true }
+                    );
+                }
+                receiveImageDataCh.ack(msg);
+            } catch(e) {
+                receiveImageDataCh.nack(msg);
+                throw e;
+            }
         }
+    } finally {
+        if (sendImageFileCh) sendImageFileCh.close();
+        if (receiveImageDataCh) receiveImageDataCh.close();
+        if (amqp) amqp.close();
     }
 };

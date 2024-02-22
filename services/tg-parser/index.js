@@ -15,26 +15,33 @@ import process from 'process';
 import { getMessagesAfter } from './utils/index.js';
 
 export const tgParser = async (logger) => {
-    const conn = await amqplib.connect(process.env.AMQP_ENDPOINT);
-    const mysql = await getMysqlClient();
-    const sendImageDataCh = await conn.createChannel();
+    let amqp, sendImageDataCh, mysql;
+    try {
+        amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
+        mysql = await getMysqlClient();
+        sendImageDataCh = await amqp.createChannel();
 
-    const channels = await selectAvailableChannels(mysql);
-    logger.info(`fetching ${channels.length} channels`);
+        const channels = await selectAvailableChannels(mysql);
+        logger.info(`fetching ${channels.length} channels`);
 
-    for (const { name, /* langs, */ timestamp } of channels) {
-        for await (const message of getMessagesAfter(name, timestamp, logger)) {
-            logger.verbose(`new post image: ${JSON.stringify(message)}`);
-            const imageData = Buffer.from(JSON.stringify({
-                ...message,
-                languages: ['eng'], // langs.split(','),
-            }));
-            sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
-            if (message.date > timestamp) {
-                const mysql = await getMysqlClient();
-                await updateChannelTimestamp(mysql, name, message.date);
+        for (const { name, /* langs, */ timestamp } of channels) {
+            for await (const message of getMessagesAfter(name, timestamp, logger)) {
+                logger.verbose(`new post image: ${JSON.stringify(message)}`);
+                const imageData = Buffer.from(JSON.stringify({
+                    ...message,
+                    languages: ['eng'], // langs.split(','),
+                }));
+                sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
+                if (message.date > timestamp) {
+                    const mysql = await getMysqlClient();
+                    await updateChannelTimestamp(mysql, name, message.date);
+                }
             }
         }
+    } finally {
+        if (sendImageDataCh) sendImageDataCh.close();
+        if (amqp) amqp.close();
+        if (mysql) mysql.close();
     }
 
     logger.info('fetched all channels, sleeping');
