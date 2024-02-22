@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 import { ChannelBlock, Loader, Pagination } from ".."
 import { useFetch } from "../../hooks"
@@ -12,6 +12,7 @@ export const ChannelSuggestionList = (props: {
     onSuggestionAction: (channel: string, action: 'add' | 'remove') => Promise<unknown>
 }) => {
     const [page, setPage] = useState(1)
+    const channelListRef = useRef<HTMLDivElement>(null)
     const request = useFetch<IGetChannelList>(
         () => getUrl('/getChannelSuggestionList', {
                 page: '' + page,
@@ -26,7 +27,7 @@ export const ChannelSuggestionList = (props: {
     }
 
     return (
-        <div id='channel-list'>
+        <div id='channel-list' ref={channelListRef}>
             <ul>
                 {request.data?.result.length 
                     ? request.data?.result.map(channel => (
@@ -48,6 +49,7 @@ export const ChannelSuggestionList = (props: {
                     page={page}
                     pagesAtTime={9}
                     pagesTotal={request.data.totalPages}
+                    scrollToIdAfterChangePage={channelListRef}
                     onChangePage={setPage}
                 />
                 : null}

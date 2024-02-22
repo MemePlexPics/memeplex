@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 import { ChannelBlock, Loader, Pagination } from ".."
 import { useFetch } from "../../hooks"
@@ -20,6 +20,7 @@ type TChannelListProps =
 
 export const ChannelList = (props: TChannelListProps) => {
     const [page, setPage] = useState(1)
+    const channelListRef = useRef<HTMLDivElement>(null)
     const request = useFetch<IGetChannelList>(
         () => getUrl('/getChannelList', {
                 page: '' + page,
@@ -37,7 +38,7 @@ export const ChannelList = (props: TChannelListProps) => {
     }
 
     return (
-        <div id='channel-list'>
+        <div id='channel-list' ref={channelListRef}>
             <ul>
                 {request.isLoaded && !request.data?.result.length
                     ? <h3 style={{ color: 'white' }}>Nothing found</h3>
@@ -58,6 +59,7 @@ export const ChannelList = (props: TChannelListProps) => {
                     page={page}
                     pagesAtTime={9}
                     pagesTotal={request.data.totalPages}
+                    scrollToIdAfterChangePage={channelListRef}
                     onChangePage={setPage}
                 />
                 : null}
