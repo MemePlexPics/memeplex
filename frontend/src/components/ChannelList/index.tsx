@@ -15,7 +15,7 @@ type TChannelListProps =
 | {
     isAdmin: true
     updateSwitch: boolean
-    onRemoveChannel: (channel: string) => Promise<boolean>
+    onRemoveChannel: (channel: string) => Promise<unknown>
 }
 
 export const ChannelList = (props: TChannelListProps) => {
@@ -39,10 +39,10 @@ export const ChannelList = (props: TChannelListProps) => {
     return (
         <div id='channel-list'>
             <ul>
-                {request.isLoaded 
-                    ? !request.data?.result.length
-                        ? <h3 style={{ color: 'white' }}>Nothing found</h3>
-                        : request.data.result.map(channel => (
+                {request.isLoaded && !request.data?.result.length
+                    ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                    : request.data
+                        ? request.data.result.map(channel => (
                             <li key={channel.name}>
                                 <ChannelBlock isAdmin={props.isAdmin} channel={channel.name} onClickRemove={props.isAdmin
                                     ? () => onClickRemove(channel.name)
@@ -50,7 +50,7 @@ export const ChannelList = (props: TChannelListProps) => {
                                 } />
                             </li>
                         ))
-                    : null
+                        : null
                 }
             </ul>
             {request.data?.totalPages && request.data.totalPages > 1

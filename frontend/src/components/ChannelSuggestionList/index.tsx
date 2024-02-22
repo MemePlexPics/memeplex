@@ -9,7 +9,7 @@ import { IGetChannelList } from "./types"
 
 export const ChannelSuggestionList = (props: {
     updateSwitch: boolean
-    onSuggestionAction: (channel: string, action: 'add' | 'remove') => Promise<boolean>
+    onSuggestionAction: (channel: string, action: 'add' | 'remove') => Promise<unknown>
 }) => {
     const [page, setPage] = useState(1)
     const request = useFetch<IGetChannelList>(

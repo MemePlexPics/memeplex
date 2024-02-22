@@ -25,8 +25,8 @@ export const useFetch = <GData>(
             try {
                 const cached = options?.getCached?.()
                 if (cached) {
-                    setState('success')
                     setData(cached)
+                    setState('success')
                     return
                 }
                 const reponseOptions: RequestInit = {
@@ -47,8 +47,8 @@ export const useFetch = <GData>(
                     throw new Error("Network response wasn't ok")
 
                 const result = await response.json()
-                setState('success')
                 setData(result)
+                setState('success')
             } catch (error) {
                 if (!(error instanceof Error)) return
                 if (error.name === 'AbortError') {
