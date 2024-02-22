@@ -4,7 +4,7 @@ ul {
     list-style: none;
     font-size: var(--font-size-normal);
     padding-left: 0;
-    gap: 4px;
+    gap: 10px;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {

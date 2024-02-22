@@ -18,23 +18,24 @@ export const AddChannelForm = (props: {
     return (
         <div className="add-channel-form">
             <div id="form-container">
-                <form id="channel-inputs" className="channel-inputs">
                 <label className="label" htmlFor="channel">Channel:</label>
-                <Input
-                    id="channel"
-                    className="input"
-                    type="text"
-                    required
-                    placeholder="@name or https://t.me/name"
-                    value={channelValue}
-                    onInput={setChannelValue}
-                />
-                </form>
-                <Button
-                    type="submit"
-                    value="Submit"
-                    onClick={onClickSubmit}
-                />
+                <div className="input-container">
+                    <Input
+                        id="channel"
+                        className="input"
+                        type="text"
+                        required
+                        placeholder="@name or https://t.me/name"
+                        value={channelValue}
+                        onInput={setChannelValue}
+                        onPressEnter={onClickSubmit}
+                    />
+                    <Button
+                        type="submit"
+                        value="Submit"
+                        onClick={onClickSubmit}
+                    />
+                </div>
             </div>
         </div>
     )

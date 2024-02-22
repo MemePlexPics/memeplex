@@ -4,6 +4,8 @@
     color: var(--color-white);
     border-radius: 8px;
     border: 1px solid var(--color-dark-gray);
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .channel-block.isAdmin {
@@ -11,7 +13,8 @@
 }
 
 .channel-info {
-    display: flex;
+    display: grid;
+    grid-template-columns: max(13%, 62px) auto;
     text-decoration: none;
     cursor: pointer;
 }
@@ -19,7 +22,7 @@
 .avatar {
     border-radius: 50%;
     padding: 8px;
-    height: 46px;
+    height: 64px;
 }
 
 .channel-name {

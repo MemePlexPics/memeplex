@@ -7,6 +7,10 @@
     transition: transform 0.3s;
 }
 
+.meme-link {
+    width: 100%;
+}
+
 @media (pointer: fine) and (hover: hover) {
     .result-image:hover {
         outline: 3px solid var(--color-light-gray);

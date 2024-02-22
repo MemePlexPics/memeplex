@@ -10,7 +10,7 @@ export const MemeContainer = (props: { meme: IMeme }) => {
 
     return <>
         <Loader state={isLoading} />
-        <Link to={`/memes/${props.meme.id}`}>
+        <Link to={`/memes/${props.meme.id}`} className="meme-link">
             <img
                 className="result-image"
                 src={props.meme.fileName}

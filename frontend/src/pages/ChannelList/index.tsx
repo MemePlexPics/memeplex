@@ -34,6 +34,7 @@ export const ChannelListPage = () => {
                         value={channelSuggestion}
                         onInput={setChannelSuggestion}
                         placeholder='@name or https://t.me/name'
+                        onPressEnter={onClickSubmit}
                     />
                     <Button onClick={onClickSubmit}>Suggest</Button>
                 </div>

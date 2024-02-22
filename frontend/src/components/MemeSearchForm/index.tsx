@@ -13,11 +13,6 @@ export const MemeSearchForm = (props: {
 
     const onChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)
 
-    const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key !== 'Enter') return
-        onClickSearch()
-    }
-
     return (
         <div id="search-container">
             <Input
@@ -26,7 +21,7 @@ export const MemeSearchForm = (props: {
                 placeholder="Search meme images by caption"
                 value={query}
                 onChange={onChangeQuery}
-                onKeyDown={onKeyDown}
+                onPressEnter={onClickSearch}
             />
             <Button
                 value="Search"

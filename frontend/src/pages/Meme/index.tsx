@@ -41,7 +41,9 @@ export const MemePage = () => {
                     {Object.entries(request.data?.text).map(([_lang, text]) => (
                         <p className="meme-text-lang">
                             <b>Text: </b>
-                            {text}
+                            {text.split('\n').map(line => (
+                                <span>{line}</span>
+                            ))}
                         </p>
                     ))}
                 </div>

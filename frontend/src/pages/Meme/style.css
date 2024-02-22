@@ -10,6 +10,11 @@
   width: 50%;
 }
 
+.meme-text-lang {
+  display: flex;
+  flex-direction: column;
+}
+
 .meme-description {
     color: var(--color-white);
     font-size: var(--font-size-normal);
