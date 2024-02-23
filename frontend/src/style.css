@@ -11,6 +11,8 @@
     --color-light-gray: #d3d3d3;
     --color-black-1: #151617;
     --color-black-2: #222;
+    --z-index-loader: 1000;
+    --z-index-notification: 1001;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {

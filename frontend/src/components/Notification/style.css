@@ -11,6 +11,7 @@
     background-color: var(--color-black-2);
     color: var(--color-white);
     border: 1px solid currentColor;
+    z-index: var(--z-index-notification);
 }
 
 .notification-text {
