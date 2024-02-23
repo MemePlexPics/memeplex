@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom"
-import { Logo, ButtonScrollToTop, GitHubLink, SidebarMenu, DialogConfirmation } from ".."
+import { Logo, ButtonScrollToTop, GitHubLink, SidebarMenu, DialogConfirmation, Notifications } from ".."
 
 import './style.css'
 
@@ -14,5 +14,6 @@ export const Layout = () => (
       <ButtonScrollToTop />
       <GitHubLink />
       <DialogConfirmation />
+      <Notifications />
     </>
 )

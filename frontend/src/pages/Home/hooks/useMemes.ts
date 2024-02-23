@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react"
 import { useAtom } from 'jotai'
 
-import { useInfinityScroll } from "../../../hooks"
+import { useInfinityScroll, useNotification } from "../../../hooks"
 import { EMemesOperation, pageOptionsDefault } from "./constants"
 import { delay, getUrl } from "../../../utils"
 import { useFetch } from "../../../hooks"
 import { IGetLatest } from "../../../services/types"
 import { memesAtom, pageOptionsAtom } from "../../../store/atoms"
+import { ENotificationType } from "../../../components/Notification/constants"
 
 export const useMemes = (query: string) => {
+    const setNotification = useNotification()
+    // TODO: get rid of it, add the operation to deps of useFetch()
     const [url, setUrl] = useState<URL>(getUrl('/getLatest'))
     const [memes, setMemes] = useAtom(memesAtom)
     const [operation, setOperation] = useState<EMemesOperation>(EMemesOperation.INIT)
@@ -93,8 +96,14 @@ export const useMemes = (query: string) => {
     }, 30_000)
 
     useEffect(() => {
-        if (request.state === 'success') {
+        if (request.isLoaded && request.data) {
             if (operation === EMemesOperation.INIT || operation === EMemesOperation.REINIT) {
+                if (operation === EMemesOperation.INIT && request.data.totalPages > 1) {
+                    setNotification({
+                        text: `There are ${request.data.totalPages - 1} more pages`,
+                        type: ENotificationType.OK,
+                    })
+                }
                 setMemes(() => request.data.result)
             } else if (operation === EMemesOperation.NEXT) {
                 setMemes((prev) => [...prev, ...request.data.result])
@@ -105,7 +114,7 @@ export const useMemes = (query: string) => {
             setOperation(() => EMemesOperation.IDLE)
         } else if (request.status === 503) retryRequest()
         else if (request.state === 'idle' && memes.length) setOperation(() => EMemesOperation.IDLE)
-    }, [request.isLoading])
+    }, [request.isLoaded])
 
     useEffect(() => {
         if (!EMemesOperation.INIT || query !== pageOptions.query) {

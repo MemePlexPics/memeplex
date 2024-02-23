@@ -4,8 +4,11 @@ import { useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
 import { addChannel, proceedChannelSuggestion, removeChannel } from './utils'
+import { useNotification, useTitle } from '../../hooks'
+import { ENotificationType } from '../../components/Notification/constants'
 
 export const AdminPage = () => {
+  const setNotification = useNotification()
   const [password, setPassword] = useState('')
   const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
   const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
@@ -14,11 +17,19 @@ export const AdminPage = () => {
   const handleAdminRequest = (response: Response) => {
     if (response.status === 403) {
       setPassword('');
+      setNotification({
+        text: 'Incorrect password!',
+        type: ENotificationType.INFO,
+      })
       return false
     }
     localStorage.setItem('isAdmin', '1')
     if (response.status === 500 || !response.ok) {
-        return false
+      setNotification({
+        text: 'An error occurred, please try again later',
+        type: ENotificationType.ERROR,
+      })
+      return false
     }
     return true
   }
@@ -27,6 +38,10 @@ export const AdminPage = () => {
     const response = await addChannel(channel, langs, password)
     if (!handleAdminRequest(response))
       return false
+    setNotification({
+      text: `The @${channel} has been successfully added`,
+      type: ENotificationType.OK
+    })
     setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
     setChannelsUpdateSwitch(!channelsUpdateSwitch)
     return true
@@ -36,6 +51,10 @@ export const AdminPage = () => {
     const response = await proceedChannelSuggestion(channel, password)
     if (!handleAdminRequest(response))
       return false
+    setNotification({
+      text: `The @${channel} suggestion has been successfully declined`,
+      type: ENotificationType.OK
+    })
     setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
     return true
   }
@@ -44,19 +63,40 @@ export const AdminPage = () => {
     const response = await removeChannel(channel, password)
     if (!handleAdminRequest(response))
       return false
+    setNotification({
+      text: `The @${channel} has been successfully removed`,
+      type: ENotificationType.OK
+    })
     setChannelsUpdateSwitch(!channelsUpdateSwitch)
     return true
   }
 
-  const onAddChannel = async (channel: string, langs: string[]) => {
-    if (!channel || !password)
+  const validChannelAndPasswordField = (channel: string) => {
+    if (!channel || !password) {
+      const incorrectFields = Object.entries({ channel, password }).reduce((acc, [field, value]) => {
+        if (!value) acc.push(field)
+        return acc
+      }, [] as string[])
+      setNotification({
+        text: `Incorrect fields:\n${incorrectFields.join(', ')}`,
+        type: ENotificationType.INFO,
+      })
       return false
-    return handleAddChannel(channel, langs)
+    }
+    return true
+  }
+
+  const onAddChannel = async (channel: string, langs: string[]) => {
+    const areFieldsValid = validChannelAndPasswordField(channel)
+    if (areFieldsValid)
+      return handleAddChannel(channel, langs)
+    return false
   }
 
   const onSuggestionAction = async (channel: string, action: 'add' | 'remove') => {
-    if (!channel || !password)
-        return false
+    const areFieldsValid = validChannelAndPasswordField(channel)
+    if (!areFieldsValid)
+      return false
     if (action === 'add') {
       setDialog({
         text: `Accept the suggested @${channel}?`,
@@ -73,15 +113,17 @@ export const AdminPage = () => {
   }
 
   const onRemoveChannel = async (channel: string) => {
-    if (!channel || !password)
-        return false
-    
-    setDialog({
-      text: `Remove the channel @${channel}?`,
-      isOpen: true,
-      onClickAccept: () => handleRemoveChannel(channel),
-    })
+    const areFieldsValid = validChannelAndPasswordField(channel)
+    if (areFieldsValid) {
+      setDialog({
+        text: `Remove the channel @${channel}?`,
+        isOpen: true,
+        onClickAccept: () => handleRemoveChannel(channel),
+      })
+    }
   }
+
+  useTitle(['Admin'])
 
   return (
     <div className='admin-page'>

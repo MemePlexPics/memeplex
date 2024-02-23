@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom"
 import { useAtomValue } from 'jotai'
 
 import { memesAtom } from "../../store/atoms"
-import { useFetch } from "../../hooks"
+import { useFetch, useTitle } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
 import { ChannelBlock, Loader } from "../../components"
@@ -23,6 +23,8 @@ export const MemePage = () => {
             }
         }
     )
+
+    useTitle(['Meme'])
 
     if (request.isLoading) return <Loader />
 

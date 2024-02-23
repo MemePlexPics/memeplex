@@ -22,7 +22,6 @@
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
     .result-image {
         max-width: 100%;
-        max-height: initial;
-        width: 100%;
+        max-height: 100%;
     }
 }

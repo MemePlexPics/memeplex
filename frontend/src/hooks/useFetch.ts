@@ -14,6 +14,9 @@ export const useFetch = <GData>(
     const [data, setData] = useState<GData>()
     const [error, setError] = useState<Error>()
     const [status, setStatus] = useState<number>()
+    const isLoaded = state === 'success'
+    const isLoading = state === 'loading'
+    const isError = state === 'error'
 
     useEffect(() => {
         const abortController = new AbortController()
@@ -69,12 +72,13 @@ export const useFetch = <GData>(
 
     // @ts-ignore
     return {
-      data: state === 'success' && data ? data : null,
-      error: state === 'error' && error ? error : null,
+      data: isLoaded && data ? data : null,
+      error: isError && error ? error : null,
+      // TODO: this doesn't make enough sense
       status: status && ['success', 'error'].includes(state) ? status : null,
       state,
-      isLoaded: state === 'success',
-      isLoading: state === 'loading',
-      isError: state === 'error',
+      isLoaded,
+      isLoading,
+      isError,
     }
 }
