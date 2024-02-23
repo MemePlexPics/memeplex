@@ -18,7 +18,7 @@ export const tgParser = async (logger) => {
     let amqp, sendImageDataCh, mysql;
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
-        mysql = await getMysqlClient();
+        mysql = await getMysqlClient({ connectTimeout: 30_000 });
         sendImageDataCh = await amqp.createChannel();
 
         const channels = await selectAvailableChannels(mysql);
@@ -32,10 +32,7 @@ export const tgParser = async (logger) => {
                     languages: ['eng'], // langs.split(','),
                 }));
                 sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
-                if (message.date > timestamp) {
-                    const mysql = await getMysqlClient();
-                    await updateChannelTimestamp(mysql, name, message.date);
-                }
+                if (message.date > timestamp) await updateChannelTimestamp(mysql, name, message.date);
             }
         }
     } finally {

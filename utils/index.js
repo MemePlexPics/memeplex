@@ -18,13 +18,14 @@ export { downloadFile } from './downloadFile.js';
 // TODO: split into files?
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const getMysqlClient = async () => {
+export const getMysqlClient = async ({ connectTimeout }) => {
     const client = await mysql.createConnection({
         host: process.env.DB_HOST,
         port: process.env.DB_PORT,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
+        connectTimeout,
     });
 
     return client;
