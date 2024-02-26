@@ -30,19 +30,21 @@ export const ChannelSuggestionList = (props: {
             isLoading={request.isLoading}
             onChangePage={setPage}
         >
-            {request.data?.result.length 
-                ? request.data?.result.map(channel => (
-                    <li key={channel.name}>
-                        <ChannelBlock
-                            isAdmin
-                            isBrowserPreview
-                            username={channel.name}
-                            onClickCheck={(name) => onClickAction(name, 'add')}
-                            onClickRemove={(name) => onClickAction(name, 'remove')}
-                        />
-                    </li>
-                ))
-                : <h3 style={{ color: 'white' }}>Nothing found</h3>
+            {request.isLoaded && !request.data?.result.length
+                ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                : request.data
+                    ? request.data.result.map(channel => (
+                        <li key={channel.name}>
+                            <ChannelBlock
+                                isAdmin
+                                isBrowserPreview
+                                username={channel.name}
+                                onClickCheck={(name) => onClickAction(name, 'add')}
+                                onClickRemove={(name) => onClickAction(name, 'remove')}
+                            />
+                        </li>
+                    ))
+                    : null
             }
         </PaginatedList>
     )
