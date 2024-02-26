@@ -1,0 +1,13 @@
+.input {
+    max-width: 800px;
+    width: 70vw;
+    font-size: var(--font-size-big);
+    background-color: var(--color-black-1);
+    border-radius: 8px;
+    color: var(--color-white);
+    border-color: var(--color-dark-gray);
+}
+
+.checkbox {
+    width: 20px;
+}

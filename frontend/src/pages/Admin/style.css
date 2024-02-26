@@ -1,0 +1,26 @@
+.admin-page {
+  padding-bottom: 20px;
+}
+
+.channel-inputs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+#form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+#languages {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+h2 {
+  color: var(--color-gray);
+  font-size: var(--font-size-big);
+}

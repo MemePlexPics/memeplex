@@ -5,13 +5,15 @@ services:
     restart: unless-stopped
     environment:
       discovery.type: single-node
-      xpack.security.enabled: false
+      xpack.security.enabled: true
+      path.repo: ./backup
       # cluster.routing.allocation.disk.threshold_enabled: false
-    mem_limit: 1GB
+    mem_limit: 10GB
     ports:
       - 9200:9200
     volumes:
-      - "./data/elastic:/usr/share/elasticsearch/data"
+      - ./data/elastic:/usr/share/elasticsearch/data
+      - ./backup/elastic/:/usr/share/elasticsearch/backup/elastic/
 
   rabbitmq:
     image: rabbitmq:3
@@ -34,7 +36,7 @@ services:
     volumes:
       - ./configs/loki.yaml:/etc/loki/local-config.yaml
       - ./data/loki/chunks:/loki/chunks
-  
+
   promtail:
     image: grafana/promtail
     container_name: promtail
@@ -57,6 +59,9 @@ services:
     restart: unless-stopped
     ports:
       - 3001:3000
+    environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
     volumes:
       - ./data/grafana:/var/lib/grafana
       # - ./data/grafana/conf:/etc/grafana

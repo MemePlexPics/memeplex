@@ -1,0 +1,51 @@
+#meme {
+  padding-top: 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  height: 100%;
+}
+
+.meme-image {
+  width: 50%;
+}
+
+.meme-text-lang {
+  display: flex;
+  flex-direction: column;
+}
+
+.meme-description {
+    color: var(--color-white);
+    font-size: var(--font-size-normal);
+    width: 50%;
+
+    .link-source {
+      color: inherit;
+    }
+}
+
+.unexisted-meme,
+.nothing-found {
+    color: var(--color-white);
+    font-size: var(--font-size-big);
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+  #meme {
+    flex-direction: column-reverse;
+  }
+
+  .meme-image,
+  .meme-description {
+    width: initial;
+  }
+
+  .meme-description {
+    font-size: var(--font-size-normal);
+  }
+}
+
+.source-block {
+  max-width: 360px;
+}

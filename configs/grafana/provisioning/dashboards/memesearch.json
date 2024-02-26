@@ -58,7 +58,7 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 1,
+            "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -95,6 +95,110 @@
         "h": 8,
         "w": 12,
         "x": 0,
+        "y": 1
+      },
+      "id": 24,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "timestamp",
+              "id": "2",
+              "settings": {
+                "interval": "1h"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "datasource": "ElasticSearch",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "",
+          "refId": "A",
+          "timeField": "timestamp"
+        }
+      ],
+      "title": "Hourly Meme Inflow",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "ElasticSearch",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
         "y": 1
       },
       "id": 14,
@@ -177,6 +281,87 @@
       "datasource": "MySQL",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 9,
+        "x": 0,
+        "y": 9
+      },
+      "id": 16,
+      "options": {
+        "minVizHeight": 200,
+        "minVizWidth": 200,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto"
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN availability = 1 THEN 1 END) AS available,\n  COUNT(CASE WHEN ocr_key IS NOT NULL THEN 1 END) as with_key,\n  COUNT(CASE WHEN ocr_key IS NOT NULL AND availability = 1 THEN 1 END) as available_with_key\nFROM\n  MadelineProto.proxies;",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "proxies"
+        }
+      ],
+      "title": "Proxies",
+      "type": "gauge"
+    },
+    {
+      "datasource": "MySQL",
+      "fieldConfig": {
+        "defaults": {
           "custom": {
             "align": "auto",
             "cellOptions": {
@@ -230,8 +415,8 @@
       "gridPos": {
         "h": 4,
         "w": 3,
-        "x": 12,
-        "y": 1
+        "x": 9,
+        "y": 9
       },
       "id": 15,
       "options": {
@@ -248,7 +433,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -289,7 +474,7 @@
       "type": "table"
     },
     {
-      "datasource": "MySQL",
+      "datasource": "ElasticSearch",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -311,14 +496,15 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 6,
+        "w": 4,
         "x": 12,
-        "y": 5
+        "y": 9
       },
-      "id": 16,
+      "id": 25,
       "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -327,47 +513,38 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "sizing": "auto"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
-      "pluginVersion": "10.3.1",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
-          "dataset": "MadelineProto",
-          "datasource": "MySQL",
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN availability = 1 THEN 1 END) AS available,\n  COUNT(CASE WHEN ocr_key IS NOT NULL THEN 1 END) as with_key,\n  COUNT(CASE WHEN ocr_key IS NOT NULL AND availability = 1 THEN 1 END) as available_with_key\nFROM\n  MadelineProto.proxies;",
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "date",
+              "id": "2",
+              "settings": {
+                "interval": "1y"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "datasource": "ElasticSearch",
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "",
           "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [
-                  {
-                    "name": "*",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "proxies"
+          "timeField": "timestamp"
         }
       ],
-      "title": "Proxies",
-      "type": "gauge"
+      "title": "Meme Count",
+      "type": "stat"
     },
     {
       "collapsed": true,
@@ -375,7 +552,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 13
       },
       "id": 7,
       "panels": [
@@ -476,7 +653,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 2
           },
           "id": 6,
           "options": {
@@ -492,12 +669,12 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
               "editorMode": "builder",
-              "expr": "{job=\"services\"} |= ``",
+              "expr": "{job=\"services\"}",
               "queryType": "range",
               "refId": "A"
             }
@@ -647,7 +824,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 11
           },
           "id": 12,
           "options": {
@@ -663,7 +840,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -819,7 +996,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 11
           },
           "id": 11,
           "options": {
@@ -835,7 +1012,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -983,7 +1160,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 19
           },
           "id": 5,
           "options": {
@@ -999,7 +1176,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -1147,7 +1324,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 19
           },
           "id": 13,
           "options": {
@@ -1163,7 +1340,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -1292,7 +1469,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 27
           },
           "id": 18,
           "options": {
@@ -1308,7 +1485,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -1457,7 +1634,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 27
           },
           "id": 23,
           "options": {
@@ -1473,7 +1650,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -1537,16 +1714,14 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": [
               {
@@ -1603,7 +1778,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 35
           },
           "id": 17,
           "options": {
@@ -1619,7 +1794,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.1",
+          "pluginVersion": "10.2.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -1693,7 +1868,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 14
       },
       "id": 8,
       "panels": [
@@ -1792,7 +1967,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 56
           },
           "id": 1,
           "options": {
@@ -1882,7 +2057,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 56
           },
           "id": 2,
           "options": {
@@ -1956,7 +2131,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 64
           },
           "id": 3,
           "options": {
@@ -2030,7 +2205,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 64
           },
           "id": 4,
           "options": {
@@ -2104,7 +2279,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 72
           },
           "id": 19,
           "options": {
@@ -2182,7 +2357,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 72
           },
           "id": 21,
           "options": {
@@ -2347,7 +2522,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 43
+            "y": 80
           },
           "id": 20,
           "options": {
@@ -2373,7 +2548,7 @@
               "refId": "A"
             }
           ],
-          "title": "Panel Title",
+          "title": "Grafana",
           "transformations": [
             {
               "id": "organize",
@@ -2425,7 +2600,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 43
+            "y": 80
           },
           "id": 22,
           "options": {
@@ -2513,13 +2688,13 @@
     "list": []
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

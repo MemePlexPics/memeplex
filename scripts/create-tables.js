@@ -1,4 +1,4 @@
-import { getMysqlClient } from '../src/utils.js';
+import { getMysqlClient } from '../utils/index.js';
 
 const createTables = async () => {
     let mysql;
@@ -37,6 +37,14 @@ const createTables = async () => {
             )
         `);
         console.log('💬 channels table created');
+
+        await mysql.query(`
+            CREATE OR REPLACE TABLE channel_suggestions (
+                name VARCHAR(255) PRIMARY KEY,
+                processed BOOLEAN NULL
+            )
+        `);
+        console.log('💬 channel_suggestions table created');
 
         await mysql.query(`
             CREATE OR REPLACE TABLE phashes (

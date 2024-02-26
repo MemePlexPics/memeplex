@@ -29,6 +29,7 @@
 - Run `docker compose up -d` to start docker services
 - Run `node ./scripts/create-index.js` to create an ElasticSearch index
 - Run `node ./scripts/create-tables.js` to create MySQL tables
+- Run `npm run build` to build static frontend files
 
 ## Startup
 
@@ -36,3 +37,29 @@
 - Run `node ./services/memesearch.js` - Telegram parser
 - Run `node ./services/servers/web.js` - web server
 - Run `node ./services/servers/tg-bot.js` - Telegram bot server
+
+## Backup
+
+### Files:
+
+```bash
+rsync --archive -progress --update user@host:remote_path local_path
+```
+
+### ElasticSearch:
+
+```bash
+# Run to init a snapshot repository for ElasticSearch
+bash ./scripts/backup/init-elastic.sh
+
+# Run to start taking snapshot
+bash ./scripts/backup/elastic.sh
+
+# You should find the snapshot you took in the ./backup/elastic directory
+```
+
+### Mysql:
+
+```bash
+ssh user@host "bash ./path_to_project/scripts/backup/mysql.sh" | gzip > memeplex_$(date +%Y%m%d-%H%M%S).sql.gz
+```

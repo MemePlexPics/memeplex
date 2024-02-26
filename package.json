@@ -1,18 +1,20 @@
 {
-  "name": "memesearch",
+  "name": "memeplex",
+  "private": true,
   "type": "module",
   "version": "1.0.0",
-  "description": "",
-  "main": "get-images.js",
+  "description": "MemePlex is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма",
+  "main": "services/memesearch.js",
   "scripts": {
-    "eslint": "eslint src/ services/",
-    "init": "npm install && mkdir -p data/{media,elastic,grafana,loki,mysql,promtail,rabbitmq} && mkdir logs && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
+    "eslint": "eslint services/ scripts/ utils/ constants/",
+    "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
+    "build": "npm --prefix ./frontend run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "klntsky",
   "license": "ISC",
   "dependencies": {
-    "@elastic/elasticsearch": "^8.11.0",
+    "@elastic/elasticsearch": "^8.11.3",
     "amqplib": "^0.10.3",
     "axios": "^1.6.3",
     "dotenv": "^16.3.1",

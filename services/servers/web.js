@@ -1,29 +1,46 @@
 import express from 'express';
 import process from 'process';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 import 'dotenv/config';
 import {
     connectToElastic,
     logError,
     getMysqlClient,
-} from '../../src/utils.js';
+    checkFileExists,
+} from '../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
     OCR_LANGUAGES,
     TG_API_PARSE_FROM_DATE,
-}  from '../../src/const.js';
+    CHANNEL_LIST_PAGE_SIZE,
+}  from '../../constants/index.js';
 import {
     insertChannel,
     selectChannel,
     updateChannelAvailability,
-} from '../../src/mysql-queries.js';
-import { searchMemes, getLatestMemes } from './utils/index.js';
+    getChannels,
+    getChannelsCount,
+    insertChannelSuggestion,
+    removeChannel,
+    proceedChannelSuggestion,
+    getChannelSuggestions,
+    getChannelSuggestionsCount,
+} from '../../utils/mysql-queries/index.js';
+import {
+    searchMemes,
+    getLatestMemes,
+    getMeme,
+    downloadTelegramChannelAvatar,
+} from './utils/index.js';
 import winston from 'winston';
 
 const app = express();
 
-app.use(express.static('static'));
-app.use('/data', express.static('data'));
+app.use(express.static('frontend/dist'));
+app.use('/data/media', express.static('data/media'));
+app.use('/data/avatars', express.static('data/avatars'));
 app.use(express.json());
 
 const { client, reconnect } = await connectToElastic();
@@ -74,6 +91,37 @@ app.get('/getLatest', async (req, res) => {
     }
 });
 
+app.get('/getChannelList', async (req, res) => {
+    try {
+        const { page, onlyAvailable } = req.query;
+        const mysql = await getMysqlClient();
+        const channels = await getChannels(mysql, page, onlyAvailable, CHANNEL_LIST_PAGE_SIZE);
+        const count = await getChannelsCount(mysql, onlyAvailable);
+        return res.send({
+            result: channels,
+            totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
+        });
+    } catch (e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/getMeme', async (req, res) => {
+    const { id } = req.query;
+    try {
+        const meme = await getMeme(client, id);
+        return res.send(meme);
+    } catch (e) {
+        if (e.meta.statusCode === 404) {
+            await handleMethodError({ message: `Meme with id "${id}" not found` });
+            return res.status(204).send();
+        }
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
 app.post('/addChannel', async (req, res) => {
     const { channel, langs, password } = req.body;
     if (!channel || !password)
@@ -97,12 +145,105 @@ app.post('/addChannel', async (req, res) => {
         } else {
             logger.info(`${req.ip} added @${channel}`);
             await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
+            await proceedChannelSuggestion(mysql, channel);
         }
         return res.send();
     } catch(e) {
         await handleMethodError(e);
-        return res.status(500).send(e);
+        return res.status(500).send();
     }
+});
+
+app.post('/removeChannel', async (req, res) => {
+    const { channel, password } = req.body;
+    if (!channel || !password)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        await removeChannel(mysql, channel);
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.post('/suggestChannel', async (req, res) => {
+    const { channel } = req.body;
+    if (!channel)
+        return res.status(500).send();
+    try {
+        const mysql = await getMysqlClient();
+        const response = await insertChannelSuggestion(mysql, channel);
+        if (response) logger.info(`${req.ip} added @${channel} to suggested`);
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.post('/proceedChannelSuggestion', async (req, res) => {
+    const { channel, password } = req.body;
+    if (!channel || !password)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        await proceedChannelSuggestion(mysql, channel);
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/getChannelSuggestionList', async (req, res) => {
+    try {
+        const { page } = req.query;
+        const mysql = await getMysqlClient();
+        const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE);
+        const count = await getChannelSuggestionsCount(mysql);
+        return res.send({
+            result: channels,
+            totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
+        });
+    } catch (e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/data/avatars/:channelName', async (req, res) => {
+    try {
+        const path = req.originalUrl;
+        const isExist = await checkFileExists(path);
+        if (!isExist) {
+            const [channelName] = req.params.channelName.split('.jpg');
+            const destination = await downloadTelegramChannelAvatar(channelName);
+            if (destination === false) {
+                logger.error(`The avatar for @${channelName} wasn't downloaded`);
+                return res.status(204).send();
+            }
+            if (destination === null)
+                return res.status(204).send();
+        }
+        return res.sendFile(path, { root: './' });
+    } catch (e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/*', async (req, res) => {
+    res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'frontend', 'dist', 'index.html'));
 });
 
 const start = async () => {

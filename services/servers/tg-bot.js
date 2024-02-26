@@ -3,16 +3,21 @@ import 'dotenv/config';
 import {
     connectToElastic,
     logError,
-} from '../../src/utils.js';
+    getMysqlClient,
+    getTgChannelName,
+} from '../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
     TG_BOT_PAGE_SIZE,
-}  from '../../src/const.js';
+}  from '../../constants/index.js';
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
 import { Telegraf, Markup, session } from 'telegraf';
 import { message } from 'telegraf/filters';
 import rateLimit from 'telegraf-ratelimit';
+import {
+    insertChannelSuggestion,
+} from '../../utils/mysql-queries/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
@@ -54,7 +59,8 @@ const resetSearchSession = (ctx) => {
 };
 
 const getBotAnswerString = (meme) => {
-    const downloadLink = `[(download)](https://${process.env.TELEGRAM_WEBHOOK_DOMAIN}/${meme.fileName})`;
+    const ourImgLink = new URL(`https://${process.env.TELEGRAM_WEBHOOK_DOMAIN}/${meme.fileName}`).href;
+    const downloadLink = `[(download)](${ourImgLink})`;
     const tgLink = `https://t.me/${meme.channel}/${meme.message}`;
     return `${downloadLink} [${tgLink}](${tgLink})`;
 };
@@ -122,6 +128,23 @@ const onBotCommandGetLatest = async (ctx, update = true) => {
     }
 };
 
+const onBotCommandSuggestChannel = async (ctx) => {
+    const { payload } = ctx;
+    const channelName = getTgChannelName(payload.trim());
+    if (!channelName)
+        return ctx.reply(`You must specify the channel name:
+/suggest_channel name`);
+    try {
+        const mysql = await getMysqlClient();
+        const response = await insertChannelSuggestion(mysql, channelName);
+        if (response) logUserAction(ctx, `added @${channelName} to suggested`);
+        return ctx.reply('Thank you for the suggestion!');
+    } catch(e) {
+        logError(logger, e);
+        await ctx.reply('An error occurred, please try again later');
+    }
+};
+
 bot.use(session({
     defaultSession: () => ({
         search: {
@@ -153,6 +176,8 @@ Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
 });
 
 bot.command('get_latest', onBotCommandGetLatest);
+
+bot.command('suggest_channel', onBotCommandSuggestChannel);
 
 bot.on(message('text'), async (ctx) => {
     resetSearchSession(ctx);

@@ -1,0 +1,40 @@
+.sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 20px;
+    height: calc(100vh - 40px);
+}
+
+.sidebar.isActive {
+    background-color: var(--color-black-1);
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    font-size: var(--font-size-normal);
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 100px;
+    width: 290px;
+}
+
+.sidebar a {
+    color: var(--color-white);
+    text-decoration: none;
+}
+
+.sidebar a.active {
+    color: var(--color-dark-gray);
+}
+
+.hamburger {
+    height: var(--hamburger-icon-height);
+    width: var(--hamburger-icon-width);
+    cursor: pointer;
+}

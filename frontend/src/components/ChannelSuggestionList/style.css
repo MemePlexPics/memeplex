@@ -1,0 +1,16 @@
+ul {
+    display: grid;
+    grid-template-columns: repeat(3, 33%);
+    list-style: none;
+    font-size: var(--font-size-normal);
+    padding-left: 0;
+    gap: 10px;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    ul {
+        grid-template-columns: repeat(2, 50%);
+        list-style: none;
+        font-size: var(--font-size-normal);
+    }
+}

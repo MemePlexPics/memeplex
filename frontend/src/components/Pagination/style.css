@@ -1,0 +1,21 @@
+
+.pagination {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 8px;
+  height: 40px;
+  justify-content: center;
+}
+
+.page.number {
+  min-width: 40px;
+}
+
+.page.neigbour {
+  /* width: 64px; */
+
+}
+
+.page.neigbour[disabled] {
+  background-color: #444;
+}

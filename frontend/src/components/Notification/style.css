@@ -1,0 +1,33 @@
+.notification {
+    width: 420px;
+    min-height: 100px;
+    font-size: var(--font-size-normal);
+    border-radius: 8px;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: 6% auto;
+    padding: 10px;
+    align-items: center;
+    background-color: var(--color-black-2);
+    color: var(--color-white);
+    border: 1px solid currentColor;
+    z-index: var(--z-index-notification);
+}
+
+.notification-text {
+    line-break: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.OK {
+    border-color: green;
+}
+
+.INFO {
+    border-color: lightskyblue;
+}
+
+.ERROR {
+    border-color: red;
+}

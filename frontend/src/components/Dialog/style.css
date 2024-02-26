@@ -1,0 +1,18 @@
+.dialog {
+    background-color: var(--color-light-gray);
+}
+
+.dialog::backdrop {
+    background: #0000007d;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: end;
+    gap: 4px;
+}
+
+.dialog-text {
+    color: var(--color-black-2);
+    font-size: var(--font-size-normal);
+}

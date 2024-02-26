@@ -1,0 +1,15 @@
+#scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    color: var(--color-gray);
+    cursor: pointer;
+    height: var(--scroll-to-top-size);
+    width: var(--scroll-to-top-size);
+    justify-content: center;
+    align-items: center;
+}
+  
+#scroll-to-top:hover {
+    color: var(--color-light-gray);
+}

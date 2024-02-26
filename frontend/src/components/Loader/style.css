@@ -1,0 +1,28 @@
+.loader-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.loader {
+    --position-offset: calc(50% - (var(--loader-size) / 2));
+    border: 8px solid var(--color-black-2);
+    border-top: 8px solid var(--color-light-gray);
+    border-radius: 50%;
+    width: var(--loader-size);
+    height: var(--loader-size);
+    animation: spin 1s linear infinite;
+    position: absolute;
+    left: var(--position-offset);
+    top: var(--position-offset);
+    z-index: var(--z-index-loader);
+}
+
+.isOverPage .loader {
+    position: fixed;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
