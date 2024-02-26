@@ -1,4 +1,4 @@
-export interface IGetChannelListEntity {
+export interface IChannel {
     name: string,
     availability: boolean
 }

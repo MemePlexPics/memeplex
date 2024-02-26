@@ -3,3 +3,31 @@
     color: var(--color-white);
     font-size: var(--font-size-big);
 }
+
+.featured-channels-header {
+    margin: 0px;
+}
+
+.featured-channels {
+    padding-bottom: 30px;
+}
+
+.featured-channels-head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+.add-your-channel-link {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    text-decoration: none;
+    color: var(--color-white);
+    font-size: var(--font-size-normal);
+    border: 1px solid var(--color-dark-gray);
+    border-radius: 8px;
+    height: 40px;
+    padding: 0 8px;
+}

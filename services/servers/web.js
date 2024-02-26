@@ -27,6 +27,10 @@ import {
     proceedChannelSuggestion,
     getChannelSuggestions,
     getChannelSuggestionsCount,
+    replaceFeaturedChannel,
+    removeFeaturedChannel,
+    getFeaturedChannelList,
+    getFeaturedChannel,
 } from '../../utils/mysql-queries/index.js';
 import {
     searchMemes,
@@ -167,6 +171,78 @@ app.post('/removeChannel', async (req, res) => {
         await removeChannel(mysql, channel);
         return res.send();
     } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.post('/addFeaturedChannel', async (req, res) => {
+    const { username, title, comment, timestamp, password } = req.body;
+    if (!username || !password || !title)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${username}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        const response = await replaceFeaturedChannel(mysql, username, title, comment, timestamp);
+        if (!response)
+            throw new Error(`Featured channel @${username} wasn't added`);
+        logger.info(`${req.ip} added featured channel @${username}`);
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.post('/removeFeaturedChannel', async (req, res) => {
+    const { username, password } = req.body;
+    // TODO: Middleware checkParams(channel, password)
+    if (!username || !password)
+        return res.status(500).send();
+    // TODO: Middleware checkPassword(password)
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${username}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        await removeFeaturedChannel(mysql, username);
+        return res.send();
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.post('/getFeaturedChannel', async (req, res) => {
+    const { username, password } = req.body;
+    if (!username || !password)
+        return res.status(500).send();
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on /admin with this channel: ${username}`);
+        return res.status(403).send();
+    }
+    try {
+        const mysql = await getMysqlClient();
+        const response = await getFeaturedChannel(mysql, username);
+        return res.send(response);
+    } catch(e) {
+        await handleMethodError(e);
+        return res.status(500).send();
+    }
+});
+
+app.get('/getFeaturedChannelList', async (req, res) => {
+    try {
+        const mysql = await getMysqlClient();
+        const channels = await getFeaturedChannelList(mysql);
+        return res.send({
+            result: channels,
+        });
+    } catch (e) {
         await handleMethodError(e);
         return res.status(500).send();
     }

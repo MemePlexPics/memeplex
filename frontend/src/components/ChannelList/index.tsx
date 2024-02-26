@@ -1,11 +1,9 @@
-import { useRef, useState } from "react"
+import { useState } from "react"
 
-import { ChannelBlock, Loader, Pagination } from ".."
+import { ChannelBlock, PaginatedList } from ".."
 import { useFetch } from "../../hooks"
 import { getUrl } from "../../utils"
-
-import './style.css'
-import { IGetChannelList } from "./types"
+import { TGetChannelList } from "../../types"
 
 type TChannelListProps =
 | {
@@ -20,8 +18,7 @@ type TChannelListProps =
 
 export const ChannelList = (props: TChannelListProps) => {
     const [page, setPage] = useState(1)
-    const channelListRef = useRef<HTMLDivElement>(null)
-    const request = useFetch<IGetChannelList>(
+    const request = useFetch<TGetChannelList>(
         () => getUrl('/getChannelList', {
                 page: '' + page,
                 onlyAvailable: `${props.isAdmin !== true}`,
@@ -38,32 +35,29 @@ export const ChannelList = (props: TChannelListProps) => {
     }
 
     return (
-        <div id='channel-list' ref={channelListRef}>
-            <ul>
-                {request.isLoaded && !request.data?.result.length
-                    ? <h3 style={{ color: 'white' }}>Nothing found</h3>
-                    : request.data
-                        ? request.data.result.map(channel => (
-                            <li key={channel.name}>
-                                <ChannelBlock isAdmin={props.isAdmin} channel={channel.name} onClickRemove={props.isAdmin
+        <PaginatedList
+            page={page}
+            totalPages={request.data?.totalPages}
+            isLoading={request.isLoading}
+            onChangePage={setPage}
+        >
+            {request.isLoaded && !request.data?.result.length
+                ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                : request.data
+                    ? request.data.result.map(channel => (
+                        <li key={channel.name}>
+                            <ChannelBlock
+                                isAdmin={props.isAdmin}
+                                username={channel.name}
+                                onClickRemove={props.isAdmin
                                     ? () => onClickRemove(channel.name)
                                     : undefined
-                                } />
-                            </li>
-                        ))
-                        : null
-                }
-            </ul>
-            {request.data?.totalPages && request.data.totalPages > 1
-                ? <Pagination
-                    page={page}
-                    pagesAtTime={9}
-                    pagesTotal={request.data.totalPages}
-                    scrollToIdAfterChangePage={channelListRef}
-                    onChangePage={setPage}
-                />
-                : null}
-            <Loader state={request.isLoading} />
-        </div>
+                                }
+                            />
+                        </li>
+                    ))
+                    : null
+            }
+        </PaginatedList>
     )
 }
