@@ -21,7 +21,7 @@ export const HomePage = () => {
                     <div className="featured-channels-head">
                         <h2 className="featured-channels-header">Featured channels</h2>
                         <Link
-                            to='https://t.me/memeplex_pics/19'
+                            to='https://t.me/memeplex_pics/20'
                             target='_blank'
                             className="add-your-channel-link"
                         >
