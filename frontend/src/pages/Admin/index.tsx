@@ -1,17 +1,19 @@
-import { AddChannelForm, ChannelList, ChannelSuggestionList, Input } from '../../components'
+import { AddChannelForm, AddFeaturedChannelForm, ChannelList, ChannelSuggestionList, FeaturedChannelList, Input } from '../../components'
 import './style.css'
 import { useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
-import { addChannel, proceedChannelSuggestion, removeChannel } from './utils'
+import { addChannel, addFeaturedChannel, getFeaturedChannel, proceedChannelSuggestion, removeChannel, removeFeaturedChannel } from './utils'
 import { useNotification, useTitle } from '../../hooks'
 import { ENotificationType } from '../../components/Notification/constants'
+import { IFeaturedChannel } from '../../types'
 
 export const AdminPage = () => {
   const setNotification = useNotification()
   const [password, setPassword] = useState('')
   const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
   const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
+  const [featuredUpdateSwitch, setFeaturedUpdateSwitch] = useState(true)
   const setDialog = useSetAtom(dialogConfirmationAtom)
 
   const handleAdminRequest = (response: Response) => {
@@ -44,6 +46,30 @@ export const AdminPage = () => {
     })
     setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
     setChannelsUpdateSwitch(!channelsUpdateSwitch)
+    return true
+  }
+
+  const handleRemoveFeaturedChannel = async (channel: IFeaturedChannel) => {
+    const response = await removeFeaturedChannel(channel.username, password)
+    if (!handleAdminRequest(response))
+      return false
+    setNotification({
+      text: `The «${channel.title}» has been successfully unfeatured`,
+      type: ENotificationType.OK
+    })
+    setFeaturedUpdateSwitch(!featuredUpdateSwitch)
+    return true
+  }
+
+  const handleAddFeaturedChannel = async (channel: IFeaturedChannel) => {
+    const response = await addFeaturedChannel(channel, password)
+    if (!handleAdminRequest(response))
+      return false
+    setNotification({
+      text: `The «${channel.title}» has been successfully featured`,
+      type: ENotificationType.OK
+    })
+    setFeaturedUpdateSwitch(!featuredUpdateSwitch)
     return true
   }
 
@@ -93,6 +119,37 @@ export const AdminPage = () => {
     return false
   }
 
+  const onAddFeaturedChannel = async (channel: IFeaturedChannel) => {
+    const areFieldsValid = validChannelAndPasswordField(channel.username)
+    if (areFieldsValid)
+      return handleAddFeaturedChannel(channel)
+    return false
+  }
+
+  const onFeaturedAction = async (channel: IFeaturedChannel, action: 'view' | 'remove') => {
+    const areFieldsValid = validChannelAndPasswordField(channel.username)
+    if (!areFieldsValid)
+      return false
+    if (action === 'remove') {
+      setDialog({
+        text: `Remove the featured «${channel.title}» (@${channel.username})?`,
+        isOpen: true,
+        onClickAccept: () => handleRemoveFeaturedChannel(channel),
+      })
+      return true
+    }
+    if (action === 'view') {
+      const response = await getFeaturedChannel(channel.username, password)
+      const date = new Date(response.timestamp * 1000).toLocaleString()
+      setDialog({
+        text: `Title: «${response.title}»\nUsername: @${response.username}\nFrom: ${date}\nComment: ${response.comment || '—'}`,
+        isOpen: true,
+        rejectText: false,
+      })
+      return true
+    }
+  }
+
   const onSuggestionAction = async (channel: string, action: 'add' | 'remove') => {
     const areFieldsValid = validChannelAndPasswordField(channel)
     if (!areFieldsValid)
@@ -138,8 +195,12 @@ export const AdminPage = () => {
       />
       <h2>Add channel</h2>
       <AddChannelForm onAddChannel={onAddChannel} />
+      <h2>Add featured channel</h2>
+      <AddFeaturedChannelForm onAddChannel={onAddFeaturedChannel} />
+      <h2>Featured channels</h2>
+      <FeaturedChannelList isAdmin updateSwitch={featuredUpdateSwitch} onAction={onFeaturedAction} />
       <h2>Suggestions</h2>
-      <ChannelSuggestionList updateSwitch={suggestionsUpdateSwitch} onSuggestionAction={onSuggestionAction} />
+      <ChannelSuggestionList updateSwitch={suggestionsUpdateSwitch} onAction={onSuggestionAction} />
       <h2>Channels</h2>
       <ChannelList isAdmin updateSwitch={channelsUpdateSwitch} onRemoveChannel={onRemoveChannel} />
     </div>

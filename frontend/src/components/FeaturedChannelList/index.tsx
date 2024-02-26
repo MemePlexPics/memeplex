@@ -3,15 +3,16 @@ import { useState } from "react"
 import { ChannelBlock, PaginatedList } from ".."
 import { useFetch } from "../../hooks"
 import { getUrl } from "../../utils"
-import { TGetChannelList } from "../../types"
+import { IFeaturedChannel, TGetFeaturedChannelList } from "../../types"
 
-export const ChannelSuggestionList = (props: {
-    updateSwitch: boolean
-    onAction: (channel: string, action: 'add' | 'remove') => Promise<unknown>
+export const FeaturedChannelList = (props: {
+    isAdmin?: boolean
+    updateSwitch?: boolean
+    onAction?: (channel: IFeaturedChannel, action: 'remove' | 'view') => Promise<unknown>
 }) => {
     const [page, setPage] = useState(1)
-    const request = useFetch<TGetChannelList>(
-        () => getUrl('/getChannelSuggestionList', {
+    const request = useFetch<TGetFeaturedChannelList>(
+        () => getUrl('/getFeaturedChannelList', {
                 page: '' + page,
             }
         ), {
@@ -19,8 +20,8 @@ export const ChannelSuggestionList = (props: {
         }
     )
 
-    const onClickAction = async (channel: string, action: 'add' | 'remove') => {
-        await props.onAction(channel, action)
+    const onClickAction = async (channel: IFeaturedChannel, action: 'remove' | 'view') => {
+        await props.onAction?.(channel, action)
     }
 
     return (
@@ -32,13 +33,14 @@ export const ChannelSuggestionList = (props: {
         >
             {request.data?.result.length 
                 ? request.data?.result.map(channel => (
-                    <li key={channel.name}>
+                    <li key={channel.username}>
                         <ChannelBlock
-                            isAdmin
+                            isAdmin={props.isAdmin}
                             isBrowserPreview
-                            username={channel.name}
-                            onClickCheck={(name) => onClickAction(name, 'add')}
-                            onClickRemove={(name) => onClickAction(name, 'remove')}
+                            username={channel.username}
+                            title={channel.title}
+                            onClickView={() => onClickAction(channel, 'view')}
+                            onClickRemove={() => onClickAction(channel, 'remove')}
                         />
                     </li>
                 ))

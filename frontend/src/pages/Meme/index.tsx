@@ -53,7 +53,7 @@ export const MemePage = () => {
                     <p>
                         <b>Source: </b>
                         <ChannelBlock
-                            channel={request.data.channel}
+                            username={request.data.channel}
                             id={request.data.message}
                             className='source-block'
                         />

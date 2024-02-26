@@ -10,7 +10,7 @@ export interface PaginationProps {
   pagesAtTime: number
   className?: string
   scrollToIdAfterChangePage?: React.RefObject<HTMLDivElement>
-  onChangePage: (page: number) => void
+  onChangePage?: (page: number) => unknown
 }
 
 export const Pagination = (props: PaginationProps) => {
@@ -20,7 +20,7 @@ export const Pagination = (props: PaginationProps) => {
     if (props.scrollToIdAfterChangePage?.current) {
       props.scrollToIdAfterChangePage.current.scrollIntoView({ behavior: 'smooth' })
     }
-    props.onChangePage(page)
+    props.onChangePage?.(page)
   }
 
   const PageButtons = () => {

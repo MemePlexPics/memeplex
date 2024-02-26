@@ -20,3 +20,7 @@ export { selectChannel } from './selectChannel.js';
 export { selectAvailableChannels } from './selectAvailableChannels.js';
 export { updateChannelTimestamp } from './updateChannelTimestamp.js';
 export { updateChannelAvailability } from './updateChannelAvailability.js';
+export { replaceFeaturedChannel } from './replaceFeaturedChannel.js';
+export { removeFeaturedChannel } from './removeFeaturedChannel.js';
+export { getFeaturedChannelList } from './getFeaturedChannelList.js';
+export { getFeaturedChannel } from './getFeaturedChannel.js';

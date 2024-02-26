@@ -11,21 +11,21 @@ export const Dialog = (props: IDialogProps) => {
     const dialogContentRef = useRef<HTMLDivElement>(null)
 
     const onClickAccept = () => {
-        props.onClickAccept?.()
-        setIsOpen(false)
-        dialogRef.current?.close()
+      props.onClickAccept?.()
+      setIsOpen(false)
+      dialogRef.current?.close()
     }
 
     const onClickReject = () => {
-        props.onClickReject?.()
-        setIsOpen(false)
-        dialogRef.current?.close()
+      props.onClickReject?.()
+      setIsOpen(false)
+      dialogRef.current?.close()
     }
 
     useEffect(() => {
-        setIsOpen(props.isOpen)
-        if (props.isOpen) dialogRef.current?.showModal()
-        else dialogRef.current?.close()
+      setIsOpen(props.isOpen)
+      if (props.isOpen) dialogRef.current?.showModal()
+      else dialogRef.current?.close()
     }, [props.isOpen])
 
     useClickOutside(dialogContentRef, () => {
@@ -35,10 +35,15 @@ export const Dialog = (props: IDialogProps) => {
     return <>
       <dialog className="dialog" ref={dialogRef}>
         <div className="dialog-container" ref={dialogContentRef}>
-          <p className="dialog-text">{props.text}</p>
+          <p className="dialog-text">{props.text?.split('\n')?.map(line => (
+            <span>{line}</span>
+          ))}</p>
           <div className="action-buttons">
             <Button onClick={onClickAccept}>OK</Button>
-            <Button onClick={onClickReject}>Cancel</Button>
+            {props.rejectText !== false
+              ? <Button onClick={onClickReject}>Cancel</Button>
+              : null
+            }
           </div>
         </div>
       </dialog>

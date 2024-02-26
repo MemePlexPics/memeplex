@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCheck, faTrashCan } from "@fortawesome/free-solid-svg-icons"
+import { faCheck, faEye, faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 
 import './style.css'
 import noAvatarChannel from './assets/no_avatar_channel.jpg'
@@ -9,24 +9,35 @@ import classNames from "classnames"
 export const ChannelBlock = (props: {
     isAdmin?: boolean
     isBrowserPreview?: boolean
-    channel: string
+    username: string
+    title?: string
     id?: string
     className?: string
-    onClickCheck?: (name: string) => unknown
-    onClickRemove?: (name: string) => unknown
+    onClickCheck?: (username: string) => unknown
+    onClickEdit?: (username: string) => unknown
+    onClickView?: (username: string) => unknown
+    onClickRemove?: (username: string) => unknown
 }) => {
-    const imgSrc = `/data/avatars/${props.channel}.jpg`
+    const imgSrc = `/data/avatars/${props.username}.jpg`
     const channelLink = props.isBrowserPreview
-        ? `s/${props.channel}`
-        : props.channel
+        ? `s/${props.username}`
+        : props.username
     const telegramLink = ['https://t.me', channelLink, props.id].join('/')
 
     const onClickRemove = () => {
-        props.onClickRemove?.(props.channel)
+        props.onClickRemove?.(props.username)
     }
 
     const onClickCheck = () => {
-        props.onClickCheck?.(props.channel)
+        props.onClickCheck?.(props.username)
+    }
+
+    const onClickEdit = () => {
+        props.onClickEdit?.(props.username)
+    }
+
+    const onClickView = () => {
+        props.onClickView?.(props.username)
     }
 
     const onError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -47,7 +58,10 @@ export const ChannelBlock = (props: {
                     onError={(e) => onError(e)}
                 />
                 <span className="channel-name">
-                    @{props.channel}
+                    {props.title
+                        ? props.title
+                        : `@${props.username}`
+                    }
                 </span>
             </Link>
                 <div className="channel-actions">
@@ -56,6 +70,19 @@ export const ChannelBlock = (props: {
                         icon={faCheck}
                         color="green"
                         onClick={onClickCheck}
+                        />
+                        : null}
+                    {props.onClickEdit
+                        ? <FontAwesomeIcon
+                        icon={faPen}
+                        color="blue"
+                        onClick={onClickEdit}
+                        />
+                        : null}
+                    {props.onClickView
+                        ? <FontAwesomeIcon
+                        icon={faEye}
+                        onClick={onClickView}
                         />
                         : null}
                     {props.onClickRemove

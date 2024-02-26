@@ -13,6 +13,8 @@
 }
 
 .dialog-text {
+    display: flex;
+    flex-direction: column;
     color: var(--color-black-2);
     font-size: var(--font-size-normal);
 }
