@@ -31,20 +31,22 @@ export const FeaturedChannelList = (props: {
             isLoading={request.isLoading}
             onChangePage={setPage}
         >
-            {request.data?.result.length 
-                ? request.data?.result.map(channel => (
-                    <li key={channel.username}>
-                        <ChannelBlock
-                            isAdmin={props.isAdmin}
-                            isBrowserPreview
-                            username={channel.username}
-                            title={channel.title}
-                            onClickView={() => onClickAction(channel, 'view')}
-                            onClickRemove={() => onClickAction(channel, 'remove')}
-                        />
-                    </li>
-                ))
-                : <h3 style={{ color: 'white' }}>Nothing found</h3>
+            {request.isLoaded && !request.data?.result.length
+                ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                : request.data
+                    ? request.data.result.map(channel => (
+                        <li key={channel.username}>
+                            <ChannelBlock
+                                isAdmin={props.isAdmin}
+                                isBrowserPreview
+                                username={channel.username}
+                                title={channel.title}
+                                onClickView={() => onClickAction(channel, 'view')}
+                                onClickRemove={() => onClickAction(channel, 'remove')}
+                            />
+                        </li>
+                    ))
+                    : null
             }
         </PaginatedList>
     )
