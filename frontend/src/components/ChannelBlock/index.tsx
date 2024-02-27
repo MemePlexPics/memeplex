@@ -11,6 +11,7 @@ export const ChannelBlock = (props: {
     isBrowserPreview?: boolean
     username: string
     title?: string
+    size?: 'normal' | 'small'
     id?: string
     className?: string
     onClickCheck?: (username: string) => unknown
@@ -46,7 +47,7 @@ export const ChannelBlock = (props: {
     }
 
     return (
-        <div className={classNames("channel-block", { isAdmin: props.isAdmin }, props.className)}>
+        <div className={classNames("channel-block", { isAdmin: props.isAdmin }, props.className, props.size)}>
             <Link
                 to={telegramLink}
                 target="_blank"

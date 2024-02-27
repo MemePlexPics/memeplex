@@ -8,6 +8,8 @@ import { IFeaturedChannel, TGetFeaturedChannelList } from "../../types"
 export const FeaturedChannelList = (props: {
     isAdmin?: boolean
     updateSwitch?: boolean
+    className?: string
+    withoutLoader?: boolean
     onAction?: (channel: IFeaturedChannel, action: 'remove' | 'view') => Promise<unknown>
 }) => {
     const [page, setPage] = useState(1)
@@ -28,11 +30,16 @@ export const FeaturedChannelList = (props: {
         <PaginatedList
             page={page}
             totalPages={request.data?.totalPages}
-            isLoading={request.isLoading}
+            isLoading={!props.withoutLoader && request.isLoading}
+            className={props.className}
+            orientation={props.isAdmin ? 'vertical' : "horizontal"}
             onChangePage={setPage}
         >
             {request.isLoaded && !request.data?.result.length
-                ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                ? <h3 style={{ color: 'white' }}>{props.isAdmin
+                    ? 'Nothing found'
+                    : 'Make your channel the first, click on the button'
+                }</h3>
                 : request.data
                     ? request.data.result.map(channel => (
                         <li key={channel.username}>
@@ -41,6 +48,7 @@ export const FeaturedChannelList = (props: {
                                 isBrowserPreview
                                 username={channel.username}
                                 title={channel.title}
+                                size={props.isAdmin ? 'normal' : 'small'}
                                 onClickView={() => onClickAction(channel, 'view')}
                                 onClickRemove={() => onClickAction(channel, 'remove')}
                             />
