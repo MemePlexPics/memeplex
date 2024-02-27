@@ -29,7 +29,7 @@ export const HomePage = () => {
                             your channel
                         </Link>
                     </div>
-                    <FeaturedChannelList />
+                    <FeaturedChannelList withoutLoader />
                 </div>
                 : null
             }
