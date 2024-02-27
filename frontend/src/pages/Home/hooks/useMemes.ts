@@ -59,9 +59,9 @@ export const useMemes = (query: string) => {
         if (operation === EMemesOperation.INIT) return
         if (operation === EMemesOperation.IDLE) return
         if (operation === EMemesOperation.DELAY) return
-        const params: Record<Exclude<EMemesOperation, EMemesOperation.IDLE | EMemesOperation.DELAY>, Record<string, string | undefined> | undefined> = {
-            [EMemesOperation.NEXT]: { to: '' + pageOptions.from },
-            [EMemesOperation.UPDATE]: { from: '' + pageOptions.to },
+        const params: Record<Exclude<EMemesOperation, EMemesOperation.IDLE | EMemesOperation.DELAY>, Record<string, string | number | undefined> | undefined> = {
+            [EMemesOperation.NEXT]: { to: pageOptions.from },
+            [EMemesOperation.UPDATE]: { from: pageOptions.to },
             [EMemesOperation.INIT]: undefined,
             [EMemesOperation.REINIT]: undefined,
         }
@@ -75,9 +75,9 @@ export const useMemes = (query: string) => {
 
     const getNextPage = () => {
         if (!query) {
-            if (pageOptions.totalPages > 1)  return getLatest()
+            if (pageOptions.totalPages > 1) getLatest()
         } else {
-            if (pageOptions.currentPage < pageOptions.totalPages) return searchByQuery()
+            if (pageOptions.currentPage < pageOptions.totalPages) searchByQuery()
         }
         setOperation(() => EMemesOperation.IDLE)
     }
@@ -111,9 +111,12 @@ export const useMemes = (query: string) => {
                 setMemes((prev) => [...request.data.result, ...prev])
             }
             savePageOptions()
-            setOperation(() => EMemesOperation.IDLE)
-        } else if (request.status === 503) retryRequest()
-        else if (request.state === 'idle' && memes.length) setOperation(() => EMemesOperation.IDLE)
+            return setOperation(() => EMemesOperation.IDLE)
+        }
+        if (request.status === 503)
+            return retryRequest()
+        if (request.state === 'idle' && memes.length)
+            return setOperation(() => EMemesOperation.IDLE)
     }, [request.isLoaded])
 
     useEffect(() => {
