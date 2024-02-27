@@ -36,10 +36,10 @@ export const PaginatedList = (props: {
     }, window, { passive: false })
 
     useEffect(() => {
-        if (props.orientation !== 'horizontal' || !ulRef.current) return
-        setIsScrollable(ulRef.current.scrollWidth > ulRef.current.scrollLeft)
-        console.log(ulRef.current)
-      }, [])
+        if (!ulRef.current) return
+        if (props.orientation === 'horizontal')
+            setIsScrollable(ulRef.current.clientWidth < ulRef.current.scrollWidth)
+      }, [ulRef.current?.scrollWidth])
 
     return <>
         <div
