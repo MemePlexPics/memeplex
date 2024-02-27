@@ -6,10 +6,25 @@
 
 .featured-channels-header {
     margin: 0px;
+    color: var(--color-white);
+    font-size:  var(--font-size-slight);
 }
 
 .featured-channels {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     padding-bottom: 30px;
+    height: 128px;
+    width: 100%;
+
+    ul {
+        display: flex;
+
+        li {
+            min-width: 380px;
+        }
+    }
 }
 
 .featured-channels-head {
@@ -25,9 +40,15 @@
     align-items: center;
     text-decoration: none;
     color: var(--color-white);
-    font-size: var(--font-size-normal);
+    font-size: var(--font-size-slight);
     border: 1px solid var(--color-dark-gray);
-    border-radius: 8px;
-    height: 40px;
+    border-radius: 5px;
+    height: 30px;
     padding: 0 8px;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) {
+    .featured-channels {
+        max-width: 90vw;
+    }
 }

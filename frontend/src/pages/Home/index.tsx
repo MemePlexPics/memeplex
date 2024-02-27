@@ -19,7 +19,7 @@ export const HomePage = () => {
             {!query
                 ? <div className="featured-channels">
                     <div className="featured-channels-head">
-                        <h2 className="featured-channels-header">Featured channels</h2>
+                        <h3 className="featured-channels-header">Featured channels</h3>
                         <Link
                             to='https://t.me/memeplex_pics/20'
                             target='_blank'

@@ -4,7 +4,8 @@ import { TUseEventListener } from './types'
 export const useEventListener: TUseEventListener = (
     eventType,
     callback,
-    element = window
+    element = window,
+    options = {}
 ) => {
     const callbackRef = useRef(callback)
 
@@ -16,7 +17,7 @@ export const useEventListener: TUseEventListener = (
         if (element == null) return
 
         const handler = (e: Event) => callbackRef.current(e)
-        element.addEventListener(eventType, handler)
+        element.addEventListener(eventType, handler, options)
 
         return () => {
             element.removeEventListener(eventType, handler)

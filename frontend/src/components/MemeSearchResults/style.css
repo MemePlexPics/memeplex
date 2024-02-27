@@ -2,8 +2,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 14px;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    /* align-items: center; */
     padding-bottom: 80px;
 }
 

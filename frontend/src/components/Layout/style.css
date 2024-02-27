@@ -1,4 +1,13 @@
 main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding-top: 40px;
-    width: 100%;
+    max-width: 90vw;
+}
+
+@media only screen and (hover: none) and (pointer: coarse) {
+    main {
+        align-items: initial;
+    }
 }
