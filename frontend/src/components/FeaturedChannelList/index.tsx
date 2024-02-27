@@ -45,7 +45,6 @@ export const FeaturedChannelList = (props: {
                         <li key={channel.username}>
                             <ChannelBlock
                                 isAdmin={props.isAdmin}
-                                isBrowserPreview
                                 username={channel.username}
                                 title={channel.title}
                                 size={props.isAdmin ? 'normal' : 'small'}

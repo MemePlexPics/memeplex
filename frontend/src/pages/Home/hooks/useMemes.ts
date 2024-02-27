@@ -75,9 +75,9 @@ export const useMemes = (query: string) => {
 
     const getNextPage = () => {
         if (!query) {
-            if (pageOptions.totalPages > 1) getLatest()
+            if (pageOptions.totalPages > 1) return getLatest()
         } else {
-            if (pageOptions.currentPage < pageOptions.totalPages) searchByQuery()
+            if (pageOptions.currentPage < pageOptions.totalPages) return searchByQuery()
         }
         setOperation(() => EMemesOperation.IDLE)
     }
@@ -111,12 +111,10 @@ export const useMemes = (query: string) => {
                 setMemes((prev) => [...request.data.result, ...prev])
             }
             savePageOptions()
-            return setOperation(() => EMemesOperation.IDLE)
-        }
-        if (request.status === 503)
-            return retryRequest()
-        if (request.state === 'idle' && memes.length)
-            return setOperation(() => EMemesOperation.IDLE)
+            setOperation(() => EMemesOperation.IDLE)
+        } else if (request.status === 503) retryRequest()
+        else if (request.state === 'idle' && memes.length)
+            setOperation(() => EMemesOperation.IDLE)
     }, [request.isLoaded])
 
     useEffect(() => {
