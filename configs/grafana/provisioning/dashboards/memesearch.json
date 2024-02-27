@@ -503,13 +503,11 @@
       "id": 25,
       "options": {
         "colorMode": "value",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": [],
           "fields": "",
           "values": false
         },
@@ -543,6 +541,7 @@
           "timeField": "timestamp"
         }
       ],
+      "timeFrom": "1y",
       "title": "Meme Count",
       "type": "stat"
     },
@@ -653,7 +652,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 2
+            "y": 14
           },
           "id": 6,
           "options": {
@@ -824,7 +823,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 11
+            "y": 23
           },
           "id": 12,
           "options": {
@@ -996,7 +995,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 11
+            "y": 23
           },
           "id": 11,
           "options": {
@@ -1160,7 +1159,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 31
           },
           "id": 5,
           "options": {
@@ -1324,7 +1323,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 31
           },
           "id": 13,
           "options": {
@@ -1469,7 +1468,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 39
           },
           "id": 18,
           "options": {
@@ -1634,7 +1633,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 39
           },
           "id": 23,
           "options": {
@@ -1714,14 +1713,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1778,7 +1779,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 47
           },
           "id": 17,
           "options": {
@@ -1794,7 +1795,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2695,6 +2696,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 4,
+  "version": 7,
   "weekStart": ""
 }
