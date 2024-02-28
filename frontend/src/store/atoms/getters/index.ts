@@ -1,0 +1,1 @@
+export { getTitleAtom } from './getTitleAtom'

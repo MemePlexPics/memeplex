@@ -8,10 +8,31 @@ import { pageOptionsAtom } from "../../store/atoms"
 import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlus } from "@fortawesome/free-solid-svg-icons"
+import { useMeta, useTitle } from "../../hooks"
 
 export const HomePage = () => {
     const [query, setQuery] = useState(useAtomValue(pageOptionsAtom).query)
     const data = useMemes(query)
+    const { title } = useTitle([])
+
+    useMeta([
+        {
+            name: 'og:description',
+            content: 'Search engine for memes with a focus on Russian underground Telegram',
+        },
+        {
+            name: "og:title",
+            content: title,
+        },
+        {
+            name: "og:url",
+            content: window.location.href,
+        },
+        {
+            name: "og:image",
+            content: "/android-chrome-192x192.png",
+        },
+    ])
 
     return (
         <>
