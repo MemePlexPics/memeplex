@@ -13,8 +13,8 @@ import {
 } from "./pages"
 import './style.css'
 import { useAtomValue } from "jotai"
-import { titleAtom } from "./store/atoms"
 import { useEffect } from "react"
+import { getTitleAtom } from "./store/atoms/getters"
 
 const router = createBrowserRouter([
   {
@@ -46,10 +46,10 @@ const router = createBrowserRouter([
 ])
 
 export const App = () => {
-  const title = useAtomValue(titleAtom)
+  const title = useAtomValue(getTitleAtom)
 
   useEffect(() => {
-    document.title = [...title, 'MemePlex'].join(' | ')
+    document.title = title
   }, [title])
 
   return (

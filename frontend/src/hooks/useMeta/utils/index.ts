@@ -1,0 +1,1 @@
+export { setMetaProperty } from './setMetaProperty'

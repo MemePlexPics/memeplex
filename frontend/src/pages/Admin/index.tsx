@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useSetAtom } from 'jotai'
 import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
 import { addChannel, addFeaturedChannel, getFeaturedChannel, proceedChannelSuggestion, removeChannel, removeFeaturedChannel } from './utils'
-import { useNotification, useTitle } from '../../hooks'
+import { useMeta, useNotification, useTitle } from '../../hooks'
 import { ENotificationType } from '../../components/Notification/constants'
 import { IFeaturedChannel } from '../../types'
 
@@ -181,6 +181,13 @@ export const AdminPage = () => {
   }
 
   useTitle(['Admin'])
+
+  useMeta([
+      {
+          name: 'robots',
+          content: 'noindex',
+      },
+  ])
 
   return (
     <div className='admin-page'>

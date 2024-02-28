@@ -4,12 +4,32 @@ import { Button, ChannelList, Input } from "../../components"
 import { getTgChannelName, getUrl } from "../../utils"
 
 import './style.css'
-import { useNotification, useTitle } from "../../hooks"
+import { useMeta, useNotification, useTitle } from "../../hooks"
 import { ENotificationType } from "../../components/Notification/constants"
 
 export const ChannelListPage = () => {
     const setNotification = useNotification()
     const [channelSuggestion, setChannelSuggestion] = useState('')
+    const { title } = useTitle(['Channels'])
+
+    useMeta([
+        {
+            name: 'og:description',
+            content: 'List of telegram channels-sources',
+        },
+        {
+            name: "og:title",
+            content: title,
+        },
+        {
+            name: "og:url",
+            content: window.location.href,
+        },
+        {
+            name: "og:image",
+            content: "/android-chrome-192x192.png",
+        },
+    ])
 
     const onClickSubmit = async () => {
         const channel = getTgChannelName(channelSuggestion)
@@ -34,8 +54,6 @@ export const ChannelListPage = () => {
         })
         setChannelSuggestion('')
     }
-
-    useTitle(['Channels'])
 
     return (
         <div id="channel-list-page">

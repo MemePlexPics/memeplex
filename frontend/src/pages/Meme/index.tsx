@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom"
 import { useAtomValue } from 'jotai'
 
 import { memesAtom } from "../../store/atoms"
-import { useFetch, useTitle } from "../../hooks"
+import { useFetch, useMeta, useTitle } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
 import { ChannelBlock, Loader } from "../../components"
@@ -12,6 +12,7 @@ import './style.css'
 export const MemePage = () => {
     const { id } = useParams()
     const memes = useAtomValue(memesAtom)
+    const { title } = useTitle(['Meme'])
     const request = useFetch<IMeme>(
         () => getUrl('/getMeme', { id }),
         {
@@ -24,7 +25,24 @@ export const MemePage = () => {
         }
     )
 
-    useTitle(['Meme'])
+    useMeta([
+        {
+            name: 'og:description',
+            content: request.data?.text.eng || '',
+        },
+        {
+            name: "og:title",
+            content: title,
+        },
+        {
+            name: "og:url",
+            content: window.location.href,
+        },
+        {
+            name: "og:image",
+            content: request.data?.fileName || '',
+        },
+    ])
 
     if (request.isLoading) return <Loader />
 
