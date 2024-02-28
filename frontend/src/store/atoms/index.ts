@@ -1,5 +1,5 @@
-export { memesAtom } from './memesAtom'
 export { pageOptionsAtom } from './pageOptionsAtom'
 export { getMemesResponseAtom } from './getMemesResponseAtom'
 export { titleAtom } from './titleAtom'
 export { notificationsAtom } from './notificationsAtom'
+export { memesAtom } from './memesAtom'
