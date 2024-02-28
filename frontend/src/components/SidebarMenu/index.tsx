@@ -42,6 +42,9 @@ export const SidebarMenu = () => {
                     <li>
                         <Link to='https://t.me/MemePlexBot' target="_blank">Telegram bot</Link>
                     </li>
+                    <li>
+                        <NavLink to='/about'>About</NavLink>
+                    </li>
                 </ul>
                 : null
             }

@@ -6,6 +6,7 @@ import {
 
 import { Layout } from './components'
 import {
+  AboutPage,
   AdminPage,
   ChannelListPage,
   HomePage,
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: 'channelList',
         element: <ChannelListPage />,
+      },
+      {
+        path: 'about',
+        element: <AboutPage />,
       },
       {
         path: 'admin',
