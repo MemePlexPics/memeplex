@@ -1,6 +1,6 @@
 .result-image {
-    max-width: 300px;
-    max-height: 300px;
+    max-width: var(--size-meme-entity);
+    max-height: var(--size-meme-entity);
     width: 100%;
     height: 100%;
     user-select: none;
