@@ -319,7 +319,9 @@ app.get('/data/avatars/:channelName', async (req, res) => {
 });
 
 app.get('/*', async (req, res) => {
-    res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'frontend', 'dist', 'index.html'));
+    if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
+        return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'frontend', 'dist', 'index.html'));
+    return res.status(404).send();
 });
 
 const start = async () => {
