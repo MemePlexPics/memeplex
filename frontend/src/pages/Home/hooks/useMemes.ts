@@ -77,16 +77,16 @@ export const useMemes = (query: string) => {
         if (!query) {
             if (pageOptions.totalPages > 1) return getLatest()
         } else {
-            if (pageOptions.currentPage < pageOptions.totalPages) return searchByQuery()
+            if (pageOptions.currentPage <= pageOptions.totalPages) return searchByQuery()
         }
         setOperation(() => EMemesOperation.IDLE)
     }
 
-    const retryRequest = () => {
+    const retryRequest = (operation: EMemesOperation) => {
         setOperation(() => EMemesOperation.DELAY)
         delay(2_000)
             .then(() => {
-                if (operation === EMemesOperation.DELAY) setOperation(() => operation)
+                setOperation(() => operation)
             })
     }
 
@@ -112,7 +112,7 @@ export const useMemes = (query: string) => {
             }
             savePageOptions()
             setOperation(() => EMemesOperation.IDLE)
-        } else if (request.status === 503) retryRequest()
+        } else if (request.status === 503) retryRequest(operation)
         else if (request.state === 'idle' && memes.length)
             setOperation(() => EMemesOperation.IDLE)
     }, [request.isLoaded])
