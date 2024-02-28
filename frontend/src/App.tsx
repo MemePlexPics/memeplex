@@ -1,6 +1,6 @@
 import {
   createBrowserRouter,
-  Navigate,
+  // Navigate,
   RouterProvider,
 } from "react-router-dom"
 
@@ -44,10 +44,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: '*',
-    element: <Navigate to="/" replace />,
-  },
+  // {
+  //   path: '*',
+  //   element: <Navigate to="/" replace />,
+  // },
 ])
 
 export const App = () => {
