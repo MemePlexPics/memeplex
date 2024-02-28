@@ -16,7 +16,7 @@
     gap: 6px;
     padding-bottom: 30px;
     height: 128px;
-    width: 100%;
+    max-width: 90vw;
 
     ul {
         display: flex;
@@ -47,8 +47,26 @@
     padding: 0 8px;
 }
 
-@media only screen and (hover: none) and (pointer: coarse) {
+@media only screen and (max-width: 1280px) {
     .featured-channels {
-        max-width: 90vw;
+        width: calc(3 * (var(--size-meme-entity) + 14px));
+    }
+}
+
+@media only screen and (max-width: 1600px) {
+    .featured-channels {
+        width: calc(4 * (var(--size-meme-entity) + 14px));
+    }
+}
+
+@media only screen and (max-width: 1920px) {
+    .featured-channels {
+        width: calc(5 * (var(--size-meme-entity) + 14px));
+    }
+}
+
+@media only screen and (max-width: 2560px) {
+    .featured-channels {
+        width: calc(6 * (var(--size-meme-entity) + 14px));
     }
 }
