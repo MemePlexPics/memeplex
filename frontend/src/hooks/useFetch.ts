@@ -55,7 +55,7 @@ export const useFetch = <GData>(
             } catch (error) {
                 if (!(error instanceof Error)) return
                 if (error.name === 'AbortError') {
-                    console.log('Request aborted')
+                    return
                 } else {
                     setError(error)
                     setState('error')
@@ -74,7 +74,6 @@ export const useFetch = <GData>(
     return {
       data: isLoaded && data ? data : null,
       error: isError && error ? error : null,
-      // TODO: this doesn't make enough sense
       status: status && ['success', 'error'].includes(state) ? status : null,
       state,
       isLoaded,
