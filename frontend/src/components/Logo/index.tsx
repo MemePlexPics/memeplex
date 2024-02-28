@@ -10,7 +10,7 @@ export const Logo = () => {
 
     return (
         <Link to="/" onClick={onClick}>
-            <img id="logo" src={logo} />
+            <img id="logo" src={logo} alt='MemePlex' />
         </Link>
     )
 }
