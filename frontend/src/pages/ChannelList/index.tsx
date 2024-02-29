@@ -15,7 +15,7 @@ export const ChannelListPage = () => {
     useMeta([
         {
             name: 'og:description',
-            content: 'List of telegram channels-sources',
+            content: 'Список телеграм-каналов (источников)',
         },
         {
             name: "og:title",

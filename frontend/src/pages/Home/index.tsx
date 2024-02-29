@@ -18,7 +18,7 @@ export const HomePage = () => {
     useMeta([
         {
             name: 'og:description',
-            content: 'Search engine for memes with a focus on Russian underground Telegram',
+            content: 'Поисковая система мемов из Телеграма',
         },
         {
             name: "og:title",
