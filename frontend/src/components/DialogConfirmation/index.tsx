@@ -5,7 +5,7 @@ import { dialogConfirmationAtom } from "../../store/atoms/dialogConfirmationAtom
 export const DialogConfirmation = () => {
     const [dialogProps, setDialogProps] = useAtom(dialogConfirmationAtom)
 
-    const onClickConfirm = () => {
+    const onClickAccept = () => {
         dialogProps.onClickAccept?.()
         setDialogProps((prev) => ({ ...prev, isOpen: false }))
     }
@@ -18,7 +18,7 @@ export const DialogConfirmation = () => {
     return <>
         <Dialog
             {...dialogProps}
-            onClickAccept={onClickConfirm}
+            onClickAccept={onClickAccept}
             onClickReject={onClickReject}
         />
     </>

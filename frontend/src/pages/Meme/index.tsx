@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom"
-import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 
-import { memesAtom, passwordAtom } from "../../store/atoms"
+import { memesAtom } from "../../store/atoms"
 import { useAdminRequest, useFetch, useMeta, useNotification, useTitle } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
@@ -16,7 +16,6 @@ export const MemePage = () => {
     const { id } = useParams()
     const memes = useAtomValue(memesAtom)
     const setNotification = useNotification()
-    const [password, setPassword] = useAtom(passwordAtom)
     const { title } = useTitle(['Meme'])
     const setDialog = useSetAtom(dialogConfirmationAtom)
     const isAdmin = !!localStorage.getItem('isAdmin') 
@@ -54,17 +53,27 @@ export const MemePage = () => {
 
     const onClickRemoveChannel = () => {
         if (!request.data) return
+        let password = ''
         setDialog({
             text: `Remove the channel @${request.data.channel}?`,
             isOpen: true,
-            children: !password
-                ? null
-                : <Input
-                    type='password'
-                    placeholder='Password'
-                    onInput={setPassword}
-                />,
+            children: <Input
+                type='password'
+                placeholder='Password'
+                required
+                onInput={val => {
+                    password = val
+                }}
+            />,
             onClickAccept: async () => {
+                if (!password) {
+
+                    setNotification({
+                        text: 'Enter password',
+                        type: ENotificationType.ERROR
+                    })
+                    return
+                }
                 const response = await removeChannel(request.data.channel, password)
                 if (!handleAdminRequest(response))
                     return false
