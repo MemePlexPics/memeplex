@@ -3,7 +3,7 @@
     left: 0;
     top: 0;
     padding: 20px;
-    height: calc(100vh - 40px);
+    height: 100vh;
 }
 
 .sidebar.isActive {
@@ -13,7 +13,7 @@
 .sidebar ul {
     list-style: none;
     padding: 0;
-    font-size: var(--font-size-normal);
+    font-size: var(--font-size-big);
 }
 
 .sidebar-menu {

@@ -4,6 +4,7 @@ main {
     align-items: center;
     padding-top: 40px;
     max-width: 90vw;
+    width: 100%;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) {

@@ -1,8 +1,8 @@
 :root {
     --loader-size: 100px;
     --scroll-to-top-size: 60px;
-    --hamburger-icon-width: 30px;
-    --hamburger-icon-height: 20px;
+    --hamburger-icon-width: 45px;
+    --hamburger-icon-height: 30px;
     --font-size-slight: 18px;
     --font-size-normal: 26px;
     --font-size-big: 30px;
@@ -31,8 +31,6 @@
 @font-face {
     font-family: OpenSans;
     src: local('OpenSans'), url(/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
-    /* font-weight: normal;
-    font-style: normal; */
 }
 
 @font-face {
