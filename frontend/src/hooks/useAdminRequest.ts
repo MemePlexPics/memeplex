@@ -1,15 +1,11 @@
-import { useSetAtom } from "jotai"
 import { useNotification } from "."
 import { ENotificationType } from "../components/Notification/constants"
-import { passwordAtom } from "../store/atoms"
 
 export const useAdminRequest = () => {
   const setNotification = useNotification()
-  const setPassword = useSetAtom(passwordAtom)
 
   const handleAdminRequest = (response: Response) => {
     if (response.status === 403) {
-      setPassword('');
       setNotification({
         text: 'Incorrect password!',
         type: ENotificationType.INFO,

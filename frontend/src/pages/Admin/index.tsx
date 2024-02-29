@@ -1,17 +1,16 @@
 import { AddChannelForm, AddFeaturedChannelForm, ChannelList, ChannelSuggestionList, FeaturedChannelList, Input } from '../../components'
 import './style.css'
 import { useState } from 'react'
-import { useAtom, useSetAtom } from 'jotai'
+import { useSetAtom } from 'jotai'
 import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
 import { addChannel, addFeaturedChannel, getFeaturedChannel, proceedChannelSuggestion, removeChannel, removeFeaturedChannel } from '../../services'
 import { useAdminRequest, useMeta, useNotification, useTitle } from '../../hooks'
 import { ENotificationType } from '../../components/Notification/constants'
 import { IFeaturedChannel } from '../../types'
-import { passwordAtom } from '../../store/atoms'
 
 export const AdminPage = () => {
   const setNotification = useNotification()
-  const [password, setPassword] = useAtom(passwordAtom)
+  const [password, setPassword] = useState('')
   const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
   const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
   const [featuredUpdateSwitch, setFeaturedUpdateSwitch] = useState(true)
@@ -121,7 +120,10 @@ export const AdminPage = () => {
       return true
     }
     if (action === 'view') {
-      const response = await getFeaturedChannel(channel.username, password)
+      const request = await getFeaturedChannel(channel.username, password)
+      if (!handleAdminRequest(request))
+        return false
+      const response = await request.json() as unknown as IFeaturedChannel
       const date = new Date(response.timestamp * 1000).toLocaleString()
       setDialog({
         text: `Title: «${response.title}»\nUsername: @${response.username}\nFrom: ${date}\nComment: ${response.comment || '—'}`,
