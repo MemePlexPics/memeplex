@@ -1,4 +1,3 @@
-import { IFeaturedChannel } from "../types"
 import { getUrl } from "../utils"
 
 export const getFeaturedChannel = async (username: string, password: string) => {
@@ -12,5 +11,6 @@ export const getFeaturedChannel = async (username: string, password: string) => 
           password,
         })
     })
-    return response.json() as Promise<IFeaturedChannel>
+
+    return response
 }
