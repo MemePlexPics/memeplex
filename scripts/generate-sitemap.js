@@ -5,7 +5,7 @@ import { getElasticClient } from '../utils/index.js';
 import { ELASTIC_INDEX } from '../constants/index.js';
 
 const client = getElasticClient();
-const PUBLIC_PATH = './frontend/src/public/';
+const PUBLIC_PATH = './frontend/src/public';
 
 const getOldestEntityTimestamp = async () => {
     const elasticRes = await client.search({
