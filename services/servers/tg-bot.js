@@ -59,7 +59,7 @@ const resetSearchSession = (ctx) => {
 };
 
 const getBotAnswerString = (meme) => {
-    const ourImgLink = new URL(`https://${process.env.TELEGRAM_WEBHOOK_DOMAIN}/${meme.fileName}`).href;
+    const ourImgLink = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href;
     const downloadLink = `[(download)](${ourImgLink})`;
     const tgLink = `https://t.me/${meme.channel}/${meme.message}`;
     return `${downloadLink} [${tgLink}](${tgLink})`;
@@ -193,7 +193,7 @@ bot.action('button_latest_newer', (ctx) => onBotCommandGetLatest(ctx, true));
 const start = async () => {
     bot.launch({
         webhook: {
-            domain: process.env.TELEGRAM_WEBHOOK_DOMAIN,
+            domain: process.env.MEMEPLEX_WEBSITE_DOMAIN,
             path: '/tgWebHook',
             port: 3081,
         },
