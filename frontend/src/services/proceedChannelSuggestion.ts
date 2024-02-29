@@ -1,4 +1,4 @@
-import { getUrl } from "../../../utils"
+import { getUrl } from "../utils"
 
 export const proceedChannelSuggestion = async (channel: string, password: string) => {
     const response = await fetch(getUrl('/proceedChannelSuggestion'), {
