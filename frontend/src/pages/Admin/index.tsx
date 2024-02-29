@@ -1,40 +1,22 @@
 import { AddChannelForm, AddFeaturedChannelForm, ChannelList, ChannelSuggestionList, FeaturedChannelList, Input } from '../../components'
 import './style.css'
 import { useState } from 'react'
-import { useSetAtom } from 'jotai'
+import { useAtom, useSetAtom } from 'jotai'
 import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
-import { addChannel, addFeaturedChannel, getFeaturedChannel, proceedChannelSuggestion, removeChannel, removeFeaturedChannel } from './utils'
-import { useMeta, useNotification, useTitle } from '../../hooks'
+import { addChannel, addFeaturedChannel, getFeaturedChannel, proceedChannelSuggestion, removeChannel, removeFeaturedChannel } from '../../services'
+import { useAdminRequest, useMeta, useNotification, useTitle } from '../../hooks'
 import { ENotificationType } from '../../components/Notification/constants'
 import { IFeaturedChannel } from '../../types'
+import { passwordAtom } from '../../store/atoms'
 
 export const AdminPage = () => {
   const setNotification = useNotification()
-  const [password, setPassword] = useState('')
+  const [password, setPassword] = useAtom(passwordAtom)
   const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
   const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
   const [featuredUpdateSwitch, setFeaturedUpdateSwitch] = useState(true)
   const setDialog = useSetAtom(dialogConfirmationAtom)
-
-  const handleAdminRequest = (response: Response) => {
-    if (response.status === 403) {
-      setPassword('');
-      setNotification({
-        text: 'Incorrect password!',
-        type: ENotificationType.INFO,
-      })
-      return false
-    }
-    localStorage.setItem('isAdmin', '1')
-    if (response.status === 500 || !response.ok) {
-      setNotification({
-        text: 'An error occurred, please try again later',
-        type: ENotificationType.ERROR,
-      })
-      return false
-    }
-    return true
-  }
+  const { handleAdminRequest } = useAdminRequest()
 
   const handleAddChannel = async (channel: string, langs: string[]) => {
     const response = await addChannel(channel, langs, password)

@@ -1,4 +1,4 @@
-import { getUrl } from "../../../utils"
+import { getUrl } from "../utils"
 
 export const removeFeaturedChannel = async (username: string, password: string) => {
     const response = await fetch(getUrl('/removeFeaturedChannel'), {

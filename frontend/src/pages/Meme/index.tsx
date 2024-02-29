@@ -1,18 +1,26 @@
 import { useParams } from "react-router-dom"
-import { useAtomValue } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 
-import { memesAtom } from "../../store/atoms"
-import { useFetch, useMeta, useTitle } from "../../hooks"
+import { memesAtom, passwordAtom } from "../../store/atoms"
+import { useAdminRequest, useFetch, useMeta, useNotification, useTitle } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
-import { ChannelBlock, Loader } from "../../components"
+import { ChannelBlock, Input, Loader } from "../../components"
 
 import './style.css'
+import { dialogConfirmationAtom } from "../../store/atoms/dialogConfirmationAtom"
+import { removeChannel } from "../../services"
+import { ENotificationType } from "../../components/Notification/constants"
 
 export const MemePage = () => {
     const { id } = useParams()
     const memes = useAtomValue(memesAtom)
+    const setNotification = useNotification()
+    const [password, setPassword] = useAtom(passwordAtom)
     const { title } = useTitle(['Meme'])
+    const setDialog = useSetAtom(dialogConfirmationAtom)
+    const isAdmin = !!localStorage.getItem('isAdmin') 
+    const { handleAdminRequest } = useAdminRequest()
     const request = useFetch<IMeme>(
         () => getUrl('/getMeme', { id }),
         {
@@ -44,6 +52,30 @@ export const MemePage = () => {
         },
     ])
 
+    const onClickRemoveChannel = () => {
+        if (!request.data) return
+        setDialog({
+            text: `Remove the channel @${request.data.channel}?`,
+            isOpen: true,
+            children: !password
+                ? null
+                : <Input
+                    type='password'
+                    placeholder='Password'
+                    onInput={setPassword}
+                />,
+            onClickAccept: async () => {
+                const response = await removeChannel(request.data.channel, password)
+                if (!handleAdminRequest(response))
+                    return false
+                setNotification({
+                    text: `The @${request.data.channel} has been successfully removed`,
+                    type: ENotificationType.OK
+                })
+            }
+        })
+    }
+
     if (request.isLoading) return <Loader />
 
     if (request.isError) {
@@ -71,9 +103,11 @@ export const MemePage = () => {
                     <p>
                         <b>Source: </b>
                         <ChannelBlock
+                            isAdmin={isAdmin}
                             username={request.data.channel}
                             id={request.data.message}
                             className='source-block'
+                            onClickRemove={onClickRemoveChannel}
                         />
                     </p>
                 </div>

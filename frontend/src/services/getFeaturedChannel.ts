@@ -1,5 +1,5 @@
-import { IFeaturedChannel } from "../../../types"
-import { getUrl } from "../../../utils"
+import { IFeaturedChannel } from "../types"
+import { getUrl } from "../utils"
 
 export const getFeaturedChannel = async (username: string, password: string) => {
     const response = await fetch(getUrl('/getFeaturedChannel'), {
