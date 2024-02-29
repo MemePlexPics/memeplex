@@ -38,6 +38,14 @@
 - Run `node ./services/servers/web.js` - web server
 - Run `node ./services/servers/tg-bot.js` - Telegram bot server
 
+## Scripts
+
+### Sitemap generator
+
+1. Run `node ./scripts/generate-sitemap.js` once a day to generate the sitemap.xml (for all previous days when first run and for the previous day every time after that)
+2. Rebuild the frontend using `npm run build` or just run `cp -r ./frontend/src/public/sitemaps ./frontend/dist/. && cp ./frontend/src/public/sitemap.xml ./frontend/dist/sitemap.xml`
+- It might be a good idea to run it with Cron at the beginning of the day
+
 ## Backup
 
 ### Files:
