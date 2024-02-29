@@ -74,12 +74,12 @@ ${files.map(file => `    <sitemap>
 
 const generateSitemaps = async () => {
     const sitemaps = fs.readdirSync(`${PUBLIC_PATH}/sitemaps`);
+    const timeZoneCorrection = new Date().getTimezoneOffset() < 0
+        ? 1
+        : 0;
     let currentTimestamp;
     if (sitemaps.length) {
         const lastDateStr = sitemaps.at(-1).replace('.xml', '');
-        const timeZoneCorrection = new Date().getTimezoneOffset() < 0
-            ? 1
-            : -1;
         currentTimestamp = new Date(lastDateStr);
         currentTimestamp.setDate(currentTimestamp.getDate() + 1 + timeZoneCorrection);
     } else {
@@ -91,9 +91,10 @@ const generateSitemaps = async () => {
         currentTimestamp = new Date(oldestTimestamp * 1000);
     }
 
-    const currentDate = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000);
+    const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
+    currentDate.setDate(new Date(currentDate).getDate() + timeZoneCorrection);
     
-    while ((currentTimestamp / 1000) < currentDate) {
+    while (currentTimestamp <= currentDate) {
         const entities = await getEntitiesByDay(currentTimestamp);
         if (entities.length > 0) {
             const day = new Date(currentTimestamp).toISOString().split('T')[0];
