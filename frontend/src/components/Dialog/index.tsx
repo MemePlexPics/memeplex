@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react"
+
 import { IDialogProps } from "./types"
 import { Button } from ".."
 import { useClickOutside } from "../../hooks"
-
-import './style.css'
+import * as stylex from '@stylexjs/stylex'
+import { s } from "./style"
 
 export const Dialog = (props: IDialogProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -33,12 +34,15 @@ export const Dialog = (props: IDialogProps) => {
     })
 
     return <>
-      <dialog className="dialog" ref={dialogRef}>
-        <div className="dialog-container" ref={dialogContentRef}>
-          <p className="dialog-text">{props.text?.split('\n')?.map(line => (
-            <span>{line}</span>
-          ))}</p>
-          <div className="action-buttons">
+      <dialog {...stylex.props(s.dialog)} ref={dialogRef}>
+        <div {...stylex.props(s.content)} ref={dialogContentRef}>
+          <p {...stylex.props(s.text)}>
+            {props.text?.split('\n')?.map(line => (
+              <span>{line}</span>
+            ))}
+          </p>
+          <div>{props.children}</div>
+          <div {...stylex.props(s.actionButtons)}>
             <Button onClick={onClickAccept}>OK</Button>
             {props.rejectText !== false
               ? <Button onClick={onClickReject}>Cancel</Button>

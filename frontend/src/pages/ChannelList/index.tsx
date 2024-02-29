@@ -1,11 +1,12 @@
 import { useState } from "react"
 
 import { Button, ChannelList, Input } from "../../components"
-import { getTgChannelName, getUrl } from "../../utils"
+import { getTgChannelName } from "../../utils"
 
 import './style.css'
 import { useMeta, useNotification, useTitle } from "../../hooks"
 import { ENotificationType } from "../../components/Notification/constants"
+import { suggestChannel } from "../../services"
 
 export const ChannelListPage = () => {
     const setNotification = useNotification()
@@ -34,13 +35,7 @@ export const ChannelListPage = () => {
     const onClickSubmit = async () => {
         const channel = getTgChannelName(channelSuggestion)
         if (!channel) return
-        const response = await fetch(getUrl('/suggestChannel'), {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ channel })
-        })
+        const response = await suggestChannel(channel)
         if (response.status === 500) {
             setNotification({
               text: 'An error occurred, please try again later',
