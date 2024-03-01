@@ -1,5 +1,5 @@
 .sidebar {
-    position: absolute;
+    position: fixed;
     left: 0;
     top: 0;
     padding: 20px;
@@ -21,7 +21,7 @@
     flex-direction: column;
     gap: 8px;
     padding-top: 100px;
-    width: 290px;
+    min-width: 290px;
 }
 
 .sidebar a {
