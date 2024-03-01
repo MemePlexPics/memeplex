@@ -3,6 +3,7 @@ import { getEndPageNumbers } from './helpers'
 import classNames from 'classnames'
 
 import './style.css'
+import { useTranslation } from 'react-i18next'
 
 export interface PaginationProps {
   page: number
@@ -14,6 +15,7 @@ export interface PaginationProps {
 }
 
 export const Pagination = (props: PaginationProps) => {
+  const { t } = useTranslation()
   const pageRange = getEndPageNumbers(props.page, props.pagesAtTime, props.pagesTotal)
 
   const onChangePage = (page: number) => {
@@ -48,7 +50,7 @@ export const Pagination = (props: PaginationProps) => {
         onClick={() => onChangePage(props.page - 1)}
         disabled={props.page === 1}
       >
-        Back
+        {t('button.back')}
       </Button>
 
       <Button
@@ -74,7 +76,7 @@ export const Pagination = (props: PaginationProps) => {
         onClick={() => onChangePage(props.page + 1)}
         disabled={props.page === props.pagesTotal}
       >
-        Next
+        {t('button.next')}
       </Button>
     </div>
   )

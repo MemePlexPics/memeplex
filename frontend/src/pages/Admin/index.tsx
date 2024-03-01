@@ -3,8 +3,10 @@ import './style.css'
 import { useState } from 'react'
 import { useMeta, useTitle } from '../../hooks'
 import { Channels, FeaturedChannels, SuggestedChannels } from '../../components/organisms'
+import { useTranslation } from 'react-i18next'
 
 export const AdminPage = () => {
+  const { t } = useTranslation()
   const [password, setPassword] = useState('')
   const [currentTab, setCurrentTab] = useState<string>('')
 
@@ -24,17 +26,17 @@ export const AdminPage = () => {
           className="input"
           type="password"
           required
-          placeholder="Password"
+          placeholder={t('placeholder.password')}
           value={password}
           onInput={setPassword}
       />
       <Tabs
-        tabs={['Channels', 'Suggested', 'Featured']}
+        tabs={[t('tab.channels'), t('tab.suggested'), t('tab.featured')]}
         onChange={tab => setCurrentTab(tab)}
       >
-        <Channels key='Channels' password={password} />
-        <SuggestedChannels key='Suggested'password={password} />
-        <FeaturedChannels key='Featured'  password={password} />
+        <Channels key={t('tab.channels')} password={password} />
+        <SuggestedChannels key={t('tab.suggested')} password={password} />
+        <FeaturedChannels key={t('tab.featured')} password={password} />
       </Tabs>
     </div>
   )

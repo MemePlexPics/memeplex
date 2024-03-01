@@ -5,8 +5,10 @@ import { Button } from ".."
 import { useClickOutside } from "../../hooks"
 import * as stylex from '@stylexjs/stylex'
 import { s } from "./style"
+import { useTranslation } from "react-i18next"
 
 export const Dialog = (props: IDialogProps) => {
+    const { t } = useTranslation()
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const dialogRef = useRef<HTMLDialogElement>(null)
     const dialogContentRef = useRef<HTMLDivElement>(null)
@@ -43,9 +45,9 @@ export const Dialog = (props: IDialogProps) => {
           </p>
           <div>{props.children}</div>
           <div {...stylex.props(s.actionButtons)}>
-            <Button onClick={onClickAccept}>OK</Button>
+            <Button onClick={onClickAccept}>{t('button.ok')}</Button>
             {props.rejectText !== false
-              ? <Button onClick={onClickReject}>Cancel</Button>
+              ? <Button onClick={onClickReject}>{t('button.cancel')}</Button>
               : null
             }
           </div>
