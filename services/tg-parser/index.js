@@ -18,7 +18,7 @@ export const tgParser = async (logger) => {
     let amqp, sendImageDataCh, mysql;
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
-        mysql = await getMysqlClient({ connectTimeout: 30_000 });
+        mysql = await getMysqlClient({ connectTimeout: 60_000 });
         sendImageDataCh = await amqp.createChannel();
 
         const channels = await selectAvailableChannels(mysql);
