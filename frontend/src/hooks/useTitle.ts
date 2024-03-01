@@ -8,10 +8,10 @@ export const useTitle = (titles: string[]) => {
     const setTitle = useSetAtom(titleAtom)
 
     useEffect(() => {
-        setTitle(titles)
+        setTitle(titles.filter(a => a))
 
         return () => setTitle([])
-    }, [])
+    }, [titles])
 
     return {
         title,
