@@ -1,13 +1,15 @@
+import { useTranslation } from "react-i18next"
 import { useNotification } from "."
 import { ENotificationType } from "../components/Notification/constants"
 
 export const useAdminRequest = () => {
+  const { t } = useTranslation()
   const setNotification = useNotification()
 
   const handleAdminRequest = (response: Response) => {
     if (response.status === 403) {
       setNotification({
-        text: 'Incorrect password!',
+        text: t('notification.incorrectPassword'),
         type: ENotificationType.INFO,
       })
       return false
@@ -15,7 +17,7 @@ export const useAdminRequest = () => {
     localStorage.setItem('isAdmin', '1')
     if (response.status === 500 || !response.ok) {
       setNotification({
-        text: 'An error occurred, please try again later',
+        text: t('label.errorOccured'),
         type: ENotificationType.ERROR,
       })
       return false

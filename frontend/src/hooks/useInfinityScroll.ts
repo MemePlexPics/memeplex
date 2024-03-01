@@ -4,7 +4,7 @@ import { isPortraitOrientation } from "../utils"
 import { TUseInfinityScroll } from "./types"
 
 export const useInfinityScroll: TUseInfinityScroll = (callback, options) => {
-    const scrollDebounceTimer = useRef(0)
+    const scrollDebounceTimer = useRef<NodeJS.Timeout>()
 
     const onScroll = () => {
         const remainPxToUpdate = options?.remainPxToUpdate || isPortraitOrientation()

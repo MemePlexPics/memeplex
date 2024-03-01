@@ -4,10 +4,12 @@ import { getTgChannelName } from "../../utils"
 
 import './style.css'
 import { IFeaturedChannel } from "../../types"
+import { useTranslation } from "react-i18next"
 
 export const AddFeaturedChannelForm = (props: {
     onAddChannel: (channel: IFeaturedChannel) => Promise<boolean>
 }) => {
+    const { t } = useTranslation()
     // TODO: <Form model={} />
     const [channelValue, setChannelValue] = useState('')
     const [titleValue, setTitleValue] = useState('')
@@ -30,20 +32,20 @@ export const AddFeaturedChannelForm = (props: {
     return (
         <div className="add-featured-channel-form">
             <div id="form-container">
-                <label className="label" htmlFor="channel">Channel:</label>
+                <label className="label" htmlFor="channel">{t('label.channel')}:</label>
                 <div className="input-container">
                     <Input
                         id="channel"
                         className="input"
                         type="text"
                         required
-                        placeholder="@name or https://t.me/name"
+                        placeholder={t('placeholder.channel')}
                         value={channelValue}
                         onInput={setChannelValue}
                         onPressEnter={onClickSubmit}
                     />
                 </div>
-                <label className="label" htmlFor="title">Title:</label>
+                <label className="label" htmlFor="title">{t('label.title')}:</label>
                 <div className="input-container">
                     <Input
                         id="title"
@@ -56,13 +58,13 @@ export const AddFeaturedChannelForm = (props: {
                         onPressEnter={onClickSubmit}
                     />
                 </div>
-                <label className="label" htmlFor="comment">Comment:</label>
+                <label className="label" htmlFor="comment">{t('label.comment')}:</label>
                 <div className="input-container">
                     <Input
                         id="channel"
                         className="input"
                         type="text"
-                        placeholder="Comment"
+                        placeholder={t('placeholder.additionalInformation')}
                         value={commentValue}
                         onInput={setCommentValue}
                         onPressEnter={onClickSubmit}
@@ -70,7 +72,7 @@ export const AddFeaturedChannelForm = (props: {
                 </div>
                 <Button
                     type="submit"
-                    value="Submit"
+                    value={t('button.submit')}
                     onClick={onClickSubmit}
                 />
             </div>

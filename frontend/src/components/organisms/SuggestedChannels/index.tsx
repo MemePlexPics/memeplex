@@ -6,11 +6,13 @@ import { getFieldsWithUntrueValues } from "../../../utils"
 import { ENotificationType } from "../../Notification/constants"
 import { addChannel, proceedChannelSuggestion } from "../../../services"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 export const SuggestedChannels = (props: {
     password: string
     className?: string
 }) => {
+    const { t } = useTranslation()
     const setNotification = useNotification()
     const setDialog = useSetAtom(dialogConfirmationAtom)
     const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
@@ -21,7 +23,7 @@ export const SuggestedChannels = (props: {
       if (!handleAdminRequest(response))
         return false
       setNotification({
-        text: `The @${channel} has been successfully added`,
+        text: t('notification.channelAdded', { channel }),
         type: ENotificationType.OK
       })
       setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
@@ -33,7 +35,7 @@ export const SuggestedChannels = (props: {
       if (!handleAdminRequest(response))
         return false
       setNotification({
-        text: `The @${channel} suggestion has been successfully declined`,
+        text: t('notification.suggestDeclined', { channel }),
         type: ENotificationType.OK
       })
       setSuggestionsUpdateSwitch(!suggestionsUpdateSwitch)
@@ -44,7 +46,7 @@ export const SuggestedChannels = (props: {
       if (!channel || !props.password) {
         const incorrectFields = getFieldsWithUntrueValues({ channel, password: props.password })
         setNotification({
-          text: `Incorrect fields:\n${incorrectFields.join(', ')}`,
+          text: `${t('notification.incorrectFields')}:\n${incorrectFields.join(', ')}`,
           type: ENotificationType.INFO,
         })
         return false
@@ -58,21 +60,20 @@ export const SuggestedChannels = (props: {
         return false
       if (action === 'add') {
         setDialog({
-          text: `Accept the suggested @${channel}?`,
+          text: `${t('notification.acceptSuggest')} @${channel}?`,
           isOpen: true,
           onClickAccept: () => handleAddChannel(channel, []),
         })
         return true
       }
       setDialog({
-        text: `Reject the suggested @${channel}?`,
+        text: `${t('notification.rejectSuggest')} @${channel}?`,
         isOpen: true,
         onClickAccept: () => handleSuggestionRemove(channel),
       })
     }
 
     return <div className={props.className}>
-        <h2>Suggestions</h2>
         <ChannelSuggestionList updateSwitch={suggestionsUpdateSwitch} onAction={onSuggestionAction} />
     </div>
 }

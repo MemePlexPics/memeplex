@@ -4,6 +4,7 @@ import { ChannelBlock, PaginatedList } from ".."
 import { useFetch } from "../../hooks"
 import { getUrl } from "../../utils"
 import { TGetChannelList } from "../../types"
+import { useTranslation } from "react-i18next"
 
 type TChannelListProps =
 | {
@@ -17,6 +18,7 @@ type TChannelListProps =
 }
 
 export const ChannelList = (props: TChannelListProps) => {
+    const { t } = useTranslation()
     const [page, setPage] = useState(1)
     const request = useFetch<TGetChannelList>(
         () => getUrl('/getChannelList', {
@@ -42,7 +44,7 @@ export const ChannelList = (props: TChannelListProps) => {
             onChangePage={setPage}
         >
             {request.isLoaded && !request.data?.result.length
-                ? <h3 style={{ color: 'white' }}>Nothing found</h3>
+                ? <h3 style={{ color: 'white' }}>{t('label.nothingFound')}</h3>
                 : request.data
                     ? request.data.result.map(channel => (
                         <li key={channel.name}>
