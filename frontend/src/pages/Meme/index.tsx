@@ -11,9 +11,11 @@ import './style.css'
 import { dialogConfirmationAtom } from "../../store/atoms/dialogConfirmationAtom"
 import { removeChannel } from "../../services"
 import { ENotificationType } from "../../components/Notification/constants"
+import { useTranslation } from "react-i18next"
 
 export const MemePage = () => {
     const { id } = useParams()
+    const { t } = useTranslation()
     const memes = useAtomValue(memesAtom)
     const setNotification = useNotification()
     const { title } = useTitle(['Meme'])
@@ -38,6 +40,10 @@ export const MemePage = () => {
             content: request.data?.text.eng || '',
         },
         {
+            name: 'description',
+            content: request.data?.text.eng || '',
+        },
+        {
             name: "og:title",
             content: title,
         },
@@ -55,11 +61,11 @@ export const MemePage = () => {
         if (!request.data) return
         let password = ''
         setDialog({
-            text: `Remove the channel @${request.data.channel}?`,
+            text: `${t('notification.removeChannel')} @${request.data.channel}?`,
             isOpen: true,
             children: <Input
                 type='password'
-                placeholder='Password'
+                placeholder={t('placeholder.password')}
                 required
                 onInput={val => {
                     password = val
@@ -69,7 +75,7 @@ export const MemePage = () => {
                 if (!password) {
 
                     setNotification({
-                        text: 'Enter password',
+                        text: t('notification.enterPassword'),
                         type: ENotificationType.ERROR
                     })
                     return
@@ -78,7 +84,7 @@ export const MemePage = () => {
                 if (!handleAdminRequest(response))
                     return false
                 setNotification({
-                    text: `The @${request.data.channel} has been successfully removed`,
+                    text: t('notification.channelRemoved', { channel: request.data.channel}),
                     type: ENotificationType.OK
                 })
             }
@@ -86,13 +92,8 @@ export const MemePage = () => {
     }
 
     if (request.isLoading) return <Loader />
-
-    if (request.isError) {
-        if (request.status === 204) return <p className="unexisted-meme">This meme is not in the database</p>
-        return <p className="error-response">An error occurred, please try later</p>
-    }
-
-    if (!request.data) return <p className='nothing-found'>Meme not found</p>
+    if (request.status === 204) return <p className="unexisted-meme">{t('label.unexistedMeme')}</p>
+    if (request.isError || !request.data) return <p className="error-response">{t('label.errorOccured')}</p>
 
     return (
         <div id="meme">
@@ -101,7 +102,7 @@ export const MemePage = () => {
                 <div className="meme-text">
                     {Object.entries(request.data?.text).map(([_lang, text]) => (
                         <p className="meme-text-lang">
-                            <b>Text: </b>
+                            <b>{t('label.text')}: </b>
                             {text.split('\n').map(line => (
                                 <span>{line}</span>
                             ))}
@@ -110,7 +111,7 @@ export const MemePage = () => {
                 </div>
                 <div className="meme-source">
                     <p>
-                        <b>Source: </b>
+                        <b>{t('label.source')}: </b>
                         <ChannelBlock
                             isAdmin={isAdmin}
                             username={request.data.channel}

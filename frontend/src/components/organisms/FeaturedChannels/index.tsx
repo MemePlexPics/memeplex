@@ -7,11 +7,13 @@ import { addFeaturedChannel, getFeaturedChannel, removeFeaturedChannel } from ".
 import { IFeaturedChannel } from "../../../types"
 import { ENotificationType } from "../../Notification/constants"
 import { getFieldsWithUntrueValues } from "../../../utils"
+import { useTranslation } from "react-i18next"
 
 export const FeaturedChannels = (props: {
     password: string
     className?: string
 }) => {
+    const { t } = useTranslation()
     const setNotification = useNotification()
     const [featuredUpdateSwitch, setFeaturedUpdateSwitch] = useState(true)
     const setDialog = useSetAtom(dialogConfirmationAtom)
@@ -22,7 +24,7 @@ export const FeaturedChannels = (props: {
       if (!handleAdminRequest(response))
         return false
       setNotification({
-        text: `The «${channel.title}» has been successfully unfeatured`,
+        text: t('notification.channelUnfeatured', { channel: channel.title }),
         type: ENotificationType.OK
       })
       setFeaturedUpdateSwitch(!featuredUpdateSwitch)
@@ -34,7 +36,7 @@ export const FeaturedChannels = (props: {
       if (!handleAdminRequest(response))
         return false
       setNotification({
-        text: `The «${channel.title}» has been successfully featured`,
+        text: t('notification.channelFeatured', { channel: channel.title }),
         type: ENotificationType.OK
       })
       setFeaturedUpdateSwitch(!featuredUpdateSwitch)
@@ -45,7 +47,7 @@ export const FeaturedChannels = (props: {
       if (!channel || !props.password) {
         const incorrectFields = getFieldsWithUntrueValues({ channel, password: props.password })
         setNotification({
-          text: `Incorrect fields:\n${incorrectFields.join(', ')}`,
+          text: `${t('notification.incorrectFields')}:\n${incorrectFields.join(', ')}`,
           type: ENotificationType.INFO,
         })
         return false
@@ -66,7 +68,7 @@ export const FeaturedChannels = (props: {
         return false
       if (action === 'remove') {
         setDialog({
-          text: `Remove the featured «${channel.title}» (@${channel.username})?`,
+          text: `${t('notification.removeFeatured')} «${channel.title}» (@${channel.username})?`,
           isOpen: true,
           onClickAccept: () => handleRemoveFeaturedChannel(channel),
         })
@@ -79,7 +81,10 @@ export const FeaturedChannels = (props: {
         const response = await request.json() as unknown as IFeaturedChannel
         const date = new Date(response.timestamp * 1000).toLocaleString()
         setDialog({
-          text: `Title: «${response.title}»\nUsername: @${response.username}\nFrom: ${date}\nComment: ${response.comment || '—'}`,
+          text: `${t('label.title')}: «${response.title}»
+            ${t('label.username')}: @${response.username}
+            ${t('label.from')}: ${date}
+            ${t('label.comment')}: ${response.comment || '—'}`,
           isOpen: true,
           rejectText: false,
         })
@@ -88,9 +93,9 @@ export const FeaturedChannels = (props: {
     }
 
     return <div className={props.className}>
-        <h2>Add featured channel</h2>
+        <h2>{t('label.addFeaturedChannel')}</h2>
         <AddFeaturedChannelForm onAddChannel={onAddFeaturedChannel} />
-        <h2>Featured channels</h2>
+        <h2>{t('label.featuredChannels')}</h2>
         <FeaturedChannelList isAdmin updateSwitch={featuredUpdateSwitch} onAction={onFeaturedAction} />
     </div>
 }

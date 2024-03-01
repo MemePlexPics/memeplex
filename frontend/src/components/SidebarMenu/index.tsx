@@ -5,8 +5,10 @@ import classnames from 'classnames'
 import { HamburgerIcon } from ".."
 import './style.css'
 import { useClickOutside } from "../../hooks"
+import { useTranslation } from "react-i18next"
 
 export const SidebarMenu = () => {
+    const { t } = useTranslation()
     const [isFolded, setIsFolded] = useState(true)
     const sidebarRef = useRef<HTMLDivElement>(null)
     const location = useLocation()
@@ -29,21 +31,21 @@ export const SidebarMenu = () => {
                 ? <ul className="sidebar-menu">
                     {localStorage.getItem('isAdmin') === '1'
                         ? <li>
-                            <NavLink to='/admin'>Admin page</NavLink>
+                            <NavLink to='/admin'>{t('page.admin')}</NavLink>
                         </li>
                         : null
                     }
                     <li>
-                        <NavLink to='/channelList'>Channel list</NavLink>
+                        <NavLink to='/channelList'>{t('page.channelList')}</NavLink>
                     </li>
                     <li>
-                        <Link to='https://t.me/MemePlex_Pics' target="_blank">Telegram channel</Link>
+                        <Link to='https://t.me/MemePlex_Pics' target="_blank">{t('page.telegramChannel')}</Link>
                     </li>
                     <li>
-                        <Link to='https://t.me/MemePlexBot' target="_blank">Telegram bot</Link>
+                        <Link to='https://t.me/MemePlexBot' target="_blank">{t('page.telegramBot')}</Link>
                     </li>
                     <li>
-                        <NavLink to='/about'>About</NavLink>
+                        <NavLink to='/about'>{t('page.about')}</NavLink>
                     </li>
                 </ul>
                 : null

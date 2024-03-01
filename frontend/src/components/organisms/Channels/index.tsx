@@ -6,11 +6,13 @@ import { ENotificationType } from "../../Notification/constants"
 import { dialogConfirmationAtom } from "../../../store/atoms/dialogConfirmationAtom"
 import { useState } from "react"
 import { getFieldsWithUntrueValues } from "../../../utils"
+import { useTranslation } from "react-i18next"
 
 export const Channels = (props: {
     password: string
     className?: string
 }) => {
+    const { t } = useTranslation()
     const setNotification = useNotification()
     const setDialog = useSetAtom(dialogConfirmationAtom)
     const { handleAdminRequest } = useAdminRequest()
@@ -21,7 +23,7 @@ export const Channels = (props: {
       if (!handleAdminRequest(response))
         return false
       setNotification({
-        text: `The @${channel} has been successfully added`,
+        text: t('notification.channelAdded', { channel }),
         type: ENotificationType.OK
       })
       setChannelsUpdateSwitch(!channelsUpdateSwitch)
@@ -33,7 +35,7 @@ export const Channels = (props: {
       if (!handleAdminRequest(response))
         return false
       setNotification({
-        text: `The @${channel} has been successfully removed`,
+        text: t('notification.channelRemoved', { channel }),
         type: ENotificationType.OK
       })
       setChannelsUpdateSwitch(!channelsUpdateSwitch)
@@ -44,7 +46,7 @@ export const Channels = (props: {
       if (!channel || !props.password) {
         const incorrectFields = getFieldsWithUntrueValues({ channel, password: props.password })
         setNotification({
-          text: `Incorrect fields:\n${incorrectFields.join(', ')}`,
+          text: `${t('notification.incorrectFields')}:\n${incorrectFields.join(', ')}`,
           type: ENotificationType.INFO,
         })
         return false
@@ -63,7 +65,7 @@ export const Channels = (props: {
       const areFieldsValid = validChannelAndPasswordField(channel)
       if (areFieldsValid) {
         setDialog({
-          text: `Remove the channel @${channel}?`,
+          text: `${t('notification.removeChannel')} @${channel}?`,
           isOpen: true,
           onClickAccept: () => handleRemoveChannel(channel),
         })
@@ -71,9 +73,9 @@ export const Channels = (props: {
     }
 
     return <div className={props.className}>
-        <h2>Add channel</h2>
+        <h2>{t('label.addChannel')}</h2>
         <AddChannelForm onAddChannel={onAddChannel} />
-        <h2>Channels</h2>
+        <h2>{t('label.channels')}</h2>
         <ChannelList isAdmin updateSwitch={channelsUpdateSwitch} onRemoveChannel={onRemoveChannel} />
     </div>
 }
