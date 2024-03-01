@@ -68,30 +68,30 @@ export const ChannelBlock = (props: {
                 <div className="channel-actions">
                     {props.onClickCheck
                         ? <FontAwesomeIcon
-                        icon={faCheck}
-                        color="green"
-                        onClick={onClickCheck}
+                            icon={faCheck}
+                            color="green"
+                            onClick={onClickCheck}
                         />
                         : null}
                     {props.onClickEdit
                         ? <FontAwesomeIcon
-                        icon={faPen}
-                        color="blue"
-                        onClick={onClickEdit}
+                            icon={faPen}
+                            color="blue"
+                            onClick={onClickEdit}
                         />
                         : null}
                     {props.onClickView
                         ? <FontAwesomeIcon
-                        icon={faEye}
-                        onClick={onClickView}
+                            icon={faEye}
+                            onClick={onClickView}
                         />
                         : null}
                     {props.onClickRemove
                         ?
                         <FontAwesomeIcon
-                        icon={faTrashCan}
-                        color="red"
-                        onClick={onClickRemove}
+                            icon={faTrashCan}
+                            color="red"
+                            onClick={onClickRemove}
                         />
                         : null}
                 </div>

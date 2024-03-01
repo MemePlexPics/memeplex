@@ -14,6 +14,7 @@ export const s = stylex.create({
         fontSize: size.fontBig,
         border: '2px solid transparent',
         padding: '0 10px',
+        cursor: 'pointer',
     },
     isActive: {
         borderColor: color.lightGray,
