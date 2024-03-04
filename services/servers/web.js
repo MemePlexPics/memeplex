@@ -8,6 +8,7 @@ import {
     logError,
     getMysqlClient,
     checkFileExists,
+    shuffleArray,
 } from '../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
@@ -240,7 +241,7 @@ app.get('/getFeaturedChannelList', async (req, res) => {
         const mysql = await getMysqlClient();
         const channels = await getFeaturedChannelList(mysql);
         return res.send({
-            result: channels,
+            result: shuffleArray(channels),
         });
     } catch (e) {
         await handleMethodError(e);
