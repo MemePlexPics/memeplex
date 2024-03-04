@@ -76,7 +76,7 @@ const generateSitemaps = async () => {
     const sitemaps = fs.readdirSync(`${PUBLIC_PATH}/sitemaps`);
     const timeZoneCorrection = new Date().getTimezoneOffset() < 0
         ? 1
-        : 0;
+        : -1;
     let currentTimestamp;
     if (sitemaps.length) {
         const lastDateStr = sitemaps.at(-1).replace('.xml', '');
