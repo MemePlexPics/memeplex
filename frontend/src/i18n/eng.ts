@@ -1,7 +1,6 @@
-import { rus } from "."
-import { TDeepStringObject } from "../types"
+import { TI18nLocalization } from "../types"
 
-export const eng: TDeepStringObject<typeof rus> = {
+export const eng: TI18nLocalization = {
     meta: {
         homeDescription: 'Search engine for memes with a focus on Russian underground Telegram',
         channelsDescription: 'List of telegram channels (sources)',

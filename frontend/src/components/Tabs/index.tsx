@@ -1,6 +1,6 @@
 import * as stylex from '@stylexjs/stylex'
 import { s } from './style'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const Tabs = (props: {
     tabs: string[]
@@ -15,10 +15,15 @@ export const Tabs = (props: {
         props.onChange?.(tab)
     }
 
+    useEffect(() => {
+        setCurrentTab(props.tabs?.[0])
+    }, [props.tabs])
+
     return <div>
         <div {...stylex.props(s.tabs)}>
             {props.tabs.map(tab => (
-                <div 
+                <div
+                    key={tab}
                     {...stylex.props(
                         s.tab,
                         currentTab === tab

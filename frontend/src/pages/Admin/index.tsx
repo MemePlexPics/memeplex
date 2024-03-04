@@ -1,13 +1,14 @@
 import { Input, Tabs } from '../../components'
 import './style.css'
 import { useState } from 'react'
-import { useMeta, useTitle } from '../../hooks'
+import { useMeta, useTitle, useTranslatedState } from '../../hooks'
 import { Channels, FeaturedChannels, SuggestedChannels } from '../../components/organisms'
 import { useTranslation } from 'react-i18next'
 
 export const AdminPage = () => {
   const { t } = useTranslation()
   const [password, setPassword] = useState('')
+  const [tabs] = useTranslatedState<string[]>(() => [t('tab.channels'), t('tab.suggested'), t('tab.featured')])
   const [currentTab, setCurrentTab] = useState<string>('')
 
   useTitle([currentTab, 'Admin'])
@@ -31,7 +32,7 @@ export const AdminPage = () => {
           onInput={setPassword}
       />
       <Tabs
-        tabs={[t('tab.channels'), t('tab.suggested'), t('tab.featured')]}
+        tabs={tabs}
         onChange={tab => setCurrentTab(tab)}
       >
         <Channels key={t('tab.channels')} password={password} />

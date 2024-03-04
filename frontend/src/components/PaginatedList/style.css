@@ -13,17 +13,11 @@ ul {
 }
 
 .horizontal {
-    &.isScrollable {
-        background: linear-gradient(270deg,var(--color-black-2) 0%, #fff0 10%);
-    }
 
     ul {
         grid-auto-flow: column;
         margin: 0;
         padding: 10px 0;
-        overflow-x: scroll;
-        scrollbar-width: thin;
-        /* scrollbar-color: transparent transparent; */
     }
 }
 
