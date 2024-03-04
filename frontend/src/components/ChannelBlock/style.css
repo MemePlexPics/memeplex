@@ -1,29 +1,22 @@
 .channel-block {
-    display: grid;
-    grid-template-columns: auto;
+    display: flex;
+    flex-direction: row;
     color: var(--color-white);
     border-radius: 8px;
     border: 1px solid var(--color-dark-gray);
     white-space: nowrap;
     overflow: hidden;
-}
-
-.channel-block.isAdmin {
-    grid-template-columns: 80% auto;
+    position: relative;
 }
 
 .channel-info {
-    display: grid;
-    grid-template-columns: max(13%, 62px) auto;
+    display: flex;
+    flex-direction: row;
     text-decoration: none;
     cursor: pointer;
 }
 
 .small {
-    .channel-info {
-        grid-template-columns: max(13%, 42px) auto;
-    }
-
     .avatar {
         padding: 5px;
         height: 40px;
@@ -58,8 +51,12 @@
 .channel-block.isAdmin:hover .channel-actions {
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    gap: 14px;
     background-color: var(--color-black-1);
+    padding: 0 14px;
+    position: absolute;
+    right: 0;
+    height: 100%;
 
     svg {
         cursor: pointer;
@@ -69,5 +66,7 @@
 @media only screen and (hover: none) and (pointer: coarse) {
     .channel-block {
         border: 0;
+        background-color: var(--color-black-1);
+        padding: 5px;
     }
 }

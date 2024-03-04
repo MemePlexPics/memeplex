@@ -1,3 +1,4 @@
+import { RouteObject } from 'react-router-dom'
 import { Layout } from '../components'
 import {
   AboutPage,
@@ -7,7 +8,7 @@ import {
   MemePage
 } from "../pages"
 
-export const routes = [
+export const routes: RouteObject[] = [
   {
     path: "/",
     element: <Layout />,

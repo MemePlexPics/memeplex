@@ -22,7 +22,11 @@
         display: flex;
 
         li {
-            min-width: 380px;
+            max-width: 380px;
+
+            .channel-block {
+                padding-right: 4px;
+            }
         }
     }
 }
