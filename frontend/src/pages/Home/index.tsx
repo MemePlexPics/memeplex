@@ -47,7 +47,10 @@ export const HomePage = () => {
             {!query
                 ? <div
                     className="featured-channels"
-                    style={{ width: visualMemesContainerWidth.current }}
+                    style={window.screen.orientation.type !== 'portrait-primary'
+                        ? { width: visualMemesContainerWidth.current }
+                        : undefined
+                    }
                 >
                     <div className="featured-channels-head">
                         <h3 className="featured-channels-header">{t('label.featuredChannels')}</h3>
