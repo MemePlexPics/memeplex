@@ -23,7 +23,7 @@ ul {
         padding: 10px 0;
         overflow-x: scroll;
         scrollbar-width: thin;
-        scrollbar-color: transparent transparent;
+        /* scrollbar-color: transparent transparent; */
     }
 }
 
