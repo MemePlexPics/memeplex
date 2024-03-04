@@ -46,6 +46,7 @@ export const rus = {
         channelUnfeatured: 'Канал «{{channel}}» был успешно удален из избранных',
         channelFeatured: 'Канал «{{channel}}» был успешно добавлен к избранным',
         removeFeatured: 'Удалить избранный',
+        pagesLeft: 'Еще {{number}} страниц',
     },
     button: {
         search: 'Поиск',
