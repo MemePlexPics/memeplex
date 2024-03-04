@@ -49,6 +49,7 @@ export const eng: TDeepStringObject<typeof rus> = {
         channelUnfeatured: 'The «{{channel}}» has been successfully unfeatured',
         channelFeatured: 'The «{{channel}}» has been successfully featured',
         removeFeatured: 'Remove the featured',
+        pagesLeft: 'There are {{number}} more pages',
     },
     button: {
         search: 'Search',

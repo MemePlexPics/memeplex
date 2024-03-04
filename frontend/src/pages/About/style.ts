@@ -14,7 +14,4 @@ export const s = stylex.create({
     p: {
         margin: '10px 0',
     },
-    border: {
-        borderRight: `1px solid ${color.darkGray}`,
-    },
 })
