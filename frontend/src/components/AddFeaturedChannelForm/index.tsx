@@ -52,7 +52,7 @@ export const AddFeaturedChannelForm = (props: {
                         className="input"
                         type="text"
                         required
-                        placeholder="Readable title"
+                        placeholder={t('placeholder.readableTitle')}
                         value={titleValue}
                         onInput={setTitleValue}
                         onPressEnter={onClickSubmit}
