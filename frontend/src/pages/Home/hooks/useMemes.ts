@@ -8,8 +8,10 @@ import { useFetch } from "../../../hooks"
 import { IGetLatest } from "../../../services/types"
 import { memesAtom, pageOptionsAtom } from "../../../store/atoms"
 import { ENotificationType } from "../../../components/Notification/constants"
+import { useTranslation } from "react-i18next"
 
 export const useMemes = (query: string) => {
+    const { t } = useTranslation()
     const setNotification = useNotification()
     // TODO: get rid of it, add the operation to deps of useFetch()
     const [url, setUrl] = useState<URL>(getUrl('/getLatest'))
@@ -92,7 +94,7 @@ export const useMemes = (query: string) => {
             if (operation === EMemesOperation.INIT || operation === EMemesOperation.REINIT) {
                 if (request.data.totalPages > 1) {
                     setNotification({
-                        text: `There are ${request.data.totalPages - 1} more pages`,
+                        text: t('notification.pagesLeft', { number: request.data.totalPages }),
                         type: ENotificationType.OK,
                     })
                 }
