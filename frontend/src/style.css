@@ -14,7 +14,7 @@
     --color-black-1: #151617;
     --color-black-2: #222;
     --z-index-loader: 1000;
-    --z-index-notification: 1001;
+    --z-index-notification: 1;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
@@ -30,13 +30,15 @@
 
 @font-face {
     font-family: OpenSans;
-    src: local('OpenSans'), url(/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
+    src: local('OpenSans'), url(/fonts/OpenSans-VariableFont_wdth\,wght.woff2);
+    font-display: swap;
 }
 
 @font-face {
     font-family: OpenSans;
-    src: local('OpenSans'), url(/fonts/OpenSans-VariableFont_wdth\,wght.ttf);
+    src: local('OpenSans'), url(/fonts/OpenSans-Italic-VariableFont_wdth\,wght.woff2);
     font-style: italic;
+    font-display: swap;
 }
 
 html {

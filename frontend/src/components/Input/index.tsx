@@ -7,7 +7,7 @@ type TDefaultInput = InputHTMLAttributes<HTMLInputElement>
 
 export const Input = (props: Omit<TDefaultInput, 'onInput'> & {
     onInput?: (value: string) => unknown
-    onPressEnter?: () => unknown
+    onPressEnter?: (value?: string) => unknown
 }) => {
     const onInput = (e: React.FormEvent<HTMLInputElement>) => {
         const value = (e.target as HTMLInputElement).value
@@ -16,7 +16,7 @@ export const Input = (props: Omit<TDefaultInput, 'onInput'> & {
 
     const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key !== 'Enter') return
-        props.onPressEnter?.()
+        props.onPressEnter?.((event.target as HTMLInputElement).value)
     }
 
     return (

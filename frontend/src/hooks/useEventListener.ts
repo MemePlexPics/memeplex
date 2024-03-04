@@ -1,12 +1,13 @@
 import { useEffect, useRef } from 'react'
-import { TUseEventListener } from './types'
 
-export const useEventListener: TUseEventListener = (
-    eventType,
-    callback,
-    element = window,
-    options = {}
+export const useEventListener = <GEvent extends Event = Event>(
+    eventType: keyof WindowEventMap,
+    callback: (event: GEvent) => void,
+    element?: HTMLElement | Window,
+    options?: boolean | AddEventListenerOptions,
+    dependencies?: unknown[]
 ) => {
+    const targetElement = element || window
     const callbackRef = useRef(callback)
 
     useEffect(() => {
@@ -14,13 +15,11 @@ export const useEventListener: TUseEventListener = (
     }, [callback])
 
     useEffect(() => {
-        if (element == null) return
-
-        const handler = (e: Event) => callbackRef.current(e)
-        element.addEventListener(eventType, handler, options)
+        const handler = (e: GEvent) => callbackRef.current(e)
+        targetElement.addEventListener(eventType, handler as EventListenerOrEventListenerObject, options || {})
 
         return () => {
-            element.removeEventListener(eventType, handler)
+            targetElement.removeEventListener(eventType, handler as EventListenerOrEventListenerObject)
         }
-    }, [eventType, element])
+    }, [eventType, element, ...(dependencies || [])])
 }

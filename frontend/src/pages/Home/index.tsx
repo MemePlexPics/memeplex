@@ -1,5 +1,4 @@
-
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useTranslation } from 'react-i18next'
 import { FeaturedChannelList, Loader, MemeSearchForm, MemeSearchResults } from "../../components"
 import { useMemes } from "./hooks/useMemes"
@@ -16,6 +15,8 @@ export const HomePage = () => {
     const [query, setQuery] = useState(useAtomValue(pageOptionsAtom).query)
     const data = useMemes(query)
     const { title } = useTitle([])
+    const maxMemesInARow = useRef(Math.floor(window.innerWidth * 0.9 / 300))
+    const visualMemesContainerWidth = useRef(maxMemesInARow.current * 300 + (maxMemesInARow.current - 1) * 14)
 
     useMeta([
         {
@@ -44,7 +45,10 @@ export const HomePage = () => {
         <>
             <MemeSearchForm query={query} onUpdate={(query) => setQuery(query)} />
             {!query
-                ? <div className="featured-channels">
+                ? <div
+                    className="featured-channels"
+                    style={{ width: visualMemesContainerWidth.current }}
+                >
                     <div className="featured-channels-head">
                         <h3 className="featured-channels-header">{t('label.featuredChannels')}</h3>
                         <Link

@@ -18,11 +18,11 @@ export const size = stylex.defineVars({
         [MOBILE_PORTRAIT]: '10vw',
     },
     hamburgerIconWidth: {
-        default: '30px',
+        default: '45px',
         [MOBILE_PORTRAIT]: '6vw',
     },
     hamburgerIconHeight: {
-        default: '20px',
+        default: '30px',
         [MOBILE_PORTRAIT]: '4vw',
     },
     fontSlight: {

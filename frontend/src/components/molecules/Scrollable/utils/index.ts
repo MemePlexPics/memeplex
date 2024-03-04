@@ -1,0 +1,1 @@
+export { getXPosition } from './getXPosition'
