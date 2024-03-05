@@ -97,7 +97,7 @@ export const MemePage = () => {
 
     return (
         <div id="meme">
-            <img className="meme-image" src={request.data.fileName} />
+            <img className="meme-image" src={'/' +  request.data.fileName} />
             <div className="meme-description">
                 <div className="meme-text">
                     {Object.entries(request.data?.text).map(([lang, text]) => (
