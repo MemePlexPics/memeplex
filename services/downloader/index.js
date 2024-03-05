@@ -8,6 +8,7 @@ import {
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../../constants/index.js';
 import { delay } from '../../utils/index.js';
+import { handleNackByTimeout } from '../utils/index.js';
 import {
     buildImagePath,
 } from './utils/index.js';
@@ -20,8 +21,12 @@ export const downloader = async (logger) => {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         sendImageFileCh = await amqp.createChannel();
         receiveImageDataCh = await amqp.createChannel();
+        const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageDataCh), 600_000);
 
         await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
+        receiveImageDataCh.on('ack', () => {
+            clearTimeout(timeoutId);
+        });
 
         for (;;) {
             msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);

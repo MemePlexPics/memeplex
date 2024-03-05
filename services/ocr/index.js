@@ -8,6 +8,7 @@ import {
 } from '../../constants/index.js';
 import { getElasticClient, delay } from '../../utils/index.js';
 import { recogniseText, getNewDoc } from './utils/index.js';
+import { handleNackByTimeout } from '../utils/index.js';
 
 // Listens for messages containing images, outputs messages containing OCR'd text
 export const ocr = async (logger) => {
@@ -20,6 +21,10 @@ export const ocr = async (logger) => {
 
         await receiveImageFileCh.assertQueue(AMQP_IMAGE_FILE_CHANNEL, { durable: true });
         await receiveImageFileCh.prefetch(1); // let it process one message at a time
+        const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageFileCh), 600_000);
+        receiveImageFileCh.on('ack', () => {
+            clearTimeout(timeoutId);
+        });
 
         for (;;) {
             msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
