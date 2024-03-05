@@ -1,20 +1,17 @@
 import { ReactElement, useEffect, useRef, useState } from "react"
-import * as stylex from '@stylexjs/stylex'
+import stylex from '@stylexjs/stylex'
 import { s } from "./style"
 
 import { useEventListener } from "../../../hooks"
 import { applyClassNameToStyleX } from "../../../utils"
-import { getXPosition } from "./utils"
 
 export const Scrollable = (props: {
     orientation: 'horizontal' | 'vertical'
     children: ReactElement
 }) => {
     const [isScrollable, setIsScrollable] = useState(false)
-    const [isDragging, setIsDragging] = useState(false)
-    const [dragStartX, setDragStartX] = useState(0)
-    const [scrollLeft, setScrollLeft] = useState(0)
     const scrollableDivRef = useRef<HTMLDivElement>(null)
+    const touchStartPosition = useRef<number | null>(null)
 
     const preventDefaultIfScrollTheComponent = (e: Event) => {
         if (props.orientation === 'horizontal'
@@ -23,29 +20,27 @@ export const Scrollable = (props: {
         ) e.preventDefault()
     }
 
-    const handleDragStart = (event: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-        setIsDragging(true)
-        if (!(event instanceof MouseEvent) || !(event instanceof TouchEvent))
+    const onTouchStart = (e: React.TouchEvent) => {
+        if (props.orientation !== 'horizontal' || !scrollableDivRef.current)
             return
-        const xPosition = getXPosition(event)
-        if (xPosition) setDragStartX(xPosition)
+        touchStartPosition.current = e.touches[0].clientX
     }
-
-    const handleDragEnd = () => {
-        setIsDragging(false)
-        setScrollLeft(scrollableDivRef.current?.scrollLeft || 0)
-    }
-
-    const handleDragMove = (event: MouseEvent | TouchEvent) => {
-        if (!isDragging)
+    
+    const onTouchMove = (e: React.TouchEvent) => {
+        if (props.orientation !== 'horizontal' || !scrollableDivRef.current)
             return
-        const currentX = getXPosition(event)
-        const distance = dragStartX - currentX
-        if (scrollableDivRef.current !== null)
+        if (touchStartPosition.current !== null) {
+            const touchCurrentPosition = e.touches[0].clientX
+            const deltaX = touchStartPosition.current - touchCurrentPosition
             scrollableDivRef.current.scrollTo({
-                top: 0,
-                left: scrollLeft + distance,
+                left: scrollableDivRef.current.scrollLeft + deltaX,
             })
+            touchStartPosition.current = touchCurrentPosition
+        }
+    }
+
+    const onTouchEnd = () => {
+        touchStartPosition.current = null
     }
 
     const onWheel = (e: React.WheelEvent) => {
@@ -62,22 +57,17 @@ export const Scrollable = (props: {
         setIsScrollable(scrollableDivRef.current.clientWidth < scrollableDivRef.current.scrollWidth)
     }, [scrollableDivRef.current?.scrollWidth])
 
-    useEventListener('mousemove', handleDragMove, window, {}, [isDragging])
-    useEventListener('touchmove', handleDragMove, window, {}, [isDragging])
-    useEventListener('mouseup', handleDragEnd, window, {}, [isDragging])
-    useEventListener('touchend', handleDragEnd, window, {}, [isDragging])
-
-    useEventListener('touchstart', (e) => preventDefaultIfScrollTheComponent(e), window, { passive: false })
     useEventListener('wheel', (e) => preventDefaultIfScrollTheComponent(e), window, { passive: false })
+    useEventListener('touchmove', (e) => preventDefaultIfScrollTheComponent(e), window, { passive: false })
 
     return (
         <div
             {...applyClassNameToStyleX(stylex.props(isScrollable ? s.scrollable : null, s[props.orientation]), 'scrollable')}
             ref={scrollableDivRef}
-            onDragStart={e => e.preventDefault()}
-            onMouseDown={handleDragStart}
-            onTouchStart={handleDragStart}
             onWheel={onWheel}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
         >
             {props.children}
         </div>

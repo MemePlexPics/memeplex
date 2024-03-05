@@ -1,4 +1,4 @@
-import * as stylex from '@stylexjs/stylex'
+import stylex from '@stylexjs/stylex'
 import { size } from '../../styles/variables.stylex'
 
 const MOBILE_PORTRAIT = '@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait)'

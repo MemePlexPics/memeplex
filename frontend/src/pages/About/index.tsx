@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import * as stylex from '@stylexjs/stylex'
+import stylex from '@stylexjs/stylex'
 import { s } from "./style"
 import { useTitle } from "../../hooks"
 import { useTranslation } from "react-i18next"
