@@ -9,14 +9,14 @@ import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlus } from "@fortawesome/free-solid-svg-icons"
 import { useMeta, useTitle } from "../../hooks"
+import { calculateHowManyObjectFit } from "../../utils"
 
 export const HomePage = () => {
     const { t } = useTranslation()
     const [query, setQuery] = useState(useAtomValue(pageOptionsAtom).query)
     const data = useMemes(query)
     const { title } = useTitle([])
-    const maxMemesInARow = useRef(Math.floor(window.innerWidth * 0.9 / 300))
-    const visualMemesContainerWidth = useRef(maxMemesInARow.current * 300 + (maxMemesInARow.current - 1) * 14)
+    const visualMemesContainerWidth = useRef(calculateHowManyObjectFit(window.innerWidth * 0.9, 300, 14).supposedWidth)
 
     useMeta([
         {
@@ -47,10 +47,10 @@ export const HomePage = () => {
             {!query
                 ? <div
                     className="featured-channels"
-                    style={window.screen.orientation.type !== 'portrait-primary'
-                        ? { width: visualMemesContainerWidth.current }
+                    style={{ width: window.screen.orientation.type !== 'portrait-primary'
+                        ? visualMemesContainerWidth.current
                         : undefined
-                    }
+                    }}
                 >
                     <div className="featured-channels-head">
                         <h3 className="featured-channels-header">{t('label.featuredChannels')}</h3>

@@ -1,4 +1,4 @@
-import * as stylex from '@stylexjs/stylex'
+import stylex from '@stylexjs/stylex'
 import { color } from '../../../styles/variables.stylex'
 
 export const s = stylex.create({

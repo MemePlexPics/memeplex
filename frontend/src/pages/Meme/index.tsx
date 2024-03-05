@@ -97,29 +97,27 @@ export const MemePage = () => {
 
     return (
         <div id="meme">
-            <img className="meme-image" src={'/' + request.data.fileName} />
+            <img className="meme-image" src={request.data.fileName} />
             <div className="meme-description">
                 <div className="meme-text">
-                    {Object.entries(request.data?.text).map(([_lang, text]) => (
-                        <p className="meme-text-lang">
+                    {Object.entries(request.data?.text).map(([lang, text]) => (
+                        <p key={lang} className="meme-text-lang">
                             <b>{t('label.text')}: </b>
-                            {text.split('\n').map(line => (
-                                <span>{line}</span>
+                            {text.split('\n').map((line, i) => (
+                                <span key={i}>{line}</span>
                             ))}
                         </p>
                     ))}
                 </div>
                 <div className="meme-source">
-                    <p>
-                        <b>{t('label.source')}: </b>
-                        <ChannelBlock
-                            isAdmin={isAdmin}
-                            username={request.data.channel}
-                            id={request.data.message}
-                            className='source-block'
-                            onClickRemove={onClickRemoveChannel}
-                        />
-                    </p>
+                    <b>{t('label.source')}: </b>
+                    <ChannelBlock
+                        isAdmin={isAdmin}
+                        username={request.data.channel}
+                        id={request.data.message}
+                        className='source-block'
+                        onClickRemove={onClickRemoveChannel}
+                    />
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { Link, NavLink, useLocation } from "react-router-dom"
-import * as stylex from '@stylexjs/stylex'
+import stylex from '@stylexjs/stylex'
 import { s } from "./style"
 
 import { HamburgerIcon } from ".."

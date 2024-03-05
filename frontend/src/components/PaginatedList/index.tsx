@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import { useRef, Fragment } from "react"
 import { Loader, Pagination } from ".."
 
 import './style.css'
@@ -16,9 +16,13 @@ export const PaginatedList = (props: {
 }) => {
     const orientation = props.orientation || 'vertical'
     const listRef = useRef<HTMLDivElement>(null)
+    // TODO: move into the Home page
+    const Wrapper = props.orientation === 'horizontal'
+        ? Scrollable
+        : Fragment
 
     return (
-        <Scrollable orientation="horizontal">
+        <Wrapper orientation="horizontal">
             <div
                 className={classNames('paginated-list', orientation, props.className)}
                 ref={listRef}
@@ -37,6 +41,6 @@ export const PaginatedList = (props: {
                     : null}
                 <Loader state={props.isLoading} />
             </div>
-        </Scrollable>
+        </Wrapper>
     )
 }

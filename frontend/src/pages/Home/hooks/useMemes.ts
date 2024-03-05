@@ -85,7 +85,7 @@ export const useMemes = (query: string) => {
     }
 
     const handleAutoUpdates = () => setInterval(() => {
-        const isScrollOnTop = document.documentElement.scrollTop === 0
+        const isScrollOnTop = document.getElementById('root')?.scrollTop === 0
         if (isScrollOnTop) setOperation(() => EMemesOperation.UPDATE)
     }, 30_000)
 

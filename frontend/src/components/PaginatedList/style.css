@@ -13,7 +13,6 @@ ul {
 }
 
 .horizontal {
-
     ul {
         grid-auto-flow: column;
         margin: 0;
@@ -21,15 +20,17 @@ ul {
     }
 }
 
-@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
-    ul {
-        list-style: none;
-        font-size: var(--font-size-normal);
-    }
-
+@media (orientation:portrait) {
     .vertical {
         ul {
             grid-template-columns: repeat(2, 50%);
         }
+    }
+}
+
+@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+    ul {
+        list-style: none;
+        font-size: var(--font-size-normal);
     }
 }

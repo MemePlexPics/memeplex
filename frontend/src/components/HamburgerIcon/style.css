@@ -1,6 +1,4 @@
 .hamburger {
-    width: 30px;
-    height: 20px;
     position: relative;
     display: flex;
     flex-direction: column;
