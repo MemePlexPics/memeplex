@@ -1,6 +1,6 @@
 .input {
     max-width: 800px;
-    width: 70vw;
+    width: 100%;
     font-size: var(--font-size-big);
     background-color: var(--color-black-1);
     border-radius: 8px;

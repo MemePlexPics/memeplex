@@ -1,5 +1,5 @@
 import React from 'react'
-import * as stylex from '@stylexjs/stylex'
+import stylex from '@stylexjs/stylex'
 import { s } from "./style"
 
 import { applyClassNameToStyleX } from '../../../utils'

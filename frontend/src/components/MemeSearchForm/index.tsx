@@ -1,7 +1,8 @@
 import { useState } from "react"
 import { Button, Input } from ".."
+import stylex from '@stylexjs/stylex'
+import { s } from "./style"
 
-import './style.css'
 import { useTranslation } from "react-i18next"
 
 export const MemeSearchForm = (props: {
@@ -16,7 +17,7 @@ export const MemeSearchForm = (props: {
     const onChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)
 
     return (
-        <div id="search-container">
+        <div {...stylex.props(s.container)}>
             <Input
                 className="input"
                 type="text"
