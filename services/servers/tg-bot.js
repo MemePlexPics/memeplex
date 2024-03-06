@@ -39,16 +39,42 @@ const logger = winston.createLogger({
     ],
 });
 
-const getTelegramUserName = (ctx) => {
-    const { username, first_name, last_name } = ctx.from;
-    return username
-        ? '@' + username
-        : [first_name, last_name].join(' ');
+const getTelegramUser = (ctx) => {
+    const { id, username, first_name, last_name } = ctx.from;
+    return {
+        id,
+        user: username
+            ? '@' + username
+            : [first_name, last_name].join(' '),
+    };
 };
 
-const logUserAction = (ctx, text) => {
-    const username = getTelegramUserName(ctx);
-    logger.info(username + `: ${text}`);
+// { search: { query, page }, latest: { from, to }, info: string, suggest: string }
+const logUserAction = (ctx, action) => {
+    const { id, user } = getTelegramUser(ctx);
+    let logEntity = {};
+    if (action.search) {
+        logEntity = {
+            action: 'search',
+            ...action.search,
+        };
+    } else if (action.latest) {
+        logEntity = {
+            action: 'latest',
+            ...action.latest,
+        };
+    } else if (action.info) {
+        logEntity = {
+            action: 'info',
+            text: action.info,
+        };
+    } else if (action.suggest) {
+        logEntity = {
+            action: 'suggest',
+            channel: action.suggest,
+        };
+    }
+    logger.info({ id, user, ...logEntity });
 };
 
 const resetSearchSession = (ctx) => {
@@ -69,7 +95,10 @@ const onBotRecieveText = async (ctx) => {
     try {
         const query = ctx.session.search.query || ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH);
         const page = ctx.session.search.nextPage || 1;
-        logUserAction(ctx, `${page}: «${query}»`);
+        logUserAction(ctx, { search: {
+            query,
+            page
+        }});
         const response = await searchMemes(client, query, page, TG_BOT_PAGE_SIZE);
 
         if (response.totalPages === 0) {
@@ -101,7 +130,10 @@ const onBotCommandGetLatest = async (ctx, update = true) => {
         const { from: sessionFrom, to: sessionTo } = ctx.session.latest;
         const from = update ? sessionTo : undefined;
         const to = update ? undefined : sessionFrom;
-        logUserAction(ctx, `/get_latest from: ${from} to: ${to}`);
+        logUserAction(ctx, { latest: {
+            from,
+            to
+        }});
         const response = await getLatestMemes(client, from, to, TG_BOT_PAGE_SIZE);
 
         for (let meme of response.result) {
@@ -137,7 +169,7 @@ const onBotCommandSuggestChannel = async (ctx) => {
     try {
         const mysql = await getMysqlClient();
         const response = await insertChannelSuggestion(mysql, channelName);
-        if (response) logUserAction(ctx, `added @${channelName} to suggested`);
+        if (response) logUserAction(ctx, { suggest: channelName });
         return ctx.reply('Thank you for the suggestion!');
     } catch(e) {
         logError(logger, e);
@@ -160,10 +192,10 @@ bot.use(session({
 }));
 
 bot.use(rateLimit({
-    window: 1000*60,
+    window: 60_000,
     limit: 15,
     onLimitExceeded: async (ctx) => {
-        logUserAction(ctx, 'exceeded rate limit');
+        logUserAction(ctx, { info: 'exceeded rate limit' });
         await ctx.reply('Wait a few seconds before trying again');
     },
 }));
