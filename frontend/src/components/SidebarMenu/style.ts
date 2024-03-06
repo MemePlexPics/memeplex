@@ -36,8 +36,13 @@ export const s = stylex.create({
         width: size.hamburgerIconWidth,
         cursor: 'pointer',
     },
-    languageSelector: {
+    languageSelectorContainer: {
         position: 'absolute',
         bottom: '20px',
+        fontSize: size.fontNormal,
+        color: color.white,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px',
     },
 })
