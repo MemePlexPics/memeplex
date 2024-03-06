@@ -30,7 +30,7 @@ export const AboutPage = () => {
                 <p {...stylex.props(s.p)}>Our distinguishing feature is that we don't steal the content (there's always a link to the original).</p>
                 <p {...stylex.props(s.p)}>
                     If you have a telegram channel, you can suggest it <Link to='/channelList' {...stylex.props(s.link)}>here</Link>
-                    , or add it to "featured channels" by reposting our announcement (see <Link to='https://t.me/memeplex_pics/4' {...stylex.props(s.link)}>here</Link>) and let us know in the <Link to='https://t.me/memeplex_pics/20' {...stylex.props(s.link)}>comments</Link>
+                    , or add it to "featured channels" by reposting our announcement (see <Link to='https://t.me/memeplex_pics/4' {...stylex.props(s.link)}>here</Link>) and let us know in the <Link to='https://t.me/memeplex_pics/20' {...stylex.props(s.link)}>comments</Link>.
                 </p>
             </div>
             }
