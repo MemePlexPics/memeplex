@@ -414,7 +414,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 5,
         "x": 9,
         "y": 9
       },
@@ -441,7 +441,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL THEN 1 END) AS without_timeout\nFROM\n  MadelineProto.ocr_keys;",
+          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -497,7 +497,7 @@
       "gridPos": {
         "h": 4,
         "w": 4,
-        "x": 12,
+        "x": 14,
         "y": 9
       },
       "id": 25,
@@ -3009,6 +3009,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 12,
+  "version": 14,
   "weekStart": ""
 }
