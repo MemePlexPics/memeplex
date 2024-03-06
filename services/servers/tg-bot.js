@@ -68,11 +68,6 @@ const logUserAction = (ctx, action) => {
             action: 'info',
             text: action.info,
         };
-    } else if (action.suggest) {
-        logEntity = {
-            action: 'suggest',
-            channel: action.suggest,
-        };
     }
     logger.info({ id, user, ...logEntity });
 };
@@ -169,7 +164,7 @@ const onBotCommandSuggestChannel = async (ctx) => {
     try {
         const mysql = await getMysqlClient();
         const response = await insertChannelSuggestion(mysql, channelName);
-        if (response) logUserAction(ctx, { suggest: channelName });
+        if (response) logUserAction(ctx, { info: `suggested @${channelName}` });
         return ctx.reply('Thank you for the suggestion!');
     } catch(e) {
         logError(logger, e);
@@ -230,7 +225,7 @@ const start = async () => {
             port: 3081,
         },
     });
-    logger.info('Telegram bot started');
+    logger.info({ info: 'Telegram bot started' });
 };
 
 await start();
