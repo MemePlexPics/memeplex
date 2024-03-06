@@ -21,12 +21,8 @@ export const downloader = async (logger) => {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         sendImageFileCh = await amqp.createChannel();
         receiveImageDataCh = await amqp.createChannel();
-        const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageDataCh), 600_000);
 
         await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
-        receiveImageDataCh.on('ack', () => {
-            clearTimeout(timeoutId);
-        });
 
         for (;;) {
             msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
@@ -35,6 +31,10 @@ export const downloader = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
+            const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageDataCh), 600_000);
+            receiveImageDataCh.on('ack', () => {
+                clearTimeout(timeoutId);
+            });
             const payload = JSON.parse(msg.content.toString());
             const destination = await buildImagePath(payload);
 

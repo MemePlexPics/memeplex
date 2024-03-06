@@ -21,10 +21,6 @@ export const ocr = async (logger) => {
 
         await receiveImageFileCh.assertQueue(AMQP_IMAGE_FILE_CHANNEL, { durable: true });
         await receiveImageFileCh.prefetch(1); // let it process one message at a time
-        const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageFileCh), 600_000);
-        receiveImageFileCh.on('ack', () => {
-            clearTimeout(timeoutId);
-        });
 
         for (;;) {
             msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
@@ -33,6 +29,10 @@ export const ocr = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
+            const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageFileCh), 600_000);
+            receiveImageFileCh.on('ack', () => {
+                clearTimeout(timeoutId);
+            });
             const { payload, texts } = await recogniseText(msg, logger);
             if (texts.eng) {
                 await elastic.index({
