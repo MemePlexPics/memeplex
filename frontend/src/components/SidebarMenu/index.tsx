@@ -53,13 +53,14 @@ export const SidebarMenu = () => {
                             <NavLink to='/about' {...stylex.props(s.link)}>{t('page.about')}</NavLink>
                         </li>
                     </ul>
-                    <LanguageSelector
-                        {...stylex.props(s.languageSelector)}
-                        languageOpetions={{
-                            ru: 'Русский',
-                            en: 'English',
-                        }}
-                    />
+                    <div {...stylex.props(s.languageSelectorContainer)}>
+                        <label>Language:</label>
+                        <LanguageSelector languageOpetions={{
+                                ru: 'Русский',
+                                en: 'English',
+                            }}
+                        />
+                    </div>
                 </>
                 : null
             }
