@@ -17,6 +17,7 @@ label {
     display: flex;
     justify-content: center;
     gap: 4px;
+    min-width: 640px;
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
