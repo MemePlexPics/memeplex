@@ -249,30 +249,38 @@ bot.on(message('text'), async (ctx) => {
 
 bot.on('inline_query', async (ctx) => {
     const query = ctx.inlineQuery.query;
-    console.log({query});
+    const page = Number(ctx.inlineQuery.offset) || 1;
 
-    // Check if the query is empty or doesn't match bot name
-    if (!query || !query.toLowerCase().startsWith('@MemePlexBot')) {
+    if (!query)
         return;
-    }
+    const response = await searchMemes(client, query, page, 30);
 
-    const results = [
-        {
+    const results = response.result.map(meme => {
+        const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href;
+        return {
             type: 'photo',
-            id: '1',
-            photo_url: 'https://memeplex.pics/data/media/rothkoskimono/5245-5420256235611087000.jpg',
-            thumb_url: 'https://memeplex.pics/apple-touch-icon.png',
-            title: 'Image 1'
-        },
-        {
-            type: 'photo',
-            id: '2',
-            photo_file_id: '5426853756349307000',
-            title: 'Image 2'
-        },
-    ];
+            id: meme.id,
+            photo_url,
+            thumb_url: photo_url,
+            title: meme.text.eng,
+            // photo_width: 400,
+            // photo_height: 400,
+        };
+    });
+    console.log(results.length, response.totalPages, ctx.inlineQuery.offset, ctx.inlineQuery.from.username, ctx.inlineQuery.chat_type, { query, page });
 
-    await ctx.answerInlineQuery(results);
+    // {
+    //     type: 'photo',
+    //     id: 'c956a3e4-71a3-4a60-8404-431546e6c66a',
+    //     photo_file_id: '5426853756349307000',
+    //     title: 'Image 2'
+    // },
+
+    await ctx.answerInlineQuery(results, {
+        next_offset: response.totalPages - page > 0
+            ? page + 1 + ''
+            : '',
+    });
 });
 
 const start = async () => {
