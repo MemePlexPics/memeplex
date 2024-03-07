@@ -65,7 +65,7 @@ const logUserAction = (ctx, action) => {
         };
     } else if (action.start) {
         logEntity = {
-            action: 'start',
+            start: 1,
         };
     } else if (action.info) {
         logEntity = {
