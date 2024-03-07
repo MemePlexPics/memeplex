@@ -247,6 +247,35 @@ bot.on(message('text'), async (ctx) => {
     await onBotRecieveText(ctx);
 });
 
+bot.on('inline_query', async (ctx) => {
+    const query = ctx.inlineQuery.query;
+    console.log({query});
+
+    // Check if the query is empty or doesn't match bot name
+    if (!query || !query.toLowerCase().startsWith('@MemePlexBot')) {
+        return;
+    }
+
+    const results = [
+        {
+            type: 'photo',
+            id: '1',
+            photo_url: 'https://memeplex.pics/data/media/rothkoskimono/5245-5420256235611087000.jpg',
+            thumb_url: 'https://memeplex.pics/data/media/rothkoskimono/5245-5420256235611087000.jpg',
+            title: 'Image 1'
+        },
+        {
+            type: 'photo',
+            id: '2',
+            photo_url: 'https://memeplex.pics/data/media/blcktlk/53773-5426853756349307000.jpg',
+            thumb_url: 'https://memeplex.pics/data/media/blcktlk/53773-5426853756349307000.jpg',
+            title: 'Image 2'
+        },
+    ];
+
+    await ctx.answerInlineQuery(results);
+});
+
 const start = async () => {
     bot.launch({
         webhook: {
