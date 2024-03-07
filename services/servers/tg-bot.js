@@ -60,7 +60,7 @@ const logUserAction = async (ctx, action) => {
     if (action.search) {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotUser(mysql, id);
-        if (!existedUser.id) await insertBotUser(mysql, id, user);
+        if (!existedUser?.id) await insertBotUser(mysql, id, user);
         await insertBotAction(mysql, id, 'search', action.search.query, action.search.page);
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
@@ -70,7 +70,7 @@ const logUserAction = async (ctx, action) => {
     } else if (action.latest) {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotUser(mysql, id);
-        if (!existedUser.id) await insertBotUser(mysql, id, user);
+        if (!existedUser?.id) await insertBotUser(mysql, id, user);
         await insertBotAction(mysql, id, 'latest', null, [action.latest.from, action.latest.to].join(','));
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
