@@ -27,3 +27,4 @@ export { getFeaturedChannel } from './getFeaturedChannel.js';
 export { insertBotUser } from './insertBotUser.js';
 export { createOrReplaceTable } from './createOrReplaceTable.js';
 export { insertBotAction } from './insertBotAction.js';
+export { selectBotUser } from './selectBotUser.js';
