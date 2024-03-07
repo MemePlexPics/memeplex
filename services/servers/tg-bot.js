@@ -13,10 +13,12 @@ import {
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
 import { Telegraf, Markup, session } from 'telegraf';
+import { MySQL } from '@telegraf/session/mysql';
 import { message } from 'telegraf/filters';
 import rateLimit from 'telegraf-ratelimit';
 import {
     insertChannelSuggestion,
+    insertBotUser,
 } from '../../utils/mysql-queries/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -187,7 +189,15 @@ bot.use(session({
             from: undefined,
             to: undefined,
         },
-    })
+    }),
+    store: MySQL({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        database: process.env.DB_DATABASE,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        table: 'telegraf-sessions',
+    }),
 }));
 
 bot.use(rateLimit({
@@ -204,23 +214,25 @@ bot.start(async (ctx) => {
 
 Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
     );
-    logUserAction(ctx, { start: true });
+    const mysql = await getMysqlClient();
+    const { id, user } = getTelegramUser(ctx);
+    await insertBotUser(mysql, id, user);
 });
 
 bot.command('get_latest', onBotCommandGetLatest);
 
 bot.command('suggest_channel', onBotCommandSuggestChannel);
 
-bot.on(message('text'), async (ctx) => {
-    resetSearchSession(ctx);
-    await onBotRecieveText(ctx);
-});
-
 bot.action('button_search_more', onBotRecieveText);
 
 bot.action('button_latest_older', (ctx) => onBotCommandGetLatest(ctx, false));
 
 bot.action('button_latest_newer', (ctx) => onBotCommandGetLatest(ctx, true));
+
+bot.on(message('text'), async (ctx) => {
+    resetSearchSession(ctx);
+    await onBotRecieveText(ctx);
+});
 
 const start = async () => {
     bot.launch({
