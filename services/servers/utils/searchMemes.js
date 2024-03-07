@@ -12,11 +12,34 @@ export const searchMemes = async (client, query, page, size) => {
         from,
         size,
         query: {
-            match: {
-                eng: {
-                    query,
-                    fuzziness: ELASTIC_FUZZINESS,
-                },
+            bool: {
+                should: [
+                    {
+                        constant_score: {
+                            filter: {
+                                match: {
+                                    eng: {
+                                        query,
+                                        fuzziness: ELASTIC_FUZZINESS,
+                                    },
+                                }
+                            },
+                            boost: 90, // +90 points
+                        }
+                    },
+                    {
+                        constant_score: {
+                            filter: {
+                                match: {
+                                    eng: {
+                                        query,
+                                    },
+                                }
+                            },
+                            boost: 10, // +10 points to previous 90, 100 points documents will be on top
+                        }
+                    }
+                ]
             }
         }
     });
