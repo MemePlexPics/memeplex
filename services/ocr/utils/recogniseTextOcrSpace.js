@@ -41,8 +41,7 @@ export const recogniseTextOcrSpace = async (fileName, language, logger) => {
             || error.message === 'socket hang up'
             || error.message === 'connect ETIMEDOUT'
             || error.message === 'Proxy connection timed out'
-            || error.message === 'Socks5 proxy rejected connection - TTLExpired'
-            || error.message === 'Socks5 proxy rejected connection - NotAllowed'
+            || error.message.startsWith('Socks5 proxy rejected connection')
             || error.message.startsWith('read ECONNRESET')
             || error.message.startsWith('connect ECONNREFUSED')
             || error.message.startsWith('connect ETIMEDOUT')
