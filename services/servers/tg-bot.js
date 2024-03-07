@@ -20,6 +20,7 @@ import {
     insertChannelSuggestion,
     insertBotUser,
     insertBotAction,
+    selectBotUser,
 } from '../../utils/mysql-queries/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -58,6 +59,8 @@ const logUserAction = async (ctx, action) => {
     let logEntity = {};
     if (action.search) {
         const mysql = await getMysqlClient();
+        const [existedUser] = await selectBotUser(mysql, id);
+        if (!existedUser.id) await insertBotUser(mysql, id, user);
         await insertBotAction(mysql, id, 'search', action.search.query, action.search.page);
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
@@ -66,6 +69,8 @@ const logUserAction = async (ctx, action) => {
         };
     } else if (action.latest) {
         const mysql = await getMysqlClient();
+        const [existedUser] = await selectBotUser(mysql, id);
+        if (!existedUser.id) await insertBotUser(mysql, id, user);
         await insertBotAction(mysql, id, 'latest', null, [action.latest.from, action.latest.to].join(','));
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
