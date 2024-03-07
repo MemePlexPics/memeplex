@@ -49,7 +49,7 @@ const getTelegramUser = (ctx) => {
     };
 };
 
-// { search: { query, page }, latest: { from, to }, info: string, suggest: string }
+// { search: { query, page }, latest: { from, to }, info: string, start: any }
 const logUserAction = (ctx, action) => {
     const { id, user } = getTelegramUser(ctx);
     let logEntity = {};
@@ -62,6 +62,10 @@ const logUserAction = (ctx, action) => {
         logEntity = {
             action: 'latest',
             ...action.latest,
+        };
+    } else if (action.start) {
+        logEntity = {
+            action: 'start',
         };
     } else if (action.info) {
         logEntity = {
@@ -200,6 +204,7 @@ bot.start(async (ctx) => {
 
 Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
     );
+    logUserAction(ctx, { start: true });
 });
 
 bot.command('get_latest', onBotCommandGetLatest);
