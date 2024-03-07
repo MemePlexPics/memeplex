@@ -24,3 +24,4 @@ export { replaceFeaturedChannel } from './replaceFeaturedChannel.js';
 export { removeFeaturedChannel } from './removeFeaturedChannel.js';
 export { getFeaturedChannelList } from './getFeaturedChannelList.js';
 export { getFeaturedChannel } from './getFeaturedChannel.js';
+export { insertBotUser } from './insertBotUser.js';
