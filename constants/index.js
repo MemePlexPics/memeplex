@@ -14,7 +14,7 @@ export const TG_API_RATE_LIMIT = (process.env.TG_API_RATE_LIMIT * 1) || 5001;
 // Start parse from date for tg API calls
 export const TG_API_PARSE_FROM_DATE = (Date.now()/1000 - 24 * 3600) | 0; // From 1 days ago
 export const ELASTIC_INDEX = 'image_text';
-export const ELASTIC_FUZZINESS = 2;
+export const ELASTIC_FUZZINESS = 1;
 export const ELASTIC_PAGE_SIZE = 20;
 export const MAX_SEARCH_QUERY_LENGTH = 300;
 // Page size for /serach handler
