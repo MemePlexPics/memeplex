@@ -25,3 +25,5 @@ export { removeFeaturedChannel } from './removeFeaturedChannel.js';
 export { getFeaturedChannelList } from './getFeaturedChannelList.js';
 export { getFeaturedChannel } from './getFeaturedChannel.js';
 export { insertBotUser } from './insertBotUser.js';
+export { createOrReplaceTable } from './createOrReplaceTable.js';
+export { insertBotAction } from './insertBotAction.js';
