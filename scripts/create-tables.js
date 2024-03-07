@@ -55,7 +55,7 @@ const createTables = async () => {
         console.log(`💬 phashes table ${mode}: ${!!phashes}`);
 
         const bot_users = await createOrReplaceTable(mysql, mode, 'bot_users', `
-            id INT PRIMARY KEY,
+            id BIGINT PRIMARY KEY,
             user VARCHAR(255) NOT NULL,
             timestamp INT NOT NULL
         `);
@@ -63,7 +63,7 @@ const createTables = async () => {
 
         const bot_actions = await createOrReplaceTable(mysql, mode, 'bot_actions', `
             id INT AUTO_INCREMENT PRIMARY KEY,
-            user_id INT NOT NULL,
+            user_id BIGINT NOT NULL,
             action VARCHAR(32) NOT NULL,
             query VARCHAR(255) NULL,
             page VARCHAR(128) NOT NULL,
