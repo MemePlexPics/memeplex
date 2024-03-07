@@ -19,6 +19,7 @@ import rateLimit from 'telegraf-ratelimit';
 import {
     insertChannelSuggestion,
     insertBotUser,
+    insertBotAction,
 } from '../../utils/mysql-queries/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -52,20 +53,29 @@ const getTelegramUser = (ctx) => {
 };
 
 // { search: { query, page }, latest: { from, to }, info: string, start: any }
-const logUserAction = (ctx, action) => {
+const logUserAction = async (ctx, action) => {
     const { id, user } = getTelegramUser(ctx);
     let logEntity = {};
     if (action.search) {
+        const mysql = await getMysqlClient();
+        await insertBotAction(mysql, id, 'search', action.search.query, action.search.page);
+        // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'search',
             ...action.search,
         };
     } else if (action.latest) {
+        const mysql = await getMysqlClient();
+        await insertBotAction(mysql, id, 'latest', null, [action.latest.from, action.latest.to].join(','));
+        // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'latest',
             ...action.latest,
         };
     } else if (action.start) {
+        const mysql = await getMysqlClient();
+        await insertBotUser(mysql, id, user);
+        // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             start: 1,
         };
@@ -214,9 +224,7 @@ bot.start(async (ctx) => {
 
 Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
     );
-    const mysql = await getMysqlClient();
-    const { id, user } = getTelegramUser(ctx);
-    await insertBotUser(mysql, id, user);
+    logUserAction(ctx, { start: true });
 });
 
 bot.command('get_latest', onBotCommandGetLatest);
