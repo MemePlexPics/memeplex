@@ -62,6 +62,15 @@ const createTables = async () => {
             )
         `);
         console.log('💬 phashes table created');
+
+        await mysql.query(`
+            CREATE OR REPLACE TABLE bot_users (
+                id VARCHAR(255) PRIMARY KEY,
+                user VARCHAR(255) NOT NULL,
+                timestamp INT NOT NULL
+            )
+        `);
+        console.log('💬 bot_users table created');
     } catch (e) {
         console.error('❌', e);
     } finally {
