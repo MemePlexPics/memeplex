@@ -87,7 +87,7 @@ const createTables = async () => {
             query VARCHAR(255) NOT NULL,
             selected_id VARCHAR(32) NULL,
             page VARCHAR(128) NULL,
-            chat_type VARCHAR(128) NOT NULL,
+            chat_type VARCHAR(128) NULL,
             timestamp INT NOT NULL,
 
             FOREIGN KEY (user_id) REFERENCES bot_inline_users(id)

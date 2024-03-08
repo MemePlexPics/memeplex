@@ -95,7 +95,7 @@ const logUserAction = async (from, action) => {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotInlineUser(mysql, id);
         if (!existedUser?.id) await insertBotInlineUser(mysql, id, user);
-        await insertBotInlineAction(mysql, id, 'select', action.inline_select.query, action.inline_select.id, null, action.inline_select.chat_type);
+        await insertBotInlineAction(mysql, id, 'select', action.inline_select.query, action.inline_select.id, null, null);
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'inline_select',
