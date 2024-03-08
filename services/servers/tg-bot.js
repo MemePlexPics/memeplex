@@ -99,6 +99,7 @@ const logUserAction = async (from, action) => {
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'inline_select',
+            selected_id: action.inline_select.id,
             ...action.inline_select,
         };
     } else if (action.start) {
@@ -294,7 +295,7 @@ const onInlineQuery = async (ctx, page) => {
             id: meme.id,
             photo_url,
             thumb_url: photo_url,
-            caption: meme.text.eng.substring(0, 1024),
+            // caption: meme.text.eng.substring(0, 1024),
             photo_width: 400,
             photo_height: 400,
         };
