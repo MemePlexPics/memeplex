@@ -5,7 +5,6 @@ export const checkProxies = async(logger) => {
     const mysql = await getMysqlClient();
     const [proxies] = await mysql.execute(`
         SELECT * FROM proxies
-        WHERE availability = 0
         ORDER BY
             ocr_key desc,
             availability asc,
