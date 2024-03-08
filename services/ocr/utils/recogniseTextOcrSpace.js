@@ -39,6 +39,7 @@ export const recogniseTextOcrSpace = async (fileName, language, logger) => {
         if (
             error.name === 'AxiosError'
             || error.message === 'socket hang up'
+            || error.message === 'Socket closed'
             || error.message === 'connect ETIMEDOUT'
             || error.message === 'Proxy connection timed out'
             || error.message.startsWith('Socks5 proxy rejected connection')
