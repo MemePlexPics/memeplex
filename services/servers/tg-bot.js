@@ -21,6 +21,9 @@ import {
     insertBotUser,
     insertBotAction,
     selectBotUser,
+    selectBotInlineUser,
+    insertBotInlineUser,
+    insertBotInlineAction,
 } from '../../utils/mysql-queries/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -43,8 +46,8 @@ const logger = winston.createLogger({
     ],
 });
 
-const getTelegramUser = (ctx) => {
-    const { id, username, first_name, last_name } = ctx.from;
+const getTelegramUser = (from) => {
+    const { id, username, first_name, last_name } = from;
     return {
         id,
         user: username
@@ -53,9 +56,10 @@ const getTelegramUser = (ctx) => {
     };
 };
 
+// TODO: refactoring
 // { search: { query, page }, latest: { from, to }, info: string, start: any }
-const logUserAction = async (ctx, action) => {
-    const { id, user } = getTelegramUser(ctx);
+const logUserAction = async (from, action) => {
+    const { id, user } = getTelegramUser(from);
     let logEntity = {};
     if (action.search) {
         const mysql = await getMysqlClient();
@@ -76,6 +80,26 @@ const logUserAction = async (ctx, action) => {
         logEntity = {
             action: 'latest',
             ...action.latest,
+        };
+    } else if (action.inline_search) {
+        const mysql = await getMysqlClient();
+        const [existedUser] = await selectBotInlineUser(mysql, id);
+        if (!existedUser?.id) await insertBotInlineUser(mysql, id, user);
+        await insertBotInlineAction(mysql, id, 'search', action.inline_search.query, null, action.inline_search.page, action.inline_search.chat_type);
+        // TODO: remove it after 2024-03-21 (two weeks)?
+        logEntity = {
+            action: 'inline_search',
+            ...action.inline_search,
+        };
+    } else if (action.inline_select) {
+        const mysql = await getMysqlClient();
+        const [existedUser] = await selectBotInlineUser(mysql, id);
+        if (!existedUser?.id) await insertBotInlineUser(mysql, id, user);
+        await insertBotInlineAction(mysql, id, 'select', action.inline_select.query, action.inline_select.id, null, action.inline_select.chat_type);
+        // TODO: remove it after 2024-03-21 (two weeks)?
+        logEntity = {
+            action: 'inline_select',
+            ...action.inline_select,
         };
     } else if (action.start) {
         const mysql = await getMysqlClient();
@@ -111,7 +135,7 @@ const onBotRecieveText = async (ctx) => {
     try {
         const query = ctx.session.search.query || ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH);
         const page = ctx.session.search.nextPage || 1;
-        logUserAction(ctx, { search: {
+        logUserAction(ctx.from, { search: {
             query,
             page
         }});
@@ -146,7 +170,7 @@ const onBotCommandGetLatest = async (ctx, update = true) => {
         const { from: sessionFrom, to: sessionTo } = ctx.session.latest;
         const from = update ? sessionTo : undefined;
         const to = update ? undefined : sessionFrom;
-        logUserAction(ctx, { latest: {
+        logUserAction(ctx.from, { latest: {
             from,
             to
         }});
@@ -185,7 +209,7 @@ const onBotCommandSuggestChannel = async (ctx) => {
     try {
         const mysql = await getMysqlClient();
         const response = await insertChannelSuggestion(mysql, channelName);
-        if (response) logUserAction(ctx, { info: `suggested @${channelName}` });
+        if (response) logUserAction(ctx.from, { info: `suggested @${channelName}` });
         return ctx.reply('Thank you for the suggestion!');
     } catch(e) {
         logError(logger, e);
@@ -219,7 +243,7 @@ bot.use(rateLimit({
     window: 60_000,
     limit: 15,
     onLimitExceeded: async (ctx) => {
-        logUserAction(ctx, { info: 'exceeded rate limit' });
+        logUserAction(ctx.from, { info: 'exceeded rate limit' });
         await ctx.reply('Wait a few seconds before trying again');
     },
 }));
@@ -229,7 +253,7 @@ bot.start(async (ctx) => {
 
 Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
     );
-    logUserAction(ctx, { start: true });
+    logUserAction(ctx.from, { start: true });
 });
 
 bot.command('get_latest', onBotCommandGetLatest);
@@ -247,13 +271,21 @@ bot.on(message('text'), async (ctx) => {
     await onBotRecieveText(ctx);
 });
 
-bot.on('inline_query', async (ctx) => {
+const debounceInline = {};
+
+const onInlineQuery = async (ctx, page) => {
     const query = ctx.inlineQuery.query;
-    const page = Number(ctx.inlineQuery.offset) || 1;
 
     if (!query)
         return;
-    const response = await searchMemes(client, query, page, 30);
+
+    logUserAction(ctx.inlineQuery.from, { inline_search: {
+        query,
+        page,
+        chat_type: ctx.inlineQuery.chat_type,
+    }});
+
+    const response = await searchMemes(client, query, page, 50); // Telegram works bad with higher numbers
 
     const results = response.result.map(meme => {
         const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href;
@@ -262,25 +294,37 @@ bot.on('inline_query', async (ctx) => {
             id: meme.id,
             photo_url,
             thumb_url: photo_url,
-            title: meme.text.eng,
-            // photo_width: 400,
-            // photo_height: 400,
+            caption: meme.text.eng.substring(0, 1024),
+            photo_width: 400,
+            photo_height: 400,
         };
     });
-    console.log(results.length, response.totalPages, ctx.inlineQuery.offset, ctx.inlineQuery.from.username, ctx.inlineQuery.chat_type, { query, page });
-
-    // {
-    //     type: 'photo',
-    //     id: 'c956a3e4-71a3-4a60-8404-431546e6c66a',
-    //     photo_file_id: '5426853756349307000',
-    //     title: 'Image 2'
-    // },
 
     await ctx.answerInlineQuery(results, {
         next_offset: response.totalPages - page > 0
             ? page + 1 + ''
             : '',
     });
+    debounceInline[ctx.inlineQuery.from.id] = 0;
+};
+
+bot.on('inline_query', async (ctx) => {
+    const page = Number(ctx.inlineQuery.offset) || 1;
+    if (debounceInline[ctx.inlineQuery.from.id]) {
+        clearTimeout(debounceInline[ctx.inlineQuery.from.id]);
+    }
+    if (page === 1) {
+        debounceInline[ctx.inlineQuery.from.id] = setTimeout(() => onInlineQuery(ctx, page), 300);
+    } else
+        await onInlineQuery(ctx, page);
+});
+
+bot.on('chosen_inline_result', async (ctx) => {
+    const { query, result_id } = ctx.update.chosen_inline_result;
+    logUserAction(ctx.update.chosen_inline_result.from, { inline_select: {
+        query,
+        id: result_id,
+    }});
 });
 
 const start = async () => {
