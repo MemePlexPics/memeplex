@@ -28,3 +28,6 @@ export { insertBotUser } from './insertBotUser.js';
 export { createOrReplaceTable } from './createOrReplaceTable.js';
 export { insertBotAction } from './insertBotAction.js';
 export { selectBotUser } from './selectBotUser.js';
+export { insertBotInlineUser } from './insertBotInlineUser.js';
+export { insertBotInlineAction } from './insertBotInlineAction.js';
+export { selectBotInlineUser } from './selectBotInlineUser.js';

@@ -72,6 +72,27 @@ const createTables = async () => {
             FOREIGN KEY (user_id) REFERENCES bot_users(id)
         `);
         console.log(`💬 bot_actions table ${mode}: ${!!bot_actions}`);
+
+        const bot_inline_users = await createOrReplaceTable(mysql, mode, 'bot_inline_users', `
+            id BIGINT PRIMARY KEY,
+            user VARCHAR(255) NOT NULL,
+            timestamp INT NOT NULL
+        `);
+        console.log(`💬 bot_inline_users table ${mode}: ${!!bot_inline_users}`);
+
+        const bot_inline_actions = await createOrReplaceTable(mysql, mode, 'bot_inline_actions', `
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id BIGINT NOT NULL,
+            action VARCHAR(32) NOT NULL,
+            query VARCHAR(255) NOT NULL,
+            selected_id VARCHAR(32) NULL,
+            page VARCHAR(128) NULL,
+            chat_type VARCHAR(128) NOT NULL,
+            timestamp INT NOT NULL,
+
+            FOREIGN KEY (user_id) REFERENCES bot_inline_users(id)
+        `);
+        console.log(`💬 bot_inline_actions table ${mode}: ${!!bot_inline_actions}`);
     } catch (e) {
         console.error('❌', e);
     } finally {
