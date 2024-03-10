@@ -13,7 +13,20 @@ export const searchMemes = async (client, query, page, size) => {
         size,
         query: {
             bool: {
+                minimum_should_match: 1,
                 should: [
+                    {
+                        constant_score: {
+                            filter: {
+                                match_phrase: {
+                                    eng: {
+                                        query,
+                                    },
+                                }
+                            },
+                            boost: 60,
+                        }
+                    },
                     {
                         constant_score: {
                             filter: {
@@ -24,7 +37,7 @@ export const searchMemes = async (client, query, page, size) => {
                                     },
                                 }
                             },
-                            boost: 90, // +90 points
+                            boost: 30,
                         }
                     },
                     {
