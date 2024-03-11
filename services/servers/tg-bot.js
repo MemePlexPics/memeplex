@@ -9,6 +9,7 @@ import {
 import {
     MAX_SEARCH_QUERY_LENGTH,
     TG_BOT_PAGE_SIZE,
+    TG_INLINE_BOT_PAGE_SIZE,
 }  from '../../constants/index.js';
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
@@ -286,7 +287,7 @@ const onInlineQuery = async (ctx, page) => {
         chat_type: ctx.inlineQuery.chat_type,
     }});
 
-    const response = await searchMemes(client, query, page, 50); // Telegram works bad with higher numbers
+    const response = await searchMemes(client, query, page, TG_INLINE_BOT_PAGE_SIZE); 
 
     const results = response.result.map(meme => {
         const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href;
