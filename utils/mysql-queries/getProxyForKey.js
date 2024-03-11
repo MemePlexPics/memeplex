@@ -24,8 +24,8 @@ export async function getProxyForKey(mysql, key) {
             ORDER BY speed LIMIT 1
         `);
     if (freeAvailableProxies.length) {
-        const findedProxy = freeAvailableProxies[0];
-        await linkKeyToProxy(mysql, key, findedProxy.address, findedProxy.protocol);
-        return findedProxy;
+        const foundProxy = freeAvailableProxies[0];
+        await linkKeyToProxy(mysql, key, foundProxy.address, foundProxy.protocol);
+        return foundProxy;
     }
 }
