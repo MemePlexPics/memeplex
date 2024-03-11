@@ -21,6 +21,7 @@ export const MAX_SEARCH_QUERY_LENGTH = 300;
 export const SEARCH_PAGE_SIZE = 60;
 // Page size for Telegram bot
 export const TG_BOT_PAGE_SIZE = 5;
+export const TG_INLINE_BOT_PAGE_SIZE = 50; // Telegram works bad with higher numbers
 // Page size for /getChannelList handler
 export const CHANNEL_LIST_PAGE_SIZE = 100;
 // Delay time for the loopRetrying() after an error is catched
