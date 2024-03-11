@@ -1,7 +1,7 @@
 import { getUrl } from "../utils"
 
 export const proceedChannelSuggestion = async (channel: string, password: string) => {
-    const response = await fetch(getUrl('/proceedChannelSuggestion'), {
+    const response = await fetch(getUrl('/admin/proceedChannelSuggestion'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
