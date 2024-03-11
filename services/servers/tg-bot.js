@@ -13,10 +13,14 @@ import {
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
 import { Telegraf, Markup, session } from 'telegraf';
+import { MySQL } from '@telegraf/session/mysql';
 import { message } from 'telegraf/filters';
 import rateLimit from 'telegraf-ratelimit';
 import {
     insertChannelSuggestion,
+    insertBotUser,
+    insertBotAction,
+    selectBotUser,
 } from '../../utils/mysql-queries/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -50,20 +54,33 @@ const getTelegramUser = (ctx) => {
 };
 
 // { search: { query, page }, latest: { from, to }, info: string, start: any }
-const logUserAction = (ctx, action) => {
+const logUserAction = async (ctx, action) => {
     const { id, user } = getTelegramUser(ctx);
     let logEntity = {};
     if (action.search) {
+        const mysql = await getMysqlClient();
+        const [existedUser] = await selectBotUser(mysql, id);
+        if (!existedUser?.id) await insertBotUser(mysql, id, user);
+        await insertBotAction(mysql, id, 'search', action.search.query, action.search.page);
+        // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'search',
             ...action.search,
         };
     } else if (action.latest) {
+        const mysql = await getMysqlClient();
+        const [existedUser] = await selectBotUser(mysql, id);
+        if (!existedUser?.id) await insertBotUser(mysql, id, user);
+        await insertBotAction(mysql, id, 'latest', null, [action.latest.from, action.latest.to].join(','));
+        // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'latest',
             ...action.latest,
         };
     } else if (action.start) {
+        const mysql = await getMysqlClient();
+        await insertBotUser(mysql, id, user);
+        // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             start: 1,
         };
@@ -187,7 +204,15 @@ bot.use(session({
             from: undefined,
             to: undefined,
         },
-    })
+    }),
+    store: MySQL({
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        database: process.env.DB_DATABASE,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        table: 'telegraf_sessions',
+    }),
 }));
 
 bot.use(rateLimit({
@@ -211,16 +236,16 @@ bot.command('get_latest', onBotCommandGetLatest);
 
 bot.command('suggest_channel', onBotCommandSuggestChannel);
 
-bot.on(message('text'), async (ctx) => {
-    resetSearchSession(ctx);
-    await onBotRecieveText(ctx);
-});
-
 bot.action('button_search_more', onBotRecieveText);
 
 bot.action('button_latest_older', (ctx) => onBotCommandGetLatest(ctx, false));
 
 bot.action('button_latest_newer', (ctx) => onBotCommandGetLatest(ctx, true));
+
+bot.on(message('text'), async (ctx) => {
+    resetSearchSession(ctx);
+    await onBotRecieveText(ctx);
+});
 
 const start = async () => {
     bot.launch({
