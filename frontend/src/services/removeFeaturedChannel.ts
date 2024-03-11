@@ -1,8 +1,8 @@
 import { getUrl } from "../utils"
 
 export const removeFeaturedChannel = async (username: string, password: string) => {
-    const response = await fetch(getUrl('/removeFeaturedChannel'), {
-        method: 'POST',
+    const response = await fetch(getUrl('/admin/featuredChannel'), {
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         },

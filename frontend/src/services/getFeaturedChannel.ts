@@ -1,8 +1,8 @@
 import { getUrl } from "../utils"
 
 export const getFeaturedChannel = async (username: string, password: string) => {
-    const response = await fetch(getUrl('/getFeaturedChannel'), {
-        method: 'POST',
+    const response = await fetch(getUrl('/admin/featuredChannel'), {
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
         },

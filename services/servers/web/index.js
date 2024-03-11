@@ -1,5 +1,4 @@
 import express from 'express';
-import process from 'process';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
@@ -9,37 +8,28 @@ import {
     getMysqlClient,
     checkFileExists,
     shuffleArray,
-} from '../../utils/index.js';
+} from '../../../utils/index.js';
 import {
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
-    OCR_LANGUAGES,
-    TG_API_PARSE_FROM_DATE,
     CHANNEL_LIST_PAGE_SIZE,
-}  from '../../constants/index.js';
+}  from '../../../constants/index.js';
 import {
-    insertChannel,
-    selectChannel,
-    updateChannelAvailability,
     getChannels,
     getChannelsCount,
     insertChannelSuggestion,
-    removeChannel,
-    proceedChannelSuggestion,
     getChannelSuggestions,
     getChannelSuggestionsCount,
-    replaceFeaturedChannel,
-    removeFeaturedChannel,
     getFeaturedChannelList,
-    getFeaturedChannel,
-} from '../../utils/mysql-queries/index.js';
+} from '../../../utils/mysql-queries/index.js';
 import {
     searchMemes,
     getLatestMemes,
     getMeme,
     downloadTelegramChannelAvatar,
-} from './utils/index.js';
+} from '../utils/index.js';
 import winston from 'winston';
+import { adminRouter } from './routers/index.js';
 
 const app = express();
 
@@ -47,6 +37,8 @@ app.use(express.static('frontend/dist'));
 app.use('/data/media', express.static('data/media'));
 app.use('/data/avatars', express.static('data/avatars'));
 app.use(express.json());
+app.set('trust proxy', true);
+app.use('/admin', adminRouter);
 
 const { client, reconnect } = await connectToElastic();
 
@@ -65,15 +57,6 @@ const logger = winston.createLogger({
         }),
     ],
 });
-
-const isAdmin = (req, res, next) => {
-    const { password } = req.body;
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on ${req.url}`);
-        return res.status(403).send();
-    }
-    next();
-};
 
 const handleMethodError = async (error) => {
     logError(logger, error);
@@ -136,94 +119,6 @@ app.get('/getMeme', async (req, res) => {
     }
 });
 
-app.post('/addChannel', isAdmin, async (req, res) => {
-    const { channel, langs } = req.body;
-    if (!channel)
-        return res.status(500).send();
-    if (langs?.find(language => !OCR_LANGUAGES.includes(language))) {
-        return res.status(500).send({
-            error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join(',')}`,
-        });
-    }
-    const languages = langs || ['eng'];
-    try {
-        const mysql = await getMysqlClient();
-        const existedChannel = await selectChannel(mysql, channel);
-        if (existedChannel) {
-            logger.info(`${req.ip} updated the avialability of @${channel}`);
-            await updateChannelAvailability(mysql, channel, true);
-        } else {
-            logger.info(`${req.ip} added @${channel}`);
-            await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
-            await proceedChannelSuggestion(mysql, channel);
-        }
-        return res.send();
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
-});
-
-app.post('/removeChannel', isAdmin, async (req, res) => {
-    const { channel } = req.body;
-    if (!channel)
-        return res.status(500).send();
-    try {
-        const mysql = await getMysqlClient();
-        await removeChannel(mysql, channel);
-        return res.send();
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
-});
-
-app.post('/addFeaturedChannel', isAdmin, async (req, res) => {
-    const { username, title, comment, timestamp } = req.body;
-    if (!username || !title)
-        return res.status(500).send();
-    try {
-        const mysql = await getMysqlClient();
-        const response = await replaceFeaturedChannel(mysql, username, title, comment, timestamp);
-        if (!response)
-            throw new Error(`Featured channel @${username} wasn't added`);
-        logger.info(`${req.ip} added featured channel @${username}`);
-        return res.send();
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
-});
-
-app.post('/removeFeaturedChannel', isAdmin, async (req, res) => {
-    const { username } = req.body;
-    // TODO: Middleware checkParams(channel, password)
-    if (!username)
-        return res.status(500).send();
-    try {
-        const mysql = await getMysqlClient();
-        await removeFeaturedChannel(mysql, username);
-        return res.send();
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
-});
-
-app.post('/getFeaturedChannel', isAdmin, async (req, res) => {
-    const { username } = req.body;
-    if (!username)
-        return res.status(500).send();
-    try {
-        const mysql = await getMysqlClient();
-        const response = await getFeaturedChannel(mysql, username);
-        return res.send(response);
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
-});
-
 app.get('/getFeaturedChannelList', async (req, res) => {
     try {
         const mysql = await getMysqlClient();
@@ -245,20 +140,6 @@ app.post('/suggestChannel', async (req, res) => {
         const mysql = await getMysqlClient();
         const response = await insertChannelSuggestion(mysql, channel);
         if (response) logger.info(`${req.ip} added @${channel} to suggested`);
-        return res.send();
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
-});
-
-app.post('/proceedChannelSuggestion', isAdmin, async (req, res) => {
-    const { channel } = req.body;
-    if (!channel)
-        return res.status(500).send();
-    try {
-        const mysql = await getMysqlClient();
-        await proceedChannelSuggestion(mysql, channel);
         return res.send();
     } catch(e) {
         await handleMethodError(e);
@@ -305,7 +186,7 @@ app.get('/data/avatars/:channelName', async (req, res) => {
 
 app.get('/*', async (req, res) => {
     if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
-        return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'frontend', 'dist', 'index.html'));
+        return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'frontend', 'dist', 'index.html'));
     return res.status(404).send();
 });
 
