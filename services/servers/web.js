@@ -66,6 +66,15 @@ const logger = winston.createLogger({
     ],
 });
 
+const isAdmin = (req, res, next) => {
+    const { password } = req.body;
+    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
+        logger.error(`${req.ip} got 403 on ${req.url}`);
+        return res.status(403).send();
+    }
+    next();
+};
+
 const handleMethodError = async (error) => {
     logError(logger, error);
     if (error.message === 'connect ECONNREFUSED ::1:9200') {
@@ -127,14 +136,10 @@ app.get('/getMeme', async (req, res) => {
     }
 });
 
-app.post('/addChannel', async (req, res) => {
-    const { channel, langs, password } = req.body;
-    if (!channel || !password)
+app.post('/addChannel', isAdmin, async (req, res) => {
+    const { channel, langs } = req.body;
+    if (!channel)
         return res.status(500).send();
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
-        return res.status(403).send();
-    }
     if (langs?.find(language => !OCR_LANGUAGES.includes(language))) {
         return res.status(500).send({
             error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join(',')}`,
@@ -159,14 +164,10 @@ app.post('/addChannel', async (req, res) => {
     }
 });
 
-app.post('/removeChannel', async (req, res) => {
-    const { channel, password } = req.body;
-    if (!channel || !password)
+app.post('/removeChannel', isAdmin, async (req, res) => {
+    const { channel } = req.body;
+    if (!channel)
         return res.status(500).send();
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
-        return res.status(403).send();
-    }
     try {
         const mysql = await getMysqlClient();
         await removeChannel(mysql, channel);
@@ -177,14 +178,10 @@ app.post('/removeChannel', async (req, res) => {
     }
 });
 
-app.post('/addFeaturedChannel', async (req, res) => {
-    const { username, title, comment, timestamp, password } = req.body;
-    if (!username || !password || !title)
+app.post('/addFeaturedChannel', isAdmin, async (req, res) => {
+    const { username, title, comment, timestamp } = req.body;
+    if (!username || !title)
         return res.status(500).send();
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on /admin with this channel: ${username}`);
-        return res.status(403).send();
-    }
     try {
         const mysql = await getMysqlClient();
         const response = await replaceFeaturedChannel(mysql, username, title, comment, timestamp);
@@ -198,16 +195,11 @@ app.post('/addFeaturedChannel', async (req, res) => {
     }
 });
 
-app.post('/removeFeaturedChannel', async (req, res) => {
-    const { username, password } = req.body;
+app.post('/removeFeaturedChannel', isAdmin, async (req, res) => {
+    const { username } = req.body;
     // TODO: Middleware checkParams(channel, password)
-    if (!username || !password)
+    if (!username)
         return res.status(500).send();
-    // TODO: Middleware checkPassword(password)
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on /admin with this channel: ${username}`);
-        return res.status(403).send();
-    }
     try {
         const mysql = await getMysqlClient();
         await removeFeaturedChannel(mysql, username);
@@ -218,14 +210,10 @@ app.post('/removeFeaturedChannel', async (req, res) => {
     }
 });
 
-app.post('/getFeaturedChannel', async (req, res) => {
-    const { username, password } = req.body;
-    if (!username || !password)
+app.post('/getFeaturedChannel', isAdmin, async (req, res) => {
+    const { username } = req.body;
+    if (!username)
         return res.status(500).send();
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on /admin with this channel: ${username}`);
-        return res.status(403).send();
-    }
     try {
         const mysql = await getMysqlClient();
         const response = await getFeaturedChannel(mysql, username);
@@ -264,14 +252,10 @@ app.post('/suggestChannel', async (req, res) => {
     }
 });
 
-app.post('/proceedChannelSuggestion', async (req, res) => {
-    const { channel, password } = req.body;
-    if (!channel || !password)
+app.post('/proceedChannelSuggestion', isAdmin, async (req, res) => {
+    const { channel } = req.body;
+    if (!channel)
         return res.status(500).send();
-    if (password !== process.env.MEMEPLEX_ADMIN_PASSWORD) {
-        logger.error(`${req.ip} got 403 on /admin with this channel: ${channel}`);
-        return res.status(403).send();
-    }
     try {
         const mysql = await getMysqlClient();
         await proceedChannelSuggestion(mysql, channel);
