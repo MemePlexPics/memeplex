@@ -43,14 +43,14 @@ app.use('/admin', adminRouter);
 const { client, reconnect } = await connectToElastic();
 
 const logger = winston.createLogger({
-    defaultMeta: { service: 'server' },
+    defaultMeta: { service: 'web' },
     format: winston.format.combine(
         winston.format.timestamp(),
         winston.format.json(),
     ),
     transports: [
         new winston.transports.File({
-            filename: 'logs/server.log',
+            filename: 'logs/web.log',
             maxsize: 1024*1024*10, // bytes
             maxFiles: 5,
             tailable: true,
@@ -65,43 +65,33 @@ const handleMethodError = async (error) => {
     }
 };
 
+app.use(async (err, req, res, next) => {
+    await handleMethodError(err);
+    return res.status(500).send();
+});
+
 app.get('/search', async (req, res) => {
-    try {
-        const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH);
-        const page = parseInt(req.query.page);
-        const result = await searchMemes(client, query, page, SEARCH_PAGE_SIZE);
-        return res.send(result);
-    } catch (e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
+    const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH);
+    const page = parseInt(req.query.page);
+    const result = await searchMemes(client, query, page, SEARCH_PAGE_SIZE);
+    return res.send(result);
 });
 
 app.get('/getLatest', async (req, res) => {
-    try {
-        const { from, to } = req.query;
-        const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE);
-        return res.send(response);
-    } catch (e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
+    const { from, to } = req.query;
+    const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE);
+    return res.send(response);
 });
 
 app.get('/getChannelList', async (req, res) => {
-    try {
-        const { page, onlyAvailable } = req.query;
-        const mysql = await getMysqlClient();
-        const channels = await getChannels(mysql, page, onlyAvailable, CHANNEL_LIST_PAGE_SIZE);
-        const count = await getChannelsCount(mysql, onlyAvailable);
-        return res.send({
-            result: channels,
-            totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
-        });
-    } catch (e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
+    const { page, onlyAvailable } = req.query;
+    const mysql = await getMysqlClient();
+    const channels = await getChannels(mysql, page, onlyAvailable, CHANNEL_LIST_PAGE_SIZE);
+    const count = await getChannelsCount(mysql, onlyAvailable);
+    return res.send({
+        result: channels,
+        totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
+    });
 });
 
 app.get('/getMeme', async (req, res) => {
@@ -114,74 +104,53 @@ app.get('/getMeme', async (req, res) => {
             await handleMethodError({ message: `Meme with id "${id}" not found` });
             return res.status(204).send();
         }
-        await handleMethodError(e);
-        return res.status(500).send();
+        throw e;
     }
 });
 
 app.get('/getFeaturedChannelList', async (req, res) => {
-    try {
-        const mysql = await getMysqlClient();
-        const channels = await getFeaturedChannelList(mysql);
-        return res.send({
-            result: shuffleArray(channels),
-        });
-    } catch (e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
+    const mysql = await getMysqlClient();
+    const channels = await getFeaturedChannelList(mysql);
+    return res.send({
+        result: shuffleArray(channels),
+    });
 });
 
 app.post('/suggestChannel', async (req, res) => {
     const { channel } = req.body;
     if (!channel)
         return res.status(500).send();
-    try {
-        const mysql = await getMysqlClient();
-        const response = await insertChannelSuggestion(mysql, channel);
-        if (response) logger.info(`${req.ip} added @${channel} to suggested`);
-        return res.send();
-    } catch(e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
+    const mysql = await getMysqlClient();
+    const response = await insertChannelSuggestion(mysql, channel);
+    if (response) logger.info(`${req.ip} added @${channel} to suggested`);
+    return res.send();
 });
 
 app.get('/getChannelSuggestionList', async (req, res) => {
-    try {
-        const { page } = req.query;
-        const mysql = await getMysqlClient();
-        const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE);
-        const count = await getChannelSuggestionsCount(mysql);
-        return res.send({
-            result: channels,
-            totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
-        });
-    } catch (e) {
-        await handleMethodError(e);
-        return res.status(500).send();
-    }
+    const { page } = req.query;
+    const mysql = await getMysqlClient();
+    const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE);
+    const count = await getChannelSuggestionsCount(mysql);
+    return res.send({
+        result: channels,
+        totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
+    });
 });
 
 app.get('/data/avatars/:channelName', async (req, res) => {
-    try {
-        const path = req.originalUrl;
-        const isExist = await checkFileExists(path);
-        if (!isExist) {
-            const [channelName] = req.params.channelName.split('.jpg');
-            const destination = await downloadTelegramChannelAvatar(channelName);
-            if (destination === false) {
-                logger.error(`The avatar for @${channelName} wasn't downloaded`);
-                return res.status(204).send();
-            }
-            if (destination === null)
-                return res.status(204).send();
+    const path = req.originalUrl;
+    const isExist = await checkFileExists(path);
+    if (!isExist) {
+        const [channelName] = req.params.channelName.split('.jpg');
+        const destination = await downloadTelegramChannelAvatar(channelName);
+        if (destination === false) {
+            logger.error(`The avatar for @${channelName} wasn't downloaded`);
+            return res.status(204).send();
         }
-        return res.sendFile(path, { root: './' });
-    } catch (e) {
-        await handleMethodError(e);
-        return res.status(500).send();
+        if (destination === null)
+            return res.status(204).send();
     }
+    return res.sendFile(path, { root: './' });
 });
 
 app.get('/*', async (req, res) => {

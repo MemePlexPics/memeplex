@@ -54,13 +54,6 @@ const logAdminAction = (req, res, next) => {
     next();
 };
 
-// const handleMethodError = async (error) => {
-//     logError(logger, error);
-//     if (error.message === 'connect ECONNREFUSED ::1:9200') {
-//         await reconnect();
-//     }
-// };
-
 adminRouter.use(isAdmin, logAdminAction);
 
 adminRouter.post('/channel', channelPost);
@@ -71,6 +64,6 @@ adminRouter.post('/featuredChannel', featuredChannelPost);
 
 adminRouter.delete('/featuredChannel', featuredChannelDelete);
 
-adminRouter.get('/featuredChannel', featuredChannelGet);
+adminRouter.post('/getFeaturedChannel', featuredChannelGet);
 
 adminRouter.post('/proceedChannelSuggestion', proceedChannelSuggestionPost);
