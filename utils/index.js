@@ -150,20 +150,20 @@ export async function chooseRandomOCRSpaceKey () {
     // Select a random key without timeout or with the early date
     const keys = await getRandomKey(mysql);
     const keyData = keys[0];
-    const finallKeyData = {
+    const finalKeyData = {
         key: keyData.ocr_key,
         timeout: keyData.timeout,
     };
-    const findedProxy = await getProxyForKey(mysql, keyData.ocr_key);
-    if (!findedProxy)
+    const foundProxy = await getProxyForKey(mysql, keyData.ocr_key);
+    if (!foundProxy)
         throw new Error('There are no available free proxies');
-    finallKeyData.proxy = findedProxy.address;
-    finallKeyData.protocol = findedProxy.protocol;
-    if (!finallKeyData.proxy)
-        throw new Error(`❌ Proxy for ${finallKeyData.key} isn't finded`);
+    finalKeyData.proxy = foundProxy.address;
+    finalKeyData.protocol = foundProxy.protocol;
+    if (!finalKeyData.proxy)
+        throw new Error(`❌ Proxy for ${finalKeyData.key} isn't finded`);
 
-    console.log(`💬 ${finallKeyData.key} ${finallKeyData.proxy} (${finallKeyData.protocol}) ${findedProxy.speed}ms`);
-    return finallKeyData;
+    console.log(`💬 ${finalKeyData.key} ${finalKeyData.proxy} (${finalKeyData.protocol}) ${foundProxy.speed}ms`);
+    return finalKeyData;
 }
 
 export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => {
