@@ -4,7 +4,7 @@ import {
 import {
     updateChannelAvailability,
 } from '../../../../../../utils/mysql-queries/index.js';
-import { setAction } from '../utils/index.js';
+import { setLogAction } from '../utils/index.js';
 
 export const channelDelete = async (req, res) => {
     const { channel } = req.body;
@@ -12,6 +12,6 @@ export const channelDelete = async (req, res) => {
         return res.status(500).send();
     const mysql = await getMysqlClient();
     await updateChannelAvailability(mysql, channel, 0);
-    setAction(res, `🗑 ${channel}`);
+    setLogAction(res, `🗑 ${channel}`);
     return res.send();
 };

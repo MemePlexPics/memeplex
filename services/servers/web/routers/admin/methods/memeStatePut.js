@@ -1,5 +1,5 @@
 import { setMemeState } from '../../../../utils/index.js';
-import { setAction } from '../utils/index.js';
+import { setLogAction } from '../utils/index.js';
 
 export const memeStatePut = async (req, res) => {
     const client = req.app.get('elasticClient');
@@ -11,6 +11,6 @@ export const memeStatePut = async (req, res) => {
         0: '👁‍🗨',
         1: '🫣',
     };
-    setAction(res, `${emoji[state]} ${id}`);
+    setLogAction(res, `${emoji[state]} ${id}`);
     return res.send();
 };
