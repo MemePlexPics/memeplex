@@ -1,7 +1,6 @@
 export { getChannels } from './getChannels.js';
 export { getChannelsCount } from './getChannelsCount.js';
 export { insertChannelSuggestion } from './insertChannelSuggestion.js';
-export { removeChannel } from './removeChannel.js';
 export { proceedChannelSuggestion } from './proceedChannelSuggestion.js';
 export { getChannelSuggestions } from './getChannelSuggestions.js';
 export { getChannelSuggestionsCount } from './getChannelSuggestionsCount.js';

@@ -3,15 +3,28 @@ import {
 }  from '../../../constants/index.js';
 import { getMemeResponseEntity } from './index.js';
 
-export const getLatestMemes = async (client, from, to, size) => {
+export const getLatestMemes = async (client, from, to, size, filtersString) => {
+    const filterObject = filtersString ? JSON.parse(filtersString) : null;
+    const additionalFilter = {};
+    if (filterObject?.channel?.length) {
+        ((additionalFilter.must ??= {}).terms ??= {}).channelName = filterObject.channel;
+    }
+    if (filterObject?.not?.state !== null) {
+        ((additionalFilter.must_not ??= {}).term ??= {}).state = filterObject?.state ?? 1;
+    }
     const elasticRes = await client.search({
         index: ELASTIC_INDEX,
         size,
         query: {
-            range: {
-                timestamp: {
-                    gt: from ? `${from}` : undefined,
-                    lt: to ? `${to}` : undefined,
+            bool: {
+                ...additionalFilter,
+                filter: {
+                    range: {
+                        timestamp: {
+                            gt: from ? `${from}` : undefined,
+                            lt: to ? `${to}` : undefined,
+                        },
+                    },
                 },
             },
         },

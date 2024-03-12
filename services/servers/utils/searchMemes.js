@@ -13,6 +13,13 @@ export const searchMemes = async (client, query, page, size) => {
         size,
         query: {
             bool: {
+                must_not: [
+                    {
+                        match: {
+                            state: 1, // hidden
+                        }
+                    }
+                ],
                 minimum_should_match: 1,
                 should: [
                     {

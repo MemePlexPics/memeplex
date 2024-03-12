@@ -1,27 +1,39 @@
-import { useParams } from "react-router-dom"
-import { useAtomValue, useSetAtom } from 'jotai'
+import { useNavigate, useParams } from "react-router-dom"
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 
-import { memesAtom } from "../../store/atoms"
-import { useAdminRequest, useFetch, useMeta, useNotification, useTitle } from "../../hooks"
+import { adminPasswordAtom, memesAtom, memesFilterAtom } from "../../store/atoms"
+import { useAdminRequest, useClickOutside, useFetch, useMeta, useNotification, useTitle } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
-import { ChannelBlock, Input, Loader } from "../../components"
+import { ChannelBlock, Loader } from "../../components"
 
-import './style.css'
+import stylex from '@stylexjs/stylex'
+import { s } from './style'
 import { dialogConfirmationAtom } from "../../store/atoms/dialogConfirmationAtom"
 import { removeChannel } from "../../services"
 import { ENotificationType } from "../../components/Notification/constants"
 import { useTranslation } from "react-i18next"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faTrash } from "@fortawesome/free-solid-svg-icons"
+import { setMemeState } from "../../services/admin"
+import { EMemeState } from "../../types/enums"
+import { useRef, useState } from "react"
+import { InputPassword } from "../../components/molecules"
 
 export const MemePage = () => {
     const { id } = useParams()
     const { t } = useTranslation()
-    const memes = useAtomValue(memesAtom)
+    const imgRef = useRef(null)
+    const password = useAtomValue(adminPasswordAtom)
+    const [memes, setMemes] = useAtom(memesAtom)
     const setNotification = useNotification()
     const { title } = useTitle(['Meme'])
     const setDialog = useSetAtom(dialogConfirmationAtom)
-    const isAdmin = !!localStorage.getItem('isAdmin') 
+    const isAdmin = !!localStorage.getItem('isAdmin')
+    const [isMemeActionShown, setIsMemeActionShown] = useState(false)
     const { handleAdminRequest } = useAdminRequest()
+    const setMemeFilters = useSetAtom(memesFilterAtom)
+    const navigate = useNavigate()
     const request = useFetch<IMeme>(
         () => getUrl('/getMeme', { id }),
         {
@@ -57,67 +69,117 @@ export const MemePage = () => {
         },
     ])
 
-    const onClickRemoveChannel = () => {
-        if (!request.data) return
-        let password = ''
-        setDialog({
-            text: `${t('notification.removeChannel')} @${request.data.channel}?`,
-            isOpen: true,
-            children: <Input
-                type='password'
-                placeholder={t('placeholder.password')}
-                required
-                onInput={val => {
-                    password = val
-                }}
-            />,
-            onClickAccept: async () => {
-                if (!password) {
+    useClickOutside(imgRef, () => {
+        setIsMemeActionShown(false)
+    })
 
-                    setNotification({
-                        text: t('notification.enterPassword'),
-                        type: ENotificationType.ERROR
-                    })
-                    return
-                }
-                const response = await removeChannel(request.data.channel, password)
-                if (!handleAdminRequest(response))
-                    return false
-                setNotification({
-                    text: t('notification.channelRemoved', { channel: request.data.channel}),
-                    type: ENotificationType.OK
-                })
-            }
+    const checkPassword = (password: string) => {
+        if (!password) {
+            setNotification({
+                text: t('notification.enterPassword'),
+                type: ENotificationType.ERROR
+            })
+            return false
+        }
+        return true
+    }
+
+    const handleRemoveChannel = async (password: string, channel: string) => {
+        if (!checkPassword) return
+        const response = await removeChannel(channel, password)
+        if (!handleAdminRequest(response))
+            return false
+        setNotification({
+            text: t('notification.channelRemoved', { channel: channel}),
+            type: ENotificationType.OK
         })
     }
 
+    const handleRemoveMeme = async (password: string, id: string) => {
+        if (!checkPassword) return
+        const response = await setMemeState(id, EMemeState.HIDDEN, password)
+        if (!handleAdminRequest(response))
+            return false
+        setNotification({
+            text: t('notification.memeRemoved', { id }),
+            type: ENotificationType.OK
+        })
+    }
+
+    const onClickRemoveMeme = async () => {
+        if (!id) return
+        setDialog({
+            text: `${t('notification.removeMeme')} ${id}?`,
+            isOpen: true,
+            children: <InputPassword />,
+            onClickAccept: () => handleRemoveMeme(password, id)
+        })
+    }
+
+    const onClickRemoveChannel = () => {
+        if (!request.data) return
+        setDialog({
+            text: `${t('notification.removeChannel')} @${request.data.channel}?`,
+            isOpen: true,
+            children: <InputPassword />,
+            onClickAccept: () => handleRemoveChannel(password, request.data.channel)
+        })
+    }
+
+    const onClickChannelImages = () => {
+        if (!request.data) return
+        setMemeFilters({ channel: [request.data.channel] })
+        setMemes([])
+        navigate('/')
+    }
+
     if (request.isLoading) return <Loader />
-    if (request.status === 204) return <p className="unexisted-meme">{t('label.unexistedMeme')}</p>
-    if (request.isError || !request.data) return <p className="error-response">{t('label.errorOccured')}</p>
+    if (request.status === 204) return <p {...stylex.props(s.messageText)}>{t('label.unexistedMeme')}</p>
+    if (request.isError || !request.data) return <p {...stylex.props(s.messageText)}>{t('label.errorOccured')}</p>
 
     return (
-        <div id="meme">
-            <img className="meme-image" src={'/' +  request.data.fileName} />
-            <div className="meme-description">
-                <div className="meme-text">
-                    {Object.entries(request.data?.text).map(([lang, text]) => (
-                        <p key={lang} className="meme-text-lang">
-                            <b>{t('label.text')}: </b>
-                            {text.split('\n').map((line, i) => (
-                                <span key={i}>{line}</span>
-                            ))}
-                        </p>
+        <div {...stylex.props(s.meme)}>
+            <div {...stylex.props(s.memeImageContainer)}>
+                <img
+                    {...stylex.props(s.memeImage)}
+                    ref={imgRef}
+                    src={'/' + request.data.fileName}
+                    onClick={() => setIsMemeActionShown(!isMemeActionShown)}
+                />
+                {isMemeActionShown
+                    ? <div {...stylex.props(s.memeActions)}>
+                        <FontAwesomeIcon
+                            icon={faTrash}
+                            color='red'
+                            size="5x"
+                            {...stylex.props(s.trashIcon)}
+                            onClick={onClickRemoveMeme}
+                        />
+                    </div>
+                    : null
+                }
+            </div>
+            <div {...stylex.props(s.memeDescription)}>
+                <div>
+                {Object.entries(request.data?.text).map(([lang, text]) => (
+                    <p key={lang} {...stylex.props(s.memeTextLang)}>
+                    <b>{t('label.text')}: </b>
+                    {text.split('\n').map((line, i) => (
+                        <span key={i}>{line}</span>
                     ))}
+                    </p>
+                ))}
                 </div>
-                <div className="meme-source">
-                    <b>{t('label.source')}: </b>
-                    <ChannelBlock
-                        isAdmin={isAdmin}
-                        username={request.data.channel}
-                        id={request.data.message}
-                        className='source-block'
-                        onClickRemove={onClickRemoveChannel}
-                    />
+                <div>
+                <b>{t('label.source')}: </b>
+                <ChannelBlock
+                    isAdmin={isAdmin}
+                    username={request.data.channel}
+                    id={request.data.message}
+                    {...stylex.props(s.sourceBlock)}
+                    onClickImages={onClickChannelImages}
+                    onClickRemove={onClickRemoveChannel}
+                />
                 </div>
             </div>
         </div>

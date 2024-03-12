@@ -9,11 +9,15 @@ import { useTranslation } from "react-i18next"
 type TChannelListProps =
 | {
     isAdmin?: false
+    filter?: string
     updateSwitch?: boolean
 }
 | {
     isAdmin: true
+    filter?: string
     updateSwitch: boolean
+    onClickImages: (channel: string) => Promise<unknown>
+    onClickEraser: (channel: string) => Promise<unknown>
     onRemoveChannel: (channel: string) => Promise<unknown>
 }
 
@@ -24,9 +28,10 @@ export const ChannelList = (props: TChannelListProps) => {
         () => getUrl('/getChannelList', {
                 page: '' + page,
                 onlyAvailable: `${props.isAdmin !== true}`,
+                filter: props.filter,
             }
         ), {
-            deps: [page, props.updateSwitch]
+            deps: [page, props.updateSwitch, props.filter]
         }
     )
 
@@ -34,6 +39,18 @@ export const ChannelList = (props: TChannelListProps) => {
         if (!props.isAdmin)
             return
         await props.onRemoveChannel(channel)
+    }
+
+    const onClickImages = async (channel: string) => {
+        if (!props.isAdmin)
+            return
+        await props.onClickImages(channel)
+    }
+
+    const onClickEraser = async (channel: string) => {
+        if (!props.isAdmin)
+            return
+        await props.onClickEraser(channel)
     }
 
     return (
@@ -51,6 +68,15 @@ export const ChannelList = (props: TChannelListProps) => {
                             <ChannelBlock
                                 isAdmin={props.isAdmin}
                                 username={channel.name}
+                                availability={channel.availability}
+                                onClickImages={props.isAdmin
+                                    ? () => onClickImages(channel.name)
+                                    : undefined
+                                }
+                                onClickEraser={props.isAdmin
+                                    ? () => onClickEraser(channel.name)
+                                    : undefined
+                                }
                                 onClickRemove={props.isAdmin
                                     ? () => onClickRemove(channel.name)
                                     : undefined

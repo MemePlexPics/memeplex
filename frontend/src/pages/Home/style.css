@@ -24,10 +24,6 @@
 
         li {
             max-width: 380px;
-
-            .channel-block {
-                padding-right: 4px;
-            }
         }
     }
 }

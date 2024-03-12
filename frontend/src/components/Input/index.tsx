@@ -7,7 +7,7 @@ type TDefaultInput = InputHTMLAttributes<HTMLInputElement>
 
 export const Input = (props: Omit<TDefaultInput, 'onInput'> & {
     onInput?: (value: string) => unknown
-    onPressEnter?: (value?: string) => unknown
+    onPressEnter?: (value: string) => unknown
 }) => {
     const onInput = (e: React.FormEvent<HTMLInputElement>) => {
         const value = (e.target as HTMLInputElement).value

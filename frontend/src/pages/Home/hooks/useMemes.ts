@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react"
-import { useAtom } from 'jotai'
+import { useAtom, useAtomValue } from 'jotai'
 
 import { useInfinityScroll, useNotification } from "../../../hooks"
 import { EMemesOperation, pageOptionsDefault } from "./constants"
 import { delay, getUrl } from "../../../utils"
 import { useFetch } from "../../../hooks"
 import { IGetLatest } from "../../../services/types"
-import { memesAtom, pageOptionsAtom } from "../../../store/atoms"
+import { memesAtom, memesFilterAtom, pageOptionsAtom } from "../../../store/atoms"
 import { ENotificationType } from "../../../components/Notification/constants"
 import { useTranslation } from "react-i18next"
 
@@ -18,6 +18,7 @@ export const useMemes = (query: string) => {
     const [memes, setMemes] = useAtom(memesAtom)
     const [operation, setOperation] = useState<EMemesOperation>(EMemesOperation.INIT)
     const [pageOptions, setPageOptions] = useAtom(pageOptionsAtom)
+    const memeFilters = useAtomValue(memesFilterAtom)
     const stateBeforeDelay = useRef<EMemesOperation>()
     const request = useFetch<IGetLatest>(() => url, {
         deps: [url],
@@ -61,13 +62,17 @@ export const useMemes = (query: string) => {
     const getLatest = () => {
         if (operation === EMemesOperation.IDLE) return
         if (operation === EMemesOperation.DELAY) return
-        const params: Record<Exclude<EMemesOperation, EMemesOperation.IDLE | EMemesOperation.DELAY>, Record<string, string | number | undefined> | undefined> = {
+        const paramsByOperation: Record<Exclude<EMemesOperation, EMemesOperation.IDLE | EMemesOperation.DELAY>, Record<string, string | number | undefined> | undefined> = {
             [EMemesOperation.NEXT]: { to: pageOptions.from },
             [EMemesOperation.UPDATE]: { from: pageOptions.to },
             [EMemesOperation.INIT]: undefined,
             [EMemesOperation.REINIT]: undefined,
         }
-        const url = getUrl('/getLatest', params[operation])
+        const params = {
+            ...paramsByOperation[operation],
+        }
+        if (memeFilters) params.filters = JSON.stringify(memeFilters)
+        const url = getUrl('/getLatest', params)
         setUrl(url)
     }
 
@@ -123,6 +128,11 @@ export const useMemes = (query: string) => {
         const updateLatestInterval = handleAutoUpdates()
         return () => clearInterval(updateLatestInterval)
     }, [query])
+
+    useEffect(() => {
+        setPageOptions(() => ({ ...pageOptionsDefault, query }))
+        setOperation(() => EMemesOperation.REINIT)
+    }, [memeFilters])
 
     useEffect(() => {
         if (operation === EMemesOperation.INIT && memes.length) return

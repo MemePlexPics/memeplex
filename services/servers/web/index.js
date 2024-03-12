@@ -32,15 +32,15 @@ import winston from 'winston';
 import { adminRouter } from './routers/index.js';
 
 const app = express();
+const { client, reconnect } = await connectToElastic();
 
 app.use(express.static('frontend/dist'));
 app.use('/data/media', express.static('data/media'));
 app.use('/data/avatars', express.static('data/avatars'));
 app.use(express.json());
 app.set('trust proxy', true);
+app.set('elasticClient', client);
 app.use('/admin', adminRouter);
-
-const { client, reconnect } = await connectToElastic();
 
 const logger = winston.createLogger({
     defaultMeta: { service: 'web' },
@@ -78,16 +78,19 @@ app.get('/search', async (req, res) => {
 });
 
 app.get('/getLatest', async (req, res) => {
-    const { from, to } = req.query;
-    const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE);
+    const { from, to, filters } = req.query;
+    const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE, filters);
     return res.send(response);
 });
 
 app.get('/getChannelList', async (req, res) => {
-    const { page, onlyAvailable } = req.query;
+    const { page, onlyAvailable, filter } = req.query;
     const mysql = await getMysqlClient();
-    const channels = await getChannels(mysql, page, onlyAvailable, CHANNEL_LIST_PAGE_SIZE);
-    const count = await getChannelsCount(mysql, onlyAvailable);
+    const filters = [];
+    if (onlyAvailable === 'true') filters.push('availability IS TRUE');
+    if (filter) filters.push(`name LIKE "%${filter}%"`);
+    const channels = await getChannels(mysql, page, CHANNEL_LIST_PAGE_SIZE, filters);
+    const count = await getChannelsCount(mysql, filters);
     return res.send({
         result: channels,
         totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),

@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { Button, Input } from ".."
 import { getTgChannelName } from "../../utils"
-
-import './style.css'
+import stylex from '@stylexjs/stylex'
+import { s } from './style'
 import { useTranslation } from "react-i18next"
 
 export const AddChannelForm = (props: {
@@ -18,22 +18,22 @@ export const AddChannelForm = (props: {
     }
 
     return (
-        <div className="add-channel-form">
+        <div {...stylex.props(s.addChannelForm)}>
             <div id="form-container">
-                <div className="input-container">
-                    <Input
-                        type="text"
-                        required
-                        placeholder={t('placeholder.channel')}
-                        value={channelValue}
-                        onInput={setChannelValue}
-                        onPressEnter={onClickSubmit}
-                    />
-                    <Button
-                        type="submit"
-                        value={t('button.submit')}
-                        onClick={onClickSubmit}
-                    />
+                <div {...stylex.props(s.inputContainer)}>
+                <Input
+                    type="text"
+                    required
+                    placeholder={t('placeholder.channel')}
+                    value={channelValue}
+                    onInput={setChannelValue}
+                    onPressEnter={onClickSubmit}
+                />
+                <Button
+                    type="submit"
+                    value={t('button.submit')}
+                    onClick={onClickSubmit}
+                />
                 </div>
             </div>
         </div>

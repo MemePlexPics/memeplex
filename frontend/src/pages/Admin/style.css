@@ -10,3 +10,8 @@ h2 {
   color: var(--color-gray);
   font-size: var(--font-size-big);
 }
+
+.label {
+  font-size: var(--font-size-big);
+  color: var(--color-white);
+}

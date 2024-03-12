@@ -1,5 +1,5 @@
 import { useSetAtom } from "jotai"
-import { AddChannelForm, ChannelList } from "../.."
+import { AddChannelForm, ChannelList, Input } from "../.."
 import { useAdminRequest, useNotification } from "../../../hooks"
 import { addChannel, removeChannel } from "../../../services"
 import { ENotificationType } from "../../Notification/constants"
@@ -7,6 +7,10 @@ import { dialogConfirmationAtom } from "../../../store/atoms/dialogConfirmationA
 import { useState } from "react"
 import { getFieldsWithUntrueValues } from "../../../utils"
 import { useTranslation } from "react-i18next"
+import { memesFilterAtom } from "../../../store/atoms"
+import { useNavigate } from "react-router-dom"
+import { setChannelMemesState } from "../../../services/admin"
+import { EMemeState } from "../../../types/enums"
 
 export const Channels = (props: {
     password: string
@@ -17,6 +21,9 @@ export const Channels = (props: {
     const setDialog = useSetAtom(dialogConfirmationAtom)
     const { handleAdminRequest } = useAdminRequest()
     const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
+    const [nameFilter, setNameFilter] = useState('')
+    const setMemeFilters = useSetAtom(memesFilterAtom)
+    const navigate = useNavigate()
 
     const handleAddChannel = async (channel: string, langs: string[]) => {
       const response = await addChannel(channel, langs, props.password)
@@ -39,6 +46,17 @@ export const Channels = (props: {
         type: ENotificationType.OK
       })
       setChannelsUpdateSwitch(!channelsUpdateSwitch)
+      return true
+    }
+
+    const handleRemoveChannelMemes = async (channel: string) => {
+      const response = await setChannelMemesState(channel, EMemeState.HIDDEN, props.password)
+      if (!handleAdminRequest(response))
+        return false
+      setNotification({
+        text: t('notification.channelMemesRemoved', { channel }),
+        type: ENotificationType.OK
+      })
       return true
     }
 
@@ -72,10 +90,42 @@ export const Channels = (props: {
       }
     }
 
+    const onClickDeleteChannelMemes = async (channel: string) => {
+      const areFieldsValid = validChannelAndPasswordField(channel)
+      if (areFieldsValid) {
+        setDialog({
+          text: t('notification.removeChannelMemes', { channel }),
+          isOpen: true,
+          onClickAccept: () => handleRemoveChannelMemes(channel),
+        })
+      }
+    }
+
+    const onClickImages = async (channel: string) => {
+      setMemeFilters({ channel: [channel] })
+      navigate('/')
+    }
+
+    const onFilterChannels = async (channel: string) => {
+      setNameFilter(channel)
+    }
+
     return <div className={props.className}>
         <h2>{t('label.addChannel')}</h2>
         <AddChannelForm onAddChannel={onAddChannel} />
+        <h2>{t('label.filter')}</h2>
+        <Input
+          placeholder={t('placeholder.channelFilter')}
+          onPressEnter={onFilterChannels}
+        />
         <h2>{t('label.channels')}</h2>
-        <ChannelList isAdmin updateSwitch={channelsUpdateSwitch} onRemoveChannel={onRemoveChannel} />
+        <ChannelList
+          isAdmin
+          updateSwitch={channelsUpdateSwitch}
+          filter={nameFilter}
+          onClickImages={onClickImages}
+          onClickEraser={onClickDeleteChannelMemes}
+          onRemoveChannel={onRemoveChannel}
+        />
     </div>
 }

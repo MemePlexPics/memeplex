@@ -25,6 +25,10 @@
     .channel-name {
         font-size: var(--font-size-slight);
     }
+
+    &.channel-block {
+        padding-right: 4px;
+    }
 }
 
 .avatar {
@@ -63,10 +67,18 @@
     }
 }
 
+.isUnavailable {
+    background-color: var(--color-black-2);
+}
+
 @media only screen and (hover: none) and (pointer: coarse) {
     .channel-block {
         border: 0;
         background-color: var(--color-black-1);
         padding: 5px;
+    }
+
+    .isUnavailable {
+        background-color: var(--color-dark-gray);
     }
 }
