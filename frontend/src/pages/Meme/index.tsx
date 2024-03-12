@@ -177,7 +177,7 @@ export const MemePage = () => {
                     {...stylex.props(s.memeImage)}
                     ref={imgRef}
                     src={'/' + request.data.fileName}
-                    onClick={() => setIsMemeActionShown(!isMemeActionShown)}
+                    onClick={() => setIsMemeActionShown(isAdmin && !isMemeActionShown)}
                 />
                 {isMemeActionShown
                     ? <div {...stylex.props(s.memeActions)}>
