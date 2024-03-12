@@ -7,3 +7,5 @@ export { getTelegramChatInfo } from './getTelegramChatInfo.js';
 export { getTelegramFileInfo } from './getTelegramFileInfo.js';
 export { downloadTelegramFile } from './downloadTelegramFile.js';
 export { downloadTelegramChannelAvatar } from './downloadTelegramChannelAvatar.js';
+export { setMemeState } from './setMemeState.js';
+export { setChannelMemesState } from './setChannelMemesState.js';

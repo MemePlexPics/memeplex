@@ -7,7 +7,9 @@ import {
     featuredChannelPost,
     featuredChannelDelete,
     featuredChannelGet,
-    proceedChannelSuggestionPost,
+    channelSuggestionProceedPost,
+    memeStatePut,
+    channelMemesStatePut,
 } from './methods/index.js';
 
 export const adminRouter = express.Router();
@@ -45,10 +47,10 @@ const isAdmin = (req, res, next) => {
 const logAdminAction = (req, res, next) => {
     res.on( 'finish', () => {
         if (res.locals.action) logger.info({
-            role: res.locals.role,
-            ip: req.ip,
             url: req.url,
             action: res.locals.action,
+            role: res.locals.role,
+            ip: req.ip,
         });
     });
     next();
@@ -57,13 +59,13 @@ const logAdminAction = (req, res, next) => {
 adminRouter.use(isAdmin, logAdminAction);
 
 adminRouter.post('/channel', channelPost);
-
 adminRouter.delete('/channel', channelDelete);
+adminRouter.put('/channel/memes/state', channelMemesStatePut);
 
 adminRouter.post('/featuredChannel', featuredChannelPost);
-
 adminRouter.delete('/featuredChannel', featuredChannelDelete);
+adminRouter.post('/featuredChannel/get', featuredChannelGet);
 
-adminRouter.post('/getFeaturedChannel', featuredChannelGet);
+adminRouter.post('/channelSuggestion/proceed', channelSuggestionProceedPost);
 
-adminRouter.post('/proceedChannelSuggestion', proceedChannelSuggestionPost);
+adminRouter.put('/meme/state', memeStatePut);

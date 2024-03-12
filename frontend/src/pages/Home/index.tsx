@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faPlus } from "@fortawesome/free-solid-svg-icons"
 import { useMeta, useTitle } from "../../hooks"
 import { calculateHowManyObjectFit } from "../../utils"
+import { FilterMemes } from "../../components/molecules"
 
 export const HomePage = () => {
     const { t } = useTranslation()
@@ -45,25 +46,26 @@ export const HomePage = () => {
         <>
             <MemeSearchForm query={query} onUpdate={(query) => setQuery(query)} />
             {!query
-                ? <div
-                    className="featured-channels"
-                    style={{ width: window.screen.orientation.type !== 'portrait-primary'
+                ? <div style={{
+                    width: window.screen.orientation.type !== 'portrait-primary'
                         ? visualMemesContainerWidth.current
                         : undefined
-                    }}
-                >
-                    <div className="featured-channels-head">
-                        <h3 className="featured-channels-header">{t('label.featuredChannels')}</h3>
-                        <Link
-                            to='https://t.me/memeplex_pics/20'
-                            target='_blank'
-                            className="add-your-channel-link"
-                        >
-                            <FontAwesomeIcon icon={faPlus} />
-                            {t('button.addYourChannelToFavorite')}
-                        </Link>
+                }}>
+                    <div className="featured-channels">
+                        <div className="featured-channels-head">
+                            <h3 className="featured-channels-header">{t('label.featuredChannels')}</h3>
+                            <Link
+                                to='https://t.me/memeplex_pics/20'
+                                target='_blank'
+                                className="add-your-channel-link"
+                            >
+                                <FontAwesomeIcon icon={faPlus} />
+                                {t('button.addYourChannelToFavorite')}
+                            </Link>
+                        </div>
+                        <FeaturedChannelList withoutLoader />
                     </div>
-                    <FeaturedChannelList withoutLoader />
+                    <FilterMemes />
                 </div>
                 : null
             }

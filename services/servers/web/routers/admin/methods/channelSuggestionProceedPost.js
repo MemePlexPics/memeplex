@@ -6,7 +6,7 @@ import {
 } from '../../../../../../utils/mysql-queries/index.js';
 import { setAction } from '../utils/index.js';
 
-export const proceedChannelSuggestionPost = async (req, res) => {
+export const channelSuggestionProceedPost = async (req, res) => {
     const { channel } = req.body;
     if (!channel)
         return res.status(500).send();

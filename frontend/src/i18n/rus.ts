@@ -9,6 +9,7 @@ export const rus = {
         password: 'Пароль',
         additionalInformation: 'Дополнительная информация',
         readableTitle: 'Человекочитаемое название',
+        channelFilter: 'Введите название и нажмите Enter',
     },
     label: {
         featuredChannels: 'Избранные каналы',
@@ -26,6 +27,7 @@ export const rus = {
         username: 'Юзернейм',
         from: 'От',
         comment: 'Комментарий',
+        filter: 'Фильтр',
     },
     tab: {
         channels: 'Каналы',
@@ -34,8 +36,11 @@ export const rus = {
     },
     notification: {
         removeChannel: 'Удалить канал',
+        removeMeme: 'Удалить мем',
         enterPassword: 'Введите пароль',
         channelRemoved: 'Канал @{{channel}} был успешно удален',
+        channelMemesRemoved: 'Мемы канала @{{channel}} успешно удалены',
+        memeRemoved: 'Мем «{{id}}» был успешно удален',
         incorrectPassword: 'Некорректный пароль',
         thankForSuggestion: 'Спасибо за предложение!\nОно будет добавлено после проверки',
         channelAdded: 'Канал @{{channel}} был успешно добавлен',
@@ -47,6 +52,7 @@ export const rus = {
         channelFeatured: 'Канал «{{channel}}» был успешно добавлен к избранным',
         removeFeatured: 'Удалить избранный',
         pagesLeft: 'Еще {{number}} страниц',
+        removeChannelMemes: 'Удалить все мемы канала @{{channel}}?',
     },
     button: {
         search: 'Поиск',

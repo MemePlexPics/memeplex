@@ -11,6 +11,7 @@ export const eng: TI18nLocalization = {
         password: 'Password',
         additionalInformation: 'Additional information',
         readableTitle: 'Readable title',
+        channelFilter: 'Enter a name and press Enter',
     },
     label: {
         featuredChannels: 'Featured channels',
@@ -28,6 +29,7 @@ export const eng: TI18nLocalization = {
         username: 'Username',
         from: 'From',
         comment: 'Comment',
+        filter: 'Filter',
     },
     tab: {
         channels: 'Channels',
@@ -36,8 +38,11 @@ export const eng: TI18nLocalization = {
     },
     notification: {
         removeChannel: 'Remove the channel',
+        removeMeme: 'Remove the meme',
         enterPassword: 'Enter password',
-        channelRemoved: 'The @{{channel}} has been successfully removed',
+        channelRemoved: '@{{channel}} has been successfully removed',
+        channelMemesRemoved: '@{{channel}} memes successfully deleted',
+        memeRemoved: 'Meme «{{id}}» has been successfully removed',
         incorrectPassword: 'Incorrect password',
         thankForSuggestion: 'Thank you for the suggestion!\nIt will be added after review',
         channelAdded: 'The @{{channel}} has been successfully added',
@@ -49,6 +54,7 @@ export const eng: TI18nLocalization = {
         channelFeatured: 'The «{{channel}}» has been successfully featured',
         removeFeatured: 'Remove the featured',
         pagesLeft: 'There are {{number}} more pages',
+        removeChannelMemes: 'Delete all memes from @{{channel}}?',
     },
     button: {
         search: 'Search',

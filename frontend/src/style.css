@@ -63,11 +63,6 @@ body {
     overflow-x: hidden;
 }
 
-.label {
-    font-size: var(--font-size-big);
-    color: var(--color-white);
-}
-
 .hide {
     display: none;
 }

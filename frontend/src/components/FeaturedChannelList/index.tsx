@@ -36,10 +36,12 @@ export const FeaturedChannelList = (props: {
             onChangePage={setPage}
         >
             {request.isLoaded && !request.data?.result.length
-                ? <h3 style={{ color: 'white' }}>{props.isAdmin
-                    ? 'Nothing found'
-                    : 'Make your channel the first, click on the button'
-                }</h3>
+                ? <h3 style={{ color: 'white' }}>
+                    {props.isAdmin
+                        ? 'Nothing found'
+                        : 'Make your channel the first, click on the button'
+                    }
+                </h3>
                 : request.data
                     ? request.data.result.map(channel => (
                         <li key={channel.username}>

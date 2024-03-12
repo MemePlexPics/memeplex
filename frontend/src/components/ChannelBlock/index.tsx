@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faCheck, faEye, faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons"
+import { faCheck, faEraser, faEye, faImages, faPen, faTrashCan } from "@fortawesome/free-solid-svg-icons"
 
 import './style.css'
 import noAvatarChannel from './assets/no_avatar_channel.jpg'
@@ -10,12 +10,15 @@ export const ChannelBlock = (props: {
     isAdmin?: boolean
     isBrowserPreview?: boolean
     username: string
+    availability?: number
     title?: string
     size?: 'normal' | 'small'
     id?: string
     className?: string
+    onClickImages?: (username: string) => unknown
     onClickCheck?: (username: string) => unknown
     onClickEdit?: (username: string) => unknown
+    onClickEraser?: (username: string) => unknown
     onClickView?: (username: string) => unknown
     onClickRemove?: (username: string) => unknown
 }) => {
@@ -41,13 +44,28 @@ export const ChannelBlock = (props: {
         props.onClickView?.(props.username)
     }
 
+    const onClickImages = () => {
+        props.onClickImages?.(props.username)
+    }
+
+    const onClickEraser = () => {
+        props.onClickEraser?.(props.username)
+    }
+
     const onError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         e.currentTarget.onerror = null;
         e.currentTarget.src = noAvatarChannel;
     }
 
     return (
-        <div className={classNames("channel-block", { isAdmin: props.isAdmin }, props.className, props.size)}>
+        <div className={classNames(
+            "channel-block", {
+                isAdmin: props.isAdmin,
+                isUnavailable: props.availability === 0 ? true : false,
+            },
+            props.className,
+            props.size
+        )}>
             <Link
                 to={telegramLink}
                 target="_blank"
@@ -66,6 +84,13 @@ export const ChannelBlock = (props: {
                 </span>
             </Link>
                 <div className="channel-actions">
+                    {props.onClickImages
+                        ? <FontAwesomeIcon
+                            icon={faImages}
+                            color='cyan'
+                            onClick={onClickImages}
+                        />
+                        : null}
                     {props.onClickCheck
                         ? <FontAwesomeIcon
                             icon={faCheck}
@@ -84,6 +109,13 @@ export const ChannelBlock = (props: {
                         ? <FontAwesomeIcon
                             icon={faEye}
                             onClick={onClickView}
+                        />
+                        : null}
+                    {props.onClickEraser
+                        ? <FontAwesomeIcon
+                            icon={faEraser}
+                            color='darkorange'
+                            onClick={onClickEraser}
                         />
                         : null}
                     {props.onClickRemove

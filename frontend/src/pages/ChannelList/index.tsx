@@ -59,7 +59,7 @@ export const ChannelListPage = () => {
     return (
         <div id="channel-list-page">
             <div className="suggest-channel">
-                <label>{t('label.suggestChannel')}: </label>
+                <label className="label">{t('label.suggestChannel')}: </label>
                 <div className="suggest-channel-input">
                     <Input
                         value={channelSuggestion}
