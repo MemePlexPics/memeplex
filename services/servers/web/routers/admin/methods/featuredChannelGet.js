@@ -12,6 +12,6 @@ export const featuredChannelGet = async (req, res) => {
         return res.status(500).send();
     const mysql = await getMysqlClient();
     const response = await getFeaturedChannel(mysql, username);
-    setLogAction(res, `👁‍🗨 @${username}`);
+    setLogAction(res, `👁‍ @${username}`);
     return res.send(response);
 };

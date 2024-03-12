@@ -8,7 +8,7 @@ export const channelMemesStatePut = async (req, res) => {
         return res.status(500).send();
     await setChannelMemesState(client, channel, state);
     const emoji = {
-        0: '👁‍🗨',
+        0: '👁‍',
         1: '🫣',
     };
     setLogAction(res, `${emoji[state]} ${channel}`);

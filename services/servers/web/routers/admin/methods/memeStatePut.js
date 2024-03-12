@@ -8,7 +8,7 @@ export const memeStatePut = async (req, res) => {
         return res.status(500).send();
     await setMemeState(client, id, state);
     const emoji = {
-        0: '👁‍🗨',
+        0: '👁‍',
         1: '🫣',
     };
     setLogAction(res, `${emoji[state]} ${id}`);
