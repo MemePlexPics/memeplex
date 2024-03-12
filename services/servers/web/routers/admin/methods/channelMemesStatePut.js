@@ -1,5 +1,5 @@
 import { setChannelMemesState } from '../../../../utils/index.js';
-import { setAction } from '../utils/index.js';
+import { setLogAction } from '../utils/index.js';
 
 export const channelMemesStatePut = async (req, res) => {
     const client = req.app.get('elasticClient');
@@ -11,6 +11,6 @@ export const channelMemesStatePut = async (req, res) => {
         0: '👁‍🗨',
         1: '🫣',
     };
-    setAction(res, `${emoji[state]} ${channel}`);
+    setLogAction(res, `${emoji[state]} ${channel}`);
     return res.send();
 };

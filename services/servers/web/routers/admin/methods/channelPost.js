@@ -11,7 +11,7 @@ import {
     updateChannelAvailability,
     proceedChannelSuggestion,
 } from '../../../../../../utils/mysql-queries/index.js';
-import { setAction } from '../utils/index.js';
+import { setLogAction } from '../utils/index.js';
 
 export const channelPost = async (req, res) => {
     const { channel, langs } = req.body;
@@ -26,10 +26,10 @@ export const channelPost = async (req, res) => {
     const mysql = await getMysqlClient();
     const existedChannel = await selectChannel(mysql, channel);
     if (existedChannel) {
-        setAction(res, `🔄 Updated the avialability of @${channel}`);
+        setLogAction(res, `🔄 Updated the avialability of @${channel}`);
         await updateChannelAvailability(mysql, channel, true);
     } else {
-        setAction(res, `➕ Added @${channel}`);
+        setLogAction(res, `➕ Added @${channel}`);
         await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
         await proceedChannelSuggestion(mysql, channel);
     }

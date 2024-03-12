@@ -4,7 +4,7 @@ import {
 import {
     removeFeaturedChannel,
 } from '../../../../../../utils/mysql-queries/index.js';
-import { setAction } from '../utils/index.js';
+import { setLogAction } from '../utils/index.js';
 
 export const featuredChannelDelete = async (req, res) => {
     const { username } = req.body;
@@ -13,6 +13,6 @@ export const featuredChannelDelete = async (req, res) => {
         return res.status(500).send();
     const mysql = await getMysqlClient();
     await removeFeaturedChannel(mysql, username);
-    setAction(res, `🗑 Deleted @${username}`);
+    setLogAction(res, `🗑 Deleted @${username}`);
     return res.send();
 };
