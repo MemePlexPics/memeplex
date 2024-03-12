@@ -7,7 +7,7 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
     const filterObject = filtersString ? JSON.parse(filtersString) : null;
     const additionalFilter = {};
     if (filterObject?.channel?.length) {
-        ((additionalFilter.must ??= {}).terms ??= {}).channelName = filterObject.channel;
+        ((additionalFilter.must ??= {}).terms ??= {}).channelName = filterObject.channel.map(channel => channel.toLowerCase());
     }
     if (filterObject?.not?.state !== null) {
         ((additionalFilter.must_not ??= {}).term ??= {}).state = filterObject?.state ?? 1;
