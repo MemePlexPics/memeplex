@@ -41,13 +41,17 @@ const isAdmin = (req, res, next) => {
         res.locals.role = 'Moderator';
         return next();
     }
-    setLogAction(res, '403');
+    logger.info({
+        url: req.url,
+        action: 403,
+        ip: req.ip,
+    });
     return res.status(403).send();
 };
 
 const logAdminAction = (req, res, next) => {
     res.on( 'finish', () => {
-        if (res.locals.action) logger.info({
+        if (res.locals.logAction) logger.info({
             url: req.url,
             action: res.locals.logAction,
             role: res.locals.role,
