@@ -1,6 +1,29 @@
 # MemePlex
 
-[MemePlex](https://memeplex.pics/) is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма.
+[![WebSite](https://img.shields.io/badge/website-000000?style=for-the-badge&logoColor=white)](https://memeplex.pics)
+[![Join us on Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/memeplex_pics)
+
+![MemePlex logo](./frontend/src/assets/images/logo/logo_600.png)
+
+## Описание
+
+[MemePlex](https://memeplex.pics/) - поисковая система для мемов русско- и украиноязычного нижнего телеграма.
+
+Мы индексируем нишевые телеграм-каналы, которые обычно пролетают под радаром крупных индексаторов, которые к тому же, как правило, не позволяют искать кириллицей.
+
+Наше главное отличие: мы не воруем контент, и всегда указываем ссылку на оригинал.
+
+Если у вас есть телеграм-канал, вы можете рекомендовать его к добавлению [здесь](https://memeplex.pics/channelList), либо же добавить его в featured channels, репостнув наш [анонс](https://t.me/memeplex_pics/4) и отписавшись в [комментариях](https://t.me/memeplex_pics/20).
+
+## Description
+
+[MemePlex](https://memeplex.pics/) is a meme search engine and catalogue with a focus on Russian and Ukrainian underground Telegram content.
+
+We index niche telegram channels that usually fly under the radar of big meme indexers, that usually don't even allow to search content in languages other than English.
+
+Our distinguishing feature is that we don't steal the content (there's always a link to the original).
+
+If you have a telegram channel, you can suggest it [here](https://memeplex.pics/channelList), or add it to "featured channels" by reposting our announcement (see [here](https://t.me/memeplex_pics/4)) and let us know in the [comments](https://t.me/memeplex_pics/20).
 
 ## Links
 
