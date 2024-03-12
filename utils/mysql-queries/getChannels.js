@@ -6,7 +6,9 @@ export const getChannels = async (mysql, page, size, filters) => {
             ? `WHERE ${filters.join(' AND ')}`
             : ''
         }
-        ORDER BY availability DESC
+        ORDER BY
+            availability DESC,
+            name ASC
         LIMIT ? OFFSET ?
     `, [size, offset]);
     return results;
