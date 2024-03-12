@@ -57,6 +57,10 @@ const logAdminAction = (req, res, next) => {
     next();
 };
 
+adminRouter.get('/', (req, res) => {
+    throw new Error('404');
+});
+
 adminRouter.use(isAdmin, logAdminAction);
 
 adminRouter.post('/channel', channelPost);

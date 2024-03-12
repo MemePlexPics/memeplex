@@ -65,7 +65,14 @@ const handleMethodError = async (error) => {
     }
 };
 
+const handle404 = async (req, res) => {
+    if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
+        return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'frontend', 'dist', 'index.html'));
+    return res.status(404).send();
+};
+
 app.use(async (err, req, res, next) => {
+    if (err.message === '404') return handle404(req, res);
     await handleMethodError(err);
     return res.status(500).send();
 });
@@ -156,11 +163,7 @@ app.get('/data/avatars/:channelName', async (req, res) => {
     return res.sendFile(path, { root: './' });
 });
 
-app.get('/*', async (req, res) => {
-    if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
-        return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'frontend', 'dist', 'index.html'));
-    return res.status(404).send();
-});
+app.get('/*', handle404);
 
 const start = async () => {
     app.listen(3080, '127.0.0.1');
