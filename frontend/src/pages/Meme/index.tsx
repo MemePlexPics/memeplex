@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom"
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 
-import { adminPasswordAtom, memesAtom, memesFilterAtom } from "../../store/atoms"
+import { adminPasswordAtom, memesAtom, memesFilterAtom, pageOptionsAtom } from "../../store/atoms"
 import { useAdminRequest, useClickOutside, useFetch, useMeta, useNotification, useTitle } from "../../hooks"
 import { getUrl } from "../../utils"
 import { IMeme } from "../../types"
@@ -15,10 +15,11 @@ import { ENotificationType } from "../../components/Notification/constants"
 import { useTranslation } from "react-i18next"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTrash } from "@fortawesome/free-solid-svg-icons"
-import { setMemeState } from "../../services/admin"
+import { setChannelMemesState, setMemeState } from "../../services/admin"
 import { EMemeState } from "../../types/enums"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { InputPassword } from "../../components/molecules"
+import { pageOptionsDefault } from "../Home/hooks/constants"
 
 export const MemePage = () => {
     const { id } = useParams()
@@ -33,7 +34,9 @@ export const MemePage = () => {
     const [isMemeActionShown, setIsMemeActionShown] = useState(false)
     const { handleAdminRequest } = useAdminRequest()
     const setMemeFilters = useSetAtom(memesFilterAtom)
+    const setSearchOptions = useSetAtom(pageOptionsAtom)
     const navigate = useNavigate()
+    const [operation, setOperation] = useState<'idle' | 'removeMeme' | 'removeChannel' | 'removeChannelMemes'>('idle')
     const request = useFetch<IMeme>(
         () => getUrl('/getMeme', { id }),
         {
@@ -73,6 +76,13 @@ export const MemePage = () => {
         setIsMemeActionShown(false)
     })
 
+    useEffect(() => {
+        if (operation === 'idle') return
+        else if (operation === 'removeMeme') handleRemoveMeme()
+        else if (operation === 'removeChannel') handleRemoveChannel()
+        else if (operation === 'removeChannelMemes') handleRemoveChannelMemes()
+    }, [operation])
+
     const checkPassword = (password: string) => {
         if (!password) {
             setNotification({
@@ -84,19 +94,31 @@ export const MemePage = () => {
         return true
     }
 
-    const handleRemoveChannel = async (password: string, channel: string) => {
-        if (!checkPassword) return
-        const response = await removeChannel(channel, password)
+    const handleRemoveChannel = async () => {
+        if (!request.data || !checkPassword) return
+        const response = await removeChannel(request.data.channel, password)
         if (!handleAdminRequest(response))
             return false
         setNotification({
-            text: t('notification.channelRemoved', { channel: channel}),
+            text: t('notification.channelRemoved', { channel: request.data.channel }),
             type: ENotificationType.OK
         })
     }
 
-    const handleRemoveMeme = async (password: string, id: string) => {
-        if (!checkPassword) return
+    const handleRemoveChannelMemes = async () => {
+        if (!request.data || !checkPassword) return
+        const response = await setChannelMemesState(request.data.channel, EMemeState.HIDDEN, password)
+        if (!handleAdminRequest(response))
+            return false
+        setNotification({
+            text: t('notification.channelMemesRemoved', { channel: request.data.channel }),
+            type: ENotificationType.OK
+        })
+        return true
+    }
+
+    const handleRemoveMeme = async () => {
+        if (!id || !checkPassword) return
         const response = await setMemeState(id, EMemeState.HIDDEN, password)
         if (!handleAdminRequest(response))
             return false
@@ -112,7 +134,7 @@ export const MemePage = () => {
             text: `${t('notification.removeMeme')} ${id}?`,
             isOpen: true,
             children: <InputPassword />,
-            onClickAccept: () => handleRemoveMeme(password, id)
+            onClickAccept: () => setOperation('removeMeme')
         })
     }
 
@@ -122,15 +144,26 @@ export const MemePage = () => {
             text: `${t('notification.removeChannel')} @${request.data.channel}?`,
             isOpen: true,
             children: <InputPassword />,
-            onClickAccept: () => handleRemoveChannel(password, request.data.channel)
+            onClickAccept: () => setOperation('removeChannel')
         })
     }
 
     const onClickChannelImages = () => {
         if (!request.data) return
         setMemeFilters({ channel: [request.data.channel] })
+        setSearchOptions(pageOptionsDefault)
         setMemes([])
         navigate('/')
+    }
+
+    const onClickDeleteChannelMemes = () => {
+        if (!request.data) return
+        setDialog({
+            text: `${t('notification.removeChannelMemes')} @${request.data.channel}?`,
+            isOpen: true,
+            children: <InputPassword />,
+            onClickAccept: () => setOperation('removeChannelMemes')
+        })
     }
 
     if (request.isLoading) return <Loader />
@@ -178,6 +211,7 @@ export const MemePage = () => {
                     id={request.data.message}
                     {...stylex.props(s.sourceBlock)}
                     onClickImages={onClickChannelImages}
+                    onClickEraser={onClickDeleteChannelMemes}
                     onClickRemove={onClickRemoveChannel}
                 />
                 </div>
