@@ -1,6 +1,10 @@
 export const handleNackByTimeout = (logger, msg, channel) => {
-    if (!msg) {
+    if (channel && msg) {
         logger.error('Timeout occurred while waiting for acknowledgment');
-        channel.nack(msg);
+        try {
+            channel.nack(msg);
+        } catch(e) {
+            if (e.message !== 'Channel closed') throw e;
+        }
     }
 };
