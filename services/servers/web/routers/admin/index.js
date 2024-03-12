@@ -11,6 +11,7 @@ import {
     memeStatePut,
     channelMemesStatePut,
 } from './methods/index.js';
+import { setLogAction } from './utils/index.js';
 
 export const adminRouter = express.Router();
 
@@ -40,7 +41,7 @@ const isAdmin = (req, res, next) => {
         res.locals.role = 'Moderator';
         return next();
     }
-    logger.error(`${req.ip} got 403 on ${req.url}`);
+    setLogAction(res, '403');
     return res.status(403).send();
 };
 
@@ -48,7 +49,7 @@ const logAdminAction = (req, res, next) => {
     res.on( 'finish', () => {
         if (res.locals.action) logger.info({
             url: req.url,
-            action: res.locals.action,
+            action: res.locals.logAction,
             role: res.locals.role,
             ip: req.ip,
         });
