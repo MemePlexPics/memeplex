@@ -19,12 +19,19 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "typeRoots": [
-      "./src/types/declarations",
-    ]
+    "typeRoots": ["./src/types/declarations"],
+
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src"],
-  "references": [{
-    "path": "./tsconfig.node.json"
-  }]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "parserOptions": {
+    "project": ["vite.config.ts"]
+  }
 }

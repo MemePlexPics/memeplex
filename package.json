@@ -9,6 +9,7 @@
     "eslint": "eslint services/ scripts/ utils/ constants/",
     "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "build": "npm --prefix ./frontend run build",
+    "pretty": "npx prettier --write ./{scripts,utils,services,frontend/src}",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "klntsky",
@@ -31,6 +32,8 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "eslint": "^8.56.0"
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "3.2.5"
   }
 }
