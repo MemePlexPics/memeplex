@@ -2,12 +2,12 @@ import { useState } from 'react'
 
 import { ChannelBlock, PaginatedList } from '..'
 import { useFetch } from '../../hooks'
-import { getUrl } from '../../utils'
 import { TGetChannelList } from '../../types'
+import { getUrl } from '../../utils'
 
 export const ChannelSuggestionList = (props: {
   updateSwitch: boolean
-  onAction: (channel: string, action: 'add' | 'remove') => Promise<unknown>
+  onAction: (channel: string, action: 'add' | 'remove') => unknown
 }) => {
   const [page, setPage] = useState(1)
   const request = useFetch<TGetChannelList>(

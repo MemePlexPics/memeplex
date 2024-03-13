@@ -1,6 +1,6 @@
-export const getFieldsWithUntrueValues = (object: Object) => {
-  return Object.entries(object).reduce((acc, [field, value]) => {
+export const getFieldsWithUntrueValues = (object: object) => {
+  return Object.entries(object).reduce<string[]>((acc, [field, value]) => {
     if (!value) acc.push(field)
     return acc
-  }, [] as string[])
+  }, [])
 }

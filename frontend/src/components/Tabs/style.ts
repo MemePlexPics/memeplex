@@ -1,4 +1,5 @@
 import stylex from '@stylexjs/stylex'
+
 import { color, size } from '../../styles/variables.stylex'
 
 const topBorderRadius = '6px'
@@ -12,7 +13,9 @@ export const s = stylex.create({
   tab: {
     color: color.white,
     fontSize: size.fontBig,
-    border: '2px solid transparent',
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderColor: 'transparent',
     padding: '0 10px',
     cursor: 'pointer',
   },

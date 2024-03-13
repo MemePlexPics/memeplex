@@ -1,5 +1,6 @@
-import { languageAtom } from '../../../store/atoms'
 import { useAtom } from 'jotai'
+
+import { languageAtom } from '../../../store/atoms'
 import { Select } from '../../atoms'
 
 export const LanguageSelector = (props: {

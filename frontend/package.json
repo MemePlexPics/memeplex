@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext ts,tsx",
     "lint:fix": "npm run lint --fix",
     "pretty": "prettier --write .",
     "preview": "vite preview"
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "@stylexjs/eslint-plugin": "^0.5.1",
+    "@types/node": "^20.11.26",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.21.0",

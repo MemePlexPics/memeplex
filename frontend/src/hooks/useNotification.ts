@@ -1,7 +1,9 @@
 import { useSetAtom } from 'jotai'
+
+import { useEffect } from 'react'
+
 import { INotificationProps } from '../components/Notification/types'
 import { notificationsAtom } from '../store/atoms'
-import { useEffect } from 'react'
 
 export const useNotification = (notification?: INotificationProps) => {
   const setNotification = useSetAtom(notificationsAtom)

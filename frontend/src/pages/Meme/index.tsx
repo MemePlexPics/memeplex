@@ -1,7 +1,14 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { faTrash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import stylex from '@stylexjs/stylex'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate, useParams } from 'react-router-dom'
 
-import { adminPasswordAtom, memesAtom, memesFilterAtom, pageOptionsAtom } from '../../store/atoms'
+import { ChannelBlock, Loader } from '../../components'
+import { ENotificationType } from '../../components/Notification/constants'
+import { InputPassword } from '../../components/molecules'
 import {
   useAdminRequest,
   useClickOutside,
@@ -10,23 +17,17 @@ import {
   useNotification,
   useTitle,
 } from '../../hooks'
-import { getUrl } from '../../utils'
-import { IMeme } from '../../types'
-import { ChannelBlock, Loader } from '../../components'
-
-import stylex from '@stylexjs/stylex'
-import { s } from './style'
-import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
 import { removeChannel } from '../../services'
-import { ENotificationType } from '../../components/Notification/constants'
-import { useTranslation } from 'react-i18next'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { setChannelMemesState, setMemeState } from '../../services/admin'
+import { adminPasswordAtom, memesAtom, memesFilterAtom, pageOptionsAtom } from '../../store/atoms'
+import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
+import { IMeme } from '../../types'
 import { EMemeState } from '../../types/enums'
-import { useEffect, useRef, useState } from 'react'
-import { InputPassword } from '../../components/molecules'
+import { getUrl } from '../../utils'
+
 import { pageOptionsDefault } from '../Home/hooks/constants'
+
+import { s } from './style'
 
 export const MemePage = () => {
   const { id } = useParams()
@@ -49,7 +50,7 @@ export const MemePage = () => {
   const request = useFetch<IMeme>(() => getUrl('/getMeme', { id }), {
     deps: [id],
     getCached: () => {
-      return memes.length ? memes.find(meme => meme?.id === id) || null : null
+      return memes.length ? memes.find(meme => meme.id === id) || null : null
     },
   })
 
@@ -82,12 +83,12 @@ export const MemePage = () => {
 
   useEffect(() => {
     if (operation === 'idle') return
-    else if (operation === 'removeMeme') handleRemoveMeme()
-    else if (operation === 'removeChannel') handleRemoveChannel()
-    else if (operation === 'removeChannelMemes') handleRemoveChannelMemes()
+    else if (operation === 'removeMeme') void handleRemoveMeme()
+    else if (operation === 'removeChannel') void handleRemoveChannel()
+    else void handleRemoveChannelMemes()
   }, [operation])
 
-  const checkPassword = (password: string) => {
+  const checkPassword = () => {
     if (!password) {
       setNotification({
         text: t('notification.enterPassword'),
@@ -99,7 +100,7 @@ export const MemePage = () => {
   }
 
   const handleRemoveChannel = async () => {
-    if (!request.data || !checkPassword) return
+    if (!request.data || !checkPassword()) return
     const response = await removeChannel(request.data.channel, password)
     if (!handleAdminRequest(response)) return false
     setNotification({
@@ -109,7 +110,7 @@ export const MemePage = () => {
   }
 
   const handleRemoveChannelMemes = async () => {
-    if (!request.data || !checkPassword) return
+    if (!request.data || !checkPassword()) return
     const response = await setChannelMemesState(request.data.channel, EMemeState.HIDDEN, password)
     if (!handleAdminRequest(response)) return false
     setNotification({
@@ -120,7 +121,7 @@ export const MemePage = () => {
   }
 
   const handleRemoveMeme = async () => {
-    if (!id || !checkPassword) return
+    if (!id || !checkPassword()) return
     const response = await setMemeState(id, EMemeState.HIDDEN, password)
     if (!handleAdminRequest(response)) return false
     setNotification({
@@ -129,13 +130,13 @@ export const MemePage = () => {
     })
   }
 
-  const onClickRemoveMeme = async () => {
+  const onClickRemoveMeme = () => {
     if (!id) return
     setDialog({
       text: `${t('notification.removeMeme')} ${id}?`,
       isOpen: true,
       children: <InputPassword />,
-      onClickAccept: () => setOperation('removeMeme'),
+      onClickAccept: () => { setOperation('removeMeme'); },
     })
   }
 
@@ -145,7 +146,7 @@ export const MemePage = () => {
       text: `${t('notification.removeChannel')} @${request.data.channel}?`,
       isOpen: true,
       children: <InputPassword />,
-      onClickAccept: () => setOperation('removeChannel'),
+      onClickAccept: () => { setOperation('removeChannel'); },
     })
   }
 
@@ -163,7 +164,7 @@ export const MemePage = () => {
       text: `${t('notification.removeChannelMemes')} @${request.data.channel}?`,
       isOpen: true,
       children: <InputPassword />,
-      onClickAccept: () => setOperation('removeChannelMemes'),
+      onClickAccept: () => { setOperation('removeChannelMemes'); },
     })
   }
 
@@ -180,7 +181,7 @@ export const MemePage = () => {
           {...stylex.props(s.memeImage)}
           ref={imgRef}
           src={'/' + request.data.fileName}
-          onClick={() => setIsMemeActionShown(isAdmin && !isMemeActionShown)}
+          onClick={() => { setIsMemeActionShown(isAdmin && !isMemeActionShown); }}
         />
         {isMemeActionShown ? (
           <div {...stylex.props(s.memeActions)}>
@@ -196,7 +197,7 @@ export const MemePage = () => {
       </div>
       <div {...stylex.props(s.memeDescription)}>
         <div>
-          {Object.entries(request.data?.text).map(([lang, text]) => (
+          {Object.entries(request.data.text).map(([lang, text]) => (
             <p
               key={lang}
               {...stylex.props(s.memeTextLang)}

@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Button, Input } from '..'
+import { useTranslation } from 'react-i18next'
+
+import { IFeaturedChannel } from '../../types'
 import { getTgChannelName } from '../../utils'
 
+import { Button, Input } from '@/components/atoms'
+
 import './style.css'
-import { IFeaturedChannel } from '../../types'
-import { useTranslation } from 'react-i18next'
 
 export const AddFeaturedChannelForm = (props: {
   onAddChannel: (channel: IFeaturedChannel) => Promise<boolean>

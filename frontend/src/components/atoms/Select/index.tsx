@@ -1,11 +1,12 @@
-import React from 'react'
 import stylex from '@stylexjs/stylex'
-import { s } from './style'
+import React from 'react'
 
 import { applyClassNameToStyleX } from '../../../utils'
 
+import { s } from './style'
+
 export const Select = (props: {
-  options: { [value: string]: string }
+  options: Record<string, string>
   defaultValue?: string
   placeholder?: string
   className?: string

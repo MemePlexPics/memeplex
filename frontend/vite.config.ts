@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-// import { resolve } from 'path'
+import { resolve } from 'path'
 import react from '@vitejs/plugin-react-swc'
 import styleX from 'vite-plugin-stylex'
 
@@ -13,7 +13,7 @@ export default defineConfig({
   plugins: [react(), styleX()],
   resolve: {
     alias: {
-      '@': './src/' // resolve(__dirname, 'src'),
+      '@': resolve(__dirname, 'src'),
     }
   }
 })

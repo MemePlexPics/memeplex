@@ -1,9 +1,16 @@
 import stylex from '@stylexjs/stylex'
-import { color, size } from '../../styles/variables.stylex'
+
+import { color, size } from '@/styles/variables.stylex'
+
+const mobilePortrait =
+  '@media (pointer: coarse)'
 
 export const s = stylex.create({
   sidebar: {
-    position: 'fixed',
+    position: {
+      default: 'relative',
+      [mobilePortrait]: 'fixed',
+    },
     left: 0,
     top: 0,
     padding: '20px',
@@ -16,6 +23,10 @@ export const s = stylex.create({
   list: {
     listStyle: 'none',
     padding: 0,
+    margin: {
+      default: 0,
+      [mobilePortrait]: '30px 0',
+    },
   },
   menu: {
     fontSize: size.fontBig,
@@ -32,9 +43,13 @@ export const s = stylex.create({
     color: color.darkGray,
   },
   hamburger: {
-    height: size.hamburgerIconHeight,
-    width: size.hamburgerIconWidth,
     cursor: 'pointer',
+    color: color.gray,
+    fontSize: '3em',
+    display: {
+      default: 'none',
+      [mobilePortrait]: 'initial',
+    },
   },
   languageSelectorContainer: {
     position: 'absolute',

@@ -1,4 +1,5 @@
 import { useAtom } from 'jotai'
+
 import { Dialog } from '..'
 import { dialogConfirmationAtom } from '../../store/atoms/dialogConfirmationAtom'
 
@@ -16,12 +17,10 @@ export const DialogConfirmation = () => {
   }
 
   return (
-    <>
-      <Dialog
+    <Dialog
         {...dialogProps}
         onClickAccept={onClickAccept}
         onClickReject={onClickReject}
       />
-    </>
   )
 }

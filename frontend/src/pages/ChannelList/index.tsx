@@ -1,13 +1,15 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
-import { Button, ChannelList, Input } from '../../components'
+import { ChannelList } from '../../components'
+import { ENotificationType } from '../../components/Notification/constants'
+import { useMeta, useNotification, useTitle } from '../../hooks'
+import { suggestChannel } from '../../services'
 import { getTgChannelName } from '../../utils'
 
+import { Button, Input } from '@/components/atoms'
+
 import './style.css'
-import { useMeta, useNotification, useTitle } from '../../hooks'
-import { ENotificationType } from '../../components/Notification/constants'
-import { suggestChannel } from '../../services'
-import { useTranslation } from 'react-i18next'
 
 export const ChannelListPage = () => {
   const { t } = useTranslation()

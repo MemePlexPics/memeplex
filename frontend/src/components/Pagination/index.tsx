@@ -1,9 +1,11 @@
-import { Button } from '..'
-import { getEndPageNumbers } from './helpers'
 import classNames from 'classnames'
+import { useTranslation } from 'react-i18next'
+
+import { getEndPageNumbers } from './helpers'
+
+import { Button } from '@/components/atoms'
 
 import './style.css'
-import { useTranslation } from 'react-i18next'
 
 export interface PaginationProps {
   page: number
@@ -33,7 +35,7 @@ export const Pagination = (props: PaginationProps) => {
           key={page}
           className='page number'
           isActive={page === props.page}
-          onClick={() => onChangePage(page)}
+          onClick={() => { onChangePage(page); }}
         >
           {page}
         </Button>,
@@ -47,7 +49,7 @@ export const Pagination = (props: PaginationProps) => {
     <div className={classNames(['pagination', props.className])}>
       <Button
         className={'page neigbour'}
-        onClick={() => onChangePage(props.page - 1)}
+        onClick={() => { onChangePage(props.page - 1); }}
         disabled={props.page === 1}
       >
         {t('button.back')}
@@ -55,7 +57,7 @@ export const Pagination = (props: PaginationProps) => {
 
       <Button
         className={'page number'}
-        onClick={() => onChangePage(1)}
+        onClick={() => { onChangePage(1); }}
         hidden={pageRange.from === 1}
       >
         1
@@ -65,7 +67,7 @@ export const Pagination = (props: PaginationProps) => {
 
       <Button
         className={'page number'}
-        onClick={() => onChangePage(props.pagesTotal)}
+        onClick={() => { onChangePage(props.pagesTotal); }}
         hidden={pageRange.to === props.pagesTotal}
       >
         {props.pagesTotal}
@@ -73,7 +75,7 @@ export const Pagination = (props: PaginationProps) => {
 
       <Button
         className={'page neigbour'}
-        onClick={() => onChangePage(props.page + 1)}
+        onClick={() => { onChangePage(props.page + 1); }}
         disabled={props.page === props.pagesTotal}
       >
         {t('button.next')}

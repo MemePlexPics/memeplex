@@ -1,9 +1,10 @@
-import { ReactElement, useEffect, useRef, useState } from 'react'
 import stylex from '@stylexjs/stylex'
-import { s } from './style'
+import { ReactElement, useEffect, useRef, useState } from 'react'
 
 import { useEventListener } from '../../../hooks'
 import { applyClassNameToStyleX } from '../../../utils'
+
+import { s } from './style'
 
 export const Scrollable = (props: {
   orientation: 'horizontal' | 'vertical'
@@ -55,8 +56,8 @@ export const Scrollable = (props: {
     setIsScrollable(scrollableDivRef.current.clientWidth < scrollableDivRef.current.scrollWidth)
   }, [scrollableDivRef.current?.scrollWidth])
 
-  useEventListener('wheel', e => preventDefaultIfScrollTheComponent(e), window, { passive: false })
-  useEventListener('touchmove', e => preventDefaultIfScrollTheComponent(e), window, {
+  useEventListener('wheel', e => { preventDefaultIfScrollTheComponent(e); }, window, { passive: false })
+  useEventListener('touchmove', e => { preventDefaultIfScrollTheComponent(e); }, window, {
     passive: false,
   })
 

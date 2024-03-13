@@ -1,13 +1,14 @@
+import { useAtomValue } from 'jotai'
+import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import './style.css'
-import { useAtomValue } from 'jotai'
-import { useEffect } from 'react'
-import { getTitleAtom } from './store/atoms/getters'
+
 import { routes } from './constants'
-import { languageAtom } from './store/atoms'
-import { useTranslation } from 'react-i18next'
 import { loadLocalizationResources } from './i18n/utils'
+import { languageAtom } from './store/atoms'
+import { getTitleAtom } from './store/atoms/getters'
 
 export const App = () => {
   const { i18n } = useTranslation()
@@ -17,7 +18,7 @@ export const App = () => {
 
   const addLocalization = async (language: 'ru' | 'en') => {
     i18n.addResourceBundle(language, 'translation', await loadLocalizationResources(language), true)
-    i18n.changeLanguage(language)
+    await i18n.changeLanguage(language)
   }
 
   useEffect(() => {
@@ -25,12 +26,10 @@ export const App = () => {
   }, [title])
 
   useEffect(() => {
-    addLocalization(language)
+    void addLocalization(language)
   }, [language])
 
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <RouterProvider router={router} />
   )
 }

@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+
 import { setMetaProperty } from './utils'
 
 export const useMeta = (meta: { name: string; content: string }[]) => {

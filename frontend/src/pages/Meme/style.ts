@@ -2,7 +2,7 @@ import stylex from '@stylexjs/stylex'
 
 import { color, size } from '../../styles/variables.stylex'
 
-const MEDIA_PORTRAIT = '@media (orientation: portrait)'
+const mediaPortrait = '@media (orientation: portrait)'
 
 export const s = stylex.create({
   meme: {
@@ -13,7 +13,7 @@ export const s = stylex.create({
     gap: '20px',
     gridTemplateAreas: {
       default: '"m d"',
-      [MEDIA_PORTRAIT]: '"d" "m"',
+      [mediaPortrait]: '"d" "m"',
     },
   },
   memeImageContainer: {

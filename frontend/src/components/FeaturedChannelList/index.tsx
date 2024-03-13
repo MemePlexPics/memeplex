@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import { ChannelBlock, PaginatedList } from '..'
 import { useFetch } from '../../hooks'
-import { getUrl } from '../../utils'
 import { IFeaturedChannel, TGetFeaturedChannelList } from '../../types'
+import { getUrl } from '../../utils'
 
 export const FeaturedChannelList = (props: {
   isAdmin?: boolean

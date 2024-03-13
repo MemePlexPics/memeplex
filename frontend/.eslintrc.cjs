@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   root: true,
   env: {
@@ -10,7 +12,7 @@ module.exports = {
     },
     'import/resolver': {
       alias: {
-        map: [['@', './src']],
+        map: [['@', path.resolve(__dirname, 'src')]],
         extensions: ['.ts', '.tsx']
       }
     }
@@ -34,7 +36,7 @@ module.exports = {
   ignorePatterns: ['vite.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    project: ['./tsconfig.json']
+    project: [path.resolve(__dirname, 'tsconfig.json')]
   },
   plugins: [
     '@stylexjs',
@@ -76,6 +78,12 @@ module.exports = {
 
     'optimize-regex/optimize-regex': 'warn',
     'promise/prefer-await-to-then': 'warn',
+    'promise/always-return': [
+      'error',
+      {
+        ignoreLastCallback: true,
+      },
+    ],
     '@typescript-eslint/no-unused-vars': [
       'warn',
       {
@@ -137,10 +145,20 @@ module.exports = {
       {
         selector: 'objectLiteralProperty',
         format: []
+      },
+      {
+        selector: 'import',
+        format: ['camelCase', 'PascalCase'],
+        modifiers: ['default'],
       }
     ],
     '@typescript-eslint/no-unsafe-assignment': 'warn',
-    '@typescript-eslint/no-confusing-void-expression': 'warn',
+    '@typescript-eslint/no-confusing-void-expression': [
+      'warn',
+      {
+        ignoreArrowShorthand: true,
+      }
+    ],
     '@typescript-eslint/no-unsafe-member-access': 'warn',
     '@typescript-eslint/no-non-null-assertion': 'error',
     '@typescript-eslint/no-inferrable-types': 0,
@@ -149,6 +167,14 @@ module.exports = {
     '@typescript-eslint/unbound-method': 0,
     '@typescript-eslint/member-ordering': 'warn',
     '@typescript-eslint/explicit-function-return-type': 0,
+    "@typescript-eslint/prefer-nullish-coalescing": "warn",
+    "@typescript-eslint/consistent-indexed-object-style": "warn",
+    "@typescript-eslint/no-misused-promises": [
+      "warn",
+      {
+        "checksVoidReturn": false
+      }
+    ],
     '@typescript-eslint/no-magic-numbers': [
       'warn',
       {
@@ -156,7 +182,7 @@ module.exports = {
         ignoreEnums: true,
         enforceConst: true,
         ignoreReadonlyClassProperties: true,
-        ignore: [0, 1, 2, 12, 24, 60, 100, 1000, 2000, 10000]
+        ignore: [0, 1, 2, 24, 60, 200, 204, 403, 404, 500, 503, 1000],
       }
     ],
     'react/no-access-state-in-setstate': 'error',

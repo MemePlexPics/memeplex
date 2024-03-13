@@ -1,10 +1,11 @@
-import { ENotificationType } from '.'
 import {
   IconDefinition,
   faCircleInfo,
   faTriangleExclamation,
   faCircleCheck,
 } from '@fortawesome/free-solid-svg-icons'
+
+import { ENotificationType } from '.'
 
 export const notificationTypeIcon: Record<
   ENotificationType,

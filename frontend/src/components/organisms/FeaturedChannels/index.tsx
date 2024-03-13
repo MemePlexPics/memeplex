@@ -1,13 +1,14 @@
+import { useSetAtom } from 'jotai'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { AddFeaturedChannelForm, FeaturedChannelList } from '../..'
 import { useAdminRequest, useNotification } from '../../../hooks'
-import { useSetAtom } from 'jotai'
-import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationAtom'
 import { addFeaturedChannel, getFeaturedChannel, removeFeaturedChannel } from '../../../services'
+import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationAtom'
 import { IFeaturedChannel } from '../../../types'
-import { ENotificationType } from '../../Notification/constants'
 import { getFieldsWithUntrueValues } from '../../../utils'
-import { useTranslation } from 'react-i18next'
+import { ENotificationType } from '../../Notification/constants'
 
 export const FeaturedChannels = (props: { password: string; className?: string }) => {
   const { t } = useTranslation()
@@ -67,21 +68,19 @@ export const FeaturedChannels = (props: { password: string; className?: string }
       })
       return true
     }
-    if (action === 'view') {
-      const request = await getFeaturedChannel(channel.username, props.password)
-      if (!handleAdminRequest(request)) return false
-      const response = (await request.json()) as unknown as IFeaturedChannel
-      const date = new Date(response.timestamp * 1000).toLocaleString()
-      setDialog({
-        text: `${t('label.title')}: «${response.title}»
-            ${t('label.username')}: @${response.username}
-            ${t('label.from')}: ${date}
-            ${t('label.comment')}: ${response.comment || '—'}`,
-        isOpen: true,
-        rejectText: false,
-      })
-      return true
-    }
+    const request = await getFeaturedChannel(channel.username, props.password)
+    if (!handleAdminRequest(request)) return false
+    const response = (await request.json()) as unknown as IFeaturedChannel
+    const date = new Date(response.timestamp * 1000).toLocaleString()
+    setDialog({
+      text: `${t('label.title')}: «${response.title}»
+          ${t('label.username')}: @${response.username}
+          ${t('label.from')}: ${date}
+          ${t('label.comment')}: ${response.comment || '—'}`,
+      isOpen: true,
+      rejectText: false,
+    })
+    return true
   }
 
   return (

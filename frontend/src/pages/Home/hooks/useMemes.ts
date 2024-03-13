@@ -1,14 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
 import { useAtom, useAtomValue } from 'jotai'
+import { useEffect, useRef, useState } from 'react'
 
-import { useInfinityScroll, useNotification } from '../../../hooks'
-import { EMemesOperation, pageOptionsDefault } from './constants'
-import { delay, getUrl } from '../../../utils'
-import { useFetch } from '../../../hooks'
+import { useTranslation } from 'react-i18next'
+
+import { ENotificationType } from '../../../components/Notification/constants'
+import { useInfinityScroll, useNotification , useFetch } from '../../../hooks'
+
 import { IGetLatest } from '../../../services/types'
 import { memesAtom, memesFilterAtom, pageOptionsAtom } from '../../../store/atoms'
-import { ENotificationType } from '../../../components/Notification/constants'
-import { useTranslation } from 'react-i18next'
+import { delay, getUrl } from '../../../utils'
+
+import { latestUpdateTime } from '../constants'
+
+import { EMemesOperation, pageOptionsDefault } from './constants'
 
 export const useMemes = (query: string) => {
   const { t } = useTranslation()
@@ -46,12 +50,12 @@ export const useMemes = (query: string) => {
         setPageOptions(prev => ({ ...prev, totalPages: request.data.totalPages }))
       if (!pageOptions.from || (request.data.from && request.data.from < pageOptions.from))
         setPageOptions(prev => ({ ...prev, from: request.data.from }))
-      if (!pageOptions.to || (request.data.to && request?.data.to > pageOptions.to))
+      if (!pageOptions.to || (request.data.to && request.data.to > pageOptions.to))
         setPageOptions(prev => ({ ...prev, to: request.data.to }))
     }
   }
 
-  const searchByQuery = async () => {
+  const searchByQuery = () => {
     const url = getUrl('/search', {
       query,
       page: '' + pageOptions.currentPage,
@@ -85,9 +89,12 @@ export const useMemes = (query: string) => {
 
   const getNextPage = () => {
     if (!query) {
-      if (pageOptions.totalPages > 1) return getLatest()
+      if (pageOptions.totalPages > 1) { getLatest(); return; }
     } else {
-      if (pageOptions.currentPage <= pageOptions.totalPages) return searchByQuery()
+      if (pageOptions.currentPage <= pageOptions.totalPages) {
+        searchByQuery()
+        return
+      }
     }
     setOperation(() => EMemesOperation.IDLE)
   }
@@ -96,7 +103,7 @@ export const useMemes = (query: string) => {
     setInterval(() => {
       const isScrollOnTop = document.documentElement.scrollTop === 0
       if (isScrollOnTop) setOperation(() => EMemesOperation.UPDATE)
-    }, 30_000)
+    }, latestUpdateTime)
 
   useEffect(() => {
     if (request.isLoaded && request.data) {
@@ -124,13 +131,13 @@ export const useMemes = (query: string) => {
   }, [request.isLoading])
 
   useEffect(() => {
-    if (!EMemesOperation.INIT || query !== pageOptions.query) {
+    if (operation !== EMemesOperation.INIT || query !== pageOptions.query) {
       setPageOptions(() => ({ ...pageOptionsDefault, query }))
       setOperation(() => EMemesOperation.REINIT)
     }
     if (query) return
     const updateLatestInterval = handleAutoUpdates()
-    return () => clearInterval(updateLatestInterval)
+    return () => { clearInterval(updateLatestInterval); }
   }, [query])
 
   useEffect(() => {
@@ -142,8 +149,8 @@ export const useMemes = (query: string) => {
     if (operation === EMemesOperation.INIT && memes.length) return
     if (operation === EMemesOperation.IDLE) return
     if (operation === EMemesOperation.DELAY) {
-      delay(2_000).then(() => {
-        if (operation === EMemesOperation.DELAY && stateBeforeDelay.current)
+      void delay(2_000).then(() => {
+        if (stateBeforeDelay.current)
           setOperation(stateBeforeDelay.current)
       })
       return
@@ -161,7 +168,7 @@ export const useMemes = (query: string) => {
     memes,
     isLoading: operation !== EMemesOperation.IDLE,
     isLoaded: request.isLoaded,
-    isError: operation === EMemesOperation.IDLE && request?.state === 'error',
+    isError: operation === EMemesOperation.IDLE && request.state === 'error',
     getLatestUpdate,
     getNextPage,
   }

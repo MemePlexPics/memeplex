@@ -1,10 +1,10 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { ChannelBlock, PaginatedList } from '..'
 import { useFetch } from '../../hooks'
-import { getUrl } from '../../utils'
 import { TGetChannelList } from '../../types'
-import { useTranslation } from 'react-i18next'
+import { getUrl } from '../../utils'
 
 type TChannelListProps =
   | {
@@ -16,9 +16,9 @@ type TChannelListProps =
       isAdmin: true
       filter?: string
       updateSwitch: boolean
-      onClickImages: (channel: string) => Promise<unknown>
-      onClickEraser: (channel: string) => Promise<unknown>
-      onRemoveChannel: (channel: string) => Promise<unknown>
+      onClickImages: (channel: string) => unknown
+      onClickEraser: (channel: string) => unknown
+      onRemoveChannel: (channel: string) => unknown
     }
 
 export const ChannelList = (props: TChannelListProps) => {
