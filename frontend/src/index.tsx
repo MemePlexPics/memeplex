@@ -38,4 +38,4 @@ const init = async () => {
   )
 }
 
-await init()
+void init()
