@@ -1,4 +1,7 @@
+import stylex from '@stylexjs/stylex'
 import { Outlet } from 'react-router-dom'
+
+import { s } from './style'
 
 import {
   Logo,
@@ -8,15 +11,14 @@ import {
   Notifications,
 } from '@/components'
 
-import './style.css'
 import { SidebarMenu } from '@/components/organisms'
 
 export const Layout = () => (
   <>
     <SidebarMenu />
-    <div>
+    <div {...stylex.props(s.content)}>
       <Logo />
-      <main className='main'>
+      <main {...stylex.props(s.main)}>
         <Outlet />
       </main>
     </div>

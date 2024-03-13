@@ -35,7 +35,9 @@ export const Pagination = (props: PaginationProps) => {
           key={page}
           className='page number'
           isActive={page === props.page}
-          onClick={() => { onChangePage(page); }}
+          onClick={() => {
+            onChangePage(page)
+          }}
         >
           {page}
         </Button>,
@@ -49,7 +51,9 @@ export const Pagination = (props: PaginationProps) => {
     <div className={classNames(['pagination', props.className])}>
       <Button
         className={'page neigbour'}
-        onClick={() => { onChangePage(props.page - 1); }}
+        onClick={() => {
+          onChangePage(props.page - 1)
+        }}
         disabled={props.page === 1}
       >
         {t('button.back')}
@@ -57,7 +61,9 @@ export const Pagination = (props: PaginationProps) => {
 
       <Button
         className={'page number'}
-        onClick={() => { onChangePage(1); }}
+        onClick={() => {
+          onChangePage(1)
+        }}
         hidden={pageRange.from === 1}
       >
         1
@@ -67,7 +73,9 @@ export const Pagination = (props: PaginationProps) => {
 
       <Button
         className={'page number'}
-        onClick={() => { onChangePage(props.pagesTotal); }}
+        onClick={() => {
+          onChangePage(props.pagesTotal)
+        }}
         hidden={pageRange.to === props.pagesTotal}
       >
         {props.pagesTotal}
@@ -75,7 +83,9 @@ export const Pagination = (props: PaginationProps) => {
 
       <Button
         className={'page neigbour'}
-        onClick={() => { onChangePage(props.page + 1); }}
+        onClick={() => {
+          onChangePage(props.page + 1)
+        }}
         disabled={props.page === props.pagesTotal}
       >
         {t('button.next')}

@@ -12,7 +12,9 @@ export const useTitle = (titles: string[]) => {
   useEffect(() => {
     setTitle(titles.filter(a => a))
 
-    return () => { setTitle([]); }
+    return () => {
+      setTitle([])
+    }
   }, [titles])
 
   return {

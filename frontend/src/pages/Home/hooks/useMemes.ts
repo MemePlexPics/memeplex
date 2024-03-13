@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { ENotificationType } from '../../../components/Notification/constants'
-import { useInfinityScroll, useNotification , useFetch } from '../../../hooks'
+import { useInfinityScroll, useNotification, useFetch } from '../../../hooks'
 
 import { IGetLatest } from '../../../services/types'
 import { memesAtom, memesFilterAtom, pageOptionsAtom } from '../../../store/atoms'
@@ -89,7 +89,10 @@ export const useMemes = (query: string) => {
 
   const getNextPage = () => {
     if (!query) {
-      if (pageOptions.totalPages > 1) { getLatest(); return; }
+      if (pageOptions.totalPages > 1) {
+        getLatest()
+        return
+      }
     } else {
       if (pageOptions.currentPage <= pageOptions.totalPages) {
         searchByQuery()
@@ -137,7 +140,9 @@ export const useMemes = (query: string) => {
     }
     if (query) return
     const updateLatestInterval = handleAutoUpdates()
-    return () => { clearInterval(updateLatestInterval); }
+    return () => {
+      clearInterval(updateLatestInterval)
+    }
   }, [query])
 
   useEffect(() => {
@@ -150,8 +155,7 @@ export const useMemes = (query: string) => {
     if (operation === EMemesOperation.IDLE) return
     if (operation === EMemesOperation.DELAY) {
       void delay(2_000).then(() => {
-        if (stateBeforeDelay.current)
-          setOperation(stateBeforeDelay.current)
+        if (stateBeforeDelay.current) setOperation(stateBeforeDelay.current)
       })
       return
     }

@@ -4,7 +4,7 @@ export const GitHubLink = () => (
   <a
     id='github'
     href='https://github.com/MemePlexPics/memeplex'
-    rel="noreferrer"
+    rel='noreferrer'
     target='_blank'
   >
     <img

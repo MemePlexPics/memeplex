@@ -1,4 +1,3 @@
-
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useAtomValue } from 'jotai'
@@ -55,7 +54,9 @@ export const HomePage = () => {
     <>
       <MemeSearchForm
         query={query}
-        onUpdate={query => { setQuery(query); }}
+        onUpdate={query => {
+          setQuery(query)
+        }}
       />
       {!query ? (
         <div

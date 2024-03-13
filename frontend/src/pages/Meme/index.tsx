@@ -136,7 +136,9 @@ export const MemePage = () => {
       text: `${t('notification.removeMeme')} ${id}?`,
       isOpen: true,
       children: <InputPassword />,
-      onClickAccept: () => { setOperation('removeMeme'); },
+      onClickAccept: () => {
+        setOperation('removeMeme')
+      },
     })
   }
 
@@ -146,7 +148,9 @@ export const MemePage = () => {
       text: `${t('notification.removeChannel')} @${request.data.channel}?`,
       isOpen: true,
       children: <InputPassword />,
-      onClickAccept: () => { setOperation('removeChannel'); },
+      onClickAccept: () => {
+        setOperation('removeChannel')
+      },
     })
   }
 
@@ -164,7 +168,9 @@ export const MemePage = () => {
       text: `${t('notification.removeChannelMemes')} @${request.data.channel}?`,
       isOpen: true,
       children: <InputPassword />,
-      onClickAccept: () => { setOperation('removeChannelMemes'); },
+      onClickAccept: () => {
+        setOperation('removeChannelMemes')
+      },
     })
   }
 
@@ -181,7 +187,9 @@ export const MemePage = () => {
           {...stylex.props(s.memeImage)}
           ref={imgRef}
           src={'/' + request.data.fileName}
-          onClick={() => { setIsMemeActionShown(isAdmin && !isMemeActionShown); }}
+          onClick={() => {
+            setIsMemeActionShown(isAdmin && !isMemeActionShown)
+          }}
         />
         {isMemeActionShown ? (
           <div {...stylex.props(s.memeActions)}>

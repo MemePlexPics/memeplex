@@ -1,12 +1,13 @@
-import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { faArrowUpRightFromSquare, faBars } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import stylex from '@stylexjs/stylex'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 import { s } from './style'
 
+import { NavLink } from '@/components/atoms'
 import { LanguageSelector } from '@/components/molecules'
 import { isMobile } from '@/constants'
 import { useClickOutside } from '@/hooks'
@@ -33,16 +34,19 @@ export const SidebarMenu = () => {
       <FontAwesomeIcon
         {...stylex.props(s.hamburger)}
         icon={faBars}
-        onClick={() => { setIsFolded(!isFolded); }}
+        onClick={() => {
+          setIsFolded(!isFolded)
+        }}
       />
       {!isFolded ? (
-        <>
+        <div {...stylex.props(s.content)}>
           <ul {...stylex.props(s.list, s.menu)}>
             {localStorage.getItem('isAdmin') === '1' ? (
               <li>
                 <NavLink
                   to='/admin'
-                  {...stylex.props(s.link)}
+                  activeStyle={s.activeLink}
+                  stylexStyles={s.link}
                 >
                   {t('page.admin')}
                 </NavLink>
@@ -51,9 +55,19 @@ export const SidebarMenu = () => {
             <li>
               <NavLink
                 to='/channelList'
-                {...stylex.props(s.link)}
+                activeStyle={s.activeLink}
+                stylexStyles={s.link}
               >
                 {t('page.channelList')}
+              </NavLink>
+            </li>
+            <li>
+              <NavLink
+                to='/about'
+                activeStyle={s.activeLink}
+                stylexStyles={s.link}
+              >
+                {t('page.about')}
               </NavLink>
             </li>
             <li>
@@ -62,7 +76,11 @@ export const SidebarMenu = () => {
                 target='_blank'
                 {...stylex.props(s.link)}
               >
-                {t('page.telegramChannel')}
+                <span>{t('page.telegramChannel')}</span>
+                <FontAwesomeIcon
+                  icon={faArrowUpRightFromSquare}
+                  color='gray'
+                />
               </Link>
             </li>
             <li>
@@ -71,17 +89,28 @@ export const SidebarMenu = () => {
                 target='_blank'
                 {...stylex.props(s.link)}
               >
-                {t('page.telegramBot')}
+                <span>{t('page.telegramBot')}</span>
+                <FontAwesomeIcon
+                  icon={faArrowUpRightFromSquare}
+                  color='gray'
+                />
               </Link>
             </li>
-            <li>
-              <NavLink
-                to='/about'
-                {...stylex.props(s.link)}
-              >
-                {t('page.about')}
-              </NavLink>
-            </li>
+            {isMobile ? (
+              <li>
+                <Link
+                  to='https://github.com/MemePlexPics/memeplex'
+                  target='_blank'
+                  {...stylex.props(s.link)}
+                >
+                  <span>Github</span>
+                  <FontAwesomeIcon
+                    icon={faArrowUpRightFromSquare}
+                    color='gray'
+                  />
+                </Link>
+              </li>
+            ) : null}
           </ul>
           <div {...stylex.props(s.languageSelectorContainer)}>
             <label>Language:</label>
@@ -92,7 +121,7 @@ export const SidebarMenu = () => {
               }}
             />
           </div>
-        </>
+        </div>
       ) : null}
     </div>
   )

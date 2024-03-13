@@ -5,7 +5,7 @@ export const applyClassNameToStyleX = (
   className?: string,
 ) => {
   return {
-    className: `${className} ${xstyle.className}`,
+    className: [className, xstyle.className].join(' '),
     style: xstyle.style,
   }
 }

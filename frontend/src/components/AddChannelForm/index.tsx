@@ -8,7 +8,6 @@ import { s } from './style'
 
 import { Button, Input } from '@/components/atoms'
 
-
 export const AddChannelForm = (props: {
   onAddChannel: (channel: string, langs: string[]) => Promise<boolean>
 }) => {

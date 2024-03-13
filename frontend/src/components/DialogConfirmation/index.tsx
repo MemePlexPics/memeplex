@@ -18,9 +18,9 @@ export const DialogConfirmation = () => {
 
   return (
     <Dialog
-        {...dialogProps}
-        onClickAccept={onClickAccept}
-        onClickReject={onClickReject}
-      />
+      {...dialogProps}
+      onClickAccept={onClickAccept}
+      onClickReject={onClickReject}
+    />
   )
 }

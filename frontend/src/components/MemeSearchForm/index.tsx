@@ -10,9 +10,13 @@ export const MemeSearchForm = (props: { query: string; onUpdate: (query: string)
   const { t } = useTranslation()
   const [query, setQuery] = useState(props.query)
 
-  const onClickSearch = () => { props.onUpdate(query); }
+  const onClickSearch = () => {
+    props.onUpdate(query)
+  }
 
-  const onChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => { setQuery(event.target.value); }
+  const onChangeQuery = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value)
+  }
 
   return (
     <div {...stylex.props(s.container)}>

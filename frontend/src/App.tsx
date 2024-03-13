@@ -29,7 +29,5 @@ export const App = () => {
     void addLocalization(language)
   }, [language])
 
-  return (
-    <RouterProvider router={router} />
-  )
+  return <RouterProvider router={router} />
 }
