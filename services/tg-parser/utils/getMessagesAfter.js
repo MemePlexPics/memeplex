@@ -3,41 +3,49 @@ import {
     TG_API_PAGE_LIMIT,
     TG_API_RATE_LIMIT,
 } from '../../../constants/index.js';
-import {
-    delay,
-    getMysqlClient,
-} from '../../../utils/index.js';
+import { delay, getMysqlClient } from '../../../utils/index.js';
 import process from 'process';
 import { setChannelUnavailable } from './index.js';
-import {
-    insertChannelSuggestion,
-} from '../../../utils/mysql-queries/index.js';
+import { insertChannelSuggestion } from '../../../utils/mysql-queries/index.js';
 
-export const getMessagesAfter = async function* (channelName, timestamp, logger) {
+export const getMessagesAfter = async function* (
+    channelName,
+    timestamp,
+    logger,
+) {
     let pageNumber = 0;
     loop: while (true) {
-        const url = (
-            process.env.TG_API_ENDPOINT + '/getHistory/?data[peer]=@' + channelName
-                + '&data[limit]=' + TG_API_PAGE_LIMIT
-                + '&data[add_offset]=' + (pageNumber * TG_API_PAGE_LIMIT)
-        );
+        const url =
+            process.env.TG_API_ENDPOINT +
+            '/getHistory/?data[peer]=@' +
+            channelName +
+            '&data[limit]=' +
+            TG_API_PAGE_LIMIT +
+            '&data[add_offset]=' +
+            pageNumber * TG_API_PAGE_LIMIT;
         logger.verbose(`checking https://t.me/${channelName}`);
         const response = await fetch(url);
         const responseJson = await response.json();
         if (responseJson.success === false) {
             const isDeleted =
-                responseJson.errors.length
-                && responseJson.errors[0].exception === 'danog\\MadelineProto\\PeerNotInDbException';
-            const isInvalid = responseJson.errors[0].message === 'CHANNEL_INVALID';
+                responseJson.errors.length &&
+                responseJson.errors[0].exception ===
+                    'danog\\MadelineProto\\PeerNotInDbException';
+            const isInvalid =
+                responseJson.errors[0].message === 'CHANNEL_INVALID';
             if (isDeleted) {
                 await setChannelUnavailable(channelName);
                 throw new Error(`❌ Channel ${channelName} is not available`);
             }
             if (isInvalid) {
                 await setChannelUnavailable(channelName);
-                throw new Error(`❌ Channel ${channelName} is: CHANNEL_INVALID (Telegram exception)`);
+                throw new Error(
+                    `❌ Channel ${channelName} is: CHANNEL_INVALID (Telegram exception)`,
+                );
             }
-            throw new Error(`❌ ${channelName} ${timestamp} ${JSON.stringify(responseJson.errors)}`);
+            throw new Error(
+                `❌ ${channelName} ${timestamp} ${JSON.stringify(responseJson.errors)}`,
+            );
         }
         if (responseJson.response.messages.length === 0) {
             logger.error(`Channel @${channelName} is empty`);
@@ -58,14 +66,20 @@ export const getMessagesAfter = async function* (channelName, timestamp, logger)
                 const forwardedFrom = chats[message?.fwd_from?.from_id];
                 if (forwardedFrom) {
                     const mysql = await getMysqlClient();
-                    const response = await insertChannelSuggestion(mysql, forwardedFrom);
-                    if (response) logger.info(`Channel @${forwardedFrom} was automatically suggested (forward)`);
+                    const response = await insertChannelSuggestion(
+                        mysql,
+                        forwardedFrom,
+                    );
+                    if (response)
+                        logger.info(
+                            `Channel @${forwardedFrom} was automatically suggested (forward)`,
+                        );
                 }
                 yield {
                     channelName,
                     messageId,
                     photoId: message.media.photo.id,
-                    date: message.date
+                    date: message.date,
                 };
             }
         }

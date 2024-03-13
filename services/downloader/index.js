@@ -9,9 +9,7 @@ import {
 } from '../../constants/index.js';
 import { delay } from '../../utils/index.js';
 import { handleNackByTimeout } from '../utils/index.js';
-import {
-    buildImagePath,
-} from './utils/index.js';
+import { buildImagePath } from './utils/index.js';
 import { isFileIgnored } from './utils/index.js';
 
 export const downloader = async (logger) => {
@@ -22,7 +20,9 @@ export const downloader = async (logger) => {
         sendImageFileCh = await amqp.createChannel();
         receiveImageDataCh = await amqp.createChannel();
 
-        await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, { durable: true });
+        await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, {
+            durable: true,
+        });
 
         for (;;) {
             msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
@@ -31,7 +31,10 @@ export const downloader = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
-            const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageDataCh), 600_000);
+            const timeoutId = setTimeout(
+                () => handleNackByTimeout(logger, msg, receiveImageDataCh),
+                600_000,
+            );
             receiveImageDataCh.on('ack', () => {
                 clearTimeout(timeoutId);
             });
@@ -40,21 +43,20 @@ export const downloader = async (logger) => {
 
             const isIgnored = await isFileIgnored(logger, destination, payload);
             if (!isIgnored) {
-                const content = Buffer.from(JSON.stringify({
-                    ...payload,
-                    fileName: destination
-                }));
-                sendImageFileCh.sendToQueue(
-                    AMQP_IMAGE_FILE_CHANNEL,
-                    content,
-                    { persistent: true }
+                const content = Buffer.from(
+                    JSON.stringify({
+                        ...payload,
+                        fileName: destination,
+                    }),
                 );
+                sendImageFileCh.sendToQueue(AMQP_IMAGE_FILE_CHANNEL, content, {
+                    persistent: true,
+                });
             }
             receiveImageDataCh.ack(msg);
         }
-    } catch(e) {
-        if (!msg)
-            return;
+    } catch (e) {
+        if (!msg) return;
         receiveImageDataCh.nack(msg);
         throw e;
     } finally {

@@ -1,15 +1,16 @@
 import 'dotenv/config';
 import { promises as fs } from 'fs';
 import * as imghash from 'imghash';
-import { selectPHash, insertPHash } from '../../../utils/mysql-queries/index.js';
+import {
+    selectPHash,
+    insertPHash,
+} from '../../../utils/mysql-queries/index.js';
 import {
     checkFileExists,
     getMysqlClient,
     downloadFile,
 } from '../../../utils/index.js';
-import {
-    buildImageUrl,
-} from './index.js';
+import { buildImageUrl } from './index.js';
 
 export const isFileIgnored = async (logger, destination, payload) => {
     const doesImageExist = await checkFileExists(destination);
@@ -22,9 +23,8 @@ export const isFileIgnored = async (logger, destination, payload) => {
     const url = buildImageUrl(payload);
     logger.verbose(`downloading: ${url} -> ${destination}`);
     // Check if a message has been deleted from a channel
-    const isEmpty = await downloadFile(url, destination, logger) === null;
-    if (isEmpty)
-        return true;
+    const isEmpty = (await downloadFile(url, destination, logger)) === null;
+    if (isEmpty) return true;
 
     // compute pHash
     const pHash = await imghash.hash(destination);

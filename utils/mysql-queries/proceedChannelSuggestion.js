@@ -1,7 +1,10 @@
 export const proceedChannelSuggestion = async (mysql, channel) => {
-    await mysql.execute(`
+    await mysql.execute(
+        `
         UPDATE channel_suggestions
         SET processed = 1
         WHERE name = ?
-    `, [channel]);
+    `,
+        [channel],
+    );
 };

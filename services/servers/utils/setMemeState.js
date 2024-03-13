@@ -1,6 +1,4 @@
-import {
-    ELASTIC_INDEX,
-}  from '../../../constants/index.js';
+import { ELASTIC_INDEX } from '../../../constants/index.js';
 
 export const setMemeState = async (client, id, state) => {
     const elasticRes = await client.update({
@@ -8,7 +6,7 @@ export const setMemeState = async (client, id, state) => {
         id,
         doc: {
             state,
-        }
+        },
     });
 
     return elasticRes;

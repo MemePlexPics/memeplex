@@ -1,12 +1,8 @@
 /* global Buffer */
 import 'dotenv/config';
 import amqplib from 'amqplib';
-import {
-    AMQP_IMAGE_DATA_CHANNEL,
-} from '../../constants/index.js';
-import {
-    getMysqlClient
-} from '../../utils/index.js';
+import { AMQP_IMAGE_DATA_CHANNEL } from '../../constants/index.js';
+import { getMysqlClient } from '../../utils/index.js';
 import {
     selectAvailableChannels,
     updateChannelTimestamp,
@@ -25,14 +21,25 @@ export const tgParser = async (logger) => {
         logger.info(`fetching ${channels.length} channels`);
 
         for (const { name, /* langs, */ timestamp } of channels) {
-            for await (const message of getMessagesAfter(name, timestamp, logger)) {
+            for await (const message of getMessagesAfter(
+                name,
+                timestamp,
+                logger,
+            )) {
                 logger.verbose(`new post image: ${JSON.stringify(message)}`);
-                const imageData = Buffer.from(JSON.stringify({
-                    ...message,
-                    languages: ['eng'], // langs.split(','),
-                }));
-                sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true });
-                if (message.date > timestamp) await updateChannelTimestamp(mysql, name, message.date);
+                const imageData = Buffer.from(
+                    JSON.stringify({
+                        ...message,
+                        languages: ['eng'], // langs.split(','),
+                    }),
+                );
+                sendImageDataCh.sendToQueue(
+                    AMQP_IMAGE_DATA_CHANNEL,
+                    imageData,
+                    { persistent: true },
+                );
+                if (message.date > timestamp)
+                    await updateChannelTimestamp(mysql, name, message.date);
             }
         }
     } finally {

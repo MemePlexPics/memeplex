@@ -24,7 +24,7 @@ const logger = winston.createLogger({
     transports: [
         new winston.transports.File({
             filename: 'logs/web-admin.log',
-            maxsize: 1024*1024*10, // bytes
+            maxsize: 1024 * 1024 * 10, // bytes
             maxFiles: 5,
             tailable: true,
         }),
@@ -50,13 +50,14 @@ const isAdmin = (req, res, next) => {
 };
 
 const logAdminAction = (req, res, next) => {
-    res.on( 'finish', () => {
-        if (res.locals.logAction) logger.info({
-            url: req.url,
-            action: res.locals.logAction,
-            role: res.locals.role,
-            ip: req.ip,
-        });
+    res.on('finish', () => {
+        if (res.locals.logAction)
+            logger.info({
+                url: req.url,
+                action: res.locals.logAction,
+                role: res.locals.role,
+                ip: req.ip,
+            });
     });
     next();
 };

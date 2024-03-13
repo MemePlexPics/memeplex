@@ -19,7 +19,9 @@ export const ocr = async (logger) => {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         receiveImageFileCh = await amqp.createChannel();
 
-        await receiveImageFileCh.assertQueue(AMQP_IMAGE_FILE_CHANNEL, { durable: true });
+        await receiveImageFileCh.assertQueue(AMQP_IMAGE_FILE_CHANNEL, {
+            durable: true,
+        });
         await receiveImageFileCh.prefetch(1); // let it process one message at a time
 
         for (;;) {
@@ -29,7 +31,10 @@ export const ocr = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
-            const timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageFileCh), 600_000);
+            const timeoutId = setTimeout(
+                () => handleNackByTimeout(logger, msg, receiveImageFileCh),
+                600_000,
+            );
             receiveImageFileCh.on('ack', () => {
                 clearTimeout(timeoutId);
             });
@@ -42,9 +47,8 @@ export const ocr = async (logger) => {
             }
             receiveImageFileCh.ack(msg);
         }
-    } catch(e) {
-        if (!msg)
-            return;
+    } catch (e) {
+        if (!msg) return;
         receiveImageFileCh.nack(msg);
         throw e;
     } finally {

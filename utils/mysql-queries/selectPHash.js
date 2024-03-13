@@ -1,8 +1,11 @@
 export async function selectPHash(mysql, pHash) {
-    const [results] = await mysql.query(`
+    const [results] = await mysql.query(
+        `
         SELECT phash FROM phashes
         WHERE phash = ?
         LIMIT 1
-    `, pHash);
+    `,
+        pHash,
+    );
     return results?.[0];
 }

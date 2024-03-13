@@ -1,6 +1,4 @@
-import {
-    ELASTIC_INDEX,
-}  from '../../../constants/index.js';
+import { ELASTIC_INDEX } from '../../../constants/index.js';
 import { getMemeResponseEntity } from './index.js';
 
 export const getLatestMemes = async (client, from, to, size, filtersString) => {
@@ -43,9 +41,10 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
             },
         },
         sort: {
-            timestamp: !Number.isInteger(to) && Number.isInteger(from)
-                ? 'asc'
-                : 'desc',
+            timestamp:
+                !Number.isInteger(to) && Number.isInteger(from)
+                    ? 'asc'
+                    : 'desc',
         },
     });
 
@@ -57,7 +56,8 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
     };
     for (const hit of elasticRes.hits.hits) {
         const timestamp = hit._source.timestamp;
-        if (!response.from || timestamp < response.from) response.from = timestamp;
+        if (!response.from || timestamp < response.from)
+            response.from = timestamp;
         if (!response.to || timestamp > response.to) response.to = timestamp;
         response.result.push(getMemeResponseEntity(hit._id, hit._source));
     }

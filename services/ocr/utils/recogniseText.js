@@ -1,8 +1,5 @@
 import fs from 'fs/promises';
-import {
-    recogniseTextOcrSpace,
-    buildImageTextPath,
-} from './index.js';
+import { recogniseTextOcrSpace, buildImageTextPath } from './index.js';
 
 export const recogniseText = async (msg, logger) => {
     const payload = JSON.parse(msg.content.toString());
@@ -11,7 +8,11 @@ export const recogniseText = async (msg, logger) => {
     const texts = {};
 
     for (const language of payload.languages) {
-        let rawText = await recogniseTextOcrSpace(payload.fileName, language, logger);
+        let rawText = await recogniseTextOcrSpace(
+            payload.fileName,
+            language,
+            logger,
+        );
 
         if (rawText) {
             texts[language] = rawText;
@@ -19,7 +20,9 @@ export const recogniseText = async (msg, logger) => {
             await fs.writeFile(textFile, rawText);
             logger.verbose(`recognized text: ${language} ${rawText}`);
         } else {
-            logger.verbose(`text wasn't recognized: ${payload.fileName} (${language})`);
+            logger.verbose(
+                `text wasn't recognized: ${payload.fileName} (${language})`,
+            );
         }
     }
 

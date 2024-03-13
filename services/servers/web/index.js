@@ -13,7 +13,7 @@ import {
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
     CHANNEL_LIST_PAGE_SIZE,
-}  from '../../../constants/index.js';
+} from '../../../constants/index.js';
 import {
     getChannels,
     getChannelsCount,
@@ -51,7 +51,7 @@ const logger = winston.createLogger({
     transports: [
         new winston.transports.File({
             filename: 'logs/web.log',
-            maxsize: 1024*1024*10, // bytes
+            maxsize: 1024 * 1024 * 10, // bytes
             maxFiles: 5,
             tailable: true,
         }),
@@ -66,8 +66,22 @@ const handleMethodError = async (error) => {
 };
 
 const handle404 = async (req, res) => {
-    if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
-        return res.sendFile(join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', 'frontend', 'dist', 'index.html'));
+    if (
+        ['/admin', '/channelList', '/memes', '/about'].some((path) =>
+            req.originalUrl.includes(path),
+        )
+    )
+        return res.sendFile(
+            join(
+                dirname(fileURLToPath(import.meta.url)),
+                '..',
+                '..',
+                '..',
+                'frontend',
+                'dist',
+                'index.html',
+            ),
+        );
     return res.status(404).send();
 };
 
@@ -86,7 +100,13 @@ app.get('/search', async (req, res) => {
 
 app.get('/getLatest', async (req, res) => {
     const { from, to, filters } = req.query;
-    const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE, filters);
+    const response = await getLatestMemes(
+        client,
+        from,
+        to,
+        SEARCH_PAGE_SIZE,
+        filters,
+    );
     return res.send(response);
 });
 
@@ -112,7 +132,9 @@ app.get('/getMeme', async (req, res) => {
         return res.send(meme);
     } catch (e) {
         if (e.meta.statusCode === 404) {
-            await handleMethodError({ message: `Meme with id "${id}" not found` });
+            await handleMethodError({
+                message: `Meme with id "${id}" not found`,
+            });
             return res.status(204).send();
         }
         throw e;
@@ -129,8 +151,7 @@ app.get('/getFeaturedChannelList', async (req, res) => {
 
 app.post('/suggestChannel', async (req, res) => {
     const { channel } = req.body;
-    if (!channel)
-        return res.status(500).send();
+    if (!channel) return res.status(500).send();
     const mysql = await getMysqlClient();
     const response = await insertChannelSuggestion(mysql, channel);
     if (response) logger.info(`${req.ip} added @${channel} to suggested`);
@@ -140,7 +161,11 @@ app.post('/suggestChannel', async (req, res) => {
 app.get('/getChannelSuggestionList', async (req, res) => {
     const { page } = req.query;
     const mysql = await getMysqlClient();
-    const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE);
+    const channels = await getChannelSuggestions(
+        mysql,
+        page,
+        CHANNEL_LIST_PAGE_SIZE,
+    );
     const count = await getChannelSuggestionsCount(mysql);
     return res.send({
         result: channels,
@@ -158,8 +183,7 @@ app.get('/data/avatars/:channelName', async (req, res) => {
             logger.error(`The avatar for @${channelName} wasn't downloaded`);
             return res.status(204).send();
         }
-        if (destination === null)
-            return res.status(204).send();
+        if (destination === null) return res.status(204).send();
     }
     return res.sendFile(path, { root: './' });
 });

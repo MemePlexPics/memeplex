@@ -22,14 +22,14 @@ export const serviceSettings = [
         name: 'proxy-checker',
         service: checkProxies,
         loggerSettings: {
-            afterCallbackDelayMs: 1000*60*60, // Once in 1 hr
+            afterCallbackDelayMs: 1000 * 60 * 60, // Once in 1 hr
         },
     },
     {
         name: 'proxy-finder',
         service: findNewProxies,
         loggerSettings: {
-            afterCallbackDelayMs: 1000*60*60*6, // Once in 6 hr
+            afterCallbackDelayMs: 1000 * 60 * 60 * 6, // Once in 6 hr
         },
     },
 ];

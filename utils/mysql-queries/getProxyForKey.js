@@ -1,7 +1,8 @@
 import { linkKeyToProxy } from './index.js';
 
 export async function getProxyForKey(mysql, key) {
-    const [oldProxies] = await mysql.query(`
+    const [oldProxies] = await mysql.query(
+        `
             SELECT
                 address,
                 protocol,
@@ -10,9 +11,10 @@ export async function getProxyForKey(mysql, key) {
             WHERE availability = 1
                 AND ocr_key = ?
             ORDER BY speed LIMIT 1
-        `, [key]);
-    if (oldProxies.length)
-        return oldProxies[0];
+        `,
+        [key],
+    );
+    if (oldProxies.length) return oldProxies[0];
     const [freeAvailableProxies] = await mysql.execute(`
             SELECT
                 address,
@@ -25,7 +27,12 @@ export async function getProxyForKey(mysql, key) {
         `);
     if (freeAvailableProxies.length) {
         const foundProxy = freeAvailableProxies[0];
-        await linkKeyToProxy(mysql, key, foundProxy.address, foundProxy.protocol);
+        await linkKeyToProxy(
+            mysql,
+            key,
+            foundProxy.address,
+            foundProxy.protocol,
+        );
         return foundProxy;
     }
 }
