@@ -1,9 +1,13 @@
-import { useState } from 'react'
-import { Button, Input } from '..'
-import { getTgChannelName } from '../../utils'
 import stylex from '@stylexjs/stylex'
-import { s } from './style'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { getTgChannelName } from '../../utils'
+
+import { s } from './style'
+
+import { Button, Input } from '@/components/atoms'
+
 
 export const AddChannelForm = (props: {
   onAddChannel: (channel: string, langs: string[]) => Promise<boolean>

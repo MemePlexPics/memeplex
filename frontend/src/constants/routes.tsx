@@ -1,6 +1,8 @@
 import { RouteObject } from 'react-router-dom'
-import { Layout } from '../components'
+
 import { AboutPage, AdminPage, ChannelListPage, HomePage, MemePage } from '../pages'
+
+import { Layout } from '@/components/templates'
 
 export const routes: RouteObject[] = [
   {

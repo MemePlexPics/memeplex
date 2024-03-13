@@ -1,12 +1,13 @@
 import { useSetAtom } from 'jotai'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
 import { ChannelSuggestionList } from '../..'
 import { useAdminRequest, useNotification } from '../../../hooks'
+import { addChannel, proceedChannelSuggestion } from '../../../services'
 import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationAtom'
 import { getFieldsWithUntrueValues } from '../../../utils'
 import { ENotificationType } from '../../Notification/constants'
-import { addChannel, proceedChannelSuggestion } from '../../../services'
-import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 export const SuggestedChannels = (props: { password: string; className?: string }) => {
   const { t } = useTranslation()
@@ -49,7 +50,7 @@ export const SuggestedChannels = (props: { password: string; className?: string 
     return true
   }
 
-  const onSuggestionAction = async (channel: string, action: 'add' | 'remove') => {
+  const onSuggestionAction = (channel: string, action: 'add' | 'remove') => {
     const areFieldsValid = validChannelAndPasswordField(channel)
     if (!areFieldsValid) return false
     if (action === 'add') {

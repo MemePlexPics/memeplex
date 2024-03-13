@@ -1,5 +1,3 @@
-import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheck,
   faEraser,
@@ -8,10 +6,13 @@ import {
   faPen,
   faTrashCan,
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import classNames from 'classnames'
+import { Link } from 'react-router-dom'
 
 import './style.css'
+
 import noAvatarChannel from './assets/no_avatar_channel.jpg'
-import classNames from 'classnames'
 
 export const ChannelBlock = (props: {
   isAdmin?: boolean
@@ -57,7 +58,7 @@ export const ChannelBlock = (props: {
     props.onClickEraser?.(props.username)
   }
 
-  const onError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+  const onError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.onerror = null
     e.currentTarget.src = noAvatarChannel
   }
@@ -82,7 +83,7 @@ export const ChannelBlock = (props: {
         <img
           className='avatar'
           src={imgSrc}
-          onError={e => onError(e)}
+          onError={e => { onError(e); }}
         />
         <span className='channel-name'>{props.title ? props.title : `@${props.username}`}</span>
       </Link>

@@ -1,4 +1,5 @@
 import stylex from '@stylexjs/stylex'
+
 import { color, size } from '../../styles/variables.stylex'
 
 export const s = stylex.create({
@@ -15,7 +16,7 @@ export const s = stylex.create({
   },
   actionButtons: {
     display: 'flex',
-    justifyContent: 'end',
+    justifyContent: 'flex-end',
     gap: '4px',
   },
   text: {

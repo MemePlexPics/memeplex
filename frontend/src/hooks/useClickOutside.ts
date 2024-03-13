@@ -7,7 +7,7 @@ export const useClickOutside = (
   useEventListener(
     'click',
     e => {
-      if (ref.current == null || ref.current.contains(e.target as Node)) return
+      if (ref.current === null || ref.current.contains(e.target as Node)) return
       callback(e)
     },
     window,

@@ -1,6 +1,8 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { titleAtom } from '../store/atoms'
+
 import { useEffect } from 'react'
+
+import { titleAtom } from '../store/atoms'
 import { getTitleAtom } from '../store/atoms/getters'
 
 export const useTitle = (titles: string[]) => {
@@ -10,7 +12,7 @@ export const useTitle = (titles: string[]) => {
   useEffect(() => {
     setTitle(titles.filter(a => a))
 
-    return () => setTitle([])
+    return () => { setTitle([]); }
   }, [titles])
 
   return {

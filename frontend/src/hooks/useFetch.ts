@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+
 import { TUseFetch } from './types'
 
 export const useFetch = <GData>(
@@ -60,7 +61,7 @@ export const useFetch = <GData>(
       }
     }
 
-    fetchData()
+    void fetchData()
 
     return () => {
       abortController.abort()

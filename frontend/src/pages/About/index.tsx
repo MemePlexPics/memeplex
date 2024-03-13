@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom'
 import stylex from '@stylexjs/stylex'
-import { s } from './style'
-import { useTitle } from '../../hooks'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+
+import { useTitle } from '../../hooks'
+
+import { s } from './style'
 
 export const AboutPage = () => {
   const { t, i18n } = useTranslation()

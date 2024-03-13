@@ -55,17 +55,7 @@ body {
 }
 
 #root {
-    margin: 0 auto;
     display: flex;
-    flex-flow: column nowrap;
-    align-items: center;
-    padding: 40px 5vw 14px 5vw;
-    max-height: calc(100% - 54px);
-    height: 100%;
     font-family: OpenSans, sans-serif;
     overflow-x: hidden;
-}
-
-.hide {
-    display: none;
 }

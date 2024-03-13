@@ -1,16 +1,23 @@
+
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useAtomValue } from 'jotai'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FeaturedChannelList, Loader, MemeSearchForm, MemeSearchResults } from '../../components'
-import { useMemes } from './hooks/useMemes'
-import './style.css'
-import { useAtomValue } from 'jotai'
-import { pageOptionsAtom } from '../../store/atoms'
+
 import { Link } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { useMeta, useTitle } from '../../hooks'
-import { calculateHowManyObjectFit } from '../../utils'
+
+import { FeaturedChannelList, Loader, MemeSearchForm, MemeSearchResults } from '../../components'
+
 import { FilterMemes } from '../../components/molecules'
+import { useMeta, useTitle } from '../../hooks'
+
+import { pageOptionsAtom } from '../../store/atoms'
+import { calculateHowManyObjectFit } from '../../utils'
+
+import { useMemes } from './hooks/useMemes'
+
+import './style.css'
 
 export const HomePage = () => {
   const { t } = useTranslation()
@@ -48,7 +55,7 @@ export const HomePage = () => {
     <>
       <MemeSearchForm
         query={query}
-        onUpdate={query => setQuery(query)}
+        onUpdate={query => { setQuery(query); }}
       />
       {!query ? (
         <div

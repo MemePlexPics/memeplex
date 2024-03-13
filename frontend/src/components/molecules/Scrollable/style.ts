@@ -1,19 +1,16 @@
 import stylex from '@stylexjs/stylex'
+
 import { color } from '../../../styles/variables.stylex'
 
 export const s = stylex.create({
   scrollable: {
-    overflow: 'hidden',
     scrollbarWidth: 'thin',
     scrollbarColor: `${color.darkGray} transparent`,
-    ':hover': {
-      overflow: 'scroll',
-    },
-    ':active': {
-      overflow: 'scroll',
-    },
-    ':focus': {
-      overflow: 'scroll',
+    overflow: {
+      default: 'hidden',
+      ':hover': 'scroll',
+      ':active': 'scroll',
+      ':focus': 'scroll',
     },
   },
   horizontal: {

@@ -1,7 +1,8 @@
 import stylex from '@stylexjs/stylex'
+
 import { size } from '../../styles/variables.stylex'
 
-const MOBILE_PORTRAIT =
+const mobilePortrait =
   '@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait)'
 
 export const s = stylex.create({
@@ -10,7 +11,7 @@ export const s = stylex.create({
     flexWrap: 'wrap',
     gap: {
       default: '14px',
-      [MOBILE_PORTRAIT]: '3vw',
+      [mobilePortrait]: '3vw',
     },
     justifyContent: 'center',
     paddingBottom: '80px',
@@ -21,11 +22,11 @@ export const s = stylex.create({
     alignItems: 'center',
     height: {
       default: size.memeEntity,
-      [MOBILE_PORTRAIT]: 'initial',
+      [mobilePortrait]: 'initial',
     },
     width: {
       default: size.memeEntity,
-      [MOBILE_PORTRAIT]: '100%',
+      [mobilePortrait]: '100%',
     },
   },
 })

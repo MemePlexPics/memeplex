@@ -1,16 +1,19 @@
 import { useSetAtom } from 'jotai'
-import { AddChannelForm, ChannelList, Input } from '../..'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+
+import { AddChannelForm, ChannelList } from '../..'
 import { useAdminRequest, useNotification } from '../../../hooks'
 import { addChannel, removeChannel } from '../../../services'
-import { ENotificationType } from '../../Notification/constants'
-import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationAtom'
-import { useState } from 'react'
-import { getFieldsWithUntrueValues } from '../../../utils'
-import { useTranslation } from 'react-i18next'
-import { memesFilterAtom } from '../../../store/atoms'
-import { useNavigate } from 'react-router-dom'
 import { setChannelMemesState } from '../../../services/admin'
+import { memesFilterAtom } from '../../../store/atoms'
+import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationAtom'
 import { EMemeState } from '../../../types/enums'
+import { getFieldsWithUntrueValues } from '../../../utils'
+import { ENotificationType } from '../../Notification/constants'
+
+import { Input } from '@/components/atoms'
 
 export const Channels = (props: { password: string; className?: string }) => {
   const { t } = useTranslation()
@@ -72,7 +75,7 @@ export const Channels = (props: { password: string; className?: string }) => {
     return false
   }
 
-  const onRemoveChannel = async (channel: string) => {
+  const onRemoveChannel = (channel: string) => {
     const areFieldsValid = validChannelAndPasswordField(channel)
     if (areFieldsValid) {
       setDialog({
@@ -83,7 +86,7 @@ export const Channels = (props: { password: string; className?: string }) => {
     }
   }
 
-  const onClickDeleteChannelMemes = async (channel: string) => {
+  const onClickDeleteChannelMemes = (channel: string) => {
     const areFieldsValid = validChannelAndPasswordField(channel)
     if (areFieldsValid) {
       setDialog({
@@ -94,12 +97,12 @@ export const Channels = (props: { password: string; className?: string }) => {
     }
   }
 
-  const onClickImages = async (channel: string) => {
+  const onClickImages = (channel: string) => {
     setMemeFilters({ channel: [channel] })
     navigate('/')
   }
 
-  const onFilterChannels = async (channel: string) => {
+  const onFilterChannels = (channel: string) => {
     setNameFilter(channel)
   }
 

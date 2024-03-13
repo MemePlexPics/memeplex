@@ -1,7 +1,7 @@
+import classNames from 'classnames'
 import { InputHTMLAttributes } from 'react'
 
 import './style.css'
-import classNames from 'classnames'
 
 type TDefaultInput = InputHTMLAttributes<HTMLInputElement>
 
@@ -11,7 +11,7 @@ export const Checkbox = (
   },
 ) => {
   const onChange = (e: React.FormEvent<HTMLInputElement>) =>
-    props?.onChange?.((e.target as HTMLInputElement).checked)
+    props.onChange?.((e.target as HTMLInputElement).checked)
 
   return (
     <input

@@ -1,7 +1,9 @@
 import { useAtom } from 'jotai'
-import { Input } from '../..'
-import { adminPasswordAtom } from '../../../store/atoms'
 import { useTranslation } from 'react-i18next'
+
+import { adminPasswordAtom } from '../../../store/atoms'
+
+import { Input } from '@/components/atoms'
 
 export const InputPassword = () => {
   const { t } = useTranslation()

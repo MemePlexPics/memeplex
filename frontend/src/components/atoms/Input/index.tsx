@@ -1,7 +1,7 @@
+import classNames from 'classnames'
 import { InputHTMLAttributes } from 'react'
 
 import './style.css'
-import classNames from 'classnames'
 
 type TDefaultInput = InputHTMLAttributes<HTMLInputElement>
 

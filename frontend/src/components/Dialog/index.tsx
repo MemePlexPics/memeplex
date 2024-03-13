@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
-
-import { IDialogProps } from './types'
-import { Button } from '..'
-import { useClickOutside } from '../../hooks'
 import stylex from '@stylexjs/stylex'
-import { s } from './style'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+
+import { useClickOutside } from '../../hooks'
+
+import { s } from './style'
+import { IDialogProps } from './types'
+
+import { Button } from '@/components/atoms'
 
 export const Dialog = (props: IDialogProps) => {
   const { t } = useTranslation()
@@ -36,8 +38,7 @@ export const Dialog = (props: IDialogProps) => {
   })
 
   return (
-    <>
-      <dialog
+    <dialog
         {...stylex.props(s.dialog)}
         ref={dialogRef}
       >
@@ -46,7 +47,7 @@ export const Dialog = (props: IDialogProps) => {
           ref={dialogContentRef}
         >
           <p {...stylex.props(s.text)}>
-            {props.text?.split('\n')?.map(line => <span>{line}</span>)}
+            {props.text?.split('\n').map((line, i) => <span key={i}>{line}</span>)}
           </p>
           <div>{props.children}</div>
           <div {...stylex.props(s.actionButtons)}>
@@ -57,6 +58,5 @@ export const Dialog = (props: IDialogProps) => {
           </div>
         </div>
       </dialog>
-    </>
   )
 }

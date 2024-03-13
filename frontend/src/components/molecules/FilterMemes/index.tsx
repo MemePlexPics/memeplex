@@ -1,12 +1,14 @@
-import { useAtom } from 'jotai'
-import { memesFilterAtom } from '../../../store/atoms'
-import { ChannelBlock } from '../..'
-import stylex from '@stylexjs/stylex'
-import { s } from './style'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEye } from '@fortawesome/free-solid-svg-icons'
-import { EMemeState } from '../../../types/enums'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import stylex from '@stylexjs/stylex'
+import { useAtom } from 'jotai'
 import { useTranslation } from 'react-i18next'
+
+import { ChannelBlock } from '../..'
+import { memesFilterAtom } from '../../../store/atoms'
+import { EMemeState } from '../../../types/enums'
+
+import { s } from './style'
 
 export const FilterMemes = () => {
   const { t } = useTranslation()
@@ -35,8 +37,8 @@ export const FilterMemes = () => {
     <div {...stylex.props(s.filter)}>
       <div {...stylex.props(s.content)}>
         <label {...stylex.props(s.label)}>{t('label.filter')}:</label>
-        {memeFilters?.channel?.map(channel => (
-          <div onClick={e => onClickChannel(e, channel)}>
+        {memeFilters.channel?.map(channel => (
+          <div onClick={e => { onClickChannel(e, channel); }} key={channel}>
             <ChannelBlock
               username={channel}
               size='small'
@@ -47,7 +49,7 @@ export const FilterMemes = () => {
       <div>
         <FontAwesomeIcon
           icon={faEye}
-          color={memeFilters?.not?.state !== null ? 'gray' : 'white'}
+          color={memeFilters.not?.state !== null ? 'gray' : 'white'}
           size='2x'
           onClick={onClickToogleDeleted}
         />

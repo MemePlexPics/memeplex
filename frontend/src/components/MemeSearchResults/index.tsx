@@ -1,7 +1,8 @@
-import { IMeme } from '../../types'
+import stylex from '@stylexjs/stylex'
 
 import { MemeContainer } from '..'
-import stylex from '@stylexjs/stylex'
+import { IMeme } from '../../types'
+
 import { s } from './style'
 
 export const MemeSearchResults = (props: { memes: IMeme[] }) => {

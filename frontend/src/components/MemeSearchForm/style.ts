@@ -1,6 +1,6 @@
 import stylex from '@stylexjs/stylex'
 
-const MOBILE_PORTRAIT =
+const mobilePortrait =
   '@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait)'
 
 export const s = stylex.create({
@@ -11,7 +11,7 @@ export const s = stylex.create({
     gap: '4px',
     width: {
       default: '70vw',
-      [MOBILE_PORTRAIT]: '100%',
+      [mobilePortrait]: '100%',
     },
   },
 })

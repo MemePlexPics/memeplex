@@ -1,25 +1,28 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import stylex from '@stylexjs/stylex'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link, NavLink, useLocation } from 'react-router-dom'
+
 import { s } from './style'
 
-import { HamburgerIcon } from '..'
-import { useClickOutside } from '../../hooks'
-import { useTranslation } from 'react-i18next'
-import { LanguageSelector } from '../molecules'
+import { LanguageSelector } from '@/components/molecules'
+import { isMobile } from '@/constants'
+import { useClickOutside } from '@/hooks'
 
 export const SidebarMenu = () => {
   const { t } = useTranslation()
-  const [isFolded, setIsFolded] = useState(true)
+  const [isFolded, setIsFolded] = useState(isMobile)
   const sidebarRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
   useClickOutside(sidebarRef, () => {
-    setIsFolded(true)
+    if (isMobile) setIsFolded(true)
   })
 
   useEffect(() => {
-    setIsFolded(true)
+    if (isMobile) setIsFolded(true)
   }, [location])
 
   return (
@@ -27,10 +30,10 @@ export const SidebarMenu = () => {
       {...stylex.props(s.sidebar, isFolded ? null : s.isActive)}
       ref={sidebarRef}
     >
-      <HamburgerIcon
-        isActive={isFolded}
-        onClick={() => setIsFolded(!isFolded)}
+      <FontAwesomeIcon
         {...stylex.props(s.hamburger)}
+        icon={faBars}
+        onClick={() => { setIsFolded(!isFolded); }}
       />
       {!isFolded ? (
         <>

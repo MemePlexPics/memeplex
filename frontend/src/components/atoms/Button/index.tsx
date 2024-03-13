@@ -15,7 +15,7 @@ export const Button = ({ className, isActive, children, ...props }: ButtonProps)
       {...props}
       className={classnames('button', className, { isActive })}
     >
-      {children || props.value}
+      {children ?? props.value}
     </button>
   )
 }

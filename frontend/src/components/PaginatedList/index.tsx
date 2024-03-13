@@ -1,8 +1,8 @@
-import { useRef, Fragment } from 'react'
-import { Loader, Pagination } from '..'
-
-import './style.css'
 import classNames from 'classnames'
+import { useRef, Fragment } from 'react'
+
+import { Loader, Pagination } from '..'
+import './style.css'
 import { Scrollable } from '../molecules'
 
 export const PaginatedList = (props: {
@@ -26,7 +26,7 @@ export const PaginatedList = (props: {
         ref={listRef}
       >
         <ul>{props.children}</ul>
-        {props?.totalPages && props.totalPages > 1 ? (
+        {props.totalPages && props.totalPages > 1 ? (
           <Pagination
             page={props.page || 1}
             pagesAtTime={9}

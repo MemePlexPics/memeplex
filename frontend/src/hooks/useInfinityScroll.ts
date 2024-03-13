@@ -1,7 +1,10 @@
 import { useRef } from 'react'
-import { useEventListener } from '.'
+
 import { isPortraitOrientation } from '../utils'
+
 import { TUseInfinityScroll } from './types'
+
+import { useEventListener } from '.'
 
 export const useInfinityScroll: TUseInfinityScroll = (callback, options) => {
   const scrollDebounceTimer = useRef<number>(0)

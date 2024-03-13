@@ -1,12 +1,14 @@
-import { Tabs } from '../../components'
+
 import './style.css'
-import { useState } from 'react'
-import { useMeta, useTitle, useTranslatedState } from '../../hooks'
-import { Channels, FeaturedChannels, SuggestedChannels } from '../../components/organisms'
-import { useTranslation } from 'react-i18next'
 import { useAtomValue } from 'jotai'
-import { adminPasswordAtom } from '../../store/atoms'
-import { InputPassword } from '../../components/molecules'
+import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { Tabs } from '@/components'
+import { InputPassword } from '@/components/molecules'
+import { Channels, FeaturedChannels, SuggestedChannels } from '@/components/organisms'
+import { useMeta, useTitle, useTranslatedState } from '@/hooks'
+import { adminPasswordAtom } from '@/store/atoms'
 
 export const AdminPage = () => {
   const { t } = useTranslation()
@@ -32,7 +34,7 @@ export const AdminPage = () => {
       <InputPassword />
       <Tabs
         tabs={tabs}
-        onChange={tab => setCurrentTab(tab)}
+        onChange={tab => { setCurrentTab(tab); }}
       >
         <Channels
           key={t('tab.channels')}

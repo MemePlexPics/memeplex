@@ -1,8 +1,10 @@
+import { useAtomValue } from 'jotai'
 import { useEffect, useRef, useState } from 'react'
+
 import { Notification } from '..'
 import './style.css'
-import { useAtomValue } from 'jotai'
 import { notificationsAtom } from '../../store/atoms'
+
 import { TNotification } from './types'
 
 export const Notifications = () => {
@@ -30,8 +32,8 @@ export const Notifications = () => {
 
   useEffect(() => {
     if (queue.current.length > 0 && notifications.length < 5) {
-      const notificationFromQueue = queue.current.shift()!
-      setNotifications(() => [notificationFromQueue, ...notifications])
+      const notificationFromQueue = queue.current.shift()
+      setNotifications(() => notificationFromQueue ? [notificationFromQueue, ...notifications] : notifications)
     }
   }, [notifications])
 
@@ -41,17 +43,15 @@ export const Notifications = () => {
   }
 
   return (
-    <>
-      <div id='notifications'>
+    <div id='notifications'>
         {notifications.map(notification => (
           <Notification
             key={notification.id}
             text={notification.text}
             type={notification.type}
-            onClose={() => onClose(notification.id)}
+            onClose={() => { onClose(notification.id); }}
           />
         ))}
       </div>
-    </>
   )
 }

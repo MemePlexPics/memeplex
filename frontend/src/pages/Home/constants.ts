@@ -1,1 +1,1 @@
-export const LATEST_UPDATE_TIME = 30_000
+export const latestUpdateTime = 30_000
