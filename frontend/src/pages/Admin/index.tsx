@@ -11,16 +11,20 @@ import { InputPassword } from '../../components/molecules'
 export const AdminPage = () => {
   const { t } = useTranslation()
   const password = useAtomValue(adminPasswordAtom)
-  const [tabs] = useTranslatedState<string[]>(() => [t('tab.channels'), t('tab.suggested'), t('tab.featured')])
+  const [tabs] = useTranslatedState<string[]>(() => [
+    t('tab.channels'),
+    t('tab.suggested'),
+    t('tab.featured'),
+  ])
   const [currentTab, setCurrentTab] = useState<string>('')
 
   useTitle([currentTab, 'Admin'])
 
   useMeta([
-      {
-          name: 'robots',
-          content: 'noindex',
-      },
+    {
+      name: 'robots',
+      content: 'noindex',
+    },
   ])
 
   return (
@@ -30,9 +34,18 @@ export const AdminPage = () => {
         tabs={tabs}
         onChange={tab => setCurrentTab(tab)}
       >
-        <Channels key={t('tab.channels')} password={password} />
-        <SuggestedChannels key={t('tab.suggested')} password={password} />
-        <FeaturedChannels key={t('tab.featured')} password={password} />
+        <Channels
+          key={t('tab.channels')}
+          password={password}
+        />
+        <SuggestedChannels
+          key={t('tab.suggested')}
+          password={password}
+        />
+        <FeaturedChannels
+          key={t('tab.featured')}
+          password={password}
+        />
       </Tabs>
     </div>
   )

@@ -1,17 +1,17 @@
 .admin-page {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding-bottom: 20px;
-  width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding-bottom: 20px;
+    width: 100%;
 }
 
 h2 {
-  color: var(--color-gray);
-  font-size: var(--font-size-big);
+    color: var(--color-gray);
+    font-size: var(--font-size-big);
 }
 
 .label {
-  font-size: var(--font-size-big);
-  color: var(--color-white);
+    font-size: var(--font-size-big);
+    color: var(--color-white);
 }

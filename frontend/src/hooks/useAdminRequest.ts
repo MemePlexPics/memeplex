@@ -1,6 +1,6 @@
-import { useTranslation } from "react-i18next"
-import { useNotification } from "."
-import { ENotificationType } from "../components/Notification/constants"
+import { useTranslation } from 'react-i18next'
+import { useNotification } from '.'
+import { ENotificationType } from '../components/Notification/constants'
 
 export const useAdminRequest = () => {
   const { t } = useTranslation()

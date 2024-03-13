@@ -1,9 +1,9 @@
-import { ENotificationType } from "../constants"
+import { ENotificationType } from '../constants'
 
 export interface INotificationProps {
-    key?: React.Key
-    text: string
-    type: ENotificationType
-    timeMs?: number
-    onClose?: (id?: string) => unknown
+  key?: React.Key
+  text: string
+  type: ENotificationType
+  timeMs?: number
+  onClose?: (id?: string) => unknown
 }

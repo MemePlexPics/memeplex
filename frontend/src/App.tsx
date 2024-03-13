@@ -1,16 +1,13 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom"
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import './style.css'
-import { useAtomValue } from "jotai"
-import { useEffect } from "react"
-import { getTitleAtom } from "./store/atoms/getters"
-import { routes } from "./constants"
-import { languageAtom } from "./store/atoms"
-import { useTranslation } from "react-i18next"
-import { loadLocalizationResources } from "./i18n/utils"
+import { useAtomValue } from 'jotai'
+import { useEffect } from 'react'
+import { getTitleAtom } from './store/atoms/getters'
+import { routes } from './constants'
+import { languageAtom } from './store/atoms'
+import { useTranslation } from 'react-i18next'
+import { loadLocalizationResources } from './i18n/utils'
 
 export const App = () => {
   const { i18n } = useTranslation()

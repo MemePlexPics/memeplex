@@ -1,3 +1,3 @@
-import { IFeaturedChannel, IPagedResult } from "."
+import { IFeaturedChannel, IPagedResult } from '.'
 
 export type TGetFeaturedChannelList = IPagedResult<IFeaturedChannel>

@@ -1,6 +1,6 @@
-import { IMeme } from "../../types"
+import { IMeme } from '../../types'
 
 export interface IGetSearch {
-    result: IMeme[]
-    totalPages: number
+  result: IMeme[]
+  totalPages: number
 }

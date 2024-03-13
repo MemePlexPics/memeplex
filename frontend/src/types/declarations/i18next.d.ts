@@ -1,10 +1,9 @@
-import { resources } from "../../i18n"
-import type { TDeepTypeInObject, TI18nLocalization } from '..'
+import type { TI18nLocalization } from '..'
 
-declare module "i18next" {
+declare module 'i18next' {
   interface CustomTypeOptions {
     resources: {
-      translation: TI18nLocalization,
-    },
+      translation: TI18nLocalization
+    }
   }
 }

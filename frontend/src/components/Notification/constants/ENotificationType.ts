@@ -1,5 +1,5 @@
 export enum ENotificationType {
-    OK = 'OK',
-    INFO = 'INFO',
-    ERROR = 'ERROR',
+  OK = 'OK',
+  INFO = 'INFO',
+  ERROR = 'ERROR',
 }

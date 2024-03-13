@@ -1,7 +1,8 @@
-import { atom } from "jotai"
-import { titleAtom } from ".."
+import { atom } from 'jotai'
 
-export const getTitleAtom = atom((get) => {
-    const sections = [...get(titleAtom), 'MemePlex']
-    return sections.join(' | ')
+import { titleAtom } from '..'
+
+export const getTitleAtom = atom(get => {
+  const sections = [...get(titleAtom), 'MemePlex']
+  return sections.join(' | ')
 })

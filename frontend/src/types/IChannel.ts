@@ -1,4 +1,4 @@
 export interface IChannel {
-    name: string,
-    availability: number
+  name: string
+  availability: number
 }

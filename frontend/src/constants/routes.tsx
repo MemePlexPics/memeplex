@@ -1,16 +1,10 @@
 import { RouteObject } from 'react-router-dom'
 import { Layout } from '../components'
-import {
-  AboutPage,
-  AdminPage,
-  ChannelListPage,
-  HomePage,
-  MemePage
-} from "../pages"
+import { AboutPage, AdminPage, ChannelListPage, HomePage, MemePage } from '../pages'
 
 export const routes: RouteObject[] = [
   {
-    path: "/",
+    path: '/',
     element: <Layout />,
     children: [
       {
