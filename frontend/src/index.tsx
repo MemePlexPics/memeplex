@@ -10,31 +10,27 @@ const root = document.getElementById('root')
 const langCode = localStorage.getItem('language') || 'ru'
 
 const init = async () => {
-  i18n
-    .use(initReactI18next)
-    .init({
-      resources: {
-        [langCode]: {
-          translation: await loadLocalizationResources(langCode),
-        },
+  i18n.use(initReactI18next).init({
+    resources: {
+      [langCode]: {
+        translation: await loadLocalizationResources(langCode),
       },
-      lng: langCode,
-      interpolation: {
-        escapeValue: false
-      }
-    })
+    },
+    lng: langCode,
+    interpolation: {
+      escapeValue: false,
+    },
+  })
 
-  ReactDOM
-    .createRoot(root!)
-    .render(
-      <React.StrictMode>
-        <Provider>
-          <I18nextProvider i18n={i18n}>
-            <App />
-          </I18nextProvider>
-        </Provider>
-      </React.StrictMode>,
-    )
+  ReactDOM.createRoot(root!).render(
+    <React.StrictMode>
+      <Provider>
+        <I18nextProvider i18n={i18n}>
+          <App />
+        </I18nextProvider>
+      </Provider>
+    </React.StrictMode>,
+  )
 }
 
 init()

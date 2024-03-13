@@ -27,7 +27,7 @@ export const Pagination = (props: PaginationProps) => {
 
   const PageButtons = () => {
     const buttons = []
-    for (let page = pageRange.from; page <= pageRange.to; page++){
+    for (let page = pageRange.from; page <= pageRange.to; page++) {
       buttons.push(
         <Button
           key={page}
@@ -36,11 +36,11 @@ export const Pagination = (props: PaginationProps) => {
           onClick={() => onChangePage(page)}
         >
           {page}
-        </Button>
+        </Button>,
       )
     }
 
-    return buttons;
+    return buttons
   }
 
   return (
@@ -68,7 +68,7 @@ export const Pagination = (props: PaginationProps) => {
         onClick={() => onChangePage(props.pagesTotal)}
         hidden={pageRange.to === props.pagesTotal}
       >
-        { props.pagesTotal }
+        {props.pagesTotal}
       </Button>
 
       <Button

@@ -1,5 +1,5 @@
-import { INotificationProps } from "../../Notification/types";
+import { INotificationProps } from '../../Notification/types'
 
 export type TNotification = INotificationProps & {
-    id: string
+  id: string
 }

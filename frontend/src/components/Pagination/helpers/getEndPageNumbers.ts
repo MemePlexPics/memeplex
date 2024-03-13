@@ -1,7 +1,7 @@
 export const getEndPageNumbers = (
   currentPage: number,
   pagesAtTime: number,
-  maxPage: number
+  maxPage: number,
 ): { from: number; to: number } => {
   let firstPage: number = Math.max(currentPage - pagesAtTime, 1)
   let lastPage: number = Math.min(currentPage + pagesAtTime, maxPage)

@@ -5,7 +5,7 @@
     --font-size-normal: 26px;
     --font-size-big: 30px;
     --size-meme-entity: 300px;
-    --color-white: #EEE;
+    --color-white: #eee;
     --color-gray: #b5b5b5;
     --color-dark-gray: #746c5f;
     --color-light-gray: #d3d3d3;
@@ -15,7 +15,7 @@
     --z-index-notification: 1;
 }
 
-@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait) {
+@media only screen and (hover: none) and (pointer: coarse) and (orientation: portrait) {
     :root {
         --scroll-to-top-size: 10vw;
         --font-size-slight: 26px;
@@ -32,7 +32,8 @@
 
 @font-face {
     font-family: OpenSans;
-    src: local('OpenSans'), url(/fonts/OpenSans-Italic-VariableFont_wdth\,wght.woff2);
+    src: local('OpenSans'),
+        url(/fonts/OpenSans-Italic-VariableFont_wdth\,wght.woff2);
     font-style: italic;
     font-display: swap;
 }
@@ -41,7 +42,9 @@ html {
     box-sizing: border-box;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
     box-sizing: inherit;
 }
 

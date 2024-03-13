@@ -3,7 +3,7 @@ import { useAtom } from 'jotai'
 import { Select } from '../../atoms'
 
 export const LanguageSelector = (props: {
-  languageOpetions: {[langCode: string]: string}
+  languageOpetions: { [langCode: string]: string }
   className?: string
 }) => {
   const [language, setLanguage] = useAtom(languageAtom)
