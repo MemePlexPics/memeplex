@@ -1,5 +1,12 @@
-export async function updateProxy(mysql, address, protocol, availability = false, speed = null) {
-    await mysql.query(`
+export async function updateProxy(
+    mysql,
+    address,
+    protocol,
+    availability = false,
+    speed = null,
+) {
+    await mysql.query(
+        `
         UPDATE proxies
         SET
             availability = ?,
@@ -7,5 +14,7 @@ export async function updateProxy(mysql, address, protocol, availability = false
         WHERE
             address = ?
             AND protocol = ?
-    `, [availability, speed, address, protocol]);
+    `,
+        [availability, speed, address, protocol],
+    );
 }

@@ -11,7 +11,7 @@ const getOldestEntityTimestamp = async () => {
     const elasticRes = await client.search({
         index: ELASTIC_INDEX,
         size: 1,
-        sort: { timestamp: 'asc' }
+        sort: { timestamp: 'asc' },
     });
     if (elasticRes.hits.hits.length > 0) {
         return elasticRes.hits.hits[0]._source.timestamp;
@@ -33,24 +33,28 @@ const getEntitiesByDay = async (timestamp) => {
                 range: {
                     timestamp: {
                         gte: startOfDay.getTime(),
-                        lte: endOfDay.getTime()
-                    }
-                }
-            }
-        }
+                        lte: endOfDay.getTime(),
+                    },
+                },
+            },
+        },
     });
-    return elasticRes.hits.hits.map(hit => ({ id: hit._id }));
+    return elasticRes.hits.hits.map((hit) => ({ id: hit._id }));
 };
 
 //  All formats limit a single sitemap to 50MB (uncompressed) or 50,000 URLs
 const createSitemapForDay = async (entities, day) => {
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${entities.map(entity => `    <url>
+${entities
+    .map(
+        (entity) => `    <url>
         <loc>https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${entity.id}</loc>
         <lastmod>${day}</lastmod>
         <changefreq>never</changefreq>
-    </url>`).join('\n')}
+    </url>`,
+    )
+    .join('\n')}
 </urlset>`;
     fs.writeFileSync(`${PUBLIC_PATH}/sitemaps/${day}.xml`, sitemap);
 };
@@ -64,24 +68,28 @@ const getPageUrlEntity = (path) => {
 const createMainSitemap = (files) => {
     const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${['channelList','about'].map(path => getPageUrlEntity(path)).join('\n')}
-${files.map(file => `    <sitemap>
+${['channelList', 'about'].map((path) => getPageUrlEntity(path)).join('\n')}
+${files
+    .map(
+        (file) => `    <sitemap>
         <loc>https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/sitemaps/${file}</loc>
-    </sitemap>`).join('\n')}
+    </sitemap>`,
+    )
+    .join('\n')}
 </sitemapindex>`;
     fs.writeFileSync(`${PUBLIC_PATH}/sitemap.xml`, sitemapIndex);
 };
 
 const generateSitemaps = async () => {
     const sitemaps = fs.readdirSync(`${PUBLIC_PATH}/sitemaps`);
-    const timeZoneCorrection = new Date().getTimezoneOffset() < 0
-        ? 1
-        : -1;
+    const timeZoneCorrection = new Date().getTimezoneOffset() < 0 ? 1 : -1;
     let currentTimestamp;
     if (sitemaps.length) {
         const lastDateStr = sitemaps.at(-1).replace('.xml', '');
         currentTimestamp = new Date(lastDateStr);
-        currentTimestamp.setDate(currentTimestamp.getDate() + 1 + timeZoneCorrection);
+        currentTimestamp.setDate(
+            currentTimestamp.getDate() + 1 + timeZoneCorrection,
+        );
     } else {
         const oldestTimestamp = await getOldestEntityTimestamp();
         if (!oldestTimestamp) {
@@ -93,7 +101,7 @@ const generateSitemaps = async () => {
 
     const currentDate = new Date(new Date().setHours(0, 0, 0, 0));
     currentDate.setDate(new Date(currentDate).getDate() + timeZoneCorrection);
-    
+
     while (currentTimestamp <= currentDate) {
         const entities = await getEntitiesByDay(currentTimestamp);
         if (entities.length > 0) {

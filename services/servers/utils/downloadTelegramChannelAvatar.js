@@ -11,9 +11,11 @@ export const downloadTelegramChannelAvatar = async (channelName) => {
         const fileInfo = await getTelegramFileInfo(photo_id);
         const file_path = fileInfo.result.file_path;
         if (file_path) {
-            const destination = await downloadTelegramFile(channelName, file_path);
-            if (destination)
-                return destination;
+            const destination = await downloadTelegramFile(
+                channelName,
+                file_path,
+            );
+            if (destination) return destination;
             else {
                 return false;
             }

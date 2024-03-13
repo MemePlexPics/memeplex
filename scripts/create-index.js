@@ -42,7 +42,7 @@ async function createIndex(indexName) {
     }
 }
 
-async function deleteIndex (indexName) {
+async function deleteIndex(indexName) {
     await client.indices.delete({ index: indexName });
 }
 
@@ -50,8 +50,6 @@ async function deleteIndex (indexName) {
 
 try {
     await deleteIndex(ELASTIC_INDEX);
-} catch (_) {
-
-}
+} catch (_) {}
 
 await createIndex(ELASTIC_INDEX);

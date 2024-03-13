@@ -7,22 +7,20 @@ export const getLogger = (loggers, service) => {
     const transports = [
         new winston.transports.File({
             filename: `logs/${service}.log`,
-            maxsize: 1024*1024*10, // bytes
+            maxsize: 1024 * 1024 * 10, // bytes
             maxFiles: 5,
             tailable: true,
         }),
     ];
-    if (process.env.NODE_ENV !== 'production') transports.push(
-        new winston.transports.Console({
-            format: simple()
-        })
-    );
+    if (process.env.NODE_ENV !== 'production')
+        transports.push(
+            new winston.transports.Console({
+                format: simple(),
+            }),
+        );
 
     loggers.add(service, {
-        format: combine(
-            timestamp(),
-            json(),
-        ),
+        format: combine(timestamp(), json()),
         level: 'verbose',
         defaultMeta: { service },
         transports,

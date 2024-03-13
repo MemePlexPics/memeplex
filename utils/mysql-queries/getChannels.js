@@ -16,6 +16,7 @@ export const getChannels = async (mysql, page, size, { onlyAvailable, name }) =>
             availability DESC,
             name ASC
         LIMIT ? OFFSET ?
-    `, [size, offset]);
+    `, [size, offset],
+    );
     return results;
 };

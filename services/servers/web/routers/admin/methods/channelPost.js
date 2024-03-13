@@ -1,10 +1,8 @@
-import {
-    getMysqlClient,
-} from '../../../../../../utils/index.js';
+import { getMysqlClient } from '../../../../../../utils/index.js';
 import {
     OCR_LANGUAGES,
     TG_API_PARSE_FROM_DATE,
-}  from '../../../../../../constants/index.js';
+} from '../../../../../../constants/index.js';
 import {
     insertChannel,
     selectChannel,
@@ -15,9 +13,8 @@ import { setLogAction } from '../utils/index.js';
 
 export const channelPost = async (req, res) => {
     const { channel, langs } = req.body;
-    if (!channel)
-        return res.status(500).send();
-    if (langs?.find(language => !OCR_LANGUAGES.includes(language))) {
+    if (!channel) return res.status(500).send();
+    if (langs?.find((language) => !OCR_LANGUAGES.includes(language))) {
         return res.status(500).send({
             error: `Languages should be comma separated. Allowed languages: ${OCR_LANGUAGES.join(',')}`,
         });
@@ -30,7 +27,13 @@ export const channelPost = async (req, res) => {
         await updateChannelAvailability(mysql, channel, true);
     } else {
         setLogAction(res, `➕ Added @${channel}`);
-        await insertChannel(mysql, channel, languages.join(','), true, TG_API_PARSE_FROM_DATE);
+        await insertChannel(
+            mysql,
+            channel,
+            languages.join(','),
+            true,
+            TG_API_PARSE_FROM_DATE,
+        );
         await proceedChannelSuggestion(mysql, channel);
     }
     return res.send();

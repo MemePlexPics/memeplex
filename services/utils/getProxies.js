@@ -5,12 +5,9 @@ export const getProxies = async () => {
         const response = await fetch(PROXY_LIST_API_URL);
         const proxies = (await response.json()).proxies;
         return proxies
-            .filter(proxy =>
-                proxy.alive
-                && proxy.anonymity !== 'transparent'
-            )
+            .filter((proxy) => proxy.alive && proxy.anonymity !== 'transparent')
             .sort((a, b) => a.timeout - b.timeout)
-            .map(data => {
+            .map((data) => {
                 return {
                     ip: data.ip,
                     port: data.port,

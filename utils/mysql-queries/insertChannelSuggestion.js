@@ -1,6 +1,7 @@
 /** Inserts a suggestion if it's not already in the channels. Ignores duplicates */
 export const insertChannelSuggestion = async (mysql, name) => {
-    const [response] = await mysql.query(`
+    const [response] = await mysql.query(
+        `
         INSERT IGNORE INTO channel_suggestions (name)
         SELECT ?
         FROM dual
@@ -9,6 +10,8 @@ export const insertChannelSuggestion = async (mysql, name) => {
             FROM channels 
             WHERE LOWER(name) = LOWER(?)
         )
-    `, [name, name]);
+    `,
+        [name, name],
+    );
     return response.affectedRows;
 };

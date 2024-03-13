@@ -91,9 +91,7 @@ export async function ocrSpace(input, options = {}) {
     } else {
         request.httpAgent = new SocksProxyAgent(`socks://${host}:${port}`, {
             protocol,
-            proxy: false,
         });
-        request.httpsAgent = request.httpAgent;
     }
     const response = await axios(request);
     return response.data;

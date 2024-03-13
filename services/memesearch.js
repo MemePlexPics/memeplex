@@ -9,14 +9,17 @@ const loggers = winston.loggers;
 const startServices = async (loggerMain) => {
     serviceSettings.forEach((service) => {
         const logger = getLogger(loggers, service.name);
-        loopRetrying(async () => {
-            loggerMain.info(`${service.name} started`);
-            await service.service(logger);
-        }, {
-            logger,
-            catchDelayMs: LOOP_RETRYING_DELAY,
-            ...service?.loggerSettings,
-        });
+        loopRetrying(
+            async () => {
+                loggerMain.info(`${service.name} started`);
+                await service.service(logger);
+            },
+            {
+                logger,
+                catchDelayMs: LOOP_RETRYING_DELAY,
+                ...service?.loggerSettings,
+            },
+        );
     });
 };
 

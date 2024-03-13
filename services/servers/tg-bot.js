@@ -10,7 +10,7 @@ import {
     MAX_SEARCH_QUERY_LENGTH,
     TG_BOT_PAGE_SIZE,
     TG_INLINE_BOT_PAGE_SIZE,
-}  from '../../constants/index.js';
+} from '../../constants/index.js';
 import { searchMemes, getLatestMemes } from './utils/index.js';
 import winston from 'winston';
 import { Telegraf, Markup, session } from 'telegraf';
@@ -40,7 +40,7 @@ const logger = winston.createLogger({
     transports: [
         new winston.transports.File({
             filename: 'logs/tg-bot.log',
-            maxsize: 1024*1024*10, // bytes
+            maxsize: 1024 * 1024 * 10, // bytes
             maxFiles: 5,
             tailable: true,
         }),
@@ -51,9 +51,7 @@ const getTelegramUser = (from) => {
     const { id, username, first_name, last_name } = from;
     return {
         id,
-        user: username
-            ? '@' + username
-            : [first_name, last_name].join(' '),
+        user: username ? '@' + username : [first_name, last_name].join(' '),
     };
 };
 
@@ -66,7 +64,13 @@ const logUserAction = async (from, action) => {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotUser(mysql, id);
         if (!existedUser?.id) await insertBotUser(mysql, id, user);
-        await insertBotAction(mysql, id, 'search', action.search.query, action.search.page);
+        await insertBotAction(
+            mysql,
+            id,
+            'search',
+            action.search.query,
+            action.search.page,
+        );
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'search',
@@ -76,7 +80,13 @@ const logUserAction = async (from, action) => {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotUser(mysql, id);
         if (!existedUser?.id) await insertBotUser(mysql, id, user);
-        await insertBotAction(mysql, id, 'latest', null, [action.latest.from, action.latest.to].join(','));
+        await insertBotAction(
+            mysql,
+            id,
+            'latest',
+            null,
+            [action.latest.from, action.latest.to].join(','),
+        );
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'latest',
@@ -86,7 +96,15 @@ const logUserAction = async (from, action) => {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotInlineUser(mysql, id);
         if (!existedUser?.id) await insertBotInlineUser(mysql, id, user);
-        await insertBotInlineAction(mysql, id, 'search', action.inline_search.query, null, action.inline_search.page, action.inline_search.chat_type);
+        await insertBotInlineAction(
+            mysql,
+            id,
+            'search',
+            action.inline_search.query,
+            null,
+            action.inline_search.page,
+            action.inline_search.chat_type,
+        );
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'inline_search',
@@ -96,7 +114,15 @@ const logUserAction = async (from, action) => {
         const mysql = await getMysqlClient();
         const [existedUser] = await selectBotInlineUser(mysql, id);
         if (!existedUser?.id) await insertBotInlineUser(mysql, id, user);
-        await insertBotInlineAction(mysql, id, 'select', action.inline_select.query, action.inline_select.id, null, null);
+        await insertBotInlineAction(
+            mysql,
+            id,
+            'select',
+            action.inline_select.query,
+            action.inline_select.id,
+            null,
+            null,
+        );
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'inline_select',
@@ -127,7 +153,9 @@ const resetSearchSession = (ctx) => {
 };
 
 const getBotAnswerString = (meme) => {
-    const ourImgLink = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href;
+    const ourImgLink = new URL(
+        `https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`,
+    ).href;
     const downloadLink = `[(download)](${ourImgLink})`;
     const tgLink = `https://t.me/${meme.channel}/${meme.message}`;
     return `${downloadLink} [${tgLink}](${tgLink})`;
@@ -135,25 +163,39 @@ const getBotAnswerString = (meme) => {
 
 const onBotRecieveText = async (ctx) => {
     try {
-        const query = ctx.session.search.query || ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH);
+        const query =
+            ctx.session.search.query ||
+            ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH);
         const page = ctx.session.search.nextPage || 1;
-        logUserAction(ctx.from, { search: {
+        logUserAction(ctx.from, {
+            search: {
+                query,
+                page,
+            },
+        });
+        const response = await searchMemes(
+            client,
             query,
-            page
-        }});
-        const response = await searchMemes(client, query, page, TG_BOT_PAGE_SIZE);
+            page,
+            TG_BOT_PAGE_SIZE,
+        );
 
         if (response.totalPages === 0) {
             await ctx.reply('Nothing found');
             return;
         }
         for (let meme of response.result) {
-            await ctx.reply(getBotAnswerString(meme), { parse_mode: 'markdown' });
+            await ctx.reply(getBotAnswerString(meme), {
+                parse_mode: 'markdown',
+            });
         }
         if (page < response.totalPages) {
-            await ctx.reply(`Page ${page} of ${response.totalPages}`, Markup.inlineKeyboard([
-                Markup.button.callback('Load more', 'button_search_more'),
-            ]));
+            await ctx.reply(
+                `Page ${page} of ${response.totalPages}`,
+                Markup.inlineKeyboard([
+                    Markup.button.callback('Load more', 'button_search_more'),
+                ]),
+            );
             ctx.session.search = {
                 nextPage: page + 1,
                 query: query,
@@ -161,7 +203,7 @@ const onBotRecieveText = async (ctx) => {
             return;
         }
         resetSearchSession(ctx);
-    } catch(e) {
+    } catch (e) {
         logError(logger, e);
         await ctx.reply('An error occurred, please try again later');
     }
@@ -172,14 +214,23 @@ const onBotCommandGetLatest = async (ctx, update = true) => {
         const { from: sessionFrom, to: sessionTo } = ctx.session.latest;
         const from = update ? sessionTo : undefined;
         const to = update ? undefined : sessionFrom;
-        logUserAction(ctx.from, { latest: {
+        logUserAction(ctx.from, {
+            latest: {
+                from,
+                to,
+            },
+        });
+        const response = await getLatestMemes(
+            client,
             from,
-            to
-        }});
-        const response = await getLatestMemes(client, from, to, TG_BOT_PAGE_SIZE);
+            to,
+            TG_BOT_PAGE_SIZE,
+        );
 
         for (let meme of response.result) {
-            await ctx.reply(getBotAnswerString(meme), { parse_mode: 'markdown' });
+            await ctx.reply(getBotAnswerString(meme), {
+                parse_mode: 'markdown',
+            });
         }
 
         if (!sessionFrom || response.from < sessionFrom)
@@ -193,10 +244,10 @@ const onBotCommandGetLatest = async (ctx, update = true) => {
             : `${response.totalPages - 1} more ${update ? 'new pages' : 'pages in the past'}`;
         const buttons = Markup.inlineKeyboard([
             Markup.button.callback('Load newer', 'button_latest_newer'),
-            Markup.button.callback('Load older', 'button_latest_older')
+            Markup.button.callback('Load older', 'button_latest_older'),
         ]);
         await ctx.reply(finalReplyText, buttons);
-    } catch(e) {
+    } catch (e) {
         logError(logger, e);
         await ctx.reply('An error occurred, please try again later');
     }
@@ -211,49 +262,56 @@ const onBotCommandSuggestChannel = async (ctx) => {
     try {
         const mysql = await getMysqlClient();
         const response = await insertChannelSuggestion(mysql, channelName);
-        if (response) logUserAction(ctx.from, { info: `suggested @${channelName}` });
+        if (response)
+            logUserAction(ctx.from, { info: `suggested @${channelName}` });
         return ctx.reply('Thank you for the suggestion!');
-    } catch(e) {
+    } catch (e) {
         logError(logger, e);
         await ctx.reply('An error occurred, please try again later');
     }
 };
 
-bot.use(session({
-    defaultSession: () => ({
-        search: {
-            nextPage: null,
-            query: null,
-        },
-        latest: {
-            pagesLeft: undefined,
-            from: undefined,
-            to: undefined,
-        },
+bot.use(
+    session({
+        defaultSession: () => ({
+            search: {
+                nextPage: null,
+                query: null,
+            },
+            latest: {
+                pagesLeft: undefined,
+                from: undefined,
+                to: undefined,
+            },
+        }),
+        store: MySQL({
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT,
+            database: process.env.DB_DATABASE,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            table: 'telegraf_sessions',
+        }),
     }),
-    store: MySQL({
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        database: process.env.DB_DATABASE,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        table: 'telegraf_sessions',
-    }),
-}));
+);
 
-bot.use(rateLimit({
-    window: 60_000,
-    limit: 15,
-    onLimitExceeded: async (ctx) => {
-        logUserAction(ctx.from, { info: 'exceeded rate limit' });
-        await ctx.reply('Wait a few seconds before trying again');
-    },
-}));
+bot.use(
+    rateLimit({
+        window: 60_000,
+        limit: 15,
+        onLimitExceeded: async (ctx) => {
+            logUserAction(ctx.from, { info: 'exceeded rate limit' });
+            await ctx.reply('Wait a few seconds before trying again');
+        },
+    }),
+);
 
 bot.start(async (ctx) => {
-    await ctx.reply(`Welcome to [MemePlex](https://memeplex.pics)!
+    await ctx.reply(
+        `Welcome to [MemePlex](https://memeplex.pics)!
 
-Send me a text to search memes by caption.`, { parse_mode: 'markdown' }
+Send me a text to search memes by caption.`,
+        { parse_mode: 'markdown' },
     );
     logUserAction(ctx.from, { start: true });
 });
@@ -278,19 +336,27 @@ const debounceInline = {};
 const onInlineQuery = async (ctx, page) => {
     const query = ctx.inlineQuery.query;
 
-    if (!query)
-        return;
+    if (!query) return;
 
-    logUserAction(ctx.inlineQuery.from, { inline_search: {
+    logUserAction(ctx.inlineQuery.from, {
+        inline_search: {
+            query,
+            page,
+            chat_type: ctx.inlineQuery.chat_type,
+        },
+    });
+
+    const response = await searchMemes(
+        client,
         query,
         page,
-        chat_type: ctx.inlineQuery.chat_type,
-    }});
+        TG_INLINE_BOT_PAGE_SIZE,
+    );
 
-    const response = await searchMemes(client, query, page, TG_INLINE_BOT_PAGE_SIZE); 
-
-    const results = response.result.map(meme => {
-        const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href;
+    const results = response.result.map((meme) => {
+        const photo_url = new URL(
+            `https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`,
+        ).href;
         return {
             type: 'photo',
             id: meme.id,
@@ -303,9 +369,7 @@ const onInlineQuery = async (ctx, page) => {
     });
 
     await ctx.answerInlineQuery(results, {
-        next_offset: response.totalPages - page > 0
-            ? page + 1 + ''
-            : '',
+        next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
     });
     debounceInline[ctx.inlineQuery.from.id] = 0;
 };
@@ -316,17 +380,21 @@ bot.on('inline_query', async (ctx) => {
         clearTimeout(debounceInline[ctx.inlineQuery.from.id]);
     }
     if (page === 1) {
-        debounceInline[ctx.inlineQuery.from.id] = setTimeout(() => onInlineQuery(ctx, page), 300);
-    } else
-        await onInlineQuery(ctx, page);
+        debounceInline[ctx.inlineQuery.from.id] = setTimeout(
+            () => onInlineQuery(ctx, page),
+            300,
+        );
+    } else await onInlineQuery(ctx, page);
 });
 
 bot.on('chosen_inline_result', async (ctx) => {
     const { query, result_id } = ctx.update.chosen_inline_result;
-    logUserAction(ctx.update.chosen_inline_result.from, { inline_select: {
-        query,
-        id: result_id,
-    }});
+    logUserAction(ctx.update.chosen_inline_result.from, {
+        inline_select: {
+            query,
+            id: result_id,
+        },
+    });
 });
 
 const start = async () => {

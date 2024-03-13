@@ -1,6 +1,4 @@
-import {
-    ELASTIC_INDEX,
-}  from '../../../constants/index.js';
+import { ELASTIC_INDEX } from '../../../constants/index.js';
 
 export const setChannelMemesState = async (client, channel, state) => {
     const elasticRes = await client.updateByQuery({

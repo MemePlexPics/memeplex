@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Client } from '@elastic/elasticsearch';
 import mysql from 'mysql2/promise';
 import process from 'process';
-import  { performance } from 'perf_hooks';
+import { performance } from 'perf_hooks';
 import axios from 'axios';
 import { promises as fs } from 'fs';
 import { SocksProxyAgent } from 'socks-proxy-agent';
@@ -40,8 +40,8 @@ export const getElasticClient = () => {
             password: process.env.ELASTIC_PASSWORD,
         },
         ssl: {
-            rejectUnauthorized: false
-        }
+            rejectUnauthorized: false,
+        },
     });
     return client;
 };
@@ -49,10 +49,13 @@ export const getElasticClient = () => {
 export const connectToElastic = async (logger) => {
     const getElasticClientUntilSuccess = async () => {
         let connect;
-        await loopRetrying(async () => {
-            connect = getElasticClient();
-            return true;
-        }, { logger });
+        await loopRetrying(
+            async () => {
+                connect = getElasticClient();
+                return true;
+            },
+            { logger },
+        );
         return connect;
     };
 
@@ -108,7 +111,8 @@ export async function loopRetrying(
         catchDelayMs: 0,
         afterCallbackDelayMs: 0,
         afterErrorCallback: async () => {},
-    }) {
+    },
+) {
     for (;;) {
         try {
             const result = await callback();
@@ -139,13 +143,10 @@ export function getDateUtc() {
 }
 
 export function dateToYyyyMmDdHhMmSs(date) {
-    return new Date(date)
-        .toISOString()
-        .slice(0,19)
-        .replace('T', ' ');
+    return new Date(date).toISOString().slice(0, 19).replace('T', ' ');
 }
 
-export async function chooseRandomOCRSpaceKey () {
+export async function chooseRandomOCRSpaceKey() {
     const mysql = await getMysqlClient();
     // Select a random key without timeout or with the early date
     const keys = await getRandomKey(mysql);
@@ -155,18 +156,25 @@ export async function chooseRandomOCRSpaceKey () {
         timeout: keyData.timeout,
     };
     const foundProxy = await getProxyForKey(mysql, keyData.ocr_key);
-    if (!foundProxy)
-        throw new Error('There are no available free proxies');
+    if (!foundProxy) throw new Error('There are no available free proxies');
     finalKeyData.proxy = foundProxy.address;
     finalKeyData.protocol = foundProxy.protocol;
     if (!finalKeyData.proxy)
         throw new Error(`❌ Proxy for ${finalKeyData.key} isn't finded`);
 
-    console.log(`💬 ${finalKeyData.key} ${finalKeyData.proxy} (${finalKeyData.protocol}) ${foundProxy.speed}ms`);
+    console.log(
+        `💬 ${finalKeyData.key} ${finalKeyData.proxy} (${finalKeyData.protocol}) ${foundProxy.speed}ms`,
+    );
     return finalKeyData;
 }
 
-export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => {
+export const getProxySpeed = async (
+    ip,
+    port,
+    protocol,
+    repeats = 1,
+    logger,
+) => {
     const proxy = `${ip}:${port}`;
     const requestOptions = {
         timeout: PROXY_TEST_TIMEOUT,
@@ -175,10 +183,12 @@ export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => 
         if (protocol === 'http') {
             requestOptions.proxy = {
                 host: ip,
-                port
+                port,
             };
         } else {
-            requestOptions.httpAgent = new SocksProxyAgent(`socks://${proxy}`, { protocol });
+            requestOptions.httpAgent = new SocksProxyAgent(`socks://${proxy}`, {
+                protocol,
+            });
         }
         const axiosClient = axios.create(requestOptions);
         const measuredSpeeds = [];
@@ -192,13 +202,18 @@ export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => 
 
             measuredSpeeds.push(end - start);
         }
-        const speed = measuredSpeeds.reduce((acc, speed) => acc + speed, 0) / repeats;
+        const speed =
+            measuredSpeeds.reduce((acc, speed) => acc + speed, 0) / repeats;
         const roundedSpeed = parseInt(speed);
-        logger.verbose(`✅ Proxy ${proxy} (${protocol}) is working. Average response time: ${roundedSpeed}ms`);
+        logger.verbose(
+            `✅ Proxy ${proxy} (${protocol}) is working. Average response time: ${roundedSpeed}ms`,
+        );
 
         return roundedSpeed;
     } catch (error) {
-        logger.verbose(`❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`);
+        logger.verbose(
+            `❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`,
+        );
         return;
     }
 };

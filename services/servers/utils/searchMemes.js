@@ -1,7 +1,4 @@
-import {
-    ELASTIC_INDEX,
-    ELASTIC_FUZZINESS,
-}  from '../../../constants/index.js';
+import { ELASTIC_INDEX, ELASTIC_FUZZINESS } from '../../../constants/index.js';
 import { getMemeResponseEntity } from './index.js';
 
 export const searchMemes = async (client, query, page, size) => {
@@ -29,10 +26,10 @@ export const searchMemes = async (client, query, page, size) => {
                                     eng: {
                                         query,
                                     },
-                                }
+                                },
                             },
                             boost: 60,
-                        }
+                        },
                     },
                     {
                         constant_score: {
@@ -42,10 +39,10 @@ export const searchMemes = async (client, query, page, size) => {
                                         query,
                                         fuzziness: ELASTIC_FUZZINESS,
                                     },
-                                }
+                                },
                             },
                             boost: 30,
-                        }
+                        },
                     },
                     {
                         constant_score: {
@@ -54,14 +51,14 @@ export const searchMemes = async (client, query, page, size) => {
                                     eng: {
                                         query,
                                     },
-                                }
+                                },
                             },
                             boost: 10, // +10 points to previous 90, 100 points documents will be on top
-                        }
-                    }
-                ]
-            }
-        }
+                        },
+                    },
+                ],
+            },
+        },
     });
 
     const response = {
