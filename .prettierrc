@@ -1,0 +1,32 @@
+{
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "trailingComma": "none",
+    "semi": false,
+    "htmlWhitespaceSensitivity": "ignore",
+    "overrides": [
+      {
+        "files": ["*.js", "*.jsx", "*.css"],
+        "options": {
+          "tabWidth": 4,
+          "trailingComma": "all",
+          "semi": true
+        }
+      },
+      {
+        "files": ["./frontend/src/**/*.{ts,tsx}"],
+        "options": {
+          "tabWidth": 2,
+          "singleQuote": true,
+          "jsxSingleQuote": true,
+          "trailingComma": "all",
+          "semi": false,
+          "htmlWhitespaceSensitivity": "ignore",
+          "printWidth": 100,
+          "arrowParens": "avoid",
+          "jsxBracketSameLine": false,
+          "singleAttributePerLine": true
+        }
+      }
+    ]
+}
