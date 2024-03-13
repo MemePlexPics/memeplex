@@ -28,7 +28,9 @@ export const Tabs = (props: {
           <div
             key={tab}
             {...stylex.props(s.tab, currentTab === tab ? s.isActive : null)}
-            onClick={() => { onChangeTab(tab); }}
+            onClick={() => {
+              onChangeTab(tab)
+            }}
           >
             {tab}
           </div>

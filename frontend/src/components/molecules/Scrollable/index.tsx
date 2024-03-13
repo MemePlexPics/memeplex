@@ -56,10 +56,24 @@ export const Scrollable = (props: {
     setIsScrollable(scrollableDivRef.current.clientWidth < scrollableDivRef.current.scrollWidth)
   }, [scrollableDivRef.current?.scrollWidth])
 
-  useEventListener('wheel', e => { preventDefaultIfScrollTheComponent(e); }, window, { passive: false })
-  useEventListener('touchmove', e => { preventDefaultIfScrollTheComponent(e); }, window, {
-    passive: false,
-  })
+  useEventListener(
+    'wheel',
+    e => {
+      preventDefaultIfScrollTheComponent(e)
+    },
+    window,
+    { passive: false },
+  )
+  useEventListener(
+    'touchmove',
+    e => {
+      preventDefaultIfScrollTheComponent(e)
+    },
+    window,
+    {
+      passive: false,
+    },
+  )
 
   return (
     <div

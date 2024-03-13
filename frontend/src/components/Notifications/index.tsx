@@ -33,7 +33,9 @@ export const Notifications = () => {
   useEffect(() => {
     if (queue.current.length > 0 && notifications.length < 5) {
       const notificationFromQueue = queue.current.shift()
-      setNotifications(() => notificationFromQueue ? [notificationFromQueue, ...notifications] : notifications)
+      setNotifications(() =>
+        notificationFromQueue ? [notificationFromQueue, ...notifications] : notifications,
+      )
     }
   }, [notifications])
 
@@ -44,14 +46,16 @@ export const Notifications = () => {
 
   return (
     <div id='notifications'>
-        {notifications.map(notification => (
-          <Notification
-            key={notification.id}
-            text={notification.text}
-            type={notification.type}
-            onClose={() => { onClose(notification.id); }}
-          />
-        ))}
-      </div>
+      {notifications.map(notification => (
+        <Notification
+          key={notification.id}
+          text={notification.text}
+          type={notification.type}
+          onClose={() => {
+            onClose(notification.id)
+          }}
+        />
+      ))}
+    </div>
   )
 }

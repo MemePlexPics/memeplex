@@ -1,4 +1,3 @@
-
 import './style.css'
 import { useAtomValue } from 'jotai'
 import { useState } from 'react'
@@ -34,7 +33,9 @@ export const AdminPage = () => {
       <InputPassword />
       <Tabs
         tabs={tabs}
-        onChange={tab => { setCurrentTab(tab); }}
+        onChange={tab => {
+          setCurrentTab(tab)
+        }}
       >
         <Channels
           key={t('tab.channels')}

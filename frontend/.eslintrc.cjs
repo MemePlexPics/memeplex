@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   root: true,
@@ -81,8 +81,8 @@ module.exports = {
     'promise/always-return': [
       'error',
       {
-        ignoreLastCallback: true,
-      },
+        ignoreLastCallback: true
+      }
     ],
     '@typescript-eslint/no-unused-vars': [
       'warn',
@@ -149,14 +149,14 @@ module.exports = {
       {
         selector: 'import',
         format: ['camelCase', 'PascalCase'],
-        modifiers: ['default'],
+        modifiers: ['default']
       }
     ],
     '@typescript-eslint/no-unsafe-assignment': 'warn',
     '@typescript-eslint/no-confusing-void-expression': [
       'warn',
       {
-        ignoreArrowShorthand: true,
+        ignoreArrowShorthand: true
       }
     ],
     '@typescript-eslint/no-unsafe-member-access': 'warn',
@@ -167,12 +167,12 @@ module.exports = {
     '@typescript-eslint/unbound-method': 0,
     '@typescript-eslint/member-ordering': 'warn',
     '@typescript-eslint/explicit-function-return-type': 0,
-    "@typescript-eslint/prefer-nullish-coalescing": "warn",
-    "@typescript-eslint/consistent-indexed-object-style": "warn",
-    "@typescript-eslint/no-misused-promises": [
-      "warn",
+    '@typescript-eslint/prefer-nullish-coalescing': 'warn',
+    '@typescript-eslint/consistent-indexed-object-style': 'warn',
+    '@typescript-eslint/no-misused-promises': [
+      'warn',
       {
-        "checksVoidReturn": false
+        checksVoidReturn: false
       }
     ],
     '@typescript-eslint/no-magic-numbers': [
@@ -182,7 +182,7 @@ module.exports = {
         ignoreEnums: true,
         enforceConst: true,
         ignoreReadonlyClassProperties: true,
-        ignore: [0, 1, 2, 24, 60, 200, 204, 403, 404, 500, 503, 1000],
+        ignore: [0, 1, 2, 24, 60, 200, 204, 403, 404, 500, 503, 1000]
       }
     ],
     'react/no-access-state-in-setstate': 'error',

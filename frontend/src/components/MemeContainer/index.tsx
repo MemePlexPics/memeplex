@@ -20,7 +20,9 @@ export const MemeContainer = (props: { meme: IMeme }) => {
           className='result-image'
           src={props.meme.fileName}
           alt={props.meme.text.eng}
-          onLoad={() => { setIsLoading(false); }}
+          onLoad={() => {
+            setIsLoading(false)
+          }}
         />
       </Link>
     </>

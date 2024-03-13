@@ -38,7 +38,12 @@ export const FilterMemes = () => {
       <div {...stylex.props(s.content)}>
         <label {...stylex.props(s.label)}>{t('label.filter')}:</label>
         {memeFilters.channel?.map(channel => (
-          <div onClick={e => { onClickChannel(e, channel); }} key={channel}>
+          <div
+            onClick={e => {
+              onClickChannel(e, channel)
+            }}
+            key={channel}
+          >
             <ChannelBlock
               username={channel}
               size='small'

@@ -39,24 +39,24 @@ export const Dialog = (props: IDialogProps) => {
 
   return (
     <dialog
-        {...stylex.props(s.dialog)}
-        ref={dialogRef}
+      {...stylex.props(s.dialog)}
+      ref={dialogRef}
+    >
+      <div
+        {...stylex.props(s.content)}
+        ref={dialogContentRef}
       >
-        <div
-          {...stylex.props(s.content)}
-          ref={dialogContentRef}
-        >
-          <p {...stylex.props(s.text)}>
-            {props.text?.split('\n').map((line, i) => <span key={i}>{line}</span>)}
-          </p>
-          <div>{props.children}</div>
-          <div {...stylex.props(s.actionButtons)}>
-            <Button onClick={onClickAccept}>{t('button.ok')}</Button>
-            {props.rejectText !== false ? (
-              <Button onClick={onClickReject}>{t('button.cancel')}</Button>
-            ) : null}
-          </div>
+        <p {...stylex.props(s.text)}>
+          {props.text?.split('\n').map((line, i) => <span key={i}>{line}</span>)}
+        </p>
+        <div>{props.children}</div>
+        <div {...stylex.props(s.actionButtons)}>
+          <Button onClick={onClickAccept}>{t('button.ok')}</Button>
+          {props.rejectText !== false ? (
+            <Button onClick={onClickReject}>{t('button.cancel')}</Button>
+          ) : null}
         </div>
-      </dialog>
+      </div>
+    </dialog>
   )
 }

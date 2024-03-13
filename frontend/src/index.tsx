@@ -7,7 +7,6 @@ import { I18nextProvider, initReactI18next } from 'react-i18next'
 
 import { App } from './App.tsx'
 
-
 import { loadLocalizationResources } from './i18n/utils'
 
 const root = document.getElementById('root')

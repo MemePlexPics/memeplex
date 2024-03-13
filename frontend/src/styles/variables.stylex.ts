@@ -1,5 +1,6 @@
 import stylex from '@stylexjs/stylex'
 
+const mobile = '@media (pointer: coarse)'
 const mobilePortrait =
   '@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait)'
 
@@ -29,6 +30,10 @@ export const size = stylex.defineVars({
   fontBig: {
     default: '30px',
     [mobilePortrait]: '36px',
+  },
+  fontHamburgerMenuIcon: {
+    default: '3em',
+    [mobile]: '4em',
   },
   memeEntity: '300px',
 })

@@ -83,7 +83,9 @@ export const ChannelBlock = (props: {
         <img
           className='avatar'
           src={imgSrc}
-          onError={e => { onError(e); }}
+          onError={e => {
+            onError(e)
+          }}
         />
         <span className='channel-name'>{props.title ? props.title : `@${props.username}`}</span>
       </Link>
