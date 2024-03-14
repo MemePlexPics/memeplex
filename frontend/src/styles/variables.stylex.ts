@@ -15,6 +15,7 @@ export const color = stylex.defineVars({
 
 export const size = stylex.defineVars({
   loader: '100px',
+  sidebarWidth: '288px',
   scrollToTop: {
     default: '60px',
     [mobilePortrait]: '10vw',

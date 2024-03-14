@@ -7,7 +7,8 @@ const mobilePortrait =
 
 export const s = stylex.create({
   results: {
-    display: 'flex',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
     flexWrap: 'wrap',
     gap: {
       default: '14px',

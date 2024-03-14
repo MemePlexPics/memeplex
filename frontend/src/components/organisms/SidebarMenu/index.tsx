@@ -41,12 +41,21 @@ export const SidebarMenu = () => {
       {!isFolded ? (
         <div {...stylex.props(s.content)}>
           <ul {...stylex.props(s.list, s.menu)}>
+            <li>
+              <NavLink
+                to='/'
+                activeStyle={s.activeLink}
+                stylexStyles={[s.link]}
+              >
+                {t('page.home')}
+              </NavLink>
+            </li>
             {localStorage.getItem('isAdmin') === '1' ? (
               <li>
                 <NavLink
                   to='/admin'
                   activeStyle={s.activeLink}
-                  stylexStyles={s.link}
+                  stylexStyles={[s.link]}
                 >
                   {t('page.admin')}
                 </NavLink>
@@ -56,7 +65,7 @@ export const SidebarMenu = () => {
               <NavLink
                 to='/channelList'
                 activeStyle={s.activeLink}
-                stylexStyles={s.link}
+                stylexStyles={[s.link]}
               >
                 {t('page.channelList')}
               </NavLink>
@@ -65,7 +74,7 @@ export const SidebarMenu = () => {
               <NavLink
                 to='/about'
                 activeStyle={s.activeLink}
-                stylexStyles={s.link}
+                stylexStyles={[s.link]}
               >
                 {t('page.about')}
               </NavLink>

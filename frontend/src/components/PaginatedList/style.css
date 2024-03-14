@@ -1,4 +1,4 @@
-ul {
+.list {
     display: grid;
     list-style: none;
     font-size: var(--font-size-normal);
@@ -7,13 +7,13 @@ ul {
 }
 
 .vertical {
-    ul {
+    .list {
         grid-template-columns: repeat(3, 33%);
     }
 }
 
 .horizontal {
-    ul {
+    .list {
         grid-auto-flow: column;
         margin: 0;
         padding: 10px 0;
@@ -22,14 +22,14 @@ ul {
 
 @media (orientation: portrait) {
     .vertical {
-        ul {
+        .list {
             grid-template-columns: repeat(2, 50%);
         }
     }
 }
 
 @media only screen and (hover: none) and (pointer: coarse) and (orientation: portrait) {
-    ul {
+    .list {
         list-style: none;
         font-size: var(--font-size-normal);
     }

@@ -7,6 +7,8 @@ export const s = stylex.create({
     flexDirection: 'column',
     padding: '40px 5vw 14px 5vw',
     width: '100%',
+    height: '100vh',
+    overflowX: 'scroll',
   },
   main: {
     display: 'flex',
@@ -19,3 +21,4 @@ export const s = stylex.create({
     height: '100%',
   },
 })
+
