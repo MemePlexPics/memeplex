@@ -23,7 +23,10 @@ export const s = stylex.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    width: size.sidebarWidth,
+    width: {
+      default: size.sidebarWidth,
+      [mobile]: 'initial',
+    },
   },
   list: {
     listStyle: 'none',
@@ -70,10 +73,6 @@ export const s = stylex.create({
     cursor: 'pointer',
     color: color.gray,
     fontSize: size.fontHamburgerMenuIcon,
-    display: {
-      default: 'none',
-      [mobile]: 'initial',
-    },
   },
   languageSelectorContainer: {
     fontSize: size.fontNormal,

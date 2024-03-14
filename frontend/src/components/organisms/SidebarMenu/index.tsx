@@ -31,13 +31,15 @@ export const SidebarMenu = () => {
       {...stylex.props(s.sidebar, isFolded ? null : s.isActive)}
       ref={sidebarRef}
     >
-      <FontAwesomeIcon
-        {...stylex.props(s.hamburger)}
-        icon={faBars}
-        onClick={() => {
-          setIsFolded(!isFolded)
-        }}
-      />
+      {isMobile ? (
+        <FontAwesomeIcon
+          {...stylex.props(s.hamburger)}
+          icon={faBars}
+          onClick={() => {
+            setIsFolded(!isFolded)
+          }}
+        />
+      ) : null}
       {!isFolded ? (
         <div {...stylex.props(s.content)}>
           <ul {...stylex.props(s.list, s.menu)}>
