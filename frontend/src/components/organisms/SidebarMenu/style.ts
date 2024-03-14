@@ -2,14 +2,14 @@ import stylex from '@stylexjs/stylex'
 
 import { color, size } from '@/styles/variables.stylex'
 
-const mobilePortrait = '@media (pointer: coarse)'
+const mobile = '@media (pointer: coarse)'
 
 export const s = stylex.create({
   sidebar: {
     display: 'flex',
     position: {
       default: 'relative',
-      [mobilePortrait]: 'fixed',
+      [mobile]: 'fixed',
     },
     left: 0,
     top: 0,
@@ -23,6 +23,7 @@ export const s = stylex.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    width: size.sidebarWidth,
   },
   list: {
     listStyle: 'none',
@@ -32,15 +33,15 @@ export const s = stylex.create({
   menu: {
     alignSelf: {
       default: 'center',
-      [mobilePortrait]: 'initial',
+      [mobile]: 'initial',
     },
     fontSize: {
       default: size.fontNormal,
-      [mobilePortrait]: size.fontBig,
+      [mobile]: size.fontBig,
     },
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px',
+    // gap: '8px',
     width: '100%',
   },
   link: {
@@ -56,6 +57,9 @@ export const s = stylex.create({
       background-color .3s,
       color .3s
     `,
+    backgroundColor: {
+      ':hover': color.darkGray,
+    },
   },
   activeLink: {
     color: color.black_1,
@@ -68,7 +72,7 @@ export const s = stylex.create({
     fontSize: size.fontHamburgerMenuIcon,
     display: {
       default: 'none',
-      [mobilePortrait]: 'initial',
+      [mobile]: 'initial',
     },
   },
   languageSelectorContainer: {

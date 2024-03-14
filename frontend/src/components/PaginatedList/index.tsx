@@ -25,7 +25,7 @@ export const PaginatedList = (props: {
         className={classNames('paginated-list', orientation, props.className)}
         ref={listRef}
       >
-        <ul>{props.children}</ul>
+        <ul className='list'>{props.children}</ul>
         {props.totalPages && props.totalPages > 1 ? (
           <Pagination
             page={props.page || 1}

@@ -9,7 +9,6 @@ export const s = stylex.create({
     paddingBottom: '50px',
     display: 'grid',
     width: '100%',
-    height: '100%',
     gap: '20px',
     gridTemplateAreas: {
       default: '"m d"',
@@ -21,7 +20,7 @@ export const s = stylex.create({
     position: 'relative',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'start',
   },
   memeImage: {
     width: '100%',

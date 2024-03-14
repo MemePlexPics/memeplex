@@ -1,9 +1,9 @@
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import stylex from '@stylexjs/stylex'
 import { useAtomValue } from 'jotai'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-
 import { Link } from 'react-router-dom'
 
 import { FeaturedChannelList, Loader, MemeSearchForm, MemeSearchResults } from '../../components'
@@ -12,20 +12,16 @@ import { FilterMemes } from '../../components/molecules'
 import { useMeta, useTitle } from '../../hooks'
 
 import { pageOptionsAtom } from '../../store/atoms'
-import { calculateHowManyObjectFit } from '../../utils'
 
 import { useMemes } from './hooks/useMemes'
 
-import './style.css'
+import { s } from './style'
 
 export const HomePage = () => {
   const { t } = useTranslation()
   const [query, setQuery] = useState(useAtomValue(pageOptionsAtom).query)
   const data = useMemes(query)
   const { title } = useTitle([])
-  const visualMemesContainerWidth = useRef(
-    calculateHowManyObjectFit(window.innerWidth * 0.9, 300, 14).supposedWidth,
-  )
 
   useMeta([
     {
@@ -51,29 +47,17 @@ export const HomePage = () => {
   ])
 
   return (
-    <>
-      <MemeSearchForm
-        query={query}
-        onUpdate={query => {
-          setQuery(query)
-        }}
-      />
+    <div {...stylex.props(s.homePage)}>
+      <MemeSearchForm query={query} onUpdate={setQuery} />
       {!query ? (
-        <div
-          style={{
-            width:
-              window.screen.orientation.type !== 'portrait-primary'
-                ? visualMemesContainerWidth.current
-                : undefined,
-          }}
-        >
-          <div className='featured-channels'>
-            <div className='featured-channels-head'>
-              <h3 className='featured-channels-header'>{t('label.featuredChannels')}</h3>
+        <div>
+          <div {...stylex.props(s.featuredChannels)}>
+            <div {...stylex.props(s.featuredChannelsHead)}>
+              <h3 {...stylex.props(s.featuredChannelsHeader)}>{t('label.featuredChannels')}</h3>
               <Link
                 to='https://t.me/memeplex_pics/20'
                 target='_blank'
-                className='add-your-channel-link'
+                {...stylex.props(s.addYourChannelLink)}
               >
                 <FontAwesomeIcon icon={faPlus} />
                 {t('button.addYourChannelToFavorite')}
@@ -84,16 +68,13 @@ export const HomePage = () => {
           <FilterMemes />
         </div>
       ) : null}
-      <Loader
-        state={data.isLoading}
-        overPage
-      />
+      <Loader state={data.isLoading} overPage />
       {data.isLoaded && !data.memes.length ? (
-        <p className='nothing-found'>{t('label.nothingFound')}</p>
+        <p {...stylex.props(s.nothingFound)}>{t('label.nothingFound')}</p>
       ) : data.memes.length ? (
         <MemeSearchResults memes={data.memes} />
       ) : null}
-      {data.isError ? <p className='error-response'>{t('label.errorOccured')}</p> : null}
-    </>
+      {data.isError ? <p {...stylex.props(s.errorResponse)}>{t('label.errorOccured')}</p> : null}
+    </div>
   )
 }

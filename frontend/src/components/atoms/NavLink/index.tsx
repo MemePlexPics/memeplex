@@ -1,4 +1,5 @@
 import stylex, { StyleXStyles } from '@stylexjs/stylex'
+import { CompiledStyles, InlineStyles, StyleXArray } from '@stylexjs/stylex/lib/StyleXTypes'
 import { Link, LinkProps, useLocation } from 'react-router-dom'
 
 export const NavLink = ({
@@ -7,7 +8,11 @@ export const NavLink = ({
   ...props
 }: {
   activeStyle?: StyleXStyles
-  stylexStyles?: StyleXStyles
+  stylexStyles?: readonly StyleXArray<
+    | (null | undefined | CompiledStyles)
+    | boolean
+    | Readonly<[CompiledStyles, InlineStyles]>
+  >[]
 } & LinkProps) => {
   const { pathname } = useLocation()
 
