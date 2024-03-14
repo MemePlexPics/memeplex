@@ -165,7 +165,7 @@ export const MemePage = () => {
   const onClickDeleteChannelMemes = () => {
     if (!request.data) return
     setDialog({
-      text: `${t('notification.removeChannelMemes')} @${request.data.channel}?`,
+      text: t('notification.removeChannelMemes', { channel: request.data.channel }),
       isOpen: true,
       children: <InputPassword />,
       onClickAccept: () => {

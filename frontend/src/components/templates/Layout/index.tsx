@@ -16,7 +16,7 @@ import { SidebarMenu } from '@/components/organisms'
 export const Layout = () => (
   <>
     <SidebarMenu />
-    <div {...stylex.props(s.content)}>
+    <div id='site-content' {...stylex.props(s.content)}>
       <Logo />
       <main {...stylex.props(s.main)}>
         <Outlet />
