@@ -9,9 +9,7 @@ export const NavLink = ({
 }: {
   activeStyle?: StyleXStyles
   stylexStyles?: readonly StyleXArray<
-    | (null | undefined | CompiledStyles)
-    | boolean
-    | Readonly<[CompiledStyles, InlineStyles]>
+    null | undefined | CompiledStyles | boolean | Readonly<[CompiledStyles, InlineStyles]>
   >[]
 } & LinkProps) => {
   const { pathname } = useLocation()
