@@ -24,5 +24,5 @@ export const useInfinityScroll: TUseInfinityScroll = (callback, options) => {
     )
   }
 
-  useEventListener('scroll', onScroll)
+  useEventListener('scroll', onScroll, options?.element )
 }
