@@ -10,7 +10,7 @@ export const useInfinityScroll: TUseInfinityScroll = (callback, options) => {
   const scrollDebounceTimer = useRef<number>(0)
 
   const onScroll = () => {
-    const remainPxToUpdate = options?.remainPxToUpdate || isPortraitOrientation() ? 5000 : 150
+    const remainPxToUpdate = options?.remainPxToUpdate ?? isPortraitOrientation() ? 5000 : 150
     const element = options?.element || document.documentElement
     const isScrolledDownEnough =
       element.scrollTop + element.clientHeight >= element.scrollHeight - remainPxToUpdate
@@ -20,7 +20,7 @@ export const useInfinityScroll: TUseInfinityScroll = (callback, options) => {
     clearTimeout(scrollDebounceTimer.current)
     scrollDebounceTimer.current = setTimeout(
       () => callback(element.scrollTop),
-      options?.debouncerMs || 300,
+      options?.debouncerMs ?? 300,
     )
   }
 

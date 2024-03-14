@@ -104,7 +104,7 @@ export const useMemes = (query: string) => {
 
   const handleAutoUpdates = () =>
     setInterval(() => {
-      const isScrollOnTop = document.documentElement.scrollTop === 0
+      const isScrollOnTop = document.getElementById('site-content')?.scrollTop === 0
       if (isScrollOnTop) setOperation(() => EMemesOperation.UPDATE)
     }, latestUpdateTime)
 
@@ -166,7 +166,7 @@ export const useMemes = (query: string) => {
 
   useInfinityScroll(() => {
     setOperation(() => EMemesOperation.NEXT)
-  })
+  }, { element: document.getElementById('site-content') })
 
   return {
     memes,
