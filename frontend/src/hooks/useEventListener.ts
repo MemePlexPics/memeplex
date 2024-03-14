@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 export const useEventListener = <GEvent extends Event = Event>(
   eventType: keyof WindowEventMap,
   callback: (event: GEvent) => void,
-  element?: HTMLElement | Window,
+  element?: HTMLElement | Window | null,
   options?: boolean | AddEventListenerOptions,
   dependencies?: unknown[],
 ) => {
@@ -25,5 +25,5 @@ export const useEventListener = <GEvent extends Event = Event>(
     return () => {
       targetElement.removeEventListener(eventType, handler as EventListenerOrEventListenerObject)
     }
-  }, [eventType, element, ...(dependencies || [])])
+  }, [eventType, element, ...(dependencies ?? [])])
 }
