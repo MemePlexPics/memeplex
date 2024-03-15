@@ -18,7 +18,6 @@ export const Notification = (props: INotificationProps) => {
 
   return (
     <div
-      key={props.key}
       className={classNames('notification', props.type)}
       onClick={() => props.onClose?.()}
     >

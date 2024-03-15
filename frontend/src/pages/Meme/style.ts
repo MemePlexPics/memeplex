@@ -30,6 +30,7 @@ export const s = stylex.create({
     padding: '20px',
     backgroundColor: color.black_1,
     borderRadius: '14px',
+    alignSelf: 'center',
   },
   trashIcon: {
     height: '100px',

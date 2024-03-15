@@ -2,7 +2,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import stylex from '@stylexjs/stylex'
 import { useAtomValue } from 'jotai'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 
@@ -17,11 +17,16 @@ import { useMemes } from './hooks/useMemes'
 
 import { s } from './style'
 
+import { calculateHowManyObjectFit } from '@/utils'
+
 export const HomePage = () => {
   const { t } = useTranslation()
   const [query, setQuery] = useState(useAtomValue(pageOptionsAtom).query)
   const data = useMemes(query)
   const { title } = useTitle([])
+  const visualMemesContainerWidth = useRef(
+    calculateHowManyObjectFit((window.innerWidth - 288) * 0.9, 300, 14).supposedWidth,
+  )
 
   useMeta([
     {
@@ -50,7 +55,12 @@ export const HomePage = () => {
     <div {...stylex.props(s.homePage)}>
       <MemeSearchForm query={query} onUpdate={setQuery} />
       {!query ? (
-        <div>
+        <div style={{
+          width: window.screen.orientation.type !== 'portrait-primary'
+            ? visualMemesContainerWidth.current
+            : undefined,
+          }}
+        >
           <div {...stylex.props(s.featuredChannels)}>
             <div {...stylex.props(s.featuredChannelsHead)}>
               <h3 {...stylex.props(s.featuredChannelsHeader)}>{t('label.featuredChannels')}</h3>

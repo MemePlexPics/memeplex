@@ -9,7 +9,7 @@ import { s } from './style'
 
 import { NavLink } from '@/components/atoms'
 import { LanguageSelector } from '@/components/molecules'
-import { isMobile } from '@/constants'
+import { isMobile, isOrientationPortrait } from '@/constants'
 import { useClickOutside } from '@/hooks'
 
 export const SidebarMenu = () => {
@@ -17,13 +17,14 @@ export const SidebarMenu = () => {
   const [isFolded, setIsFolded] = useState(isMobile)
   const sidebarRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
+  const isFoldable = isMobile || isOrientationPortrait
 
   useClickOutside(sidebarRef, () => {
-    if (isMobile) setIsFolded(true)
+    if (isFoldable) setIsFolded(true)
   })
 
   useEffect(() => {
-    if (isMobile) setIsFolded(true)
+    if (isFoldable) setIsFolded(true)
   }, [location])
 
   return (
@@ -31,7 +32,7 @@ export const SidebarMenu = () => {
       {...stylex.props(s.sidebar, isFolded ? null : s.isActive)}
       ref={sidebarRef}
     >
-      {isMobile ? (
+      {isFoldable ? (
         <FontAwesomeIcon
           {...stylex.props(s.hamburger)}
           icon={faBars}
