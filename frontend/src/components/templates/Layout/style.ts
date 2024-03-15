@@ -8,7 +8,7 @@ export const s = stylex.create({
     padding: '40px 5vw 14px 5vw',
     width: '100%',
     height: '100vh',
-    overflowX: 'scroll',
+    overflowY: 'scroll',
   },
   main: {
     display: 'flex',

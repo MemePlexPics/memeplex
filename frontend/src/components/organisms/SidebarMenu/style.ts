@@ -2,7 +2,8 @@ import stylex from '@stylexjs/stylex'
 
 import { color, size } from '@/styles/variables.stylex'
 
-const mobile = '@media (pointer: coarse)'
+const mobile = '@media (pointer: coarse) and (orientation:portrait)'
+const portrait = '@media (orientation:portrait)'
 
 export const s = stylex.create({
   sidebar: {
@@ -10,6 +11,7 @@ export const s = stylex.create({
     position: {
       default: 'relative',
       [mobile]: 'fixed',
+      [portrait]: 'fixed',
     },
     left: 0,
     top: 0,
@@ -44,7 +46,6 @@ export const s = stylex.create({
     },
     display: 'flex',
     flexDirection: 'column',
-    // gap: '8px',
     width: '100%',
   },
   link: {

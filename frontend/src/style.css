@@ -57,5 +57,5 @@ body {
 #root {
     display: flex;
     font-family: OpenSans, sans-serif;
-    overflow-x: hidden;
+    overflow: hidden;
 }
