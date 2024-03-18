@@ -149,6 +149,9 @@ export async function chooseRandomOCRSpaceKey() {
     const mysql = await getMysqlClient();
     // Select a random key without timeout or with the early date
     const keys = await getRandomKey(mysql);
+    if (!keys.length) {
+        throw new Error('❌ There are no keys without timeout');
+    }
     const keyData = keys[0];
     const finalKeyData = {
         key: keyData.ocr_key,
