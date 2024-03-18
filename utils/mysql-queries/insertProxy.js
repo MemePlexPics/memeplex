@@ -19,6 +19,14 @@ export async function insertProxy(
             last_check_datetime
         ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `,
-        [address, protocol, availability, anonimity, speed, lastActivityDatetime, lastActivityDatetime],
+        [
+            address,
+            protocol,
+            availability,
+            anonimity,
+            speed,
+            lastActivityDatetime,
+            lastActivityDatetime,
+        ],
     );
 }

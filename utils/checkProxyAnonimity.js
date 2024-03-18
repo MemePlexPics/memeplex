@@ -18,7 +18,10 @@ export const checkProxyAnonimity = async (ownIp, protocol, ip, port) => {
             if (value.includes(ownIp)) {
                 hasOriginalIP = true;
             }
-            if (header.toLowerCase().includes('via') || value.toLowerCase().includes('proxy')) {
+            if (
+                header.toLowerCase().includes('via') ||
+                value.toLowerCase().includes('proxy')
+            ) {
                 hasProxyIndicator = true;
             }
         });

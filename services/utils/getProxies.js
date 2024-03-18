@@ -16,23 +16,27 @@ export const getProxies = async () => {
     const regex = /\b(?:\d{1,3}\.){3}\d{1,3}:\d{1,5}\b/g;
 
     for (const [protocol, proxyLists] of Object.entries(PROXY_LIST_API_URLS)) {
-        if (!proxiesByProtocol[protocol]) proxiesByProtocol[protocol] = new Set();
+        if (!proxiesByProtocol[protocol])
+            proxiesByProtocol[protocol] = new Set();
         for (const proxyList of proxyLists) {
             const proxies = await getProxyList(proxyList);
             if (proxies === null) return;
             const matches = proxies.match(regex);
-            matches?.forEach(proxy => proxiesByProtocol[protocol].add(proxy));
-        };
-    };
-    return Object.entries(proxiesByProtocol).reduce((acc, [protocol, proxyList]) => {
-        proxyList.forEach(proxy => {
-            const [ip, port] = proxy.split(':');
-            acc.push({
-                ip,
-                port,
-                protocol,
+            matches?.forEach((proxy) => proxiesByProtocol[protocol].add(proxy));
+        }
+    }
+    return Object.entries(proxiesByProtocol).reduce(
+        (acc, [protocol, proxyList]) => {
+            proxyList.forEach((proxy) => {
+                const [ip, port] = proxy.split(':');
+                acc.push({
+                    ip,
+                    port,
+                    protocol,
+                });
             });
-        });
-        return acc;
-    }, []);
+            return acc;
+        },
+        [],
+    );
 };
