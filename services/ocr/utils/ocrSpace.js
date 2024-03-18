@@ -29,21 +29,31 @@ export async function ocrSpace(input, options = {}) {
         throw Error('Param input is required and must be typeof string');
     }
     const {
-        apiKey, ocrUrl, language, isOverlayRequired,
-        filetype, detectOrientation, isCreateSearchablePdf,
-        isSearchablePdfHideTextLayer, scale, isTable, OCREngine,
-        host, port, protocol
+        apiKey,
+        ocrUrl,
+        language,
+        isOverlayRequired,
+        filetype,
+        detectOrientation,
+        isCreateSearchablePdf,
+        isSearchablePdfHideTextLayer,
+        scale,
+        isTable,
+        OCREngine,
+        host,
+        port,
+        protocol,
     } = options;
     const formData = new FormData();
     const detectedInput = detectInput(input);
     switch (detectedInput) {
-    case 'file':
-        formData.append('file', fs.createReadStream(input));
-        break;
-    case 'url':
-    case 'base64Image':
-        formData.append(detectedInput, input);
-        break;
+        case 'file':
+            formData.append('file', fs.createReadStream(input));
+            break;
+        case 'url':
+        case 'base64Image':
+            formData.append(detectedInput, input);
+            break;
     }
     formData.append('language', String(language || 'eng'));
     formData.append('isOverlayRequired', String(isOverlayRequired || 'false'));
@@ -51,8 +61,14 @@ export async function ocrSpace(input, options = {}) {
         formData.append('filetype', String(filetype));
     }
     formData.append('detectOrientation', String(detectOrientation || 'false'));
-    formData.append('isCreateSearchablePdf', String(isCreateSearchablePdf || 'false'));
-    formData.append('isSearchablePdfHideTextLayer', String(isSearchablePdfHideTextLayer || 'false'));
+    formData.append(
+        'isCreateSearchablePdf',
+        String(isCreateSearchablePdf || 'false'),
+    );
+    formData.append(
+        'isSearchablePdfHideTextLayer',
+        String(isSearchablePdfHideTextLayer || 'false'),
+    );
     formData.append('scale', String(scale || 'false'));
     formData.append('isTable', String(isTable || 'false'));
     formData.append('OCREngine', String(OCREngine || '1'));
@@ -70,10 +86,14 @@ export async function ocrSpace(input, options = {}) {
     if (protocol === 'http') {
         request.proxy = {
             host,
-            port
+            port,
         };
     } else {
-        request.httpAgent = new SocksProxyAgent(`socks://${host}:${port}`, { protocol });
+        request.httpAgent = new SocksProxyAgent(`socks://${host}:${port}`, {
+            protocol,
+            proxy: false,
+        });
+        request.httpsAgent = request.httpAgent;
     }
     const response = await axios(request);
     return response.data;
