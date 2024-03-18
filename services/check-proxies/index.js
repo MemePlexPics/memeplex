@@ -18,7 +18,7 @@ const checkProxyArray = async (mysql, proxies, ipWithoutProxy, logger) => {
 };
 
 export const checkProxies = async (logger) => {
-    let amqp, checkProxyCh;
+    let amqp, checkProxyCh, timeoutId;
     let msg;
     try {
         const mysql = await getMysqlClient();
@@ -31,6 +31,9 @@ export const checkProxies = async (logger) => {
 
         const ipWithoutProxyResponse = await fetch('https://api64.ipify.org');
         const ipWithoutProxy = await ipWithoutProxyResponse.text();
+        checkProxyCh.on('ack', () => {
+            clearTimeout(timeoutId);
+        });
 
         for (;;) {
             msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL);
@@ -65,13 +68,10 @@ export const checkProxies = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
-            const timeoutId = setTimeout(
+            timeoutId = setTimeout(
                 () => handleNackByTimeout(logger, msg, checkProxyCh),
                 60_000,
             );
-            checkProxyCh.on('ack', () => {
-                clearTimeout(timeoutId);
-            });
 
             const { action, ...payload } = JSON.parse(msg.content.toString());
             if (action === 'add') {
@@ -82,10 +82,6 @@ export const checkProxies = async (logger) => {
             }
             checkProxyCh.ack(msg);
         }
-    } catch (e) {
-        if (!msg || !checkProxyCh) return;
-        checkProxyCh.nack(msg);
-        throw e;
     } finally {
         if (checkProxyCh) checkProxyCh.close();
         if (amqp) amqp.close();
