@@ -11,6 +11,9 @@
 - Infinite scrolling
 - Layout of search results
 - No unwanted scrollbars or overlaps
+   + featured channels
+   + main page
+   + main page while the content is loading
 - Admin panel
 
 ## Admin Panel Functionality:
