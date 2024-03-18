@@ -16,7 +16,7 @@ export const checkProxy = async (proxy, ownIp, logger) => {
         isValid ? new Date() : new Date(0),
     );
     const result = {
-        anonimity: anonymityLevel,
+        anonymity: anonymityLevel,
         availability: isValid,
         speed: proxy.speed || null,
         lastCheckDatetime,

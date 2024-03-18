@@ -28,7 +28,7 @@ const createTables = async () => {
             address VARCHAR(64) NOT NULL,
             protocol VARCHAR(10) NOT NULL,
             availability BOOLEAN NOT NULL,
-            anonimity VARCHAR(12) NULL,
+            anonymity VARCHAR(12) NULL,
             ocr_key VARCHAR(255) NULL,
             speed INT NULL,
             last_activity_datetime DATETIME NOT NULL,

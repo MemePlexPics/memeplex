@@ -3,7 +3,7 @@ export async function updateProxy(
     address,
     protocol,
     availability,
-    anonimity,
+    anonymity,
     speed,
     lastCheckDatetime,
 ) {
@@ -13,12 +13,12 @@ export async function updateProxy(
         SET
             availability = ?,
             speed = ?,
-            anonimity = ?,
+            anonymity = ?,
             last_check_datetime = ?
         WHERE
             address = ?
             AND protocol = ?
     `,
-        [availability, speed, anonimity, lastCheckDatetime, address, protocol],
+        [availability, speed, anonymity, lastCheckDatetime, address, protocol],
     );
 }

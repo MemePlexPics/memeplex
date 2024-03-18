@@ -3,7 +3,7 @@ export async function insertProxy(
     address,
     protocol,
     availability,
-    anonimity,
+    anonymity,
     speed,
     lastActivityDatetime,
 ) {
@@ -13,7 +13,7 @@ export async function insertProxy(
             address,
             protocol,
             availability,
-            anonimity,
+            anonymity,
             speed,
             last_activity_datetime,
             last_check_datetime
@@ -23,7 +23,7 @@ export async function insertProxy(
             address,
             protocol,
             availability,
-            anonimity,
+            anonymity,
             speed,
             lastActivityDatetime,
             lastActivityDatetime,
