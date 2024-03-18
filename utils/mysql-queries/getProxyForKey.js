@@ -8,7 +8,9 @@ export async function getProxyForKey(mysql, key) {
                 protocol,
                 speed
             FROM proxies
-            WHERE availability = 1
+            WHERE
+                anonimity IN ('anonymous', 'elite')
+                AND availability = 1
                 AND ocr_key = ?
             ORDER BY speed LIMIT 1
         `,
@@ -21,7 +23,9 @@ export async function getProxyForKey(mysql, key) {
                 protocol,
                 speed
             FROM proxies
-            WHERE availability = 1
+            WHERE
+                anonimity IN ('anonymous', 'elite')
+                AND availability = 1
                 AND ocr_key IS NULL
             ORDER BY speed LIMIT 1
         `);

@@ -27,7 +27,6 @@ export const downloader = async (logger) => {
         for (;;) {
             msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
             if (!msg) {
-                logger.info('Queue is empty');
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }

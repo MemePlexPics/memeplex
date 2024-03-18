@@ -1,6 +1,6 @@
-import { tgParser, downloader, ocr } from '../index.js';
+import { tgParser, downloader, ocr, checkProxies } from '../index.js';
 import { CYCLE_SLEEP_TIMEOUT } from '../../constants/index.js';
-import { findNewProxies, checkProxies } from '../utils/index.js';
+import { findNewProxies } from '../utils/index.js';
 
 export const serviceSettings = [
     {
@@ -21,15 +21,12 @@ export const serviceSettings = [
     {
         name: 'proxy-checker',
         service: checkProxies,
-        loggerSettings: {
-            afterCallbackDelayMs: 1000 * 60 * 60, // Once in 1 hr
-        },
     },
     {
         name: 'proxy-finder',
         service: findNewProxies,
         loggerSettings: {
-            afterCallbackDelayMs: 1000 * 60 * 60 * 6, // Once in 6 hr
+            afterCallbackDelayMs: 1000 * 60 * 60,
         },
     },
 ];

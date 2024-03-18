@@ -2,12 +2,8 @@ import 'dotenv/config';
 import { Client } from '@elastic/elasticsearch';
 import mysql from 'mysql2/promise';
 import process from 'process';
-import { performance } from 'perf_hooks';
-import axios from 'axios';
 import { promises as fs } from 'fs';
-import { SocksProxyAgent } from 'socks-proxy-agent';
 
-import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from '../constants/index.js';
 import { getProxyForKey, getRandomKey } from '../utils/mysql-queries/index.js';
 import { InfoMessage } from './custom-errors.js';
 
@@ -15,6 +11,9 @@ export { InfoMessage } from './custom-errors.js';
 export { getTgChannelName } from './getTgChannelName.js';
 export { downloadFile } from './downloadFile.js';
 export { shuffleArray } from './shuffleArray.js';
+export { getProxySpeed } from './getProxySpeed.js';
+export { insertProxyToRequest } from './insertProxyToRequest.js';
+export { checkProxyAnonimity } from './checkProxyAnonimity.js';
 
 // TODO: split into files?
 export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -167,53 +166,3 @@ export async function chooseRandomOCRSpaceKey() {
     );
     return finalKeyData;
 }
-
-export const getProxySpeed = async (
-    ip,
-    port,
-    protocol,
-    repeats = 1,
-    logger,
-) => {
-    const proxy = `${ip}:${port}`;
-    const requestOptions = {
-        timeout: PROXY_TEST_TIMEOUT,
-    };
-    try {
-        if (protocol === 'http') {
-            requestOptions.proxy = {
-                host: ip,
-                port,
-            };
-        } else {
-            requestOptions.httpAgent = new SocksProxyAgent(`socks://${proxy}`, {
-                protocol,
-            });
-        }
-        const axiosClient = axios.create(requestOptions);
-        const measuredSpeeds = [];
-        for (let i = 0; i < repeats; i++) {
-            const start = performance.now();
-            const response = await axiosClient.get(PROXY_TESTING_FILE);
-            const end = performance.now();
-
-            if (response.status != 200)
-                throw new Error(`status ${response.status}`, response?.data);
-
-            measuredSpeeds.push(end - start);
-        }
-        const speed =
-            measuredSpeeds.reduce((acc, speed) => acc + speed, 0) / repeats;
-        const roundedSpeed = parseInt(speed);
-        logger.verbose(
-            `✅ Proxy ${proxy} (${protocol}) is working. Average response time: ${roundedSpeed}ms`,
-        );
-
-        return roundedSpeed;
-    } catch (error) {
-        logger.verbose(
-            `❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`,
-        );
-        return;
-    }
-};

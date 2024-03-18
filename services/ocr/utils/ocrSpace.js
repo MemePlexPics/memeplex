@@ -5,7 +5,7 @@
 import * as fs from 'fs';
 import axios from 'axios';
 import FormData from 'form-data';
-import { SocksProxyAgent } from 'socks-proxy-agent';
+import { insertProxyToRequest } from '../../../utils/index.js';
 
 /**
  * Detect the input type between url, file path or base64 image
@@ -83,16 +83,7 @@ export async function ocrSpace(input, options = {}) {
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
     };
-    if (protocol === 'http') {
-        request.proxy = {
-            host,
-            port,
-        };
-    } else {
-        request.httpAgent = new SocksProxyAgent(`socks://${host}:${port}`, {
-            protocol,
-        });
-    }
+    insertProxyToRequest(request, protocol, host, port);
     const response = await axios(request);
     return response.data;
 }

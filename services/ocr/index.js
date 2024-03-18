@@ -27,7 +27,6 @@ export const ocr = async (logger) => {
         for (;;) {
             msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
             if (!msg) {
-                logger.info('Queue is empty');
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
