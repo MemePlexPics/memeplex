@@ -6,7 +6,7 @@ export async function getRandomKey(mysql) {
         FROM ocr_keys
         WHERE
             timeout IS NULL
-            OR timeout > DATE_ADD(NOW(), INTERVAL 55 MINUTE)
+            OR timeout < DATE_ADD(NOW(), INTERVAL 55 MINUTE)
         ORDER BY
             RAND()
         LIMIT 1
