@@ -15,11 +15,11 @@ export const recogniseTextOcrSpace = async (fileName, language, logger) => {
     let res;
     const {
         key: apiKey,
-        timeout,
+        // timeout,
         proxy,
         protocol,
     } = await chooseRandomOCRSpaceKey();
-    if (timeout) handleTimeout(apiKey, timeout, logger);
+    // if (timeout) handleTimeout(apiKey, timeout, logger);
     const mysql = await getMysqlClient();
     try {
         try {
