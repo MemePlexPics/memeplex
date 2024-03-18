@@ -13,7 +13,7 @@ import { buildImagePath } from './utils/index.js';
 import { isFileIgnored } from './utils/index.js';
 
 export const downloader = async (logger) => {
-    let amqp, sendImageFileCh, receiveImageDataCh;
+    let amqp, sendImageFileCh, receiveImageDataCh, timeoutId;
     let msg;
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
@@ -23,6 +23,9 @@ export const downloader = async (logger) => {
         await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, {
             durable: true,
         });
+        receiveImageDataCh.on('ack', () => {
+            clearTimeout(timeoutId);
+        });
 
         for (;;) {
             msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
@@ -30,13 +33,10 @@ export const downloader = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
-            const timeoutId = setTimeout(
+            timeoutId = setTimeout(
                 () => handleNackByTimeout(logger, msg, receiveImageDataCh),
                 600_000,
             );
-            receiveImageDataCh.on('ack', () => {
-                clearTimeout(timeoutId);
-            });
             const payload = JSON.parse(msg.content.toString());
             const destination = await buildImagePath(payload);
 
