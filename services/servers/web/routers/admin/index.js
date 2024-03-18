@@ -11,7 +11,6 @@ import {
     memeStatePut,
     channelMemesStatePut,
 } from './methods/index.js';
-import { setLogAction } from './utils/index.js';
 
 export const adminRouter = express.Router();
 
