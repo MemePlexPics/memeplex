@@ -2,9 +2,7 @@
 import process from 'process';
 import amqplib from 'amqplib';
 import { getMysqlClient } from '../../utils/index.js';
-import {
-    findExistedProxy,
-} from '../../utils/mysql-queries/index.js';
+import { findExistedProxy } from '../../utils/mysql-queries/index.js';
 import { AMQP_CHECK_PROXY_CHANNEL } from '../../constants/index.js';
 import { getProxies } from './index.js';
 
@@ -30,12 +28,12 @@ export const findNewProxies = async (logger) => {
                 `💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`,
             );
 
-            const proxyData = Buffer.from(JSON.stringify({ action: 'add', proxy }));
-            checkProxyCh.sendToQueue(
-                AMQP_CHECK_PROXY_CHANNEL,
-                proxyData,
-                { persistent: true },
+            const proxyData = Buffer.from(
+                JSON.stringify({ action: 'add', proxy }),
             );
+            checkProxyCh.sendToQueue(AMQP_CHECK_PROXY_CHANNEL, proxyData, {
+                persistent: true,
+            });
         }
         logger.info('💬 Looking completed');
     } finally {

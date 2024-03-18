@@ -117,7 +117,12 @@ app.get('/getChannelList', async (req, res) => {
         onlyAvailable,
         name: filter,
     };
-    const channels = await getChannels(mysql, page, CHANNEL_LIST_PAGE_SIZE, filters);
+    const channels = await getChannels(
+        mysql,
+        page,
+        CHANNEL_LIST_PAGE_SIZE,
+        filters,
+    );
     const count = await getChannelsCount(mysql, filters);
     return res.send({
         result: channels,

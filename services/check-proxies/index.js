@@ -13,7 +13,15 @@ import { insertProxy, updateProxy } from '../../utils/mysql-queries/index.js';
 const checkProxyArray = async (mysql, proxies, ipWithoutProxy, logger) => {
     for (const proxy of proxies) {
         const result = await checkProxy(proxy, ipWithoutProxy, logger);
-        await updateProxy(mysql, proxy.ip, proxy.protocol, result.availability, result.anonimity, result.speed, result.lastCheckDatetime);
+        await updateProxy(
+            mysql,
+            proxy.ip,
+            proxy.protocol,
+            result.availability,
+            result.anonimity,
+            result.speed,
+            result.lastCheckDatetime,
+        );
     }
 };
 
@@ -76,9 +84,17 @@ export const checkProxies = async (logger) => {
             const { action, ...payload } = JSON.parse(msg.content.toString());
             if (action === 'add') {
                 const { proxy } = payload;
-                console.log({action, ...proxy});
+                console.log({ action, ...proxy });
                 const result = await checkProxy(proxy, ipWithoutProxy, logger);
-                await insertProxy(mysql, `${proxy.ip}:${proxy.port}`, proxy.protocol, result.availability, result.anonimity, result.speed, result.lastCheckDatetime);
+                await insertProxy(
+                    mysql,
+                    `${proxy.ip}:${proxy.port}`,
+                    proxy.protocol,
+                    result.availability,
+                    result.anonimity,
+                    result.speed,
+                    result.lastCheckDatetime,
+                );
             }
             checkProxyCh.ack(msg);
         }

@@ -53,12 +53,17 @@ export const HomePage = () => {
 
   return (
     <div {...stylex.props(s.homePage)}>
-      <MemeSearchForm query={query} onUpdate={setQuery} />
+      <MemeSearchForm
+        query={query}
+        onUpdate={setQuery}
+      />
       {!query ? (
-        <div style={{
-          width: window.screen.orientation.type !== 'portrait-primary'
-            ? visualMemesContainerWidth.current
-            : undefined,
+        <div
+          style={{
+            width:
+              window.screen.orientation.type !== 'portrait-primary'
+                ? visualMemesContainerWidth.current
+                : undefined,
           }}
         >
           <div {...stylex.props(s.featuredChannels)}>
@@ -78,7 +83,10 @@ export const HomePage = () => {
           <FilterMemes />
         </div>
       ) : null}
-      <Loader state={data.isLoading} overPage />
+      <Loader
+        state={data.isLoading}
+        overPage
+      />
       {data.isLoaded && !data.memes.length ? (
         <p {...stylex.props(s.nothingFound)}>{t('label.nothingFound')}</p>
       ) : data.memes.length ? (

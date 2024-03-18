@@ -164,9 +164,12 @@ export const useMemes = (query: string) => {
     else getLatest()
   }, [operation])
 
-  useInfinityScroll(() => {
-    setOperation(() => EMemesOperation.NEXT)
-  }, { element: document.getElementById('site-content') })
+  useInfinityScroll(
+    () => {
+      setOperation(() => EMemesOperation.NEXT)
+    },
+    { element: document.getElementById('site-content') },
+  )
 
   return {
     memes,

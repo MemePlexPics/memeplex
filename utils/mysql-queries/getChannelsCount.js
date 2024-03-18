@@ -7,9 +7,12 @@ export const getChannelsCount = async (mysql, { onlyAvailable, name }) => {
         ? `WHERE ${filters.join(' AND ')}`
         : '';
 
-    const [[results]] = await mysql.query(`
+    const [[results]] = await mysql.query(
+        `
         SELECT COUNT(*) FROM channels
         ${mysql.escapeId(filterString)}
-    `, [filterString]);
+    `,
+        [filterString],
+    );
     return results['COUNT(*)'];
 };

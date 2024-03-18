@@ -10,14 +10,14 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
                 channelName: [],
             },
         };
-        filterObject.channel.forEach(channel => {
-            if (typeof channel === 'string') additionalFilter.must.terms.channelName.push(channel);
+        filterObject.channel.forEach((channel) => {
+            if (typeof channel === 'string')
+                additionalFilter.must.terms.channelName.push(channel);
         });
     }
     if (filterObject?.not?.state !== null) {
-        const state = typeof filterObject?.state === 'number'
-            ? filterObject.state
-            : 1;
+        const state =
+            typeof filterObject?.state === 'number' ? filterObject.state : 1;
         additionalFilter.must_not = {
             term: {
                 state,

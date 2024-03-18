@@ -5,7 +5,7 @@ export async function updateProxy(
     availability,
     anonimity,
     speed,
-    lastCheckDatetime
+    lastCheckDatetime,
 ) {
     await mysql.query(
         `

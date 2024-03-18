@@ -5,10 +5,10 @@ export const channelMemesStatePut = async (req, res) => {
     const client = req.app.get('elasticClient');
     const { channel, state } = req.body;
     if (
-        !channel
-        || !state
-        || typeof channel !== 'string'
-        || typeof state !== 'number'
+        !channel ||
+        !state ||
+        typeof channel !== 'string' ||
+        typeof state !== 'number'
     )
         return res.status(500).send();
     await setChannelMemesState(client, channel, state);

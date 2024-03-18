@@ -63,7 +63,8 @@ export const recogniseTextOcrSpace = async (fileName, language, logger) => {
             throw error;
         }
 
-        if (res.IsErroredOnProcessing) throw new Error(res?.ErrorMessage?.join());
+        if (res.IsErroredOnProcessing)
+            throw new Error(res?.ErrorMessage?.join());
 
         if (!Array.isArray(res?.ParsedResults)) {
             await updateProxyAvailability(mysql, proxy, protocol, false);
