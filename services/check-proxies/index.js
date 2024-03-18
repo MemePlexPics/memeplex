@@ -17,7 +17,7 @@ const checkProxyArray = async (mysql, proxies, ipWithoutProxy, logger) => {
             `${proxy.ip}:${proxy.port}`,
             proxy.protocol,
             result.availability,
-            result.anonimity,
+            result.anonymity,
             result.speed,
             result.lastCheckDatetime,
         );
@@ -45,7 +45,7 @@ export const checkProxies = async (logger) => {
                 const [proxiesForRecheck] = await mysql.execute(`
                     SELECT * FROM proxies
                     WHERE
-                        anonimity != 'transparent'
+                        anonymity != 'transparent'
                         AND availability = 1
                         AND last_check_datetime <= DATE_SUB(NOW(), INTERVAL 1 HOUR)
                     ORDER BY
@@ -58,7 +58,7 @@ export const checkProxies = async (logger) => {
                 const [proxiesForResurrection] = await mysql.execute(`
                     SELECT * FROM proxies
                     WHERE
-                        anonimity != 'transparent'
+                        anonymity != 'transparent'
                         AND availability = 0
                     ORDER BY
                         last_check_datetime asc,
@@ -77,12 +77,12 @@ export const checkProxies = async (logger) => {
             if (action === 'add') {
                 const { proxy } = payload;
                 const proxyString = `${proxy.ip}:${proxy.port}`;
-                const finded = await findExistedProxy(
+                const found = await findExistedProxy(
                     mysql,
                     proxyString,
                     proxy.protocol,
                 );
-                if (!finded) {
+                if (!found) {
                     console.log({ action, ...proxy });
                     const result = await checkProxy(proxy, ipWithoutProxy, logger);
                     await insertProxy(
@@ -90,7 +90,7 @@ export const checkProxies = async (logger) => {
                         `${proxy.ip}:${proxy.port}`,
                         proxy.protocol,
                         result.availability,
-                        result.anonimity,
+                        result.anonymity,
                         result.speed,
                         result.lastCheckDatetime,
                     );

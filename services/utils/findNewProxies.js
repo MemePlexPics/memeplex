@@ -17,13 +17,13 @@ export const findNewProxies = async (logger) => {
         for (const proxy of proxies) {
             const mysql = await getMysqlClient();
             const proxyString = `${proxy.ip}:${proxy.port}`;
-            const finded = await findExistedProxy(
+            const found = await findExistedProxy(
                 mysql,
                 proxyString,
                 proxy.protocol,
             );
             mysql.end();
-            if (finded) continue;
+            if (found) continue;
             logger.verbose(
                 `💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`,
             );
