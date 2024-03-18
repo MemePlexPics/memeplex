@@ -6,16 +6,15 @@ import {
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../../constants/index.js';
 import { delay, getMysqlClient } from '../../utils/index.js';
-import { handleNackByTimeout } from '../utils/index.js';
 import { checkProxy } from './utils/index.js';
-import { insertProxy, updateProxy } from '../../utils/mysql-queries/index.js';
+import { findExistedProxy, insertProxy, updateProxy } from '../../utils/mysql-queries/index.js';
 
 const checkProxyArray = async (mysql, proxies, ipWithoutProxy, logger) => {
     for (const proxy of proxies) {
         const result = await checkProxy(proxy, ipWithoutProxy, logger);
         await updateProxy(
             mysql,
-            proxy.ip,
+            `${proxy.ip}:${proxy.port}`,
             proxy.protocol,
             result.availability,
             result.anonimity,
@@ -26,7 +25,7 @@ const checkProxyArray = async (mysql, proxies, ipWithoutProxy, logger) => {
 };
 
 export const checkProxies = async (logger) => {
-    let amqp, checkProxyCh, timeoutId;
+    let amqp, checkProxyCh;
     let msg;
     try {
         const mysql = await getMysqlClient();
@@ -39,9 +38,6 @@ export const checkProxies = async (logger) => {
 
         const ipWithoutProxyResponse = await fetch('https://api64.ipify.org');
         const ipWithoutProxy = await ipWithoutProxyResponse.text();
-        checkProxyCh.on('ack', () => {
-            clearTimeout(timeoutId);
-        });
 
         for (;;) {
             msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL);
@@ -76,25 +72,29 @@ export const checkProxies = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
-            timeoutId = setTimeout(
-                () => handleNackByTimeout(logger, msg, checkProxyCh),
-                60_000,
-            );
 
             const { action, ...payload } = JSON.parse(msg.content.toString());
             if (action === 'add') {
                 const { proxy } = payload;
-                console.log({ action, ...proxy });
-                const result = await checkProxy(proxy, ipWithoutProxy, logger);
-                await insertProxy(
+                const proxyString = `${proxy.ip}:${proxy.port}`;
+                const finded = await findExistedProxy(
                     mysql,
-                    `${proxy.ip}:${proxy.port}`,
+                    proxyString,
                     proxy.protocol,
-                    result.availability,
-                    result.anonimity,
-                    result.speed,
-                    result.lastCheckDatetime,
                 );
+                if (!finded) {
+                    console.log({ action, ...proxy });
+                    const result = await checkProxy(proxy, ipWithoutProxy, logger);
+                    await insertProxy(
+                        mysql,
+                        `${proxy.ip}:${proxy.port}`,
+                        proxy.protocol,
+                        result.availability,
+                        result.anonimity,
+                        result.speed,
+                        result.lastCheckDatetime,
+                    );
+                }
             }
             checkProxyCh.ack(msg);
         }
