@@ -1,41 +1,45 @@
-import { getMysqlClient, getProxySpeed } from '../../utils/index.js';
+/* global Buffer */
+import process from 'process';
+import amqplib from 'amqplib';
+import { getMysqlClient } from '../../utils/index.js';
 import {
     findExistedProxy,
-    insertProxy,
 } from '../../utils/mysql-queries/index.js';
+import { AMQP_CHECK_PROXY_CHANNEL } from '../../constants/index.js';
 import { getProxies } from './index.js';
 
 export const findNewProxies = async (logger) => {
+    let amqp, checkProxyCh;
     const proxies = await getProxies();
     logger.info(`💬 Proxy list fetched. ${proxies.length} entities`);
-    logger.info('💬 Start testing');
+    logger.info('💬 Starting to look for new ones');
+    try {
+        amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
+        checkProxyCh = await amqp.createChannel();
+        for (const proxy of proxies) {
+            const mysql = await getMysqlClient();
+            const proxyString = `${proxy.ip}:${proxy.port}`;
+            logger.verbose(
+                `💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`,
+            );
+            const finded = await findExistedProxy(
+                mysql,
+                proxyString,
+                proxy.protocol,
+            );
+            mysql.end();
+            if (finded) continue;
 
-    for (const proxy of proxies) {
-        const mysql = await getMysqlClient();
-        const proxyString = `${proxy.ip}:${proxy.port}`;
-        logger.verbose(
-            `💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`,
-        );
-        const finded = await findExistedProxy(
-            mysql,
-            proxyString,
-            proxy.protocol,
-        );
-        if (finded) continue;
-
-        const speed = await getProxySpeed(
-            proxy.ip,
-            proxy.port,
-            proxy.protocol,
-            5,
-            logger,
-        );
-        if (!speed) continue;
-        await insertProxy(mysql, proxyString, proxy.protocol, !!speed, speed);
-        logger.verbose(
-            `✅ Proxy ${proxyString} (${proxy.protocol}) inserted into DB`,
-        );
-        mysql.end();
+            const proxyData = Buffer.from(JSON.stringify({ action: 'add', proxy }));
+            checkProxyCh.sendToQueue(
+                AMQP_CHECK_PROXY_CHANNEL,
+                proxyData,
+                { persistent: true },
+            );
+        }
+        logger.info('💬 Looking completed');
+    } finally {
+        if (checkProxyCh) checkProxyCh.close();
+        if (amqp) amqp.close();
     }
-    logger.info('💬 Testing completed');
 };

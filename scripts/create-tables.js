@@ -28,8 +28,11 @@ const createTables = async () => {
             address VARCHAR(64) NOT NULL,
             protocol VARCHAR(10) NOT NULL,
             availability BOOLEAN NOT NULL,
+            anonimity VARCHAR(12) NULL,
             ocr_key VARCHAR(255) NULL,
-            speed INT NOT NULL,
+            speed INT NULL,
+            last_activity_datetime DATETIME NOT NULL,
+            last_check_datetime DATETIME NOT NULL,
 
             FOREIGN KEY (ocr_key) REFERENCES ocr_keys(ocr_key),
             UNIQUE KEY unique_address_protocol (address, protocol)

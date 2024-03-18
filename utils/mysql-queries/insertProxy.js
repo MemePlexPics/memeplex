@@ -3,17 +3,22 @@ export async function insertProxy(
     address,
     protocol,
     availability,
-    speed = null,
+    anonimity,
+    speed,
+    lastActivityDatetime,
 ) {
     await mysql.query(
         `
-        INSERT INTO proxies (
+        INSERT IGNORE INTO proxies (
             address,
             protocol,
             availability,
-            speed
-        ) VALUES (?, ?, ?, ?)
+            anonimity,
+            speed,
+            last_activity_datetime,
+            last_check_datetime
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `,
-        [address, protocol, availability, speed],
+        [address, protocol, availability, anonimity, speed, lastActivityDatetime, lastActivityDatetime],
     );
 }

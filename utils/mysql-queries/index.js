@@ -8,7 +8,7 @@ export { insertProxy } from './insertProxy.js';
 export { updateProxy } from './updateProxy.js';
 export { findExistedProxy } from './findExistedProxy.js';
 export { getProxyForKey } from './getProxyForKey.js';
-export { setProxyAvailability } from './setProxyAvailability.js';
+export { updateProxyAvailability } from './updateProxyAvailability.js';
 export { getRandomKey } from './getRandomKey.js';
 export { linkKeyToProxy } from './linkKeyToProxy.js';
 export { saveKeyTimeout } from './saveKeyTimeout.js';

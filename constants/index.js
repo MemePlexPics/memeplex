@@ -4,6 +4,7 @@ import process from 'process';
 // rabbitmq channel names
 export const AMQP_IMAGE_DATA_CHANNEL = 'image_data';
 export const AMQP_IMAGE_FILE_CHANNEL = 'image_files';
+export const AMQP_CHECK_PROXY_CHANNEL = 'check_proxy';
 // how much time to sleep between fetching all data, ms
 export const CYCLE_SLEEP_TIMEOUT = (process.env.CYCLE_SLEEP_TIMEOUT * 1) || 30_000;
 export const OCR_SPACE_403_DELAY = 60_000; // 3600 / 180, the limit is 180 per hour
@@ -32,7 +33,7 @@ export const EMPTY_QUEUE_RETRY_DELAY = 10_000;
 export const PROXY_TEST_TIMEOUT = 5_000;
 // Must be http (because many proxies don't support SSL)
 export const PROXY_TESTING_FILE = 'http://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_272x92dp.png';
-// API to get list of free proxy servers
-export const PROXY_LIST_API_URL = 'https://api.proxyscrape.com/v3/free-proxy-list/get?request=displayproxies&proxy_format=ipport&format=json';
 // Available OCR languages
 export const OCR_LANGUAGES = ['eng', 'rus'];
+
+export { PROXY_LIST_API_URLS } from './PROXY_LIST_API_URLS.js';

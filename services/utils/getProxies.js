@@ -1,20 +1,38 @@
-import { PROXY_LIST_API_URL } from '../../constants/index.js';
+import { PROXY_LIST_API_URLS } from '../../constants/index.js';
+
+const getProxyList = async (url) => {
+    try {
+        const response = await fetch(url, {
+            timeout: 15_000,
+        });
+        return await response.text();
+    } catch (error) {
+        return null;
+    }
+};
 
 export const getProxies = async () => {
-    try {
-        const response = await fetch(PROXY_LIST_API_URL);
-        const proxies = (await response.json()).proxies;
-        return proxies
-            .filter((proxy) => proxy.alive && proxy.anonymity !== 'transparent')
-            .sort((a, b) => a.timeout - b.timeout)
-            .map((data) => {
-                return {
-                    ip: data.ip,
-                    port: data.port,
-                    protocol: data.protocol,
-                };
+    const proxiesByProtocol = {};
+    const regex = /\b(?:\d{1,3}\.){3}\d{1,3}:\d{1,5}\b/g;
+
+    for (const [protocol, proxyLists] of Object.entries(PROXY_LIST_API_URLS)) {
+        if (!proxiesByProtocol[protocol]) proxiesByProtocol[protocol] = new Set();
+        for (const proxyList of proxyLists) {
+            const proxies = await getProxyList(proxyList);
+            if (proxies === null) return;
+            const matches = proxies.match(regex);
+            matches?.forEach(proxy => proxiesByProtocol[protocol].add(proxy));
+        };
+    };
+    return Object.entries(proxiesByProtocol).reduce((acc, [protocol, proxyList]) => {
+        proxyList.forEach(proxy => {
+            const [ip, port] = proxy.split(':');
+            acc.push({
+                ip,
+                port,
+                protocol,
             });
-    } catch (error) {
-        throw new Error(`❌ Error fetching proxies: ${error.message}`);
-    }
+        });
+        return acc;
+    }, []);
 };
