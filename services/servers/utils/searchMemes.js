@@ -16,7 +16,7 @@ export const searchMemes = async (client, query, page, size) => {
                 must_not: [
                     {
                         match: {
-                            state: 1, // hidden
+                            state: 1, // we hide soft-deleted memes
                         }
                     }
                 ],

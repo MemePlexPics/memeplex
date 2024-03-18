@@ -93,9 +93,10 @@ app.get('/getLatest', async (req, res) => {
 app.get('/getChannelList', async (req, res) => {
     const { page, onlyAvailable, filter } = req.query;
     const mysql = await getMysqlClient();
-    const filters = [];
-    if (onlyAvailable === 'true') filters.push('availability IS TRUE');
-    if (filter) filters.push(`name LIKE "%${filter}%"`);
+    const filters = {
+        onlyAvailable,
+        name: filter,
+    };
     const channels = await getChannels(mysql, page, CHANNEL_LIST_PAGE_SIZE, filters);
     const count = await getChannelsCount(mysql, filters);
     return res.send({

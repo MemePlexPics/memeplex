@@ -7,10 +7,24 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
     const filterObject = filtersString ? JSON.parse(filtersString) : null;
     const additionalFilter = {};
     if (filterObject?.channel?.length) {
-        ((additionalFilter.must ??= {}).terms ??= {}).channelName = filterObject.channel.map(channel => channel.toLowerCase());
+        additionalFilter.must = {
+            terms: {
+                channelName: [],
+            },
+        };
+        filterObject.channel.forEach(channel => {
+            if (typeof channel === 'string') additionalFilter.must.terms.channelName.push(channel);
+        });
     }
     if (filterObject?.not?.state !== null) {
-        ((additionalFilter.must_not ??= {}).term ??= {}).state = filterObject?.state ?? 1;
+        const state = typeof filterObject?.state === 'number'
+            ? filterObject.state
+            : 1;
+        additionalFilter.must_not = {
+            term: {
+                state,
+            },
+        };
     }
     const elasticRes = await client.search({
         index: ELASTIC_INDEX,
