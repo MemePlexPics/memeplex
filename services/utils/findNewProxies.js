@@ -23,8 +23,10 @@ export const findNewProxies = async (logger) => {
                 proxyString,
                 proxy.protocol,
             );
-            if (found) continue;
-            notCheckedProxiesCount--;
+            if (found) {
+                notCheckedProxiesCount--;
+                continue;
+            }
             
             const proxyData = Buffer.from(
                 JSON.stringify({ action: 'add', proxy }),
