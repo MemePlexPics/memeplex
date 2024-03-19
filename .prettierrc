@@ -6,7 +6,7 @@
     "htmlWhitespaceSensitivity": "ignore",
     "overrides": [
       {
-        "files": ["*.js", "*.jsx", "*.css"],
+        "files": ["*.js", "*.css"],
         "options": {
           "tabWidth": 4,
           "trailingComma": "all",
