@@ -1,3 +1,5 @@
+import { OCR_SPACE_403_DELAY } from '../../constants/index.js';
+
 export async function getRandomKey(mysql) {
     const [results] = await mysql.execute(`
         SELECT
@@ -6,10 +8,10 @@ export async function getRandomKey(mysql) {
         FROM ocr_keys
         WHERE
             timeout IS NULL
-            OR timeout < DATE_ADD(NOW(), INTERVAL 55 MINUTE)
+            OR timeout < DATE_ADD(NOW(), INTERVAL ? MICROSECOND)
         ORDER BY
             RAND()
         LIMIT 1
-    `);
+    `, [OCR_SPACE_403_DELAY]);
     return results;
 }

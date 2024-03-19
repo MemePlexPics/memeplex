@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1710418088140,
+      "tag": "0000_massive_pestilence",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1710420952878,
+      "tag": "0001_fat_blindfold",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1710842970518,
+      "tag": "0002_lyrical_sprite",
+      "breakpoints": true
+    }
+  ]
+}

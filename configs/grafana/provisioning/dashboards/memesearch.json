@@ -443,7 +443,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys;",
+          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 5 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -776,7 +776,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 1548
+                "value": 1077
               }
             ]
           },
@@ -950,8 +950,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -1150,8 +1149,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   }
                 ]
               },
@@ -1325,8 +1323,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1586,8 +1583,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1758,8 +1754,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -1922,8 +1917,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2086,8 +2080,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2231,8 +2224,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2396,8 +2388,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2603,8 +2594,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3586,6 +3576,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 29,
+  "version": 30,
   "weekStart": ""
 }

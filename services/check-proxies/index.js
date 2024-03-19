@@ -7,9 +7,10 @@ import {
 } from '../../constants/index.js';
 import { delay, getMysqlClient } from '../../utils/index.js';
 import { handleAddingProxy, maintaneProxies } from './utils/index.js';
+import { handleNackByTimeout } from '../utils/handleNackByTimeout.js';
 
 export const checkProxies = async (logger) => {
-    let amqp, checkProxyCh;
+    let amqp, checkProxyCh, timeoutId;
     let msg;
     try {
         const mysql = await getMysqlClient();
@@ -20,6 +21,10 @@ export const checkProxies = async (logger) => {
             durable: true,
         });
         await checkProxyCh.prefetch(1); // let it process one message at a time
+        checkProxyCh
+            .on('close', () => clearTimeout(timeoutId))
+            .on('ack', () => clearTimeout(timeoutId))
+            .on('nack', () => clearTimeout(timeoutId));
 
         const ipWithoutProxyResponse = await fetch('https://api64.ipify.org');
         const ipWithoutProxy = await ipWithoutProxyResponse.text();
@@ -31,6 +36,10 @@ export const checkProxies = async (logger) => {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }
+            timeoutId = setTimeout(
+                () => handleNackByTimeout(logger, msg, checkProxyCh),
+                600_000,
+            );
 
             const { action, ...payload } = JSON.parse(msg.content.toString());
 

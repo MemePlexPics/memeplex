@@ -7,7 +7,7 @@ import {
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../../constants/index.js';
 import { getElasticClient, delay } from '../../utils/index.js';
-import { recogniseText, getNewDoc } from './utils/index.js';
+import { recogniseText, getNewDoc, blackListChecker } from './utils/index.js';
 import { handleNackByTimeout } from '../utils/index.js';
 
 // Listens for messages containing images, outputs messages containing OCR'd text
@@ -23,9 +23,10 @@ export const ocr = async (logger) => {
             durable: true,
         });
         await receiveImageFileCh.prefetch(1); // let it process one message at a time
-        receiveImageFileCh.on('ack', () => {
-            clearTimeout(timeoutId);
-        });
+        receiveImageFileCh
+            .on('close', () => clearTimeout(timeoutId))
+            .on('ack', () => clearTimeout(timeoutId))
+            .on('nack', () => clearTimeout(timeoutId));
 
         for (;;) {
             msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
@@ -38,7 +39,7 @@ export const ocr = async (logger) => {
                 600_000,
             );
             const { payload, texts } = await recogniseText(msg, logger);
-            if (texts.eng) {
+            if (texts.eng && await blackListChecker(texts.eng)) {
                 await elastic.index({
                     index: ELASTIC_INDEX,
                     document: getNewDoc(payload, texts),
