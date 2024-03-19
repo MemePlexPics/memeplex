@@ -23,9 +23,11 @@ export const downloader = async (logger) => {
         await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, {
             durable: true,
         });
-        receiveImageDataCh.on('ack', () => {
-            clearTimeout(timeoutId);
-        });
+        // TODO: incapsulate?
+        receiveImageDataCh
+            .on('close', () => clearTimeout(timeoutId))
+            .on('ack', () => clearTimeout(timeoutId))
+            .on('nack', () => clearTimeout(timeoutId));
 
         for (;;) {
             msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);

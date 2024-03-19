@@ -23,9 +23,10 @@ export const ocr = async (logger) => {
             durable: true,
         });
         await receiveImageFileCh.prefetch(1); // let it process one message at a time
-        receiveImageFileCh.on('ack', () => {
-            clearTimeout(timeoutId);
-        });
+        receiveImageFileCh
+            .on('close', () => clearTimeout(timeoutId))
+            .on('ack', () => clearTimeout(timeoutId))
+            .on('nack', () => clearTimeout(timeoutId));
 
         for (;;) {
             msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
