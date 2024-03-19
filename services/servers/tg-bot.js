@@ -401,7 +401,7 @@ const start = async () => {
     bot.launch({
         webhook: {
             domain: process.env.MEMEPLEX_WEBSITE_DOMAIN,
-            path: '/tgWebHook',
+            path: '/' + process.env.TELEGRAM_BOT_WEBHOOK_PATH,
             port: 3081,
         },
     });
