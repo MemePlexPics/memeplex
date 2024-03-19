@@ -14,20 +14,18 @@ export const findNewProxies = async (logger) => {
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         checkProxyCh = await amqp.createChannel();
+        const mysql = await getMysqlClient();
+        let notCheckedProxiesCount = proxies.length;
         for (const proxy of proxies) {
-            const mysql = await getMysqlClient();
             const proxyString = `${proxy.ip}:${proxy.port}`;
             const found = await findExistedProxy(
                 mysql,
                 proxyString,
                 proxy.protocol,
             );
-            mysql.end();
             if (found) continue;
-            logger.verbose(
-                `💬 Proxy ${proxyString} (${proxy.protocol}) is being checked`,
-            );
-
+            notCheckedProxiesCount--;
+            
             const proxyData = Buffer.from(
                 JSON.stringify({ action: 'add', proxy }),
             );
@@ -35,7 +33,8 @@ export const findNewProxies = async (logger) => {
                 persistent: true,
             });
         }
-        logger.info('💬 Looking completed');
+        mysql.end();
+        logger.info(`💬 Looking completed: ${notCheckedProxiesCount} new proxies to check`);
     } finally {
         if (checkProxyCh) checkProxyCh.close();
         if (amqp) amqp.close();
