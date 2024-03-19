@@ -42,8 +42,9 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 - [ocr.space](https://ocr.space) API key
 - [TelegramApiServer](https://github.com/xtrime-ru/TelegramApiServer)
 - [TelegramRSS](https://github.com/xtrime-ru/TelegramRSS)
-- RabbitMQ
-- ElasticSearch
+- Docker
+- RabbitMQ (will be installed automatically using the ./docker-compose.yml)
+- ElasticSearch (will be installed automatically using the ./docker-compose.yml)
 
 ## Setup
 
@@ -57,7 +58,7 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 - Set `ELASTIC_ENDPOINT` in `.env`
 - Run `docker compose up -d` to start docker services
 - Run `node ./scripts/create-index.js` to create an ElasticSearch index
-- Run `node ./scripts/create-tables.js` to create MySQL tables
+- Run `npm run migrations:run` to create MySQL tables
 - Run `npm run build` to build static frontend files
 
 ## Startup

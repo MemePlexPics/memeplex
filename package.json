@@ -10,6 +10,12 @@
     "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "build": "npm --prefix ./frontend run build",
     "pretty": "npx prettier --write ./{scripts,utils,services,frontend/src}",
+    "migrations": "npx drizzle-kit",
+    "drizzle:check-api-changes": "npm run migrations up:mysql",
+    "migrations:run": "npx tsx scripts/db-migrate.ts",
+    "migrations:generate": "npm run drizzle:check-api-changes && npm run migrations check:mysql && npm run migrations generate:mysql",
+    "migrations:down": "npm run migrations down",
+    "migrations:pull-schema": "npm run migrations introspect:mysql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "klntsky",
@@ -17,21 +23,24 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.3",
     "@telegraf/session": "^2.0.0-beta.7",
+    "@types/node": "^20.11.29",
     "amqplib": "^0.10.3",
     "axios": "^1.6.3",
     "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.30.1",
     "express": "^4.18.2",
     "form-data": "^4.0.0",
     "imghash": "^0.0.9",
-    "kysely": "^0.27.2",
     "mysql2": "^3.7.0",
     "ocr-space-api-wrapper": "^2.3.0",
     "socks-proxy-agent": "^8.0.2",
     "telegraf": "^4.15.3",
     "telegraf-ratelimit": "^2.0.0",
+    "tsx": "^4.7.1",
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.20.14",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "3.2.5"
