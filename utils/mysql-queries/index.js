@@ -30,3 +30,4 @@ export { selectBotUser } from './selectBotUser.js';
 export { insertBotInlineUser } from './insertBotInlineUser.js';
 export { insertBotInlineAction } from './insertBotInlineAction.js';
 export { selectBotInlineUser } from './selectBotInlineUser.js';
+export { selectBlackList } from './selectBlackList.js';

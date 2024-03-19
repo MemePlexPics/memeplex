@@ -7,7 +7,7 @@ import {
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../../constants/index.js';
 import { getElasticClient, delay } from '../../utils/index.js';
-import { recogniseText, getNewDoc } from './utils/index.js';
+import { recogniseText, getNewDoc, blackListChecker } from './utils/index.js';
 import { handleNackByTimeout } from '../utils/index.js';
 
 // Listens for messages containing images, outputs messages containing OCR'd text
@@ -39,7 +39,7 @@ export const ocr = async (logger) => {
                 600_000,
             );
             const { payload, texts } = await recogniseText(msg, logger);
-            if (texts.eng) {
+            if (texts.eng && await blackListChecker(texts.eng)) {
                 await elastic.index({
                     index: ELASTIC_INDEX,
                     document: getNewDoc(payload, texts),
