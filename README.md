@@ -1,9 +1,15 @@
 # MemePlex
 
-[![WebSite](https://img.shields.io/badge/website-000000?style=for-the-badge&logoColor=white)](https://memeplex.pics)
-[![Join us on Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/memeplex_pics)
-
-![MemePlex logo](./frontend/src/assets/images/logo/logo_600.png)
+<p align="center">
+    <a href="https://memeplex.pics">
+        <img alt="WebSite" src="https://img.shields.io/badge/website-000000?style=for-the-badge&logoColor=white" />
+    </a>
+    <a href="https://t.me/memeplex_pics">
+        <img alt="Join us on Telegram" src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" />
+    </a>
+    <br><br>
+    <img alt="MemePlex logo" src="./frontend/src/assets/images/logo/logo_600.png" />
+</p>
 
 ## Описание
 
