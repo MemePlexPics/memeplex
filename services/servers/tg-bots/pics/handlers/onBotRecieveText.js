@@ -1,9 +1,16 @@
 import { Markup } from 'telegraf';
 
-import { MAX_SEARCH_QUERY_LENGTH, TG_BOT_PAGE_SIZE } from '../../../../../constants/index.js';
+import {
+    MAX_SEARCH_QUERY_LENGTH,
+    TG_BOT_PAGE_SIZE,
+} from '../../../../../constants/index.js';
 import { logError } from '../../../../../utils/index.js';
 import { searchMemes } from '../../../utils/searchMemes.js';
-import { getBotAnswerString, logUserAction, resetSearchSession } from '../utils/index.js';
+import {
+    getBotAnswerString,
+    logUserAction,
+    resetSearchSession,
+} from '../utils/index.js';
 
 export const onBotRecieveText = async (ctx, client, logger) => {
     try {

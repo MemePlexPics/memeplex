@@ -16,7 +16,7 @@ export const checkProxies = async (logger) => {
         const mysql = await getMysqlClient();
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         checkProxyCh = await amqp.createChannel();
-        
+
         await checkProxyCh.assertQueue(AMQP_CHECK_PROXY_CHANNEL, {
             durable: true,
         });
