@@ -13,79 +13,52 @@ import {
   RegularMenu
 } from 'telegraf-menu'
 import { MySQL } from '@telegraf/session/mysql'
-
-type CurrentCtx = DefaultCtx & {
-  session: {
-    keyboardMenu: GenericMenu
-  }
-}
+import { TCurrentCtx } from './types'
+import { addChannelMenu, channelSelectMenu, channelSettingsMenu, mainMenu } from './menus'
+import { EState } from './constants'
 
 const bot = new Telegraf(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN)
 const logger = getLogger('tg-publisher-bot')
 
-
 bot.use(
   session({
-      defaultSession: () => ({}),
-      store: MySQL({
-          host: process.env.DB_HOST,
-          port: Number(process.env.DB_PORT),
-          database: process.env.DB_DATABASE,
-          user: process.env.DB_USER,
-          password: process.env.DB_PASSWORD,
-          table: 'telegraf_sessions',
-      }),
-  }),
-);
+    defaultSession: () => ({}),
+    store: MySQL({
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      table: 'telegraf_publisher_sessions'
+    })
+  })
+)
 
 bot.use(GenericMenu.middleware())
 
-enum MenuAction {
-  BASKET = 'basket',
-  VIDEO_FILTERS = 'video_filters',
-  LANGUAGE = 'language',
-  START = 'start'
-}
-
-const START_MENU_FILTERS: MenuFilters<MenuAction> = [
-  new KeyboardButton('basket', MenuAction.BASKET),
-  new KeyboardButton('videoFilters', MenuAction.VIDEO_FILTERS),
-  new KeyboardButton('language', MenuAction.LANGUAGE)
-]
-
-const initStartMenu = (ctx: CurrentCtx) => {
-  new RegularMenu<CurrentCtx, MenuAction>({
-    action: MenuAction.START,
-    message: 'menu.start.start',
-    filters: START_MENU_FILTERS,
-    replaceable: true,
-    debug: true,
-    menuGetter: (menuCtx) => menuCtx.session.keyboardMenu,
-    menuSetter: (menuCtx, menu) => (menuCtx.session.keyboardMenu = menu),
-    onChange(changeCtx, state) {
-      console.log(state)
-      switch (state) {
-        case MenuAction.BASKET:
-        // return initBasketMenu(changeCtx);
-
-        case MenuAction.LANGUAGE:
-        // return initLanguageMenu(changeCtx);
-
-        case MenuAction.VIDEO_FILTERS:
-        // return initVideoFiltersMenu(changeCtx);
-      }
-    }
-  }).sendMenu(ctx)
-}
-
 // @ts-expect-error
-bot.command(MenuAction.START, initStartMenu)
+bot.command(EState.MAIN, mainMenu)
 bot.action(
-  new RegExp(MenuAction.START),
-  GenericMenu.onAction(
-    (ctx: CurrentCtx) => ctx.session.keyboardMenu,
-    initStartMenu
-  )
+  new RegExp(EState.MAIN),
+  GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, mainMenu)
+)
+// @ts-expect-error
+bot.command(EState.ADD_CHANNEL, addChannelMenu)
+bot.action(
+  new RegExp(EState.ADD_CHANNEL),
+  GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, addChannelMenu)
+)
+// @ts-expect-error
+bot.command(EState.CHANNEL_SELECT, channelSelectMenu)
+bot.action(
+  new RegExp(EState.CHANNEL_SELECT),
+  GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSelectMenu)
+)
+// @ts-expect-error
+bot.command(EState.CHANNEL_SETTINGS, channelSettingsMenu)
+bot.action(
+  new RegExp(EState.CHANNEL_SETTINGS),
+  GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSettingsMenu)
 )
 
 const start = async () => {
