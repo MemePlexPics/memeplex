@@ -39,7 +39,7 @@ export const ocr = async (logger) => {
                 600_000,
             );
             const { payload, texts } = await recogniseText(msg, logger);
-            if (texts.eng && await blackListChecker(texts.eng)) {
+            if (texts.eng && (await blackListChecker(texts.eng))) {
                 await elastic.index({
                     index: ELASTIC_INDEX,
                     document: getNewDoc(payload, texts),

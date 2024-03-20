@@ -1,4 +1,8 @@
-import { getMysqlClient, getTgChannelName, logError } from '../../../../../utils/index.js';
+import {
+    getMysqlClient,
+    getTgChannelName,
+    logError,
+} from '../../../../../utils/index.js';
 import { insertChannelSuggestion } from '../../../../../utils/mysql-queries/index.js';
 import { logUserAction } from '../utils/index.js';
 

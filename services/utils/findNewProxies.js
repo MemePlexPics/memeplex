@@ -27,7 +27,7 @@ export const findNewProxies = async (logger) => {
                 notCheckedProxiesCount--;
                 continue;
             }
-            
+
             const proxyData = Buffer.from(
                 JSON.stringify({ action: 'add', proxy }),
             );
@@ -36,7 +36,9 @@ export const findNewProxies = async (logger) => {
             });
         }
         mysql.end();
-        logger.info(`💬 Looking completed: ${notCheckedProxiesCount} new proxies to check`);
+        logger.info(
+            `💬 Looking completed: ${notCheckedProxiesCount} new proxies to check`,
+        );
     } finally {
         if (checkProxyCh) checkProxyCh.close();
         if (amqp) amqp.close();
