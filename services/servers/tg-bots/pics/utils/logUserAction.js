@@ -1,5 +1,12 @@
 import { getMysqlClient } from '../../../../../utils/index.js';
-import { insertBotAction, insertBotInlineAction, insertBotInlineUser, insertBotUser, selectBotInlineUser, selectBotUser } from '../../../../../utils/mysql-queries/index.js';
+import {
+    insertBotAction,
+    insertBotInlineAction,
+    insertBotInlineUser,
+    insertBotUser,
+    selectBotInlineUser,
+    selectBotUser,
+} from '../../../../../utils/mysql-queries/index.js';
 import { getTelegramUser } from '../../utils/index.js';
 
 // TODO: refactoring
