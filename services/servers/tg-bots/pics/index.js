@@ -1,15 +1,18 @@
 import process from 'process';
 import 'dotenv/config';
-import {
-    connectToElastic,
-} from '../../../../utils/index.js';
+import { connectToElastic } from '../../../../utils/index.js';
 import winston from 'winston';
 import { Telegraf, session } from 'telegraf';
 import { MySQL } from '@telegraf/session/mysql';
 import { message } from 'telegraf/filters';
 import rateLimit from 'telegraf-ratelimit';
 import { logUserAction, resetSearchSession } from './utils/index.js';
-import { onBotCommandGetLatest, onBotCommandSuggestChannel, onBotRecieveText, onInlineQuery } from './handlers/index.js';
+import {
+    onBotCommandGetLatest,
+    onBotCommandSuggestChannel,
+    onBotRecieveText,
+    onInlineQuery,
+} from './handlers/index.js';
 import { defaultSession } from './constants/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
@@ -67,15 +70,25 @@ Send me a text to search memes by caption.`,
     logUserAction(ctx.from, { start: true });
 });
 
-bot.command('get_latest', (ctx) => onBotCommandGetLatest(ctx, true, client, logger));
+bot.command('get_latest', (ctx) =>
+    onBotCommandGetLatest(ctx, true, client, logger),
+);
 
-bot.command('suggest_channel', (ctx) => onBotCommandSuggestChannel(ctx, logger));
+bot.command('suggest_channel', (ctx) =>
+    onBotCommandSuggestChannel(ctx, logger),
+);
 
-bot.action('button_search_more', (ctx) => onBotRecieveText(ctx, client, logger));
+bot.action('button_search_more', (ctx) =>
+    onBotRecieveText(ctx, client, logger),
+);
 
-bot.action('button_latest_older', (ctx) => onBotCommandGetLatest(ctx, false, client, logger));
+bot.action('button_latest_older', (ctx) =>
+    onBotCommandGetLatest(ctx, false, client, logger),
+);
 
-bot.action('button_latest_newer', (ctx) => onBotCommandGetLatest(ctx, true, client, logger));
+bot.action('button_latest_newer', (ctx) =>
+    onBotCommandGetLatest(ctx, true, client, logger),
+);
 
 bot.on(message('text'), async (ctx) => {
     resetSearchSession(ctx);
