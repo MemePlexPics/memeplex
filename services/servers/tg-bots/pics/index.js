@@ -1,7 +1,6 @@
 import process from 'process';
 import 'dotenv/config';
 import { connectToElastic } from '../../../../utils/index.js';
-import winston from 'winston';
 import { Telegraf, session } from 'telegraf';
 import { MySQL } from '@telegraf/session/mysql';
 import { message } from 'telegraf/filters';
@@ -14,26 +13,13 @@ import {
     onInlineQuery,
 } from './handlers/index.js';
 import { defaultSession } from './constants/index.js';
+import { getLogger } from '../utils/index.js';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 
 const { client } = await connectToElastic();
 
-const logger = winston.createLogger({
-    defaultMeta: { service: 'tg-bot' },
-    format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-    ),
-    transports: [
-        new winston.transports.File({
-            filename: 'logs/tg-bot.log',
-            maxsize: 1024 * 1024 * 10, // bytes
-            maxFiles: 5,
-            tailable: true,
-        }),
-    ],
-});
+const logger = getLogger('tg-bot');
 
 bot.use(
     session({
