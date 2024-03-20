@@ -66,7 +66,7 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 - Run `docker compose up -d` to start docker services
 - Run `node ./services/memesearch.js` - Telegram parser
 - Run `node ./services/servers/web` - web server
-- Run `node ./services/servers/tg-bot.js` - Telegram bot server
+- Run `node ./services/servers/tg-bots/pics` - Telegram Pics bot server
 
 ## Scripts
 
