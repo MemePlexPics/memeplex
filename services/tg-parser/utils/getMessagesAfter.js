@@ -31,8 +31,9 @@ export const getMessagesAfter = async function* (
                 responseJson.errors.length &&
                 responseJson.errors[0].exception ===
                     'danog\\MadelineProto\\PeerNotInDbException';
-            const isInvalid =
-                responseJson.errors[0].message === 'CHANNEL_INVALID';
+            const errorMessage = responseJson.errors[0].message;
+            const isInvalid = ['CHANNEL_PRIVATE', 'CHANNEL_INVALID']
+                .includes(errorMessage);
             if (isDeleted) {
                 await setChannelUnavailable(channelName);
                 throw new Error(`❌ Channel ${channelName} is not available`);
@@ -40,7 +41,7 @@ export const getMessagesAfter = async function* (
             if (isInvalid) {
                 await setChannelUnavailable(channelName);
                 throw new Error(
-                    `❌ Channel ${channelName} is: CHANNEL_INVALID (Telegram exception)`,
+                    `❌ Channel ${channelName} is: ${errorMessage} (Telegram exception)`,
                 );
             }
             throw new Error(
