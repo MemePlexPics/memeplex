@@ -45,6 +45,7 @@ export const recogniseTextOcrSpace = async (fileName, language, logger) => {
                 );
             }
             if (
+                error.name === 'AxiosError' ||
                 error.code === 'ECONNREFUSED' ||
                 error.code === 'ERR_BAD_REQUEST' ||
                 error.code === 'ECONNRESET' ||
