@@ -1,8 +1,8 @@
 export enum EState {
-  ADD_CHANNEL = 'ADD_CHANNEL',
-  ADD_KEYWORDS = 'ADD_KEYWORDS',
-  CHANNEL_SELECT = 'CHANNEL_SELECT',
-  CHANNEL_SETTINGS = 'CHANNEL_SETTINGS',
-  KEYWORD_SETTINGS = 'KEYWORD_SETTINGS',
+  ADD_CHANNEL = 'add_channel',
+  ADD_KEYWORDS = 'add_keywords',
+  CHANNEL_SELECT = 'channel_select',
+  CHANNEL_SETTINGS = 'channel_settings',
+  KEYWORD_SETTINGS = 'keyword_settings',
   MAIN = 'start'
 }

@@ -1,22 +1,23 @@
-import { KeyboardButton, RadioMenu, RegularMenu } from 'telegraf-menu'
+import { KeyboardButton, RegularMenu } from 'telegraf-menu'
 import { TCurrentCtx } from '../types'
 import { EState } from '../constants'
-import { channelSettingsMenu } from '.'
+import { channelSettingsMenu, mainMenu } from '.'
 
 export const channelSelectMenu = (ctx: TCurrentCtx) => {
-  new RadioMenu<TCurrentCtx, string>({
+  new RegularMenu<TCurrentCtx, string>({
     action: EState.CHANNEL_SELECT,
     message: 'Выберите канал',
-    filters: [1,2,3].map(i => new KeyboardButton(`@channel_${i}`, 'i')),
+    filters: ['first', 'second', 'third']
+      .map(i => new KeyboardButton(`@${i}`, i))
+      .concat([new KeyboardButton('В главное меню', EState.MAIN)]),
     replaceable: true,
     menuGetter: (menuCtx) => menuCtx.session.keyboardMenu,
     menuSetter: (menuCtx, menu) => (menuCtx.session.keyboardMenu = menu),
     onChange(changeCtx, state) {
+      console.log(state)
+      if (state === EState.MAIN) return mainMenu(changeCtx)
+      ctx.session.channel = state;
       channelSettingsMenu(changeCtx)
-      // switch (state) {
-      //   case EState.MAIN:
-      //     return mainMenu(changeCtx)
-      // }
     }
   }).sendMenu(ctx)
 }
