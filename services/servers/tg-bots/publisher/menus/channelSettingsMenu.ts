@@ -19,8 +19,11 @@ export const channelSettingsMenu = (ctx: TCurrentCtx) => {
     menuGetter: (menuCtx) => menuCtx.session.keyboardMenu,
     menuSetter: (menuCtx, menu) => (menuCtx.session.keyboardMenu = menu),
     onChange(changeCtx, state) {
+      console.log(state)
+      ctx.session.state = state
       switch (state) {
         case EState.MAIN:
+          changeCtx.session.channel = undefined
           return mainMenu(changeCtx)
       }
     }
