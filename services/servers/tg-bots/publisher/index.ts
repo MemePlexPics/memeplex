@@ -2,15 +2,10 @@ import process from 'process'
 import 'dotenv/config'
 import { Telegraf, session } from 'telegraf'
 import { message } from 'telegraf/filters'
-import { Keyboard } from 'telegram-keyboard'
+import { Keyboard, Key } from 'telegram-keyboard'
 import { getLogger } from '../utils/index.js'
-import {
-  GenericMenu,
-} from 'telegraf-menu'
 import { TCurrentCtx } from './types'
-import { addChannelMenu, channelSelectMenu, channelSettingsMenu, mainMenu } from './menus'
 import { EState } from './constants'
-import { keywordSettingsMenu } from './menus/keywordSettingsMenu.js'
 
 const bot = new Telegraf<TCurrentCtx>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
@@ -25,64 +20,51 @@ bot.use(
   })
 )
 
-// bot.use(GenericMenu.middleware())
-
-// // @ts-expect-error
-// bot.command(EState.MAIN, mainMenu)
-// bot.action(
-//   new RegExp(EState.MAIN),
-//   // @ts-expect-error
-//   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, mainMenu)
-// )
-
-// // @ts-expect-error
-// bot.command(EState.ADD_CHANNEL, addChannelMenu)
-// bot.action(
-  // new RegExp(EState.ADD_CHANNEL),
-//   // @ts-expect-error
-//   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, addChannelMenu)
-// )
-
-// // @ts-expect-error
-// bot.command(EState.CHANNEL_SELECT, channelSelectMenu)
-// bot.action(
-//   new RegExp(EState.CHANNEL_SELECT),
-//   // @ts-expect-error
-//   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSelectMenu)
-// )
-
-// // @ts-expect-error
-// bot.command(EState.CHANNEL_SETTINGS, channelSettingsMenu)
-// bot.action(
-//   new RegExp(EState.CHANNEL_SETTINGS),
-//   // @ts-expect-error
-//   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSettingsMenu)
-// )
-
-// // @ts-expect-error
-// bot.command(EState.KEYWORD_SETTINGS, keywordSettingsMenu)
-// bot.action(
-//   new RegExp(EState.KEYWORD_SETTINGS),
-//   // @ts-expect-error
-//   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, keywordSettingsMenu)
-// )
+const keyboards = {
+  [EState.MAIN]: [
+    Key.callback('Добавить канал', EState.ADD_CHANNEL),
+    Key.callback('Настройки каналов', EState.CHANNEL_SETTINGS),
+  ],
+  [EState.ADD_CHANNEL]: [
+    Key.callback('Назад', EState.MAIN),
+  ],
+  // [EState.ADD_KEYWORDS]: [
+  //   Key.callback('Добавить канал', EState.ADD_CHANNEL),
+  // ],
+  [EState.CHANNEL_SELECT]: [
+    ['first', 'second', 'third'],
+    [
+      Key.callback('Добавить канал', EState.ADD_CHANNEL)
+    ],
+  ],
+  [EState.CHANNEL_SETTINGS]: [
+    [
+      Key.callback('Добавить ключевые слова', EState.ADD_KEYWORDS),
+    ],
+    [
+      Key.callback('Редактировать ключевые слова', EState.ADD_KEYWORDS),
+    ],
+    [
+      Key.callback('В главное меню', EState.MAIN),
+    ],
+  ],
+  [EState.KEYWORD_SETTINGS]: [
+    ['tits','peaches'].map(keyword => ([
+      keyword,
+      `${keyword}|del`,
+    ])),
+    Key.callback('В главное меню', EState.MAIN),
+  ],
+}
 
 bot.on(message('text'), async (ctx) => {
-  const { state } = ctx.session
+  // const { state } = ctx.session
   const text = ctx.update.message.text
-  console.log(text, state)
-  if (state === EState.ADD_CHANNEL) {
-    ctx.session.channel = text
-    return Keyboard.reply(['Button 1', 'Button 2'])
-  }
-  if (state === EState.CHANNEL_SELECT) {
-    ctx.session.channel = text
-    return Keyboard.reply(['Button 2', 'Button 3'])
-  }
-  if (state === EState.ADD_KEYWORDS) {
-    await ctx.reply(`Данные ключевые слова приняты: ${text}`)
-    return Keyboard.reply(['Button 3', 'Button 4'])
-  }
+  let state
+  console.log(text)
+  if (text[0] === '/') state = text.slice(1)
+  const keyboard = Keyboard.make(keyboards[state ?? text])
+  await ctx.reply('Keyboard', keyboard.reply())
 });
 
 const start = async () => {
