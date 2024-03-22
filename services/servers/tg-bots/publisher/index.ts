@@ -1,4 +1,5 @@
 import process from 'process'
+import 'dotenv/config'
 import { SessionStore, Telegraf, session } from 'telegraf'
 import { message } from 'telegraf/filters'
 import { getLogger } from '../utils/index.js'
@@ -17,8 +18,8 @@ const logger = getLogger('tg-publisher-bot')
 bot.use(
   session({
     defaultSession: () => ({
-      keyboardMenu: undefined,
-      channel: undefined,
+      // keyboardMenu: undefined,
+      // channel: undefined,
       state: EState.MAIN
     }),
     // store: MySQL({
@@ -70,7 +71,7 @@ bot.action(
 )
 
 bot.on(message('text'), async (ctx) => {
-  console.log(ctx);
+  console.log(ctx.update.message.text, ctx.session)
 });
 
 const start = async () => {
@@ -85,3 +86,6 @@ const start = async () => {
 }
 
 await start()
+
+process.once('SIGINT', () => bot.stop('SIGINT'))
+process.once('SIGTERM', () => bot.stop('SIGTERM'))

@@ -4,7 +4,7 @@ import { EState } from '../constants'
 import { mainMenu } from '.'
 
 export const addChannelMenu = (ctx: TCurrentCtx) => {
-  ctx.session.channel = EState.ADD_CHANNEL
+  ctx.session.state = EState.ADD_CHANNEL
   new RegularMenu<TCurrentCtx, EState>({
     action: EState.ADD_CHANNEL,
     message:
