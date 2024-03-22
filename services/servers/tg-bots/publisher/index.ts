@@ -69,17 +69,19 @@ bot.action(
 bot.on(message('text'), async (ctx) => {
   const { state } = ctx.session
   const text = ctx.update.message.text
+  console.log(text, state)
   if (state === EState.ADD_CHANNEL) {
     ctx.session.channel = text
-    return GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, keywordSettingsMenu)
+    return keywordSettingsMenu(ctx)
   }
   if (state === EState.CHANNEL_SELECT) {
     ctx.session.channel = text
-    return GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSettingsMenu)
+    return channelSettingsMenu(ctx)
   }
-  if (state === EState.ADD_KEYWORDS)
+  if (state === EState.ADD_KEYWORDS) {
     await ctx.reply(`Данные ключевые слова приняты: ${text}`)
-  return GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, mainMenu)
+    return mainMenu(ctx)
+  }
 });
 
 const start = async () => {

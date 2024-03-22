@@ -1,7 +1,7 @@
 import { KeyboardButton, RegularMenu } from 'telegraf-menu'
 import { TCurrentCtx } from '../types'
 import { EState } from '../constants'
-import { mainMenu } from '.'
+import { keywordSettingsMenu, mainMenu } from '.'
 
 export const channelSettingsMenu = (ctx: TCurrentCtx) => {
   new RegularMenu<TCurrentCtx, EState>({
@@ -21,10 +21,15 @@ export const channelSettingsMenu = (ctx: TCurrentCtx) => {
     onChange(changeCtx, state) {
       console.log(state)
       ctx.session.state = state
-      switch (state) {
-        case EState.MAIN:
-          changeCtx.session.channel = undefined
-          return mainMenu(changeCtx)
+      if (state === EState.MAIN) {
+        changeCtx.session.channel = undefined
+        return mainMenu(changeCtx)
+      }
+      if (state === EState.ADD_KEYWORDS) {
+        return ctx.reply('Отправьте ссылку на канал в формате @name или https://t.me/name')
+      }
+      if (state === EState.KEYWORD_SETTINGS) {
+        return keywordSettingsMenu(changeCtx)
       }
     }
   }).sendMenu(ctx)
