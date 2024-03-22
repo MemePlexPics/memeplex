@@ -1,12 +1,11 @@
 import process from 'process'
 import 'dotenv/config'
-import { SessionStore, Telegraf, session } from 'telegraf'
+import { Telegraf, session } from 'telegraf'
 import { message } from 'telegraf/filters'
 import { getLogger } from '../utils/index.js'
 import {
   GenericMenu,
 } from 'telegraf-menu'
-import { MySQL } from '@telegraf/session/mysql'
 import { TCurrentCtx } from './types'
 import { addChannelMenu, channelSelectMenu, channelSettingsMenu, mainMenu } from './menus'
 import { EState } from './constants'
@@ -18,18 +17,10 @@ const logger = getLogger('tg-publisher-bot')
 bot.use(
   session({
     defaultSession: () => ({
-      // keyboardMenu: undefined,
-      // channel: undefined,
+      keyboardMenu: undefined,
+      channel: undefined,
       state: EState.MAIN
     }),
-    // store: MySQL({
-    //   host: process.env.DB_HOST,
-    //   port: Number(process.env.DB_PORT),
-    //   database: process.env.DB_DATABASE,
-    //   user: process.env.DB_USER,
-    //   password: process.env.DB_PASSWORD,
-    //   table: 'telegraf_publisher_sessions'
-    // })
   })
 )
 
@@ -39,6 +30,7 @@ bot.use(GenericMenu.middleware())
 bot.command(EState.MAIN, mainMenu)
 bot.action(
   new RegExp(EState.MAIN),
+  // @ts-expect-error
   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, mainMenu)
 )
 
@@ -46,6 +38,7 @@ bot.action(
 bot.command(EState.ADD_CHANNEL, addChannelMenu)
 bot.action(
   new RegExp(EState.ADD_CHANNEL),
+  // @ts-expect-error
   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, addChannelMenu)
 )
 
@@ -53,6 +46,7 @@ bot.action(
 bot.command(EState.CHANNEL_SELECT, channelSelectMenu)
 bot.action(
   new RegExp(EState.CHANNEL_SELECT),
+  // @ts-expect-error
   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSelectMenu)
 )
 
@@ -60,6 +54,7 @@ bot.action(
 bot.command(EState.CHANNEL_SETTINGS, channelSettingsMenu)
 bot.action(
   new RegExp(EState.CHANNEL_SETTINGS),
+  // @ts-expect-error
   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSettingsMenu)
 )
 
@@ -67,11 +62,24 @@ bot.action(
 bot.command(EState.KEYWORD_SETTINGS, keywordSettingsMenu)
 bot.action(
   new RegExp(EState.KEYWORD_SETTINGS),
+  // @ts-expect-error
   GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, keywordSettingsMenu)
 )
 
 bot.on(message('text'), async (ctx) => {
-  console.log(ctx.update.message.text, ctx.session)
+  const { state } = ctx.session
+  const text = ctx.update.message.text
+  if (state === EState.ADD_CHANNEL) {
+    ctx.session.channel = text
+    return GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, keywordSettingsMenu)
+  }
+  if (state === EState.CHANNEL_SELECT) {
+    ctx.session.channel = text
+    return GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, channelSettingsMenu)
+  }
+  if (state === EState.ADD_KEYWORDS)
+    await ctx.reply(`Данные ключевые слова приняты: ${text}`)
+  return GenericMenu.onAction((ctx: TCurrentCtx) => ctx.session.keyboardMenu, mainMenu)
 });
 
 const start = async () => {
