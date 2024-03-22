@@ -1,3 +1,4 @@
+import process from 'process';
 import { Markup } from 'telegraf';
 
 import {
@@ -18,12 +19,12 @@ export const onBotRecieveText = async (ctx, client, logger) => {
             ctx.session.search.query ||
             ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH);
         const page = ctx.session.search.nextPage || 1;
-        logUserAction(ctx.from, {
+        await logUserAction(ctx.from, {
             search: {
                 query,
                 page,
             },
-        });
+        }, logger);
         const response = await searchMemes(
             client,
             query,
@@ -38,6 +39,11 @@ export const onBotRecieveText = async (ctx, client, logger) => {
         for (let meme of response.result) {
             await ctx.reply(getBotAnswerString(meme), {
                 parse_mode: 'markdown',
+                link_preview_options: {
+                    url: new URL(
+                        `https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`,
+                    ).href
+                }
             });
         }
         if (page < response.totalPages) {
