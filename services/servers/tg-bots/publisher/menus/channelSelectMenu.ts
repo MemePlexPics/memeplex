@@ -16,7 +16,7 @@ export const channelSelectMenu = (ctx: TCurrentCtx) => {
     onChange(changeCtx, state) {
       console.log(state)
       if (state === EState.MAIN) return mainMenu(changeCtx)
-      ctx.session.channel = state;
+      ctx.session.state = state;
       channelSettingsMenu(changeCtx)
     }
   }).sendMenu(ctx)
