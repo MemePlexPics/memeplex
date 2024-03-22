@@ -1,4 +1,5 @@
 import { Markup } from 'telegraf';
+import process from 'process';
 
 import { TG_BOT_PAGE_SIZE } from '../../../../../constants/index.js';
 import { logError } from '../../../../../utils/index.js';
@@ -15,7 +16,7 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
                 from,
                 to,
             },
-        });
+        }, logger);
         const response = await getLatestMemes(
             client,
             from,
@@ -26,6 +27,11 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
         for (let meme of response.result) {
             await ctx.reply(getBotAnswerString(meme), {
                 parse_mode: 'markdown',
+                link_preview_options: {
+                    url: new URL(
+                        `https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`,
+                    ).href
+                }
             });
         }
 
