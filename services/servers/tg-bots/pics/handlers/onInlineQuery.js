@@ -4,24 +4,33 @@ import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants/index.js';
 import { searchMemes } from '../../../utils/index.js';
 import { logUserAction } from '../utils/index.js';
 
-export const onInlineQuery = async (ctx, page, client, debounceInline) => {
+export const onInlineQuery = async (ctx, page, client, sessionInline, logger) => {
     const query = ctx.inlineQuery.query;
 
     if (!query) return;
 
-    logUserAction(ctx.inlineQuery.from, {
-        inline_search: {
-            query,
-            page,
-            chat_type: ctx.inlineQuery.chat_type,
+    await logUserAction(
+        ctx.inlineQuery.from,
+        {
+            inline_search: {
+                query,
+                page,
+                chat_type: ctx.inlineQuery.chat_type,
+            },
         },
-    });
+        logger);
+    if (sessionInline[ctx.inlineQuery.from.id].abortController) {
+        sessionInline[ctx.inlineQuery.from.id].abortController.abort();
+    }
+    const abortController = new AbortController();
+    sessionInline[ctx.inlineQuery.from.id].abortController = abortController;
 
     const response = await searchMemes(
         client,
         query,
         page,
         TG_INLINE_BOT_PAGE_SIZE,
+        abortController,
     );
 
     const results = response.result.map((meme) => {
@@ -39,8 +48,12 @@ export const onInlineQuery = async (ctx, page, client, debounceInline) => {
         };
     });
 
-    await ctx.answerInlineQuery(results, {
-        next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
-    });
-    debounceInline[ctx.inlineQuery.from.id] = 0;
+    // If they are not equal, then there is at least one more new request from the same user
+    if (abortController === sessionInline[ctx.inlineQuery.from.id].abortController) {
+        await ctx.answerInlineQuery(results, {
+            next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
+        });
+        sessionInline[ctx.inlineQuery.from.id].debounce = 0;
+        sessionInline[ctx.inlineQuery.from.id].abortController = undefined;
+    }
 };

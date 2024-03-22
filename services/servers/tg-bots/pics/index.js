@@ -40,7 +40,7 @@ bot.use(
         window: 60_000,
         limit: 15,
         onLimitExceeded: async (ctx) => {
-            logUserAction(ctx.from, { info: 'exceeded rate limit' });
+            logUserAction(ctx.from, { info: 'exceeded rate limit' }, logger);
             await ctx.reply('Wait a few seconds before trying again');
         },
     }),
@@ -53,7 +53,7 @@ bot.start(async (ctx) => {
 Send me a text to search memes by caption.`,
         { parse_mode: 'markdown' },
     );
-    logUserAction(ctx.from, { start: true });
+    logUserAction(ctx.from, { start: true }, logger);
 });
 
 bot.command('get_latest', (ctx) =>
@@ -78,22 +78,25 @@ bot.action('button_latest_newer', (ctx) =>
 
 bot.on(message('text'), async (ctx) => {
     resetSearchSession(ctx);
-    await onBotRecieveText(ctx);
+    await onBotRecieveText(ctx, client, logger);
 });
 
-const debounceInline = {};
+const sessionInline = {};
 
 bot.on('inline_query', async (ctx) => {
+    if (!sessionInline[ctx.inlineQuery.from.id]) {
+        sessionInline[ctx.inlineQuery.from.id] = {};
+    }
     const page = Number(ctx.inlineQuery.offset) || 1;
-    if (debounceInline[ctx.inlineQuery.from.id]) {
-        clearTimeout(debounceInline[ctx.inlineQuery.from.id]);
+    if (sessionInline[ctx.inlineQuery.from.id]?.debounce) {
+        clearTimeout(sessionInline[ctx.inlineQuery.from.id].debounce);
     }
     if (page === 1) {
-        debounceInline[ctx.inlineQuery.from.id] = setTimeout(
-            () => onInlineQuery(ctx, page, client, debounceInline),
+        sessionInline[ctx.inlineQuery.from.id].debounce = setTimeout(
+            () => onInlineQuery(ctx, page, client, sessionInline, logger),
             500,
         );
-    } else await onInlineQuery(ctx, page, client, debounceInline);
+    } else await onInlineQuery(ctx, page, client, sessionInline, logger);
 });
 
 bot.on('chosen_inline_result', async (ctx) => {
@@ -103,7 +106,7 @@ bot.on('chosen_inline_result', async (ctx) => {
             query,
             id: result_id,
         },
-    });
+    }, logger);
 });
 
 const start = async () => {

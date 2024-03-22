@@ -1,6 +1,7 @@
 import process from 'process'
 import 'dotenv/config'
 import { SessionStore, Telegraf, session } from 'telegraf'
+// import { Bot, session } from 'grammy'
 import { message } from 'telegraf/filters'
 // import rateLimit from 'telegraf-ratelimit';
 import { getLogger } from '../utils/index.js'
@@ -13,7 +14,7 @@ import { addChannelMenu, channelSelectMenu, channelSettingsMenu, mainMenu } from
 import { EState } from './constants'
 import { keywordSettingsMenu } from './menus/keywordSettingsMenu.js'
 
-const bot = new Telegraf<TCurrentCtx>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN)
+const bot = new Telegraf<TCurrentCtx>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
 
 bot.use(
@@ -23,14 +24,14 @@ bot.use(
       channel: undefined,
       state: EState.MAIN
     }),
-    store: MySQL({
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      database: process.env.DB_DATABASE,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      table: 'telegraf_publisher_sessions'
-    }) as SessionStore<TCurrentCtx['session']>
+    // store: MySQL({
+    //   host: process.env.DB_HOST,
+    //   port: Number(process.env.DB_PORT),
+    //   database: process.env.DB_DATABASE,
+    //   user: process.env.DB_USER,
+    //   password: process.env.DB_PASSWORD,
+    //   table: 'telegraf_publisher_sessions'
+    // })
   })
 )
 

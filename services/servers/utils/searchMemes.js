@@ -1,7 +1,7 @@
 import { ELASTIC_INDEX, ELASTIC_FUZZINESS } from '../../../constants/index.js';
 import { getMemeResponseEntity } from './index.js';
 
-export const searchMemes = async (client, query, page, size) => {
+export const searchMemes = async (client, query, page, size, abortController) => {
     const from = (page - 1) * size;
 
     const elasticRes = await client.search({
@@ -59,7 +59,7 @@ export const searchMemes = async (client, query, page, size) => {
                 ],
             },
         },
-    });
+    }, abortController ? { signal: abortController.signal } : {});
 
     const response = {
         result: [],
