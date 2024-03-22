@@ -35,6 +35,7 @@ export const channelPost = async (req, res) => {
             TG_API_PARSE_FROM_DATE,
         );
         await proceedChannelSuggestion(mysql, channel);
+        mysql.close();
     }
     return res.send();
 };
