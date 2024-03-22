@@ -8,6 +8,7 @@ export const featuredChannelDelete = async (req, res) => {
     if (!username) return res.status(500).send();
     const mysql = await getMysqlClient();
     await removeFeaturedChannel(mysql, username);
+    mysql.close();
     setLogAction(res, `🗑 Deleted @${username}`);
     return res.send();
 };
