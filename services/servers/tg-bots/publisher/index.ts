@@ -1,9 +1,6 @@
 import process from 'process'
-import 'dotenv/config'
 import { SessionStore, Telegraf, session } from 'telegraf'
-// import { Bot, session } from 'grammy'
 import { message } from 'telegraf/filters'
-// import rateLimit from 'telegraf-ratelimit';
 import { getLogger } from '../utils/index.js'
 import {
   GenericMenu,

@@ -35,7 +35,7 @@ export const findNewProxies = async (logger) => {
                 persistent: true,
             });
         }
-        mysql.end();
+        mysql.close();
         logger.info(
             `💬 Looking completed: ${notCheckedProxiesCount} new proxies to check`,
         );

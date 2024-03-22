@@ -52,6 +52,7 @@ export const ocr = async (logger) => {
         receiveImageFileCh.nack(msg);
         throw e;
     } finally {
+        clearTimeout(timeoutId);
         if (receiveImageFileCh) receiveImageFileCh.close();
         if (amqp) amqp.close();
         if (elastic) elastic.close();

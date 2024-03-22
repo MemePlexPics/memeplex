@@ -61,6 +61,7 @@ export const downloader = async (logger) => {
         receiveImageDataCh.nack(msg);
         throw e;
     } finally {
+        clearTimeout(timeoutId);
         if (sendImageFileCh) sendImageFileCh.close();
         if (receiveImageDataCh) receiveImageDataCh.close();
         if (amqp) amqp.close();
