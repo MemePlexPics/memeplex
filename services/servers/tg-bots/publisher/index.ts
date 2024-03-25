@@ -28,11 +28,11 @@ const keyboards = {
   [EState.ADD_CHANNEL]: [
     Key.callback('Назад', EState.MAIN),
   ],
-  // [EState.ADD_KEYWORDS]: [
-  //   Key.callback('Добавить канал', EState.ADD_CHANNEL),
-  // ],
+  [EState.ADD_KEYWORDS]: [
+    Key.callback('Добавить канал', EState.ADD_CHANNEL),
+  ],
   [EState.CHANNEL_SELECT]: [
-    ['first', 'second', 'third'],
+    ['first', 'second', 'third'].map(channel => Key.callback(channel, channel)),
     [
       Key.callback('Добавить канал', EState.ADD_CHANNEL)
     ],
@@ -50,8 +50,8 @@ const keyboards = {
   ],
   [EState.KEYWORD_SETTINGS]: [
     ['tits','peaches'].map(keyword => ([
-      keyword,
-      `${keyword}|del`,
+      Key.callback(keyword, keyword),
+      Key.callback('Del', `${keyword}|del`),
     ])),
     Key.callback('В главное меню', EState.MAIN),
   ],
