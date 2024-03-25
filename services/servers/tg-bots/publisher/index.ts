@@ -2,71 +2,46 @@ import process from 'process'
 import 'dotenv/config'
 import { Telegraf, session } from 'telegraf'
 import { message } from 'telegraf/filters'
-import { Keyboard, Key } from 'telegram-keyboard'
-import { getLogger } from '../utils/index.js'
-import { TCurrentCtx } from './types'
+import { getLogger } from '../utils'
 import { EState } from './constants'
+import { TState, TTelegrafContext } from './types'
+import { enterToState } from './utils'
+import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
 
-const bot = new Telegraf<TCurrentCtx>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
+const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
 
 bot.use(
   session({
     defaultSession: () => ({
-      keyboardMenu: undefined,
       channel: undefined,
       state: EState.MAIN
     }),
   })
 )
 
-const keyboards = {
-  [EState.MAIN]: [
-    Key.callback('Добавить канал', EState.ADD_CHANNEL),
-    Key.callback('Настройки каналов', EState.CHANNEL_SETTINGS),
-  ],
-  [EState.ADD_CHANNEL]: [
-    Key.callback('Назад', EState.MAIN),
-  ],
-  [EState.ADD_KEYWORDS]: [
-    Key.callback('Добавить канал', EState.ADD_CHANNEL),
-  ],
-  [EState.CHANNEL_SELECT]: [
-    ['first', 'second', 'third'].map(channel => Key.callback(channel, channel)),
-    [
-      Key.callback('Добавить канал', EState.ADD_CHANNEL)
-    ],
-  ],
-  [EState.CHANNEL_SETTINGS]: [
-    [
-      Key.callback('Добавить ключевые слова', EState.ADD_KEYWORDS),
-    ],
-    [
-      Key.callback('Редактировать ключевые слова', EState.ADD_KEYWORDS),
-    ],
-    [
-      Key.callback('В главное меню', EState.MAIN),
-    ],
-  ],
-  [EState.KEYWORD_SETTINGS]: [
-    ['tits','peaches'].map(keyword => ([
-      Key.callback(keyword, keyword),
-      Key.callback('Del', `${keyword}|del`),
-    ])),
-    Key.callback('В главное меню', EState.MAIN),
-  ],
+const states: Record<EState, TState<EState>> = {
+  [EState.ADD_CHANNEL]: addChannelState,
+  [EState.ADD_KEYWORDS]: addKeywordsState,
+  [EState.CHANNEL_SELECT]: channelSelectState,
+  [EState.CHANNEL_SETTINGS]: channelSettingState,
+  [EState.KEYWORD_SETTINGS]: keywordSettingsState,
+  [EState.MAIN]: mainState,
 }
 
+bot.start(async (ctx) => {
+  await enterToState(ctx, mainState)
+})
+
+bot.on('callback_query', async (ctx) => {
+  // @ts-expect-error
+  const callbackQuery = ctx.update.callback_query.data
+  await states[ctx.session.state].onCallback(ctx, callbackQuery)
+})
+
 bot.on(message('text'), async (ctx) => {
-  // const { state } = ctx.session
-  const text = ctx.update.message.text
-  let state
-  console.log(text)
-  if (text[0] === '/') state = text.slice(1)
-  const keyboard = Keyboard.make(keyboards[state ?? text])
-  if (!keyboard) return
-  await ctx.reply('Keyboard', keyboard.inline())
-});
+  await states[ctx.session.state].onText?.(ctx, ctx.update.message.text)
+})
 
 const start = async () => {
   bot.launch({
