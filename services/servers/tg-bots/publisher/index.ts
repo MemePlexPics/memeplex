@@ -8,6 +8,10 @@ import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
 import { enterToState } from './utils'
 import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
+import { drizzle } from 'drizzle-orm/mysql2'
+import { getMysqlClient } from '../../../../utils'
+import { botPublisherUsers } from '../../../../db/schema'
+import { sql } from 'drizzle-orm'
 
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
@@ -40,6 +44,14 @@ const states: Record<EState, TState<EState>> = {
 
 bot.start(async (ctx) => {
   await enterToState(ctx, mainState)
+
+  // TODO: move all orm queries into mysql-queris folder
+  const db = drizzle(await getMysqlClient())
+  await db.insert(botPublisherUsers).values({
+    id: ctx.from.id,
+    user: ctx.from.username,
+    timestamp: Date.now() / 1000,
+  }).onDuplicateKeyUpdate({ set: { id: sql`id` } })
 })
 
 bot.on('callback_query', async (ctx) => {
