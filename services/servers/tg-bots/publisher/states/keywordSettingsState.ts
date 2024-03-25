@@ -5,7 +5,7 @@ import { enterToState } from "../utils"
 import { mainState } from "."
 
 export const keywordSettingsState: TState<EState> = {
-    stateName: EState.CHANNEL_SELECT,
+    stateName: EState.KEYWORD_SETTINGS,
     inlineMenu: () => ({
         text: 'Настройка ключевых слов',
         buttons: ['tits','peaches'].map(keyword => ([
