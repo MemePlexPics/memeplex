@@ -16,6 +16,9 @@ export const channelSettingState: TState<EState> = {
               Key.callback('Редактировать ключевые слова', EState.KEYWORD_SETTINGS),
             ],
             [
+              Key.callback('Отключить канал', 'disable_channel'),
+            ],
+            [
               Key.callback('В главное меню', EState.MAIN),
             ],
         ],
@@ -31,6 +34,11 @@ export const channelSettingState: TState<EState> = {
         }
         if (callback === EState.MAIN) {
             ctx.session.channel = undefined
+            await enterToState(ctx, mainState)
+            return
+        }
+        if (callback === 'disable_channel') {
+            await ctx.reply('Канал отключен от подписки')
             await enterToState(ctx, mainState)
             return
         }

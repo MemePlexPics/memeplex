@@ -30,8 +30,8 @@ export const keywordSettingsState: TState<EState> = {
             return
         }
         if (typeof callback === 'string') {
-            const [channel, command] = callback.split('|')
-            console.log({channel, command})
+            const [keyword, command] = callback.split('|')
+            console.log({keyword, command})
             await ctx.reply('Ключевые слова приняты!')
             await enterToState(ctx, mainState)
         }
