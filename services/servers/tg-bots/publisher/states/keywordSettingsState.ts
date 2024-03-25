@@ -15,9 +15,6 @@ export const keywordSettingsState: TState<EState> = {
             ])).concat([[
                 Key.callback('В главное меню', EState.MAIN)
             ]]),
-            options: {
-                columns: 2,
-            },
         }
     },
     onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {

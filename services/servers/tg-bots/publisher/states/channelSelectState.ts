@@ -13,9 +13,6 @@ export const channelSelectState: TState<EState> = {
             .concat([[
                 Key.callback('Добавить канал', EState.ADD_CHANNEL)
               ]]),
-        options: {
-            columns: 1,
-        },
     }),
     onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
         if (callback === EState.ADD_CHANNEL) {
