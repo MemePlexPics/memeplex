@@ -7,6 +7,8 @@ export const enterToState = async <GStateName extends EState>(ctx: TTelegrafCont
     if (state.inlineMenu) {
         const inlineMenu = state.inlineMenu(ctx)
         await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).inline())
+        const message = state.message?.(ctx)
+        if (message) ctx.reply(message)
         return
     }
 }

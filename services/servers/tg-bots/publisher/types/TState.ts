@@ -1,4 +1,4 @@
-import { CallbackButton } from "telegram-keyboard"
+import { CallbackButton, MakeOptions } from "telegram-keyboard"
 import { TTelegrafContext } from "."
 
 export type TState<GStateName> = {
@@ -6,6 +6,7 @@ export type TState<GStateName> = {
     inlineMenu?: (ctx?: TTelegrafContext) => {
         text: string
         buttons: CallbackButton[] | CallbackButton[][]
+        options?: MakeOptions
     }
     message?: (ctx?: TTelegrafContext) => string
     onCallback?: <GCallback = GStateName>(ctx: TTelegrafContext, callback: GCallback) => unknown
