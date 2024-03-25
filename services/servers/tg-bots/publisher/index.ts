@@ -37,6 +37,8 @@ bot.on('callback_query', async (ctx) => {
   // @ts-expect-error
   const callbackQuery = ctx.update.callback_query.data
   await states[ctx.session.state].onCallback(ctx, callbackQuery)
+  const message = states[ctx.session.state].message?.(ctx)
+  if (message) ctx.reply(message)
 })
 
 bot.on(message('text'), async (ctx) => {
