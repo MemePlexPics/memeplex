@@ -64,7 +64,8 @@ bot.on(message('text'), async (ctx) => {
   console.log(text)
   if (text[0] === '/') state = text.slice(1)
   const keyboard = Keyboard.make(keyboards[state ?? text])
-  await ctx.reply('Keyboard', keyboard.reply())
+  if (!keyboard) return
+  await ctx.reply('Keyboard', keyboard.inline())
 });
 
 const start = async () => {
