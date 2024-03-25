@@ -20,7 +20,7 @@ export const channelSelectState: TState<EState> = {
             return
         }
         if (typeof callback === 'string') {
-            ctx.session.channel = callback
+            ctx.session.channel.name = callback
             await enterToState(ctx, channelSettingState)
             return
         }

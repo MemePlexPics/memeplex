@@ -10,7 +10,7 @@ export const keywordSettingsState: TState<EState> = {
         return {
             text: `Настройка ключевых слов @${ctx.session.channel}`,
             buttons: ['tits','peaches'].map(keyword => ([
-                Key.callback(keyword, keyword),
+                // Key.callback(keyword, keyword),
                 Key.callback('Del', `${keyword}|del`),
             ])).concat([[
                 Key.callback('В главное меню', EState.MAIN)
@@ -25,8 +25,9 @@ export const keywordSettingsState: TState<EState> = {
         }
         if (typeof callback === 'string') {
             const [keyword, command] = callback.split('|')
-            console.log({keyword, command})
-            await ctx.reply('Ключевые слова приняты!')
+            if (command === 'del') {
+                console.log({keyword, command})
+            }
             await enterToState(ctx, mainState)
         }
     }

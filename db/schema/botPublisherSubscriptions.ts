@@ -1,4 +1,4 @@
-import { mysqlTable, int, serial } from "drizzle-orm/mysql-core"
+import { mysqlTable, int, serial, unique } from "drizzle-orm/mysql-core"
 import { botPublisherChannels, botPublisherKeywords } from "."
 
 export const botPublisherSubscriptions = mysqlTable("bot_publisher_subscriptions", {
@@ -15,4 +15,6 @@ export const botPublisherSubscriptions = mysqlTable("bot_publisher_subscriptions
 			onDelete: "restrict",
 			onUpdate: "restrict"
 		}),
-})
+}, (t) => ({
+	unq: unique('keyword_id-channel_id').on(t.keywordId, t.channelId)
+}))

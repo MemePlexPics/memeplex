@@ -10,7 +10,6 @@ export const botPublisherChannels = mysqlTable("bot_publisher_channels", {
 			onUpdate: "restrict"
 		}),
 	username: varchar("username", { length: 255 }).notNull(),
-	title: varchar("title", { length: 255 }).notNull(),
 	subscribers: int('subscribers').notNull(),
 	timestamp: int("timestamp").notNull(),
 })

@@ -1,6 +1,9 @@
 import { EState } from "../constants"
 
 export type TTelegrafSession = {
-    channel?: string
+    channel?: {
+        name: string
+        id?: number
+    }
     state: EState
 }
