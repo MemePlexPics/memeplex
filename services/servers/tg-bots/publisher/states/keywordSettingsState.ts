@@ -6,14 +6,17 @@ import { mainState } from "."
 
 export const keywordSettingsState: TState<EState> = {
     stateName: EState.KEYWORD_SETTINGS,
-    inlineMenu: () => ({
-        text: 'Настройка ключевых слов',
+    inlineMenu: (ctx) => ({
+        text: `Настройка ключевых слов @${ctx.session.channel}`,
         buttons: ['tits','peaches'].map(keyword => ([
             Key.callback(keyword, keyword),
             Key.callback('Del', `${keyword}|del`),
         ])).concat([
             Key.callback('В главное меню', EState.MAIN)
         ]),
+        options: {
+            columns: 2,
+        }
     }),
     onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
         if (callback === EState.MAIN) {
@@ -24,6 +27,8 @@ export const keywordSettingsState: TState<EState> = {
         if (typeof callback === 'string') {
             const [channel, command] = callback.split('|')
             console.log({channel, command})
+            await ctx.reply('Ключевые слова приняты!')
+            await enterToState(ctx, mainState)
         }
     }
 }
