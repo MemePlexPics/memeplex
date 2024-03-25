@@ -7,9 +7,6 @@ import { mainState } from "."
 export const keywordSettingsState: TState<EState> = {
     stateName: EState.KEYWORD_SETTINGS,
     inlineMenu: (ctx) => {
-        // const buttons = [];
-        // ['tits', 'peaches'].forEach(keyword => buttons.concat(Key.callback(keyword, keyword), Key.callback('Del', `${keyword}|del`)))
-        // buttons.push()
         return {
             text: `Настройка ключевых слов @${ctx.session.channel}`,
             buttons: ['tits','peaches'].map(keyword => ([

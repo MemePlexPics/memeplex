@@ -9,10 +9,10 @@ export const channelSelectState: TState<EState> = {
     inlineMenu: () => ({
         text: 'Выберите канал',
         buttons: ['first', 'second', 'third']
-            .map(channel => Key.callback(`@${channel}`, channel))
-            .concat([
+            .map(channel => [Key.callback(`@${channel}`, channel)])
+            .concat([[
                 Key.callback('Добавить канал', EState.ADD_CHANNEL)
-              ]),
+              ]]),
         options: {
             columns: 1,
         },
