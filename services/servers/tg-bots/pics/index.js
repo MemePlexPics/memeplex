@@ -118,9 +118,9 @@ const start = async () => {
         },
     });
     logger.info({ info: 'Telegram bot started' });
+
+    process.once('SIGINT', () => bot.stop('SIGINT'));
+    process.once('SIGTERM', () => bot.stop('SIGTERM'));
 };
 
 await start();
-
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));

@@ -1,10 +1,11 @@
 import process from 'process'
 import 'dotenv/config'
 import { Telegraf, session } from 'telegraf'
+import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger } from '../utils'
 import { EState } from './constants'
-import { TState, TTelegrafContext } from './types'
+import { TState, TTelegrafContext, TTelegrafSession } from './types'
 import { enterToState } from './utils'
 import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
 
@@ -16,6 +17,14 @@ bot.use(
     defaultSession: () => ({
       channel: undefined,
       state: EState.MAIN
+    }),
+    store: MySQL<TTelegrafSession>({
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        database: process.env.DB_DATABASE,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        table: 'telegraf_publisher_sessions',
     }),
   })
 )
@@ -34,7 +43,7 @@ bot.start(async (ctx) => {
 })
 
 bot.on('callback_query', async (ctx) => {
-  // @ts-expect-error
+  // @ts-expect-error Property 'data' does not exist on type 'CallbackQuery'
   const callbackQuery = ctx.update.callback_query.data
   await states[ctx.session.state].onCallback(ctx, callbackQuery)
 })
@@ -52,9 +61,9 @@ const start = async () => {
     }
   })
   logger.info({ info: 'Telegram bot started' })
+
+  process.once('SIGINT', () => bot.stop('SIGINT'))
+  process.once('SIGTERM', () => bot.stop('SIGTERM'))  
 }
 
 await start()
-
-process.once('SIGINT', () => bot.stop('SIGINT'))
-process.once('SIGTERM', () => bot.stop('SIGTERM'))
