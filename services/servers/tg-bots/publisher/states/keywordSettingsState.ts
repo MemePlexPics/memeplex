@@ -15,8 +15,9 @@ export const keywordSettingsState: TState<EState> = {
             Key.callback('В главное меню', EState.MAIN)
         ]),
         options: {
+            flat: true,
             columns: 2,
-        }
+        },
     }),
     onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
         if (callback === EState.MAIN) {
