@@ -7,7 +7,7 @@ import { addKeywordsState, keywordSettingsState, mainState } from "."
 export const channelSettingState: TState<EState> = {
     stateName: EState.CHANNEL_SETTINGS,
     inlineMenu: (ctx) => ({
-        text: `Настройки канала ${ctx.session.channel}`,
+        text: `Настройки канала @${ctx.session.channel}`,
         buttons: [
             [
               Key.callback('Добавить ключевые слова', EState.ADD_KEYWORDS),
