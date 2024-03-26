@@ -167,14 +167,16 @@ app.post('/suggestChannel', async (req, res) => {
 });
 
 app.get('/getChannelSuggestionList', async (req, res) => {
-    const { page } = req.query;
+    const { page, filter } = req.query;
     const mysql = await getMysqlClient();
+    const filters = { name: filter };
     const channels = await getChannelSuggestions(
         mysql,
         page,
         CHANNEL_LIST_PAGE_SIZE,
+        filters,
     );
-    const count = await getChannelSuggestionsCount(mysql);
+    const count = await getChannelSuggestionsCount(mysql, filters);
     mysql.close();
     return res.send({
         result: channels,

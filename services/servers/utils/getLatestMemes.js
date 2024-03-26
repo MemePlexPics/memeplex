@@ -52,6 +52,7 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
         result: [],
         from: undefined,
         to: undefined,
+        total: elasticRes.hits.total.value,
         totalPages: Math.ceil(elasticRes.hits.total.value / size),
     };
     for (const hit of elasticRes.hits.hits) {
