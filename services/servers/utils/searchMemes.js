@@ -63,6 +63,7 @@ export const searchMemes = async (client, query, page, size, abortController) =>
 
     const response = {
         result: [],
+        total: elasticRes.hits.total.value,
         totalPages: Math.ceil(elasticRes.hits.total.value / size),
     };
     for (const hit of elasticRes.hits.hits) {

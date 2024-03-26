@@ -7,6 +7,7 @@ import { getUrl } from '../../utils'
 
 export const ChannelSuggestionList = (props: {
   updateSwitch: boolean
+  filter?: string
   onAction: (channel: string, action: 'add' | 'remove') => unknown
 }) => {
   const [page, setPage] = useState(1)
@@ -14,9 +15,10 @@ export const ChannelSuggestionList = (props: {
     () =>
       getUrl('/getChannelSuggestionList', {
         page: '' + page,
+        filter: props.filter,
       }),
     {
-      deps: [page, props.updateSwitch],
+      deps: [page, props.updateSwitch, props.filter],
     },
   )
 
