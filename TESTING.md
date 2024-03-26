@@ -15,6 +15,7 @@
    + main page
    + main page while the content is loading
 - Admin panel
+- Changing the language
 
 ## Admin Panel Functionality:
 
