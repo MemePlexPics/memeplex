@@ -13,7 +13,6 @@ import { handleNackByTimeout } from '../utils/index.js';
 // Listens for messages containing images, outputs messages containing OCR'd text
 export const ocr = async (logger) => {
     let elastic, amqp, receiveImageFileCh, timeoutId;
-    let msg;
     try {
         elastic = getElasticClient();
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
@@ -29,7 +28,7 @@ export const ocr = async (logger) => {
             .on('nack', () => clearTimeout(timeoutId));
 
         for (;;) {
-            msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
+            const msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL);
             if (!msg) {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
@@ -47,10 +46,6 @@ export const ocr = async (logger) => {
             }
             receiveImageFileCh.ack(msg);
         }
-    } catch (e) {
-        if (!msg) return;
-        receiveImageFileCh.nack(msg);
-        throw e;
     } finally {
         clearTimeout(timeoutId);
         if (receiveImageFileCh) receiveImageFileCh.close();
