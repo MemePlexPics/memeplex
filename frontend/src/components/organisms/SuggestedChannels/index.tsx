@@ -9,11 +9,14 @@ import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationA
 import { getFieldsWithUntrueValues } from '../../../utils'
 import { ENotificationType } from '../../Notification/constants'
 
+import { Input } from '@/components/atoms'
+
 export const SuggestedChannels = (props: { password: string; className?: string }) => {
   const { t } = useTranslation()
   const setNotification = useNotification()
   const setDialog = useSetAtom(dialogConfirmationAtom)
   const [suggestionsUpdateSwitch, setSuggestionsUpdateSwitch] = useState(true)
+  const [nameFilter, setNameFilter] = useState('')
   const { handleAdminRequest } = useAdminRequest()
 
   const handleAddChannel = async (channel: string, langs: string[]) => {
@@ -68,10 +71,20 @@ export const SuggestedChannels = (props: { password: string; className?: string 
     })
   }
 
+  const onFilterChannels = (channel: string) => {
+    setNameFilter(channel)
+  }
+
   return (
     <div className={props.className}>
+      <h2>{t('label.filter')}</h2>
+      <Input
+        placeholder={t('placeholder.channelFilter')}
+        onPressEnter={onFilterChannels}
+      />
       <ChannelSuggestionList
         updateSwitch={suggestionsUpdateSwitch}
+        filter={nameFilter}
         onAction={onSuggestionAction}
       />
     </div>
