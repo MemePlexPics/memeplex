@@ -14,7 +14,6 @@ import { isFileIgnored } from './utils/index.js';
 
 export const downloader = async (logger) => {
     let amqp, sendImageFileCh, receiveImageDataCh, timeoutId;
-    let msg;
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         sendImageFileCh = await amqp.createChannel();
@@ -30,7 +29,7 @@ export const downloader = async (logger) => {
             .on('nack', () => clearTimeout(timeoutId));
 
         for (;;) {
-            msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
+            const msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL);
             if (!msg) {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
@@ -56,10 +55,6 @@ export const downloader = async (logger) => {
             }
             receiveImageDataCh.ack(msg);
         }
-    } catch (e) {
-        if (!msg) return;
-        receiveImageDataCh.nack(msg);
-        throw e;
     } finally {
         clearTimeout(timeoutId);
         if (sendImageFileCh) sendImageFileCh.close();
