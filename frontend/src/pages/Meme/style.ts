@@ -12,7 +12,7 @@ export const s = stylex.create({
     gap: '20px',
     gridTemplateAreas: {
       default: '"m d"',
-      [mediaPortrait]: '"d" "m"',
+      [mediaPortrait]: '"m" "d"',
     },
   },
   memeImageContainer: {
