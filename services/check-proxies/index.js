@@ -11,7 +11,6 @@ import { handleNackByTimeout } from '../utils/handleNackByTimeout.js';
 
 export const checkProxies = async (logger) => {
     let amqp, checkProxyCh, timeoutId;
-    let msg;
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         checkProxyCh = await amqp.createChannel();
@@ -29,7 +28,7 @@ export const checkProxies = async (logger) => {
         const ipWithoutProxy = await ipWithoutProxyResponse.text();
 
         for (;;) {
-            msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL);
+            const msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL);
             if (!msg) {
                 const mysql = await getMysqlClient();
                 await maintaneProxies(mysql, ipWithoutProxy, logger);
