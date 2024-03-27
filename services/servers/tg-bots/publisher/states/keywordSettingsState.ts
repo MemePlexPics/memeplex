@@ -21,7 +21,7 @@ export const keywordSettingsState: TState<EState> = {
             text: `Настройка ключевых слов @${ctx.session.channel}`,
             buttons: keywordRows.map(keywordRow => ([
                 // Key.callback(keyword, keyword),
-                Key.callback(`🗑 ${keywordRow}`, `${keywordRow.keyword}|del`),
+                Key.callback(`🗑 ${keywordRow.keyword}`, `${keywordRow.keyword}|del`),
             ])).concat([[
                 Key.callback('🏠 В главное меню', EState.MAIN)
             ]]),
