@@ -19,9 +19,13 @@ export const mainState: TState<EState> = {
         return {
             text: 'Добро пожаловать в MemePlex Publisher!',
             buttons: [
-                Key.callback('Добавить канал', EState.ADD_CHANNEL),
+                [
+                    Key.callback('Добавить канал', EState.ADD_CHANNEL),
+                ],
                 userChannels[0].values !== 0
-                    ? Key.callback('Настройки каналов', EState.CHANNEL_SELECT)
+                    ? [
+                        Key.callback('Настройки каналов', EState.CHANNEL_SELECT),
+                    ]
                     : undefined,
             ],
         }
