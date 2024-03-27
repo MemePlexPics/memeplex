@@ -12,9 +12,9 @@ export const addKeywordsState: TState<EState> = {
     stateName: EState.ADD_KEYWORDS,
     message: () => 'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке)',
     inlineMenu: () => ({
-        text: 'Меню',
+        text: 'Добавление ключевых слов',
         buttons: [
-            Key.callback('Назад', EState.CHANNEL_SETTINGS),
+            Key.callback('⬅️ Назад', EState.CHANNEL_SETTINGS),
         ],
     }),
     onCallback: (ctx) => enterToState(ctx, channelSettingState),
@@ -39,14 +39,14 @@ export const addKeywordsState: TState<EState> = {
 
         const subscriptions = existedKeywords.map(({ id }) => ({
             keywordId: id,
-            channelId: 123,
+            channelId: ctx.session.channel.id,
         }))
 
         await db.insert(botPublisherSubscriptions)
             .values(subscriptions)
             .onDuplicateKeyUpdate({ set: { id: sql`id` } })
 
-        await ctx.reply('Ключевые слова приняты!')
+        await ctx.reply('Ключевые слова добавлены!')
         await enterToState(ctx, channelSettingState)
         return
     }
