@@ -11,9 +11,9 @@ export const addChannelState: TState<EState> = {
     stateName: EState.ADD_CHANNEL,
     message: () => 'Введитие название канала в формате @name или https://t.me/name',
     inlineMenu: () => ({
-        text: 'Меню',
+        text: 'Добавление канала',
         buttons: [
-            Key.callback('Назад', EState.MAIN),
+            Key.callback('⬅️ Назад', EState.MAIN),
         ],
     }),
     onCallback: (ctx) => enterToState(ctx, mainState),
@@ -25,11 +25,13 @@ export const addChannelState: TState<EState> = {
         }
         const botInfo = await ctx.telegram.getMe()
         const botInChat = await ctx.telegram.getChatMember(`@${channel}`, botInfo.id)
+        // TODO: check what we're speaking with a chat administrator
         if (botInChat.status !== 'administrator') {
             await ctx.reply(`
 Для публикации от имени канала @${channel} боту необходимо предоставить админ-права.
 После предоставления прав повторите, пожалуйста, отправку названия канала в том же формате.`
             )
+            // TODO: just warn in case of a private subscription without channel / admin rights
             return
         }
         // TODO: if (chat.type === 'private') => ???
@@ -43,13 +45,14 @@ export const addChannelState: TState<EState> = {
 
             const db = drizzle(await getMysqlClient())
             const timestamp = Date.now() / 1000
+            // TODO: state confirmUserChange (when another administrator has already configured the bot)
             await db.insert(botPublisherChannels).values({
                 id: chat.id,
                 userId: ctx.from.id,
                 username: channel,
                 subscribers,
                 timestamp,
-            })
+            }).onDuplicateKeyUpdate({ set: { userId: ctx.from.id } })
             await enterToState(ctx, addKeywordsState)
             return
         }
