@@ -16,18 +16,17 @@ export const mainState: TState<EState> = {
             .select({ values: count() })
             .from(botPublisherChannels)
             .where(eq(botPublisherChannels.userId, ctx.from.id))
+        const buttons = [
+            [
+                Key.callback('Добавить канал', EState.ADD_CHANNEL),
+            ],
+        ]
+        if (userChannels[0].values !== 0) buttons.push([
+            Key.callback('Настройки каналов', EState.CHANNEL_SELECT),
+        ])
         return {
             text: 'Добро пожаловать в MemePlex Publisher!',
-            buttons: [
-                [
-                    Key.callback('Добавить канал', EState.ADD_CHANNEL),
-                ],
-                userChannels[0].values !== 0
-                    ? [
-                        Key.callback('Настройки каналов', EState.CHANNEL_SELECT),
-                    ]
-                    : undefined,
-            ],
+            buttons,
         }
     },
     onCallback: async (ctx, state) => {

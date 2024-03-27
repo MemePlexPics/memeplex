@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, serial } from "drizzle-orm/mysql-core"
+import { mysqlTable, int, varchar } from "drizzle-orm/mysql-core"
 
 export const botPublisherKeywords = mysqlTable("bot_publisher_keywords", {
 	id: int("id").autoincrement().primaryKey(),
