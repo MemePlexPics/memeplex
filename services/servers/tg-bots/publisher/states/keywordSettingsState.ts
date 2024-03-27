@@ -44,6 +44,7 @@ export const keywordSettingsState: TState<EState> = {
                 await db
                     .delete(botPublisherSubscriptions)
                     .where(eq(botPublisherSubscriptions.keywordId, keywordRow[0].id))
+                // TODO: delete orphaned keywords
             }
             await enterToState(ctx, mainState)
         }
