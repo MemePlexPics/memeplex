@@ -17,22 +17,22 @@ export const channelSettingState: TState<EState> = {
         .from(botPublisherSubscriptions)
         .where(eq(botPublisherSubscriptions.channelId, ctx.session.channel.id))
       const hasKeywords = keywordsCount?.[0]?.value !== 0
+      const buttons = [
+        [
+          Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS),
+        ],
+        [
+          Key.callback('🏠 В главное меню', EState.MAIN),
+        ],
+      ]
+      if (hasKeywords) buttons.splice(1, 0, [
+        Key.callback('✏️ Редактировать ключевые слова', EState.KEYWORD_SETTINGS),
+      ])
       return {
         text: `Настройки канала @${ctx.session.channel}`,
-        buttons: [
-            [
-              Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS),
-            ],
-            hasKeywords
-              ? [
-                Key.callback('✏️ Редактировать ключевые слова', EState.KEYWORD_SETTINGS),
-              ]
-              : undefined,
-            [
-              Key.callback('🏠 В главное меню', EState.MAIN),
-            ],
-        ],
-    }},
+        buttons,
+      }
+    },
     onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
         if (callback === EState.ADD_KEYWORDS) {
             await enterToState(ctx, addKeywordsState)
