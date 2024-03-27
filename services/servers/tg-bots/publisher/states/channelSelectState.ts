@@ -17,15 +17,16 @@ export const channelSelectState: TState<EState> = {
             username: botPublisherChannels.username
         }).from(botPublisherChannels).where(eq(botPublisherChannels.userId, ctx.from.id))
         return {
-        text: 'Выберите канал',
-        buttons: userChannels
-            .map(({ id, username }) => [
-                Key.callback(`@${username}`, `${id}|${username}`),
-            ])
-            .concat([[
-                Key.callback('➕ Добавить канал', EState.ADD_CHANNEL)
-              ]]),
-    }},
+            text: 'Выберите канал',
+            buttons: userChannels
+                .map(({ id, username }) => [
+                    Key.callback(`@${username}`, `${id}|${username}`),
+                ])
+                .concat([[
+                    Key.callback('➕ Добавить канал', EState.ADD_CHANNEL)
+                ]]),
+        }
+    },
     onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
         if (callback === EState.ADD_CHANNEL) {
             await enterToState(ctx, addChannelState)

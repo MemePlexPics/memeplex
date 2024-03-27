@@ -1,4 +1,4 @@
-import { mysqlTable, int, serial, unique, foreignKey, bigint } from "drizzle-orm/mysql-core"
+import { mysqlTable, int, unique, foreignKey, bigint } from "drizzle-orm/mysql-core"
 import { botPublisherChannels, botPublisherKeywords } from "."
 
 export const botPublisherSubscriptions = mysqlTable("bot_publisher_subscriptions", {
