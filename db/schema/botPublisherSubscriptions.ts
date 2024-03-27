@@ -1,20 +1,20 @@
-import { mysqlTable, int, serial, unique } from "drizzle-orm/mysql-core"
+import { mysqlTable, int, serial, unique, foreignKey, bigint } from "drizzle-orm/mysql-core"
 import { botPublisherChannels, botPublisherKeywords } from "."
 
 export const botPublisherSubscriptions = mysqlTable("bot_publisher_subscriptions", {
-	id: serial("id").primaryKey(),
-	keywordId: int("keyword_id")
-		.notNull()
-		.references(() => botPublisherKeywords.id, {
-			onDelete: "restrict",
-			onUpdate: "restrict"
-		}),
-	channelId: int("channel_id")
-		.notNull()
-		.references(() => botPublisherChannels.id, {
-			onDelete: "restrict",
-			onUpdate: "restrict"
-		}),
-}, (t) => ({
-	unq: unique('keyword_id-channel_id').on(t.keywordId, t.channelId)
+	id: int("id").autoincrement().primaryKey(),
+	keywordId: int("keyword_id").notNull(),
+	channelId: bigint("channel_id", { mode: 'number' }).notNull(),
+}, (table) => ({
+	unique: unique('keyword_id-channel_id').on(table.keywordId, table.channelId),
+	keywordReference: foreignKey({
+		columns: [table.keywordId],
+		foreignColumns: [botPublisherKeywords.id],
+		name: 'bot_publisher_subscriptions_keyword_id_fk',
+	}),
+	channelReference: foreignKey({
+		columns: [table.channelId],
+		foreignColumns: [botPublisherChannels.id],
+		name: 'bot_publisher_subscriptions__channel_id_fk',
+	}),
 }))
