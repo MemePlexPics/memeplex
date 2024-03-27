@@ -14,7 +14,7 @@
     "drizzle:check-api-changes": "npm run migrations up:mysql",
     "migrations:run": "npx tsx scripts/db-migrate.ts",
     "migrations:generate": "npm run drizzle:check-api-changes && npm run migrations check:mysql && npm run migrations generate:mysql",
-    "migrations:down": "npm run migrations down",
+    "migrations:down": "npm run migrations drop",
     "migrations:pull-schema": "npm run migrations introspect:mysql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
