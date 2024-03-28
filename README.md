@@ -59,14 +59,16 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 - Run `docker compose up -d` to start docker services
 - Run `node ./scripts/create-index.js` to create an ElasticSearch index
 - Run `npm run migrations:run` to create MySQL tables
-- Run `npm run build` to build static frontend files
+- Run `npm run build:front` to build static frontend files
+- Run `npm run build:back` to transpile files for backend
 
 ## Startup
 
 - Run `docker compose up -d` to start docker services
-- Run `node ./services/memesearch.js` - Telegram parser
-- Run `node ./services/servers/web` - web server
-- Run `node ./services/servers/tg-bots/pics` - Telegram Pics bot server
+- Run `npm run service:memesearch` - Telegram parser
+- Run `npm run service:web` - web server
+- Run `npm run service:pics` - Telegram Pics bot server
+- Run `npm run service:publisher` - Telegram Publisher bot server
 
 ## Scripts
 
