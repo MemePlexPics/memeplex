@@ -1,14 +1,15 @@
 {
   "name": "memeplex",
   "private": true,
-  "type": "module",
   "version": "1.0.0",
   "description": "MemePlex is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма",
   "main": "services/memesearch.js",
   "scripts": {
     "eslint": "eslint services/ scripts/ utils/ constants/",
     "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
-    "build": "npm --prefix ./frontend run build",
+    "build:back": "npx webpack",
+    "build:front": "npm --prefix ./frontend run build",
+    "build:all": "npm run build:back && npm run build:front",
     "pretty": "npx prettier --write ./{scripts,utils,services,frontend/src}",
     "migrations": "npx drizzle-kit",
     "drizzle:check-api-changes": "npm run migrations up:mysql",
@@ -16,6 +17,10 @@
     "migrations:generate": "npm run drizzle:check-api-changes && npm run migrations check:mysql && npm run migrations generate:mysql",
     "migrations:down": "npm run migrations drop",
     "migrations:pull-schema": "npm run migrations introspect:mysql",
+    "service:memesearch": "node ./dist/memesearch.js",
+    "service:web": "node ./dist/web.js",
+    "service:publisher": "node ./dist/tgPublisherBot.js",
+    "service:pics": "node ./dist/tgPicsBot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "klntsky",
@@ -37,15 +42,20 @@
     "telegraf-ratelimit": "^2.0.0",
     "telegram-keyboard": "^2.3.5",
     "tsx": "^4.7.1",
-    "typescript": "^5.4.2",
     "winston": "^3.11.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.29",
+    "@webpack-cli/generators": "^3.0.7",
+    "copy-webpack-plugin": "^12.0.2",
     "drizzle-kit": "^0.20.14",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "3.2.5"
+    "prettier": "3.2.5",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.3",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
   }
 }
