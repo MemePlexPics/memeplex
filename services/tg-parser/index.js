@@ -11,13 +11,14 @@ import process from 'process';
 import { getMessagesAfter } from './utils/index.js';
 
 export const tgParser = async (logger) => {
-    let amqp, sendImageDataCh, mysql;
+    let amqp, sendImageDataCh;
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
-        mysql = await getMysqlClient({ connectTimeout: 60_000 });
         sendImageDataCh = await amqp.createChannel();
-
+        
+        const mysql = await getMysqlClient();
         const channels = await selectAvailableChannels(mysql);
+        mysql.close();
         logger.info(`fetching ${channels.length} channels`);
 
         for (const { name, /* langs, */ timestamp } of channels) {
@@ -38,14 +39,16 @@ export const tgParser = async (logger) => {
                     imageData,
                     { persistent: true },
                 );
-                if (message.date > timestamp)
+                if (message.date > timestamp) {
+                    const mysql = await getMysqlClient();
                     await updateChannelTimestamp(mysql, name, message.date);
+                    mysql.close();
+                }
             }
         }
     } finally {
         if (sendImageDataCh) sendImageDataCh.close();
         if (amqp) amqp.close();
-        if (mysql) mysql.close();
     }
 
     logger.info('fetched all channels, sleeping');

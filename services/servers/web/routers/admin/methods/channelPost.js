@@ -23,7 +23,7 @@ export const channelPost = async (req, res) => {
     const mysql = await getMysqlClient();
     const existedChannel = await selectChannel(mysql, channel);
     if (existedChannel) {
-        setLogAction(res, `🔄 Updated the avialability of @${channel}`);
+        setLogAction(res, `⬆️ Updated the avialability of @${channel}`);
         await updateChannelAvailability(mysql, channel, true);
     } else {
         setLogAction(res, `➕ Added @${channel}`);
@@ -35,6 +35,7 @@ export const channelPost = async (req, res) => {
             TG_API_PARSE_FROM_DATE,
         );
         await proceedChannelSuggestion(mysql, channel);
+        mysql.close();
     }
     return res.send();
 };

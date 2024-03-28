@@ -7,6 +7,7 @@ export const channelSuggestionProceedPost = async (req, res) => {
     if (!channel) return res.status(500).send();
     const mysql = await getMysqlClient();
     await proceedChannelSuggestion(mysql, channel);
+    mysql.close();
     setLogAction(res, `✍️ @${channel}`);
     return res.send();
 };

@@ -1,13 +1,17 @@
-import { findExistedProxy, insertProxy } from '../../../utils/mysql-queries/index.js';
+import {
+    findExistedProxy,
+    insertProxy,
+} from '../../../utils/mysql-queries/index.js';
 import { checkProxy } from './index.js';
 
-export const handleAddingProxy = async (mysql, proxy, ipWithoutProxy, logger) => {
+export const handleAddingProxy = async (
+    mysql,
+    proxy,
+    ipWithoutProxy,
+    logger,
+) => {
     const proxyString = `${proxy.ip}:${proxy.port}`;
-    const found = await findExistedProxy(
-        mysql,
-        proxyString,
-        proxy.protocol,
-    );
+    const found = await findExistedProxy(mysql, proxyString, proxy.protocol);
     if (!found) {
         const result = await checkProxy(proxy, ipWithoutProxy, logger);
         await insertProxy(

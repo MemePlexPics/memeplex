@@ -13,6 +13,7 @@ export const featuredChannelPost = async (req, res) => {
         comment,
         timestamp,
     );
+    mysql.close();
     if (!response)
         throw new Error(`Featured channel @${username} wasn't added`);
     setLogAction(res, `➕ Added featured channel @${username}`);
