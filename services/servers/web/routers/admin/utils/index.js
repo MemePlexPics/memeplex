@@ -1,1 +1,1 @@
-export { setLogAction } from './setLogAction.js';
+export { setLogAction } from './setLogAction';

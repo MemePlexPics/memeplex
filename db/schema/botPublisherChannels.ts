@@ -6,6 +6,7 @@ export const botPublisherChannels = mysqlTable("bot_publisher_channels", {
 	userId: int("user_id").notNull(),
 	username: varchar("username", { length: 255 }).notNull(),
 	subscribers: int('subscribers').notNull(),
+	type: varchar('type', { length: 32 }),
 	timestamp: int("timestamp").notNull(),
 }, (table) => {
 	return {

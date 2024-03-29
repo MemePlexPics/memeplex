@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import process from 'process';
 
-import { ELASTIC_INDEX } from '../constants/index.js';
-import { getElasticClient } from '../utils/index.js';
+import { ELASTIC_INDEX } from '../constants/index';
+import { getElasticClient } from '../utils/index';
 
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 

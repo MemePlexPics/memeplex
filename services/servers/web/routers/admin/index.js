@@ -10,7 +10,7 @@ import {
     channelSuggestionProceedPost,
     memeStatePut,
     channelMemesStatePut,
-} from './methods/index.js';
+} from './methods';
 
 export const adminRouter = express.Router();
 

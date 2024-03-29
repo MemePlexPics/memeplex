@@ -4,24 +4,25 @@ import mysql from 'mysql2/promise';
 import process from 'process';
 import { promises as fs } from 'fs';
 
-import { getProxyForKey, getRandomKey } from '../utils/mysql-queries/index.js';
-import { InfoMessage } from './custom-errors.js';
+import { getProxyForKey, getRandomKey } from './mysql-queries';
+import { InfoMessage } from './custom-errors';
+import { Logger } from 'winston';
 
-export { InfoMessage } from './custom-errors.js';
-export { getTgChannelName } from './getTgChannelName.js';
-export { downloadFile } from './downloadFile.js';
-export { shuffleArray } from './shuffleArray.js';
-export { getProxySpeed } from './getProxySpeed.js';
-export { insertProxyToRequest } from './insertProxyToRequest.js';
-export { checkProxyAnonimity } from './checkProxyAnonimity.js';
+export { InfoMessage } from './custom-errors';
+export { getTgChannelName } from './getTgChannelName';
+export { downloadFile } from './downloadFile';
+export { shuffleArray } from './shuffleArray';
+export { getProxySpeed } from './getProxySpeed';
+export { insertProxyToRequest } from './insertProxyToRequest';
+export { checkProxyAnonimity } from './checkProxyAnonimity';
 
 // TODO: split into files?
-export const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const getMysqlClient = async (options) => {
+export const getMysqlClient = async (options?: { connectTimeout: number }) => {
     const client = await mysql.createConnection({
         host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
+        port: Number(process.env.DB_PORT),
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
         database: process.env.DB_DATABASE,
@@ -38,16 +39,16 @@ export const getElasticClient = () => {
             username: process.env.ELASTIC_USERNAME,
             password: process.env.ELASTIC_PASSWORD,
         },
-        ssl: {
+        tls: {
             rejectUnauthorized: false,
         },
     });
     return client;
 };
 
-export const connectToElastic = async (logger) => {
+export const connectToElastic = async (logger: Logger) => {
     const getElasticClientUntilSuccess = async () => {
-        let connect;
+        let connect: Client;
         await loopRetrying(
             async () => {
                 connect = getElasticClient();
@@ -105,7 +106,12 @@ export async function logInfo(logger, e) {
 
 export async function loopRetrying(
     callback,
-    options = {
+    options: {
+        logger?: Logger
+        catchDelayMs?: number
+        afterCallbackDelayMs?: number
+        afterErrorCallback?: () => Promise<unknown> 
+    } = {
         logger: undefined,
         catchDelayMs: 0,
         afterCallbackDelayMs: 0,
@@ -153,7 +159,12 @@ export async function chooseRandomOCRSpaceKey() {
         throw new Error('❌ There are no keys without timeout');
     }
     const keyData = keys[0];
-    const finalKeyData = {
+    const finalKeyData: {
+        key: string
+        timeout: Date
+        proxy?: string
+        protocol?: string
+    } = {
         key: keyData.ocr_key,
         timeout: keyData.timeout,
     };

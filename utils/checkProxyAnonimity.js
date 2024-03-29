@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { insertProxyToRequest } from './index.js';
-import { PROXY_TEST_TIMEOUT } from '../constants/index.js';
+import { insertProxyToRequest } from '.';
+import { PROXY_TEST_TIMEOUT } from '../constants';
 
 export const checkProxyAnonimity = async (ownIp, protocol, ip, port) => {
     try {

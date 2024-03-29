@@ -1,8 +1,8 @@
 import fs from 'fs';
 import process from 'process';
 
-import { getElasticClient } from '../utils/index.js';
-import { ELASTIC_INDEX } from '../constants/index.js';
+import { getElasticClient } from '../utils/index';
+import { ELASTIC_INDEX } from '../constants/index';
 
 const client = getElasticClient();
 const PUBLIC_PATH = './frontend/src/public';

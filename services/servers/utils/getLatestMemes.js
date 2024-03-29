@@ -1,5 +1,5 @@
-import { ELASTIC_INDEX } from '../../../constants/index.js';
-import { getMemeResponseEntity } from './index.js';
+import { ELASTIC_INDEX } from '../../../constants';
+import { getMemeResponseEntity } from '.';
 
 export const getLatestMemes = async (client, from, to, size, filtersString) => {
     const filterObject = filtersString ? JSON.parse(filtersString) : null;

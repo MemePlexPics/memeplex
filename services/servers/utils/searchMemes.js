@@ -1,5 +1,5 @@
-import { ELASTIC_INDEX, ELASTIC_FUZZINESS } from '../../../constants/index.js';
-import { getMemeResponseEntity } from './index.js';
+import { ELASTIC_INDEX, ELASTIC_FUZZINESS } from '../../../constants';
+import { getMemeResponseEntity } from '.';
 
 export const searchMemes = async (client, query, page, size, abortController) => {
     const from = (page - 1) * size;

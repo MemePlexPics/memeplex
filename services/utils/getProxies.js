@@ -1,4 +1,4 @@
-import { PROXY_LIST_API_URLS } from '../../constants/index.js';
+import { PROXY_LIST_API_URLS } from '../../constants';
 
 const getProxyList = async (url) => {
     try {

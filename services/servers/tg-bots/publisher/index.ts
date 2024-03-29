@@ -6,12 +6,13 @@ import { message } from 'telegraf/filters'
 import { getLogger } from '../utils'
 import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
-import { enterToState } from './utils'
+import { enterToState, handleDistributionQueue } from './utils'
 import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
 import { drizzle } from 'drizzle-orm/mysql2'
 import { getMysqlClient } from '../../../../utils'
 import { botPublisherUsers } from '../../../../db/schema'
 import { sql } from 'drizzle-orm'
+import { loopRetrying } from '../../../../utils'
 
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
@@ -43,6 +44,15 @@ const states: Record<EState, TState<EState>> = {
 }
 
 bot.start(async (ctx) => {
+  await ctx.reply(`
+    Добро пожаловать в MemePlex Publisher!
+
+    Здесь вы можете подписать ваш канал, или себя, на ключевые слова мемов.
+    Как только у нас появится мем, содержащий указанное вами ключевое слово, мы перешлем его в текущий чат.
+
+    Для добавления канала боту необходимо предоставить административные права, чтобы он мог отправлять сообщения от лица канала.
+    Перед отправкой в канал вам необходимо будет одобрить отправку мема в текущем чате, нажав кнопку подтверждения.
+  `)
   await enterToState(ctx, mainState)
 
   // TODO: move all orm queries into mysql-queris folder
@@ -75,7 +85,13 @@ const start = async () => {
   logger.info({ info: 'Telegram bot started' })
 
   process.once('SIGINT', () => bot.stop('SIGINT'))
-  process.once('SIGTERM', () => bot.stop('SIGTERM'))  
+  process.once('SIGTERM', () => bot.stop('SIGTERM'))
+
+  await loopRetrying(async () => handleDistributionQueue(bot, logger), {
+    logger,
+    afterCallbackDelayMs: 10_000,
+    catchDelayMs: 10_000,
+  })
 }
 
 await start()

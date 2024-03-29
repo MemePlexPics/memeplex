@@ -45,6 +45,7 @@
     "winston": "^3.11.0"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.10.5",
     "@types/express": "^4.17.21",
     "@types/node": "^20.11.29",
     "@webpack-cli/generators": "^3.0.7",

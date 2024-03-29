@@ -2,7 +2,7 @@ import {
     getTelegramChatInfo,
     getTelegramFileInfo,
     downloadTelegramFile,
-} from './index.js';
+} from '.';
 
 export const downloadTelegramChannelAvatar = async (channelName) => {
     const chatInfo = await getTelegramChatInfo(channelName);

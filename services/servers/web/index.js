@@ -8,12 +8,12 @@ import {
     getMysqlClient,
     checkFileExists,
     shuffleArray,
-} from '../../../utils/index.js';
+} from '../../../utils';
 import {
     MAX_SEARCH_QUERY_LENGTH,
     SEARCH_PAGE_SIZE,
     CHANNEL_LIST_PAGE_SIZE,
-} from '../../../constants/index.js';
+} from '../../../constants';
 import {
     getChannels,
     getChannelsCount,
@@ -21,15 +21,15 @@ import {
     getChannelSuggestions,
     getChannelSuggestionsCount,
     getFeaturedChannelList,
-} from '../../../utils/mysql-queries/index.js';
+} from '../../../utils/mysql-queries';
 import {
     searchMemes,
     getLatestMemes,
     getMeme,
     downloadTelegramChannelAvatar,
-} from '../utils/index.js';
+} from '../utils';
 import winston from 'winston';
-import { adminRouter } from './routers/index.js';
+import { adminRouter } from './routers';
 
 const app = express();
 const { client, reconnect } = await connectToElastic();

@@ -1,4 +1,4 @@
-import { getMysqlClient } from '../../../../../utils/index.js';
+import { getMysqlClient } from '../../../../../utils';
 import {
     insertBotAction,
     insertBotInlineAction,
@@ -6,8 +6,8 @@ import {
     insertBotUser,
     selectBotInlineUser,
     selectBotUser,
-} from '../../../../../utils/mysql-queries/index.js';
-import { getTelegramUser } from '../../utils/index.js';
+} from '../../../../../utils/mysql-queries';
+import { getTelegramUser } from '../../utils';
 
 // TODO: refactoring
 // { search: { query, page }, latest: { from, to }, info: string, start: any }

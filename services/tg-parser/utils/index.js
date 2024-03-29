@@ -1,2 +1,2 @@
-export { getMessagesAfter } from './getMessagesAfter.js';
-export { setChannelUnavailable } from './setChannelUnavailable.js';
+export { getMessagesAfter } from './getMessagesAfter';
+export { setChannelUnavailable } from './setChannelUnavailable';

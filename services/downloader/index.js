@@ -6,11 +6,11 @@ import {
     AMQP_IMAGE_DATA_CHANNEL,
     AMQP_IMAGE_FILE_CHANNEL,
     EMPTY_QUEUE_RETRY_DELAY,
-} from '../../constants/index.js';
-import { delay } from '../../utils/index.js';
-import { handleNackByTimeout } from '../utils/index.js';
-import { buildImagePath } from './utils/index.js';
-import { isFileIgnored } from './utils/index.js';
+} from '../../constants';
+import { delay } from '../../utils';
+import { handleNackByTimeout } from '../utils';
+import { buildImagePath } from './utils';
+import { isFileIgnored } from './utils';
 
 export const downloader = async (logger) => {
     let amqp, sendImageFileCh, receiveImageDataCh, timeoutId;

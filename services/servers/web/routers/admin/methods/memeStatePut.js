@@ -1,5 +1,5 @@
-import { setMemeState } from '../../../../utils/index.js';
-import { setLogAction } from '../utils/index.js';
+import { setMemeState } from '../../../../utils';
+import { setLogAction } from '../utils';
 
 export const memeStatePut = async (req, res) => {
     const client = req.app.get('elasticClient');

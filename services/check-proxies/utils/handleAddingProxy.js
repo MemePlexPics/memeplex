@@ -1,8 +1,8 @@
 import {
     findExistedProxy,
     insertProxy,
-} from '../../../utils/mysql-queries/index.js';
-import { checkProxy } from './index.js';
+} from '../../../utils/mysql-queries';
+import { checkProxy } from '.';
 
 export const handleAddingProxy = async (
     mysql,

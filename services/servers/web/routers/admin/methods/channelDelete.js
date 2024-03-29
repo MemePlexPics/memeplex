@@ -1,6 +1,6 @@
-import { getMysqlClient } from '../../../../../../utils/index.js';
-import { updateChannelAvailability } from '../../../../../../utils/mysql-queries/index.js';
-import { setLogAction } from '../utils/index.js';
+import { getMysqlClient } from '../../../../../../utils';
+import { updateChannelAvailability } from '../../../../../../utils/mysql-queries';
+import { setLogAction } from '../utils';
 
 export const channelDelete = async (req, res) => {
     const { channel } = req.body;

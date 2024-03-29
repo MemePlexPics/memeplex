@@ -1,5 +1,5 @@
-import { setChannelMemesState } from '../../../../utils/index.js';
-import { setLogAction } from '../utils/index.js';
+import { setChannelMemesState } from '../../../../utils';
+import { setLogAction } from '../utils';
 
 export const channelMemesStatePut = async (req, res) => {
     const client = req.app.get('elasticClient');

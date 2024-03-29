@@ -1,4 +1,4 @@
-export { checkProxy } from './checkProxy.js';
-export { checkProxyArray } from './checkProxyArray.js';
-export { maintaneProxies } from './maintaneProxies.js';
-export { handleAddingProxy } from './handleAddingProxy.js';
+export { checkProxy } from './checkProxy';
+export { checkProxyArray } from './checkProxyArray';
+export { maintaneProxies } from './maintaneProxies';
+export { handleAddingProxy } from './handleAddingProxy';

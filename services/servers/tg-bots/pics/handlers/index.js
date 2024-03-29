@@ -1,4 +1,4 @@
-export { onBotRecieveText } from './onBotRecieveText.js';
-export { onBotCommandGetLatest } from './onBotCommandGetLatest.js';
-export { onBotCommandSuggestChannel } from './onBotCommandSuggestChannel.js';
-export { onInlineQuery } from './onInlineQuery.js';
+export { onBotRecieveText } from './onBotRecieveText';
+export { onBotCommandGetLatest } from './onBotCommandGetLatest';
+export { onBotCommandSuggestChannel } from './onBotCommandSuggestChannel';
+export { onInlineQuery } from './onInlineQuery';

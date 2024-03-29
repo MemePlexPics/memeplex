@@ -1,5 +1,5 @@
-import { delay, getMysqlClient, getDateUtc } from '../../../utils/index.js';
-import { saveKeyTimeout } from '../../../utils/mysql-queries/index.js';
+import { delay, getMysqlClient, getDateUtc } from '../../../utils';
+import { saveKeyTimeout } from '../../../utils/mysql-queries';
 
 export const handleTimeout = async (apiKey, timeout, logger) => {
     const utcNow = getDateUtc();

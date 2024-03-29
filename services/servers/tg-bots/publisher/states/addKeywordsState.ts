@@ -4,9 +4,8 @@ import { TState } from "../types"
 import { enterToState } from "../utils"
 import { channelSettingState } from "."
 import { drizzle } from "drizzle-orm/mysql2"
-import { botPublisherKeywords, botPublisherSubscriptions } from "../../../../../db/schema"
 import { getMysqlClient } from '../../../../../utils'
-import { inArray, sql } from "drizzle-orm"
+import { insertPublisherKeywords, insertPublisherSubscription } from "../../../../../utils/mysql-queries"
 
 export const addKeywordsState: TState<EState> = {
     stateName: EState.ADD_KEYWORDS,
@@ -23,28 +22,19 @@ export const addKeywordsState: TState<EState> = {
         const keywords = keywordsRaw
             .split('\n')
             .map(line => line.split(','))
-            .flat(2)
+            .flat()
         const keywordValues = keywords.map((keyword) => ({
-            keyword,
+            keyword: keyword.replace('|', '').toLowerCase(),
         }))
 
-        await db.insert(botPublisherKeywords)
-            .values(keywordValues)
-            .onDuplicateKeyUpdate({ set: { id: sql`id` }})
+        await insertPublisherKeywords(db, keywordValues)
 
-        const existedKeywords = await db
-            .select({ id: botPublisherKeywords.id })
-            .from(botPublisherKeywords)
-            .where(inArray(botPublisherKeywords.keyword, keywords))
-
-        const subscriptions = existedKeywords.map(({ id }) => ({
-            keywordId: id,
+        const subscriptions = keywords.map((keyword) => ({
+            keyword,
             channelId: ctx.session.channel.id,
         }))
 
-        await db.insert(botPublisherSubscriptions)
-            .values(subscriptions)
-            .onDuplicateKeyUpdate({ set: { id: sql`id` } })
+        await insertPublisherSubscription(db, subscriptions)
 
         await ctx.reply('Ключевые слова добавлены!')
         await enterToState(ctx, channelSettingState)
