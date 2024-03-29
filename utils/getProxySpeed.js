@@ -1,8 +1,8 @@
 import { performance } from 'perf_hooks';
 import axios from 'axios';
-import { insertProxyToRequest } from '../utils/index.js';
+import { insertProxyToRequest } from '../utils';
 
-import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from '../constants/index.js';
+import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from '../constants';
 
 export const getProxySpeed = async (
     ip,

@@ -1,1 +1,1 @@
-export { defaultSession } from './defaultSession.js';
+export { defaultSession } from './defaultSession';

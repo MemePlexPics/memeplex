@@ -1,1 +1,1 @@
-export { serviceSettings } from './serviceSettings.js';
+export { serviceSettings } from './serviceSettings';

@@ -5,17 +5,13 @@ import { enterToState } from "../utils"
 import { addKeywordsState, keywordSettingsState, mainState } from "."
 import { drizzle } from "drizzle-orm/mysql2"
 import { getMysqlClient } from '../../../../../utils'
-import { botPublisherSubscriptions } from "../../../../../db/schema"
-import { count, eq } from "drizzle-orm"
+import { countPublisherSubscriptionsByChannelId } from "../../../../../utils/mysql-queries"
 
 export const channelSettingState: TState<EState> = {
     stateName: EState.CHANNEL_SETTINGS,
     inlineMenu: async (ctx) => {
       const db = drizzle(await getMysqlClient())
-      const keywordsCount = await db
-        .select({ value: count() })
-        .from(botPublisherSubscriptions)
-        .where(eq(botPublisherSubscriptions.channelId, ctx.session.channel.id))
+      const keywordsCount = await countPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
       const hasKeywords = keywordsCount?.[0]?.value !== 0
       const buttons = [
         [

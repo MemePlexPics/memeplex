@@ -1,4 +1,4 @@
-import { checkProxyArray } from './index.js';
+import { checkProxyArray } from '.';
 
 export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
     const [proxiesForRecheck] = await mysql.execute(`

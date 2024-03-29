@@ -1,19 +1,19 @@
 import process from 'process';
 import 'dotenv/config';
-import { connectToElastic } from '../../../../utils/index.js';
+import { connectToElastic } from '../../../../utils';
 import { Telegraf, session } from 'telegraf';
 import { MySQL } from '@telegraf/session/mysql';
 import { message } from 'telegraf/filters';
 import rateLimit from 'telegraf-ratelimit';
-import { logUserAction, resetSearchSession } from './utils/index.js';
+import { logUserAction, resetSearchSession } from './utils';
 import {
     onBotCommandGetLatest,
     onBotCommandSuggestChannel,
     onBotRecieveText,
     onInlineQuery,
-} from './handlers/index.js';
-import { defaultSession } from './constants/index.js';
-import { getLogger } from '../utils/index.js';
+} from './handlers';
+import { defaultSession } from './constants';
+import { getLogger } from '../utils';
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN);
 

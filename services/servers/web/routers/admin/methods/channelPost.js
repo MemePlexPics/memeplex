@@ -1,15 +1,15 @@
-import { getMysqlClient } from '../../../../../../utils/index.js';
+import { getMysqlClient } from '../../../../../../utils';
 import {
     OCR_LANGUAGES,
     TG_API_PARSE_FROM_DATE,
-} from '../../../../../../constants/index.js';
+} from '../../../../../../constants';
 import {
     insertChannel,
     selectChannel,
     updateChannelAvailability,
     proceedChannelSuggestion,
-} from '../../../../../../utils/mysql-queries/index.js';
-import { setLogAction } from '../utils/index.js';
+} from '../../../../../../utils/mysql-queries';
+import { setLogAction } from '../utils';
 
 export const channelPost = async (req, res) => {
     const { channel, langs } = req.body;

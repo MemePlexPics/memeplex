@@ -1,4 +1,4 @@
-import { OCR_SPACE_403_DELAY } from '../../constants/index.js';
+import { OCR_SPACE_403_DELAY } from '../../constants';
 
 export async function getRandomKey(mysql) {
     const [results] = await mysql.execute(

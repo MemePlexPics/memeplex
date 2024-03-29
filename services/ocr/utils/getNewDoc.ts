@@ -1,4 +1,6 @@
-export const getNewDoc = (payload, texts) => {
+import { TMemeEntity } from "../types";
+
+export const getNewDoc = (payload, texts): TMemeEntity => {
     const doc = {
         timestamp: Math.floor(Date.now() / 1000),
         fileName: payload.fileName,

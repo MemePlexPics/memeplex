@@ -1,7 +1,7 @@
-import { loopRetrying } from '../utils/index.js';
-import { LOOP_RETRYING_DELAY } from '../constants/index.js';
-import { serviceSettings } from './constants/index.js';
-import { getLogger, insertOcrKeysIntoDb } from './utils/index.js';
+import { loopRetrying } from '../utils';
+import { LOOP_RETRYING_DELAY } from '../constants';
+import { serviceSettings } from './constants';
+import { getLogger, insertOcrKeysIntoDb } from './utils';
 import winston from 'winston';
 
 const loggers = winston.loggers;

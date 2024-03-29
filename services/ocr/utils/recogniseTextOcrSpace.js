@@ -1,15 +1,15 @@
-import { ocrSpace, handleTimeout } from './index.js';
+import { ocrSpace, handleTimeout } from '.';
 import {
     chooseRandomOCRSpaceKey,
     getMysqlClient,
     dateToYyyyMmDdHhMmSs,
-} from '../../../utils/index.js';
+} from '../../../utils';
 import {
     saveKeyTimeout,
     updateProxyAvailability,
-} from '../../../utils/mysql-queries/index.js';
-import { OCR_SPACE_403_DELAY } from '../../../constants/index.js';
-import { InfoMessage } from '../../../utils/index.js';
+} from '../../../utils/mysql-queries';
+import { OCR_SPACE_403_DELAY } from '../../../constants';
+import { InfoMessage } from '../../../utils';
 
 export const recogniseTextOcrSpace = async (fileName, language, logger) => {
     let res;

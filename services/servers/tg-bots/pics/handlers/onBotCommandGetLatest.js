@@ -1,10 +1,10 @@
 import { Markup } from 'telegraf';
 import process from 'process';
 
-import { TG_BOT_PAGE_SIZE } from '../../../../../constants/index.js';
-import { logError } from '../../../../../utils/index.js';
-import { getLatestMemes } from '../../../utils/index.js';
-import { getBotAnswerString, logUserAction } from '../utils/index.js';
+import { TG_BOT_PAGE_SIZE } from '../../../../../constants';
+import { logError } from '../../../../../utils';
+import { getLatestMemes } from '../../../utils';
+import { getBotAnswerString, logUserAction } from '../utils';
 
 export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
     try {

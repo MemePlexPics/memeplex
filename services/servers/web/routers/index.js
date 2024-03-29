@@ -1,1 +1,1 @@
-export { adminRouter } from './admin/index.js';
+export { adminRouter } from './admin';

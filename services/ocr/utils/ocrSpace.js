@@ -5,7 +5,7 @@
 import * as fs from 'fs';
 import axios from 'axios';
 import FormData from 'form-data';
-import { insertProxyToRequest } from '../../../utils/index.js';
+import { insertProxyToRequest } from '../../../utils';
 
 /**
  * Detect the input type between url, file path or base64 image

@@ -1,8 +1,8 @@
-export { channelPost } from './channelPost.js';
-export { channelDelete } from './channelDelete.js';
-export { featuredChannelPost } from './featuredChannelPost.js';
-export { featuredChannelDelete } from './featuredChannelDelete.js';
-export { featuredChannelGet } from './featuredChannelGet.js';
-export { channelSuggestionProceedPost } from './channelSuggestionProceedPost.js';
-export { memeStatePut } from './memeStatePut.js';
-export { channelMemesStatePut } from './channelMemesStatePut.js';
+export { channelPost } from './channelPost';
+export { channelDelete } from './channelDelete';
+export { featuredChannelPost } from './featuredChannelPost';
+export { featuredChannelDelete } from './featuredChannelDelete';
+export { featuredChannelGet } from './featuredChannelGet';
+export { channelSuggestionProceedPost } from './channelSuggestionProceedPost';
+export { memeStatePut } from './memeStatePut';
+export { channelMemesStatePut } from './channelMemesStatePut';

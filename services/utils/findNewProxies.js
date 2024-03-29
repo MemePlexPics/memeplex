@@ -1,10 +1,10 @@
 /* global Buffer */
 import process from 'process';
 import amqplib from 'amqplib';
-import { getMysqlClient } from '../../utils/index.js';
-import { findExistedProxy } from '../../utils/mysql-queries/index.js';
-import { AMQP_CHECK_PROXY_CHANNEL } from '../../constants/index.js';
-import { getProxies } from './index.js';
+import { getMysqlClient } from '../../utils';
+import { findExistedProxy } from '../../utils/mysql-queries';
+import { AMQP_CHECK_PROXY_CHANNEL } from '../../constants';
+import { getProxies } from '.';
 
 export const findNewProxies = async (logger) => {
     let amqp, checkProxyCh;

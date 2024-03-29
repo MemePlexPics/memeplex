@@ -4,13 +4,13 @@ import * as imghash from 'imghash';
 import {
     selectPHash,
     insertPHash,
-} from '../../../utils/mysql-queries/index.js';
+} from '../../../utils/mysql-queries';
 import {
     checkFileExists,
     getMysqlClient,
     downloadFile,
-} from '../../../utils/index.js';
-import { buildImageUrl } from './index.js';
+} from '../../../utils';
+import { buildImageUrl } from '.';
 
 export const isFileIgnored = async (logger, destination, payload) => {
     const doesImageExist = await checkFileExists(destination);
