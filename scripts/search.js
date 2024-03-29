@@ -2,9 +2,9 @@ import 'dotenv/config';
 import * as readline from 'readline';
 import process from 'process';
 
-import { getElasticClient } from '../utils/index.js';
-import { ELASTIC_PAGE_SIZE } from '../constants/index.js';
-import { searchMemes } from '../services/servers/utils/index.js';
+import { getElasticClient } from '../utils/index';
+import { ELASTIC_PAGE_SIZE } from '../constants/index';
+import { searchMemes } from '../services/servers/utils/index';
 
 const client = await getElasticClient();
 

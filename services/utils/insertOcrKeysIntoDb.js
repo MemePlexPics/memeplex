@@ -1,6 +1,6 @@
 import process from 'process';
 
-import { getMysqlClient } from '../../utils/index.js';
+import { getMysqlClient } from '../../utils';
 
 // TODO: move
 async function insertKeys(connection, keys) {

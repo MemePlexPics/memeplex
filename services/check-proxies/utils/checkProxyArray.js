@@ -1,5 +1,5 @@
-import { checkProxy } from '../utils/index.js';
-import { updateProxy } from '../../../utils/mysql-queries/index.js';
+import { checkProxy } from '../utils';
+import { updateProxy } from '../../../utils/mysql-queries';
 
 export const checkProxyArray = async (
     mysql,

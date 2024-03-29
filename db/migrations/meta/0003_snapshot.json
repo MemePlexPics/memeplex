@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "83244402-836d-42b9-9b9f-bf1c75841c93",
+  "id": "ed015fde-29ad-4f4f-856e-633b3c3c8677",
   "prevId": "f3a9b783-c798-4a99-9e85-90d4fb207450",
   "tables": {
     "bot_actions": {
@@ -266,13 +266,6 @@
     "bot_publisher_keywords": {
       "name": "bot_publisher_keywords",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
-        },
         "keyword": {
           "name": "keyword",
           "type": "varchar(255)",
@@ -284,21 +277,14 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "bot_publisher_keywords_id": {
-          "name": "bot_publisher_keywords_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
-      "uniqueConstraints": {
-        "bot_publisher_keywords_keyword_unique": {
-          "name": "bot_publisher_keywords_keyword_unique",
+        "bot_publisher_keywords_keyword": {
+          "name": "bot_publisher_keywords_keyword",
           "columns": [
             "keyword"
           ]
         }
-      }
+      },
+      "uniqueConstraints": {}
     },
     "bot_publisher_subscriptions": {
       "name": "bot_publisher_subscriptions",
@@ -310,9 +296,9 @@
           "notNull": true,
           "autoincrement": true
         },
-        "keyword_id": {
-          "name": "keyword_id",
-          "type": "int",
+        "keyword": {
+          "name": "keyword",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -327,15 +313,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "bot_publisher_subscriptions_keyword_id_fk": {
-          "name": "bot_publisher_subscriptions_keyword_id_fk",
+        "bot_publisher_subscriptions_keyword_fk": {
+          "name": "bot_publisher_subscriptions_keyword_fk",
           "tableFrom": "bot_publisher_subscriptions",
           "tableTo": "bot_publisher_keywords",
           "columnsFrom": [
-            "keyword_id"
+            "keyword"
           ],
           "columnsTo": [
-            "id"
+            "keyword"
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
@@ -366,7 +352,7 @@
         "keyword_id-channel_id": {
           "name": "keyword_id-channel_id",
           "columns": [
-            "keyword_id",
+            "keyword",
             "channel_id"
           ]
         }

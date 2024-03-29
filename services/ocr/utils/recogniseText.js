@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
-import { recogniseTextOcrSpace, buildImageTextPath } from './index.js';
+import { recogniseTextOcrSpace, buildImageTextPath } from '.';
 
 export const recogniseText = async (msg, logger) => {
     const payload = JSON.parse(msg.content.toString());

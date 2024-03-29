@@ -1,8 +1,8 @@
 import process from 'process';
 
-import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants/index.js';
-import { searchMemes } from '../../../utils/index.js';
-import { logUserAction } from '../utils/index.js';
+import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants';
+import { searchMemes } from '../../../utils';
+import { logUserAction } from '../utils';
 
 export const onInlineQuery = async (ctx, page, client, sessionInline, logger) => {
     const query = ctx.inlineQuery.query;

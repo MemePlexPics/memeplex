@@ -1,3 +1,3 @@
-export { isFileIgnored } from './isFileIgnored.js';
-export { buildImageUrl } from './buildImageUrl.js';
-export { buildImagePath } from './buildImagePath.js';
+export { isFileIgnored } from './isFileIgnored';
+export { buildImageUrl } from './buildImageUrl';
+export { buildImagePath } from './buildImagePath';

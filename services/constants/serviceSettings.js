@@ -1,6 +1,6 @@
-import { tgParser, downloader, ocr, checkProxies } from '../index.js';
-import { CYCLE_SLEEP_TIMEOUT } from '../../constants/index.js';
-import { findNewProxies } from '../utils/index.js';
+import { tgParser, downloader, ocr, checkProxies } from '..';
+import { CYCLE_SLEEP_TIMEOUT } from '../../constants';
+import { findNewProxies } from '../utils';
 
 export const serviceSettings = [
     {

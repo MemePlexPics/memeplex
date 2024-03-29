@@ -1,5 +1,5 @@
 import process from 'process';
-import { downloadFile } from '../../../utils/index.js';
+import { downloadFile } from '../../../utils';
 
 export const downloadTelegramFile = async (channel, file_path) => {
     const url = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${file_path}`;

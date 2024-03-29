@@ -2,9 +2,9 @@ import {
     getMysqlClient,
     getTgChannelName,
     logError,
-} from '../../../../../utils/index.js';
-import { insertChannelSuggestion } from '../../../../../utils/mysql-queries/index.js';
-import { logUserAction } from '../utils/index.js';
+} from '../../../../../utils';
+import { insertChannelSuggestion } from '../../../../../utils/mysql-queries';
+import { logUserAction } from '../utils';
 
 export const onBotCommandSuggestChannel = async (ctx, logger) => {
     const { payload } = ctx;

@@ -1,4 +1,4 @@
-import { dateToYyyyMmDdHhMmSs } from '../index.js';
+import { dateToYyyyMmDdHhMmSs } from '..';
 
 export async function updateProxyAvailability(
     mysql,
@@ -17,6 +17,6 @@ export async function updateProxyAvailability(
             address = ?
             AND protocol = ?
     `,
-        [availability, proxy, protocol, lastActivityDatetime],
+        [availability, lastActivityDatetime, proxy, protocol],
     );
 }

@@ -2,11 +2,11 @@ import 'dotenv/config';
 import {
     TG_API_PAGE_LIMIT,
     TG_API_RATE_LIMIT,
-} from '../../../constants/index.js';
-import { delay, getMysqlClient } from '../../../utils/index.js';
+} from '../../../constants';
+import { delay, getMysqlClient } from '../../../utils';
 import process from 'process';
-import { setChannelUnavailable } from './index.js';
-import { insertChannelSuggestion } from '../../../utils/mysql-queries/index.js';
+import { setChannelUnavailable } from '.';
+import { insertChannelSuggestion } from '../../../utils/mysql-queries';
 
 export const getMessagesAfter = async function* (
     channelName,

@@ -1,5 +1,5 @@
-import { ELASTIC_INDEX } from '../../../constants/index.js';
-import { getMemeResponseEntity } from './index.js';
+import { ELASTIC_INDEX } from '../../../constants';
+import { getMemeResponseEntity } from '.';
 
 export const getMeme = async (client, id) => {
     const elasticRes = await client.get({

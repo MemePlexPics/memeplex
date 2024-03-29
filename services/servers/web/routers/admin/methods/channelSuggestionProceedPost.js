@@ -1,6 +1,6 @@
-import { getMysqlClient } from '../../../../../../utils/index.js';
-import { proceedChannelSuggestion } from '../../../../../../utils/mysql-queries/index.js';
-import { setLogAction } from '../utils/index.js';
+import { getMysqlClient } from '../../../../../../utils';
+import { proceedChannelSuggestion } from '../../../../../../utils/mysql-queries';
+import { setLogAction } from '../utils';
 
 export const channelSuggestionProceedPost = async (req, res) => {
     const { channel } = req.body;

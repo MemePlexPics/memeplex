@@ -1,14 +1,14 @@
 /* global Buffer */
 import 'dotenv/config';
 import amqplib from 'amqplib';
-import { AMQP_IMAGE_DATA_CHANNEL } from '../../constants/index.js';
-import { getMysqlClient } from '../../utils/index.js';
+import { AMQP_IMAGE_DATA_CHANNEL } from '../../constants';
+import { getMysqlClient } from '../../utils';
 import {
     selectAvailableChannels,
     updateChannelTimestamp,
-} from '../../utils/mysql-queries/index.js';
+} from '../../utils/mysql-queries';
 import process from 'process';
-import { getMessagesAfter } from './utils/index.js';
+import { getMessagesAfter } from './utils';
 
 export const tgParser = async (logger) => {
     let amqp, sendImageDataCh;

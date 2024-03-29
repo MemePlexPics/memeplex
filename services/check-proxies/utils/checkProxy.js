@@ -2,7 +2,7 @@ import {
     getProxySpeed,
     checkProxyAnonimity,
     dateToYyyyMmDdHhMmSs,
-} from '../../../utils/index.js';
+} from '../../../utils';
 
 export const checkProxy = async (proxy, ownIp, logger) => {
     const anonymityLevel = await checkProxyAnonimity(

@@ -1,6 +1,6 @@
-import { getMysqlClient } from '../../../../../../utils/index.js';
-import { getFeaturedChannel } from '../../../../../../utils/mysql-queries/index.js';
-import { setLogAction } from '../utils/index.js';
+import { getMysqlClient } from '../../../../../../utils';
+import { getFeaturedChannel } from '../../../../../../utils/mysql-queries';
+import { setLogAction } from '../utils';
 
 export const featuredChannelGet = async (req, res) => {
     const { username } = req.body;

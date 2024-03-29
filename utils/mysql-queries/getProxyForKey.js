@@ -1,4 +1,4 @@
-import { linkKeyToProxy } from './index.js';
+import { linkKeyToProxy } from '.';
 
 export async function getProxyForKey(mysql, key) {
     const [oldProxies] = await mysql.query(

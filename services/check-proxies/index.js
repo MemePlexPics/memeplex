@@ -4,10 +4,10 @@ import process from 'process';
 import {
     AMQP_CHECK_PROXY_CHANNEL,
     EMPTY_QUEUE_RETRY_DELAY,
-} from '../../constants/index.js';
-import { delay, getMysqlClient } from '../../utils/index.js';
-import { handleAddingProxy, maintaneProxies } from './utils/index.js';
-import { handleNackByTimeout } from '../utils/handleNackByTimeout.js';
+} from '../../constants';
+import { delay, getMysqlClient } from '../../utils';
+import { handleAddingProxy, maintaneProxies } from './utils';
+import { handleNackByTimeout } from '../utils/handleNackByTimeout';
 
 export const checkProxies = async (logger) => {
     let amqp, checkProxyCh, timeoutId;
