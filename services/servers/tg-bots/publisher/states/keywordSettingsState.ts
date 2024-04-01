@@ -5,7 +5,7 @@ import { enterToState } from "../utils"
 import { mainState } from "."
 import { drizzle } from "drizzle-orm/mysql2"
 import { getMysqlClient } from '../../../../../utils'
-import { botPublisherKeywords, botPublisherSubscriptions } from "../../../../../db/schema"
+import { botPublisherSubscriptions } from "../../../../../db/schema"
 import { eq } from "drizzle-orm"
 import { deletePublisherKeyword } from "../../../../../utils/mysql-queries"
 
@@ -18,7 +18,7 @@ export const keywordSettingsState: TState<EState> = {
             .from(botPublisherSubscriptions)
             .where(eq(botPublisherSubscriptions.channelId, ctx.session.channel.id))
         return {
-            text: `Настройка ключевых слов @${ctx.session.channel}`,
+            text: `Настройка ключевых слов @${ctx.session.channel.name}`,
             buttons: keywordRows.map(keywordRow => ([
                 // Key.callback(keyword, keyword),
                 Key.callback(`🗑 ${keywordRow.keyword}`, `${keywordRow.keyword}|del`),
