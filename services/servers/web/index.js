@@ -59,7 +59,7 @@ const logger = winston.createLogger({
 });
 
 const handleMethodError = async (error) => {
-    logError(logger, error);
+    await logError(logger, error);
     if (error.message === 'connect ECONNREFUSED ::1:9200') {
         await reconnect();
     }

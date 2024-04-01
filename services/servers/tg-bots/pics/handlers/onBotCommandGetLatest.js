@@ -50,7 +50,7 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
         ]);
         await ctx.reply(finalReplyText, buttons);
     } catch (e) {
-        logError(logger, e);
+        await logError(logger, e);
         await ctx.reply('An error occurred, please try again later');
     }
 };

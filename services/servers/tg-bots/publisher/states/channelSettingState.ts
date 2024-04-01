@@ -3,14 +3,13 @@ import { EState } from "../constants"
 import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { addKeywordsState, keywordSettingsState, mainState } from "."
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import { countPublisherSubscriptionsByChannelId } from "../../../../../utils/mysql-queries"
 
 export const channelSettingState: TState<EState> = {
     stateName: EState.CHANNEL_SETTINGS,
     inlineMenu: async (ctx) => {
-      const db = drizzle(await getMysqlClient())
+      const db = await getDbConnection()
       const keywordsCount = await countPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
       const hasKeywords = keywordsCount?.[0]?.value !== 0
       const buttons = [
@@ -25,7 +24,7 @@ export const channelSettingState: TState<EState> = {
         Key.callback('✏️ Редактировать ключевые слова', EState.KEYWORD_SETTINGS),
       ])
       return {
-        text: `Настройки канала @${ctx.session.channel.name}`,
+        text: `Настройка подписки @${ctx.session.channel.name}`,
         buttons,
       }
     },

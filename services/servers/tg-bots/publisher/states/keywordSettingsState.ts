@@ -3,8 +3,7 @@ import { EState } from "../constants"
 import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { mainState } from "."
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import { botPublisherSubscriptions } from "../../../../../db/schema"
 import { eq } from "drizzle-orm"
 import { deletePublisherKeyword } from "../../../../../utils/mysql-queries"
@@ -12,7 +11,7 @@ import { deletePublisherKeyword } from "../../../../../utils/mysql-queries"
 export const keywordSettingsState: TState<EState> = {
     stateName: EState.KEYWORD_SETTINGS,
     inlineMenu: async (ctx) => {
-        const db = drizzle(await getMysqlClient())
+        const db = await getDbConnection()
         const keywordRows = await db
             .select({ keyword: botPublisherSubscriptions.keyword })
             .from(botPublisherSubscriptions)
@@ -36,7 +35,7 @@ export const keywordSettingsState: TState<EState> = {
         if (typeof callback === 'string') {
             const [keyword, command] = callback.split('|')
             if (command === 'del') {
-                const db = drizzle(await getMysqlClient())
+                const db = await getDbConnection()
                 await db
                     .delete(botPublisherSubscriptions)
                     .where(eq(botPublisherSubscriptions.keyword, keyword))

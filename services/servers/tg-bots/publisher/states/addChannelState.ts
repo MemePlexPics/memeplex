@@ -3,8 +3,7 @@ import { addKeywordsState, mainState } from "."
 import { EState } from "../constants"
 import { TState } from "../types"
 import { enterToState } from "../utils"
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import { insertPublisherChannel } from "../../../../../utils/mysql-queries"
 
 export const addChannelState: TState<EState> = {
@@ -64,7 +63,7 @@ export const addChannelState: TState<EState> = {
                 type: chat.type,
             }
 
-            const db = drizzle(await getMysqlClient())
+            const db = await getDbConnection()
             const timestamp = Date.now() / 1000
             // TODO: state confirmUserChange (when another administrator has already configured the bot)
             await insertPublisherChannel(db, {
