@@ -3,6 +3,7 @@ CREATE TABLE `bot_publisher_channels` (
 	`user_id` int NOT NULL,
 	`username` varchar(255) NOT NULL,
 	`subscribers` int NOT NULL,
+	`type` varchar(32),
 	`timestamp` int NOT NULL,
 	CONSTRAINT `bot_publisher_channels_id` PRIMARY KEY(`id`)
 );

@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "ed015fde-29ad-4f4f-856e-633b3c3c8677",
+  "id": "8ab28518-7778-44bb-b139-569caefa6380",
   "prevId": "f3a9b783-c798-4a99-9e85-90d4fb207450",
   "tables": {
     "bot_actions": {
@@ -227,6 +227,13 @@
           "type": "int",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "timestamp": {
