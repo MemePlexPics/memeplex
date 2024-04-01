@@ -15,6 +15,7 @@ export { shuffleArray } from './shuffleArray';
 export { getProxySpeed } from './getProxySpeed';
 export { insertProxyToRequest } from './insertProxyToRequest';
 export { checkProxyAnonimity } from './checkProxyAnonimity';
+export { getDbConnection } from './getDbConnection'
 
 // TODO: split into files?
 export const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

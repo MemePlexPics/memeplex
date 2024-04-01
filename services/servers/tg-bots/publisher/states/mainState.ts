@@ -3,8 +3,7 @@ import { EState } from "../constants"
 import { TState } from "../types"
 import { enterToState } from "../utils"
 import { addChannelState, addKeywordsState, channelSelectState } from "."
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import { countPublisherChannelsByUserId, insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from "../../utils"
 
@@ -13,7 +12,7 @@ const ADD_MYSELF = 'add_myself'
 export const mainState: TState<EState> = {
     stateName: EState.MAIN,
     inlineMenu: async (ctx) => {
-        const db = drizzle(await getMysqlClient())
+        const db = await getDbConnection()
         const userChannels = await countPublisherChannelsByUserId(db, ctx.from.id)
         const buttons = [
             [
@@ -42,7 +41,7 @@ export const mainState: TState<EState> = {
                 id: ctx.from.id,
                 type: 'private'
             }
-            const db = drizzle(await getMysqlClient())
+            const db = await getDbConnection()
             const timestamp = Date.now() / 1000
             await insertPublisherChannel(db, {
                 id: ctx.from.id,

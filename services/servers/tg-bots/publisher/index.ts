@@ -8,8 +8,7 @@ import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
 import { enterToState, handleDistributionQueue } from './utils'
 import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
-import { drizzle } from 'drizzle-orm/mysql2'
-import { getMysqlClient } from '../../../../utils'
+import { getDbConnection } from '../../../../utils'
 import { botPublisherUsers } from '../../../../db/schema'
 import { sql } from 'drizzle-orm'
 import { loopRetrying } from '../../../../utils'
@@ -56,7 +55,7 @@ bot.start(async (ctx) => {
   await enterToState(ctx, mainState)
 
   // TODO: move all orm queries into mysql-queris folder
-  const db = drizzle(await getMysqlClient())
+  const db = await getDbConnection()
   await db.insert(botPublisherUsers).values({
     id: ctx.from.id,
     user: ctx.from.username,

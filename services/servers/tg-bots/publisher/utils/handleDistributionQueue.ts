@@ -4,11 +4,10 @@ import { TTelegrafContext } from "../types"
 import process from 'process'
 import { getAmqpQueue } from '../../../../utils'
 import { AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, EMPTY_QUEUE_RETRY_DELAY } from '../../../../../constants'
-import { delay, getMysqlClient } from '../../../../../utils'
+import { delay, getDbConnection } from '../../../../../utils'
 import { Logger } from 'winston'
 import { TPublisherDistributionQueueMsg } from '../../../../ocr/types'
 import fs from 'fs/promises'
-import { drizzle } from 'drizzle-orm/mysql2'
 import { botPublisherChannels } from '../../../../../db/schema'
 import { inArray } from 'drizzle-orm'
 import { Key } from 'telegram-keyboard'
@@ -32,7 +31,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
         const buttons = []
 
-        const db = drizzle(await getMysqlClient())
+        const db = await getDbConnection()
 
         const channels = await db.select().from(botPublisherChannels).where(inArray(botPublisherChannels.id, payload.channelIds))
 

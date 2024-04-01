@@ -61,7 +61,7 @@ export const onBotRecieveText = async (ctx, client, logger) => {
         }
         resetSearchSession(ctx);
     } catch (e) {
-        logError(logger, e);
+        await logError(logger, e);
         await ctx.reply('An error occurred, please try again later');
     }
 };
