@@ -1,4 +1,4 @@
-import { ocrSpace, handleTimeout } from '.';
+import { ocrSpace } from '.';
 import {
     chooseRandomOCRSpaceKey,
     getMysqlClient,
@@ -11,15 +11,15 @@ import {
 import { OCR_SPACE_403_DELAY } from '../../../constants';
 import { InfoMessage } from '../../../utils';
 
-export const recogniseTextOcrSpace = async (fileName, language, logger) => {
+export const recogniseTextOcrSpace = async (fileName, language) => {
     let res;
     const {
         key: apiKey,
-        timeout,
+        // timeout,
         proxy,
         protocol,
     } = await chooseRandomOCRSpaceKey();
-    if (timeout) handleTimeout(apiKey, timeout, logger);
+    // if (timeout) handleTimeout(apiKey, timeout, logger);
     try {
         const [host, port] = proxy.split(':');
         res = await ocrSpace(fileName, {
