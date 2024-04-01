@@ -45,7 +45,7 @@ export const mainState: TState<EState> = {
                 id: ctx.from.id,
                 userId: ctx.from.id,
                 username: username.user,
-                subscribers: null,
+                subscribers: 0,
                 timestamp,
             })
             await enterToState(ctx, addKeywordsState)
