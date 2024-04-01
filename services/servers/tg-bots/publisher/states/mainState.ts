@@ -33,7 +33,7 @@ export const mainState: TState<EState> = {
     },
     onCallback: async (ctx, state) => {
         if (state === ADD_MYSELF) {
-            const username = getTelegramUser(ctx.from)
+            const username = getTelegramUser(ctx.from, '')
             ctx.session.channel = {
                 name: username,
                 id: ctx.from.id,
@@ -44,7 +44,7 @@ export const mainState: TState<EState> = {
             await insertPublisherChannel(db, {
                 id: ctx.from.id,
                 userId: ctx.from.id,
-                username: username,
+                username: username.user,
                 subscribers: null,
                 timestamp,
             })
