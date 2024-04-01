@@ -11,8 +11,9 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
             },
         };
         filterObject.channel.forEach((channel) => {
-            if (typeof channel === 'string')
+            if (/[0-9a-zA-Z_]+/.test(channel)) {
                 additionalFilter.must.terms.channelName.push(channel);
+            }
         });
     }
     if (filterObject?.not?.state !== null) {
@@ -24,6 +25,7 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
             },
         };
     }
+    console.log({additionalFilter});
     const elasticRes = await client.search({
         index: ELASTIC_INDEX,
         size,
