@@ -28,11 +28,11 @@ export const checkProxies = async (logger) => {
         const ipWithoutProxy = await ipWithoutProxyResponse.text();
 
         for (;;) {
+            const mysql = await getMysqlClient();
+            await maintaneProxies(mysql, ipWithoutProxy, logger);
+            mysql.close();
             const msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL);
             if (!msg) {
-                const mysql = await getMysqlClient();
-                await maintaneProxies(mysql, ipWithoutProxy, logger);
-                mysql.close();
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
                 continue;
             }

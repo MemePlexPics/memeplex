@@ -12,7 +12,7 @@ export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
             ocr_key desc,
             last_activity_datetime desc,
             speed asc
-        LIMIT 10
+        LIMIT 1
     `);
     const [proxiesForResurrection] = await mysql.execute(`
         SELECT * FROM proxies
@@ -24,7 +24,7 @@ export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
             ocr_key desc,
             last_activity_datetime desc,
             speed asc
-        LIMIT 100
+        LIMIT 1
     `);
     const proxies = [...proxiesForRecheck, ...proxiesForResurrection];
     await checkProxyArray(mysql, proxies, ipWithoutProxy, logger);
