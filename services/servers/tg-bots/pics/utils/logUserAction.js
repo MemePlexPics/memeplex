@@ -93,7 +93,7 @@ export const logUserAction = async (from, action, logger) => {
         mysql.close();
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
-            start: 1,
+            start: action.start,
         };
     } else if (action.info) {
         logEntity = {
