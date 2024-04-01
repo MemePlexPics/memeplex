@@ -10,7 +10,7 @@ export const AMQP_CHECK_PROXY_CHANNEL = 'check_proxy';
 export const AMQP_PUBLISHER_DISTRIBUTION_CHANNEL = 'publisher_distibution';
 // how much time to sleep between fetching all data, ms
 export const CYCLE_SLEEP_TIMEOUT = (Number(process.env.CYCLE_SLEEP_TIMEOUT) * 1) || 30_000;
-export const OCR_SPACE_403_DELAY = 300_000; // 3600 / 180, the limit is 180 per hour
+export const OCR_SPACE_403_DELAY = 1_800_000; // 3600 / 180, the limit is 180 per hour
 // Page size for tg API calls
 export const TG_API_PAGE_LIMIT = (Number(process.env.TG_API_PAGE_LIMIT) * 1) || 10;
 // Rate limit for tg API calls
