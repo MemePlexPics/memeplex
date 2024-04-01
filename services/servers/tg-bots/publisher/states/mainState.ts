@@ -35,7 +35,7 @@ export const mainState: TState<EState> = {
         if (state === ADD_MYSELF) {
             const username = getTelegramUser(ctx.from, '')
             ctx.session.channel = {
-                name: username,
+                name: username.user,
                 id: ctx.from.id,
                 type: 'private'
             }
