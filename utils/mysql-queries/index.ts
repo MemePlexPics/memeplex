@@ -42,4 +42,4 @@ export { selectPublisherSubscriptionsByKeyword } from './selectPublisherSubscrip
 export { selectPublisherChannelById } from './selectPublisherChannelById'
 export { selectPublisherUserById } from './selectPublisherUserById'
 export { deletePublisherKeyword } from './deletePublisherKeyword'
-export { deletePublisherSubscriptionByKeyword } from './deletePublisherSubscriptionByKeyword'
+export { deletePublisherSubscription } from './deletePublisherSubscription'
