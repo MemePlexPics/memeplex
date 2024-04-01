@@ -42,12 +42,12 @@ export const ocr = async (logger) => {
             const { payload, texts } = await recogniseText(msg, logger);
             if (texts.eng && (await blackListChecker(texts.eng))) {
                 const document = getNewDoc(payload, texts);
-                await elastic.index({
+                const meme = await elastic.index({
                     index: ELASTIC_INDEX,
                     document,
                 });
                 try {
-                    await handlePublisherDistribution(botPublisherDistributionCh, document)
+                    await handlePublisherDistribution(botPublisherDistributionCh, document, meme._id)
                 } catch (error) {
                     await logError(logger, error)
                 }

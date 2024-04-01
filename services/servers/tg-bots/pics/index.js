@@ -53,7 +53,7 @@ bot.start(async (ctx) => {
 Send me a text to search memes by caption.`,
         { parse_mode: 'markdown' },
     );
-    logUserAction(ctx.from, { start: true }, logger);
+    logUserAction(ctx.from, { start: ctx.payload || 1 }, logger);
 });
 
 bot.command('get_latest', (ctx) =>
