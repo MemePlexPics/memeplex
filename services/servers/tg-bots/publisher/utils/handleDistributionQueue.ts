@@ -33,14 +33,17 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
         const db = await getDbConnection()
 
-        const channels = await db.select().from(botPublisherChannels).where(inArray(botPublisherChannels.id, payload.channelIds))
+        const channels = await db
+            .select()
+            .from(botPublisherChannels)
+            .where(inArray(botPublisherChannels.id, payload.channelIds))
 
         channels.forEach(channel => buttons.push([
-            Key.callback(`✅ ${channel.username}`, channel.id)
+            Key.callback(`✅ ${channel.username}`, `post|${channel.id}|${payload.memeId}`)
         ]))
 
         payload.keywords.forEach(keyword => buttons.push([
-            Key.callback(`🗑️ ${keyword}`, keyword)
+            Key.callback(`🗑️ ${keyword}`, `key|del|${keyword}`)
         ]))
 
         try {

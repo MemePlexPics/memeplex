@@ -4,7 +4,7 @@ import { getPublisherKeywords, selectPublisherChannelById, selectPublisherSubscr
 import { Channel } from "amqplib";
 import { TMemeEntity, TPublisherDistributionQueueMsg } from "../types";
 
-export const handlePublisherDistribution = async (amqpChannel: Channel, document: TMemeEntity) => {
+export const handlePublisherDistribution = async (amqpChannel: Channel, document: TMemeEntity, memeId: string) => {
     const db = await getDbConnection()
     const keywords = await getPublisherKeywords(db)
 
@@ -19,6 +19,7 @@ export const handlePublisherDistribution = async (amqpChannel: Channel, document
             const [user] = await selectPublisherUserById(db, channel.userId)
             userId = user.id
             if (!queue[userId]) queue[userId] = {
+                memeId,
                 document,
                 keywords: [],
                 channelIds: [],
