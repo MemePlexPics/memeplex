@@ -24,7 +24,7 @@ export const channelSettingState: TState<EState> = {
         Key.callback('✏️ Редактировать ключевые слова', EState.KEYWORD_SETTINGS),
       ])
       return {
-        text: `Настройка подписки @${ctx.session.channel.name}`,
+        text: `Настройка подписки ${ctx.session.channel.name}`,
         buttons,
       }
     },
