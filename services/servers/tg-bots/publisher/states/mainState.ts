@@ -19,13 +19,16 @@ export const mainState: TState<EState> = {
             [
                 Key.callback('Добавить канал', EState.ADD_CHANNEL),
             ],
-            [
-                Key.callback('Добавить себя', ADD_MYSELF),
-            ],
         ]
-        if (userChannels[0].values !== 0) buttons.push([
-            Key.callback('Настройки подписок', EState.CHANNEL_SELECT),
-        ])
+        if (userChannels[0].values !== 0) {
+            buttons.push([
+                Key.callback('Настройки подписок', EState.CHANNEL_SELECT),
+            ])
+         } else {
+            buttons.push([
+                Key.callback('Добавить себя', ADD_MYSELF),
+            ])
+        }
         return {
             text: 'Меню подписок',
             buttons,
