@@ -55,7 +55,8 @@ export const recogniseTextOcrSpace = async (fileName, language) => {
             error.message === 'Socket closed' ||
             error.message === 'Proxy connection timed out' ||
             error.message.startsWith('Socks5 proxy rejected connection') ||
-            error.message.startsWith('connect ECONNREFUSED') // somehow this is not the same error as the error.code === 'ECONNREFUSED'
+            error.message.startsWith('connect ECONNREFUSED') || // somehow this is not the same error as the error.code === 'ECONNREFUSED'
+            error.message.startsWith('read ECONNRESET') // the same as above
         ) {
             const mysql = await getMysqlClient();
             await updateProxyAvailability(mysql, proxy, protocol, false);
