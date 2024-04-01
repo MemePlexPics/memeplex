@@ -1,16 +1,17 @@
 import 'dotenv/config';
-import amqplib, { type Connection, Channel } from 'amqplib';
+import amqplib, { Connection, Channel, GetMessage } from 'amqplib';
 import process from 'process';
 import {
     AMQP_IMAGE_FILE_CHANNEL,
     ELASTIC_INDEX,
     EMPTY_QUEUE_RETRY_DELAY,
 } from '../../constants';
-import { getElasticClient, delay } from '../../utils';
+import { getElasticClient, delay, logError } from '../../utils';
 import { recogniseText, getNewDoc, blackListChecker } from './utils';
 import { Client } from '@elastic/elasticsearch';
 import { getAmqpQueue } from '../utils';
 import { handlePublisherDistribution } from './utils';
+import { Logger } from 'winston';
 
 // Listens for messages containing images, outputs messages containing OCR'd text
 export const ocr = async (logger) => {
@@ -23,7 +24,7 @@ export const ocr = async (logger) => {
     try {
         elastic = getElasticClient();
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
-        let receiveImageFileTimeout
+        let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void
         [
             receiveImageFileCh,
             receiveImageFileTimeout,
@@ -45,7 +46,11 @@ export const ocr = async (logger) => {
                     index: ELASTIC_INDEX,
                     document,
                 });
-                await handlePublisherDistribution(botPublisherDistributionCh, document)
+                try {
+                    await handlePublisherDistribution(botPublisherDistributionCh, document)
+                } catch (error) {
+                    await logError(logger, error)
+                }
             }
             receiveImageFileCh.ack(msg);
         }

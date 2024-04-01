@@ -20,7 +20,7 @@ export const onBotCommandSuggestChannel = async (ctx, logger) => {
             logUserAction(ctx.from, { info: `suggested @${channelName}` }, logger);
         return ctx.reply('Thank you for the suggestion!');
     } catch (e) {
-        logError(logger, e);
+        await logError(logger, e);
         await ctx.reply('An error occurred, please try again later');
     }
 };

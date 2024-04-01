@@ -3,15 +3,14 @@ import { EState } from "../constants"
 import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { addChannelState, channelSettingState } from "."
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import { selectPublisherChannelsByUserId } from "../../../../../utils/mysql-queries"
 import { ChatFromGetChat } from "telegraf/typings/core/types/typegram"
 
 export const channelSelectState: TState<EState> = {
     stateName: EState.CHANNEL_SELECT,
     inlineMenu: async (ctx) => {
-        const db = drizzle(await getMysqlClient())
+        const db = await getDbConnection()
         const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
         return {
             text: 'Выберите канал',

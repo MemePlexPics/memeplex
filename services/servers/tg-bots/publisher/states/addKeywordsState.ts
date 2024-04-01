@@ -3,8 +3,7 @@ import { EState } from "../constants"
 import { TState } from "../types"
 import { enterToState } from "../utils"
 import { channelSettingState } from "."
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import { insertPublisherKeywords, insertPublisherSubscription } from "../../../../../utils/mysql-queries"
 
 export const addKeywordsState: TState<EState> = {
@@ -18,7 +17,7 @@ export const addKeywordsState: TState<EState> = {
     }),
     onCallback: (ctx) => enterToState(ctx, channelSettingState),
     onText: async (ctx, keywordsRaw) => {
-        const db = drizzle(await getMysqlClient())
+        const db = await getDbConnection()
         const keywords = keywordsRaw
             .split('\n')
             .map(line => line.split(','))

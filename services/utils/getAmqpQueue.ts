@@ -1,7 +1,8 @@
-import { Channel, Connection } from "amqplib"
+import { Channel, Connection, GetMessage } from "amqplib"
 import { handleNackByTimeout } from "."
+import { Logger } from "winston"
 
-export const getAmqpQueue = async (amqp: Connection, queue: string): Promise<[Channel, (ms: number, logger, msg) => void, () => void]> => {
+export const getAmqpQueue = async (amqp: Connection, queue: string): Promise<[Channel, (ms: number, logger: Logger, msg: GetMessage) => void, () => void]> => {
     const channel = await amqp.createChannel()
     let timeoutId: NodeJS.Timeout
 
@@ -18,7 +19,7 @@ export const getAmqpQueue = async (amqp: Connection, queue: string): Promise<[Ch
         .on('ack', timeoutClear)
         .on('nack', timeoutClear)
 
-    const timeoutSetter = (ms, logger, msg) => {
+    const timeoutSetter = (ms: number, logger: Logger, msg: GetMessage) => {
         timeoutId = setTimeout(
             () => handleNackByTimeout(logger, msg, channel),
             ms,

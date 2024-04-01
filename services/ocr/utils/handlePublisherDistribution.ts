@@ -1,12 +1,11 @@
-import { drizzle } from "drizzle-orm/mysql2"
-import { getMysqlClient } from "../../../utils"
+import { getDbConnection } from "../../../utils"
 import { AMQP_PUBLISHER_DISTRIBUTION_CHANNEL } from "../../../constants";
 import { getPublisherKeywords, selectPublisherChannelById, selectPublisherSubscriptionsByKeyword, selectPublisherUserById } from "../../../utils/mysql-queries";
 import { Channel } from "amqplib";
 import { TMemeEntity, TPublisherDistributionQueueMsg } from "../types";
 
 export const handlePublisherDistribution = async (amqpChannel: Channel, document: TMemeEntity) => {
-    const db = drizzle(await getMysqlClient())
+    const db = await getDbConnection()
     const keywords = await getPublisherKeywords(db)
 
     const queue: Record<number, Omit<TPublisherDistributionQueueMsg, 'userId'>> = {}
