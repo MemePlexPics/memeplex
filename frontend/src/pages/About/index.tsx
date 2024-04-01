@@ -91,7 +91,7 @@ export const AboutPage = () => {
             >
               here
             </Link>
-            ) and let us know in the{' '}
+            ) and asking in the comments{' '}
             <Link
               to='https://t.me/memeplex_pics/20'
               {...stylex.props(s.link)}
