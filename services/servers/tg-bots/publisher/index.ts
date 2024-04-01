@@ -59,7 +59,7 @@ bot.start(async (ctx) => {
   const db = await getDbConnection()
   await db.insert(botPublisherUsers).values({
     id: ctx.from.id,
-    user: getTelegramUser(ctx.from),
+    user: getTelegramUser(ctx.from).user,
     timestamp: Date.now() / 1000,
   }).onDuplicateKeyUpdate({ set: { id: sql`id` } })
 })
