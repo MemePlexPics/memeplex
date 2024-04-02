@@ -27,6 +27,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
             continue;
         }
         const payload = JSON.parse(msg.content.toString()) as TPublisherDistributionQueueMsg;
+        console.log(payload)
         distributionTimeout(600_000, logger, msg);
 
         const buttons = []

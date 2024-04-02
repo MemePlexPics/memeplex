@@ -12,7 +12,7 @@ export const handlePublisherDistribution = async (amqpChannel: Channel, document
 
     let userId: number
     for (const { keyword } of keywords) {
-        if (!document.eng.toLowerCase().includes(keyword)) return
+        // if (!document.eng.toLowerCase().includes(keyword)) return
         const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
         for (const { channelId } of subscriptions) {
             const [channel] = await selectPublisherChannelById(db, channelId)
@@ -34,6 +34,7 @@ export const handlePublisherDistribution = async (amqpChannel: Channel, document
             userId,
             ...queue[userId],
         }))
+        console.log(userId, queue[userId])
         amqpChannel.sendToQueue(
             AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
             buffer,
