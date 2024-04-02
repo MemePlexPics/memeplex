@@ -1,5 +1,5 @@
-import { mysqlTable, varchar } from "drizzle-orm/mysql-core"
+import { mysqlTable, varchar } from 'drizzle-orm/mysql-core'
 
-export const phashes = mysqlTable("phashes", {
-	phash: varchar("phash", { length: 255 }).notNull(),
+export const phashes = mysqlTable('phashes', {
+  phash: varchar('phash', { length: 255 }).notNull()
 })
