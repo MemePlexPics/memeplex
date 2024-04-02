@@ -23,7 +23,7 @@ export const channelSettingState: TState<EState> = {
     const hasKeywords = keywordsCount?.[0]?.value !== 0
     const buttons = [
       [Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS)],
-      [Key.callback('🗑 Удалить канал', DELETE_CHANNEL)],
+      [Key.callback('🗑 Отвязать канал', DELETE_CHANNEL)],
       [Key.callback('🏠 В главное меню', EState.MAIN)]
     ]
     if (hasKeywords)
