@@ -8,4 +8,5 @@ export type TTelegrafSession = {
         type: ChatFromGetChat['type']
     }
     state: EState
+    lastMenuId?: number
 }

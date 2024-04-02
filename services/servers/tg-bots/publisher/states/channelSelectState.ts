@@ -3,7 +3,7 @@ import { EState } from "../constants"
 import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { addChannelState, channelSettingState } from "."
-import { getDbConnection } from '../../../../../utils'
+import { InfoMessage, getDbConnection } from '../../../../../utils'
 import { selectPublisherChannelsByUserId } from "../../../../../utils/mysql-queries"
 import { ChatFromGetChat } from "telegraf/typings/core/types/typegram"
 
@@ -38,5 +38,6 @@ export const channelSelectState: TState<EState> = {
             await enterToState(ctx, channelSettingState)
             return
         }
+        throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
 }

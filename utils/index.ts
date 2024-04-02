@@ -126,8 +126,8 @@ export async function loopRetrying(
                 await delay(options.afterCallbackDelayMs);
             if (result) break;
         } catch (e) {
-            if (e instanceof InfoMessage) logInfo(options.logger, e);
-            else logError(options.logger, e);
+            if (e instanceof InfoMessage) await logInfo(options.logger, e);
+            else await logError(options.logger, e);
             if (options.catchDelayMs) await delay(options.catchDelayMs);
             await options?.afterErrorCallback?.();
         }

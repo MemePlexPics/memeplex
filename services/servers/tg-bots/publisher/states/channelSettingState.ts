@@ -3,8 +3,10 @@ import { EState } from "../constants"
 import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { addKeywordsState, keywordSettingsState, mainState } from "."
-import { getDbConnection } from '../../../../../utils'
-import { countPublisherSubscriptionsByChannelId } from "../../../../../utils/mysql-queries"
+import { InfoMessage, getDbConnection } from '../../../../../utils'
+import { countPublisherSubscriptionsByChannelId, deletePublisherChannelById } from "../../../../../utils/mysql-queries"
+
+const DELETE_CHANNEL = 'delete_channel'
 
 export const channelSettingState: TState<EState> = {
     stateName: EState.CHANNEL_SETTINGS,
@@ -15,6 +17,9 @@ export const channelSettingState: TState<EState> = {
       const buttons = [
         [
           Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS),
+        ],
+        [
+          Key.callback('🗑 Удалить канал', DELETE_CHANNEL),
         ],
         [
           Key.callback('🏠 В главное меню', EState.MAIN),
@@ -37,10 +42,19 @@ export const channelSettingState: TState<EState> = {
             await enterToState(ctx, keywordSettingsState)
             return
         }
+        if (callback === DELETE_CHANNEL) {
+          const db = await getDbConnection()
+          await deletePublisherChannelById(db, ctx.session.channel.id)
+          await ctx.reply(`Канал успешно удален`)
+          ctx.session.channel = undefined
+          await enterToState(ctx, mainState)
+          return
+        }
         if (callback === EState.MAIN) {
             ctx.session.channel = undefined
             await enterToState(ctx, mainState)
             return
         }
+        throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
 }

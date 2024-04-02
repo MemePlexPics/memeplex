@@ -3,7 +3,7 @@ import { EState } from "../constants"
 import { TState } from "../types"
 import { enterToState } from "../utils"
 import { addChannelState, addKeywordsState, channelSelectState } from "."
-import { getDbConnection } from '../../../../../utils'
+import { InfoMessage, getDbConnection } from '../../../../../utils'
 import { countPublisherChannelsByUserId, insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from "../../utils"
 
@@ -60,5 +60,6 @@ export const mainState: TState<EState> = {
             await enterToState(ctx, channelSelectState)
             return
         }
+        throw new InfoMessage(`Unknown menu state: ${state}`)
     }
 }

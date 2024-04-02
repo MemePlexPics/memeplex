@@ -1,4 +1,9 @@
-export const getMemeResponseEntity = (id, source) => {
+export const getMemeResponseEntity = (id: string, source: {
+    fileName: string
+    channelName: string
+    messageId: string
+    eng: string
+}) => {
     return {
         id,
         fileName: source.fileName,

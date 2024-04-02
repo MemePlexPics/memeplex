@@ -3,7 +3,7 @@ import { addKeywordsState, mainState } from "."
 import { EState } from "../constants"
 import { TState } from "../types"
 import { enterToState } from "../utils"
-import { getDbConnection } from '../../../../../utils'
+import { getDbConnection, getTgChannelName } from '../../../../../utils'
 import { insertPublisherChannel } from "../../../../../utils/mysql-queries"
 
 export const addChannelState: TState<EState> = {
@@ -17,7 +17,7 @@ export const addChannelState: TState<EState> = {
     }),
     onCallback: (ctx) => enterToState(ctx, mainState),
     onText: async (ctx, text) => {
-        const channel = text.replace('@', '').replace('https://t.me', '')
+        const channel = getTgChannelName(text)
         if (!channel) {
             await ctx.reply('Пожалуйста, проверьте корректность названия. Формат: @name или https://t.me/name')
             return
@@ -26,7 +26,7 @@ export const addChannelState: TState<EState> = {
         if (chat.type === 'private') {
             await ctx.reply(`
                 Для того, чтобы подписаться самому, выберите в главном меню кнопку "Добавить себя".
-                Вернитесь назад в главное меню или отправьте название канала`
+                Вернитесь назад в главное меню или отправьте название канала.`
             )
             return
         }
@@ -50,8 +50,8 @@ export const addChannelState: TState<EState> = {
         }
         if (!isOurBotAnAdmin) {
             await ctx.reply(`
-Для публикации от имени канала @${channel} боту необходимо предоставить админ-права.
-После предоставления прав повторите, пожалуйста, отправку названия канала в том же формате.`
+                Для публикации в канал @${channel} боту необходимо предоставить админ-права.
+                После предоставления прав повторите, пожалуйста, отправку названия канала в том же формате.`
             )
             return
         }
@@ -65,12 +65,12 @@ export const addChannelState: TState<EState> = {
 
             const db = await getDbConnection()
             const timestamp = Date.now() / 1000
-            // TODO: state confirmUserChange (when another administrator has already configured the bot)
             await insertPublisherChannel(db, {
                 id: chat.id,
                 userId: ctx.from.id,
                 username: channel,
                 subscribers,
+                type: chat.type,
                 timestamp,
             })
             await enterToState(ctx, addKeywordsState)
