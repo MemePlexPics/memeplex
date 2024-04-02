@@ -101,12 +101,16 @@ bot.on('inline_query', async (ctx) => {
 
 bot.on('chosen_inline_result', async (ctx) => {
     const { query, result_id } = ctx.update.chosen_inline_result;
-    logUserAction(ctx.update.chosen_inline_result.from, {
-        inline_select: {
-            query,
-            id: result_id,
+    logUserAction(
+        ctx.update.chosen_inline_result.from,
+        {
+            inline_select: {
+                query,
+                id: result_id,
+            },
         },
-    }, logger);
+        logger,
+    );
 });
 
 const start = async () => {

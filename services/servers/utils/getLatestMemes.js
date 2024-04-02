@@ -12,7 +12,9 @@ export const getLatestMemes = async (client, from, to, size, filtersString) => {
         };
         filterObject.channel.forEach((channel) => {
             if (/[0-9a-zA-Z_]+/.test(channel)) {
-                additionalFilter.must.terms.channelName.push(channel.toLowerCase());
+                additionalFilter.must.terms.channelName.push(
+                    channel.toLowerCase(),
+                );
             }
         });
     }

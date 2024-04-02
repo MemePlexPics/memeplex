@@ -6,16 +6,37 @@ import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
-import { enterToState, handleDistributionQueue, handleKeyAction, handleMemePost } from './utils'
-import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
-import { InfoMessage, getDbConnection, getElasticClient, logError, logInfo } from '../../../../utils'
+import {
+  enterToState,
+  handleDistributionQueue,
+  handleKeyAction,
+  handleMemePost
+} from './utils'
+import {
+  addChannelState,
+  addKeywordsState,
+  channelSelectState,
+  channelSettingState,
+  keywordSettingsState,
+  mainState
+} from './states'
+import {
+  InfoMessage,
+  getDbConnection,
+  getElasticClient,
+  logError,
+  logInfo
+} from '../../../../utils'
 import { loopRetrying } from '../../../../utils'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
 import { insertPublisherUser } from '../../../../utils/mysql-queries'
 
-const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
+const bot = new Telegraf<TTelegrafContext>(
+  process.env.TELEGRAM_PUBLISHER_BOT_TOKEN,
+  { telegram: { webhookReply: false } }
+)
 const logger = getLogger('tg-publisher-bot')
-const elastic = getElasticClient();
+const elastic = getElasticClient()
 
 bot.use(
   session({
@@ -24,13 +45,13 @@ bot.use(
       state: EState.MAIN
     }),
     store: MySQL<TTelegrafSession>({
-        host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT),
-        database: process.env.DB_DATABASE,
-        user: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        table: 'telegraf_publisher_sessions',
-    }),
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      table: 'telegraf_publisher_sessions'
+    })
   })
 )
 
@@ -40,7 +61,7 @@ const states: Record<EState, TState<EState>> = {
   [EState.CHANNEL_SELECT]: channelSelectState,
   [EState.CHANNEL_SETTINGS]: channelSettingState,
   [EState.KEYWORD_SETTINGS]: keywordSettingsState,
-  [EState.MAIN]: mainState,
+  [EState.MAIN]: mainState
 }
 
 bot.start(async (ctx) => {
@@ -59,7 +80,7 @@ bot.start(async (ctx) => {
   await insertPublisherUser(db, {
     id: ctx.from.id,
     user: getTelegramUser(ctx.from).user,
-    timestamp: Date.now() / 1000,
+    timestamp: Date.now() / 1000
   })
 })
 
@@ -83,9 +104,9 @@ bot.on('callback_query', async (ctx) => {
     await states[ctx.session.state].onCallback(ctx, callbackQuery)
   } catch (error) {
     if (error instanceof InfoMessage) {
-      await logInfo(logger, error);
+      await logInfo(logger, error)
     } else {
-      await logError(logger, error);
+      await logError(logger, error)
     }
   }
 })
@@ -105,7 +126,7 @@ const start = async () => {
   bot.telegram.setMyCommands([
     {
       command: 'menu',
-      description: 'Меню',
+      description: 'Меню'
     }
   ])
   bot.telegram.setMyDescription(`
@@ -122,7 +143,7 @@ const start = async () => {
   await loopRetrying(async () => handleDistributionQueue(bot, logger), {
     logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
-    catchDelayMs: LOOP_RETRYING_DELAY,
+    catchDelayMs: LOOP_RETRYING_DELAY
   })
 }
 

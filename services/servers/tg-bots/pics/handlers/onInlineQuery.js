@@ -4,7 +4,13 @@ import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants';
 import { searchMemes } from '../../../utils';
 import { logUserAction } from '../utils';
 
-export const onInlineQuery = async (ctx, page, client, sessionInline, logger) => {
+export const onInlineQuery = async (
+    ctx,
+    page,
+    client,
+    sessionInline,
+    logger,
+) => {
     const query = ctx.inlineQuery.query;
 
     if (!query) return;
@@ -18,7 +24,8 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
                 chat_type: ctx.inlineQuery.chat_type,
             },
         },
-        logger);
+        logger,
+    );
     if (sessionInline[ctx.inlineQuery.from.id].abortController) {
         sessionInline[ctx.inlineQuery.from.id].abortController.abort();
     }
@@ -49,20 +56,26 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
     });
 
     // If they are not equal, then there is at least one more new request from the same user
-    if (abortController === sessionInline[ctx.inlineQuery.from.id].abortController) {
+    if (
+        abortController ===
+        sessionInline[ctx.inlineQuery.from.id].abortController
+    ) {
         if (results.length) {
             await ctx.answerInlineQuery(results, {
-                next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
+                next_offset:
+                    response.totalPages - page > 0 ? page + 1 + '' : '',
             });
         } else {
-            await ctx.answerInlineQuery([{
-                type: 'article',
-                id: query,
-                title: 'Ничего не найдено',
-                input_message_content: {
-                    message_text: 'Ничего не найдено',
+            await ctx.answerInlineQuery([
+                {
+                    type: 'article',
+                    id: query,
+                    title: 'Ничего не найдено',
+                    input_message_content: {
+                        message_text: 'Ничего не найдено',
+                    },
                 },
-            }]);
+            ]);
         }
         sessionInline[ctx.inlineQuery.from.id].debounce = 0;
         sessionInline[ctx.inlineQuery.from.id].abortController = undefined;
