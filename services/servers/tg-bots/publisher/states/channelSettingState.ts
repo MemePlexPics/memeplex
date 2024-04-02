@@ -6,7 +6,9 @@ import { addKeywordsState, keywordSettingsState, mainState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   countPublisherSubscriptionsByChannelId,
-  deletePublisherChannelById
+  deletePublisherChannelById,
+  deletePublisherSubscription,
+  deletePublisherSubscriptionsByChannelId
 } from '../../../../../utils/mysql-queries'
 
 const DELETE_CHANNEL = 'delete_channel'
@@ -48,6 +50,7 @@ export const channelSettingState: TState<EState> = {
     }
     if (callback === DELETE_CHANNEL) {
       const db = await getDbConnection()
+      await deletePublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
       await deletePublisherChannelById(db, ctx.session.channel.id)
       await ctx.reply(`Канал успешно удален`)
       ctx.session.channel = undefined
