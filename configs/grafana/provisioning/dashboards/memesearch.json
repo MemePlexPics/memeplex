@@ -443,7 +443,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 5 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys;",
+          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -941,7 +941,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 23
+            "y": 31
           },
           "id": 29,
           "options": {
@@ -1147,7 +1147,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 23
+            "y": 31
           },
           "id": 35,
           "options": {
@@ -1206,33 +1206,6 @@
               "rawQuery": true,
               "rawSql": "SELECT\n  FROM_UNIXTIME(timestamp, '%Y-%m-%d%H:00:00') as timestamp,\n  COUNT(action) as inline_actions,\n  SUM(action = 'select') AS inline_select,\n  user_id as inline_users\nFROM MadelineProto.bot_inline_actions\nGROUP BY timestamp",
               "refId": "B",
-              "sql": {
-                "columns": [
-                  {
-                    "parameters": [],
-                    "type": "function"
-                  }
-                ],
-                "groupBy": [
-                  {
-                    "property": {
-                      "type": "string"
-                    },
-                    "type": "groupBy"
-                  }
-                ],
-                "limit": 50
-              }
-            },
-            {
-              "dataset": "MadelineProto",
-              "datasource": "MySQL",
-              "editorMode": "code",
-              "format": "table",
-              "hide": false,
-              "rawQuery": true,
-              "rawSql": "SET SESSION time_zone = 'Asia/Tbilisi'",
-              "refId": "C",
               "sql": {
                 "columns": [
                   {
@@ -1492,7 +1465,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 31
+            "y": 39
           },
           "id": 23,
           "options": {
@@ -1739,7 +1712,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 48
           },
           "id": 36,
           "options": {
@@ -1915,7 +1888,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 56
           },
           "id": 12,
           "options": {
@@ -2086,7 +2059,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 56
           },
           "id": 11,
           "options": {
@@ -2249,7 +2222,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 64
           },
           "id": 5,
           "options": {
@@ -2412,7 +2385,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 40
+            "y": 64
           },
           "id": 13,
           "options": {
@@ -2556,7 +2529,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 48
+            "y": 72
           },
           "id": 18,
           "options": {
@@ -2768,7 +2741,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 48
+            "y": 72
           },
           "id": 34,
           "options": {
@@ -2926,7 +2899,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 56
+            "y": 80
           },
           "id": 17,
           "options": {
@@ -3116,7 +3089,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 33
+            "y": 57
           },
           "id": 1,
           "options": {
@@ -3207,7 +3180,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 33
+            "y": 57
           },
           "id": 2,
           "options": {
@@ -3282,7 +3255,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 41
+            "y": 65
           },
           "id": 3,
           "options": {
@@ -3357,7 +3330,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 41
+            "y": 65
           },
           "id": 4,
           "options": {
@@ -3432,7 +3405,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 49
+            "y": 73
           },
           "id": 19,
           "options": {
@@ -3511,7 +3484,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 49
+            "y": 73
           },
           "id": 21,
           "options": {
@@ -3677,7 +3650,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 57
+            "y": 81
           },
           "id": 20,
           "options": {
@@ -3756,7 +3729,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 57
+            "y": 81
           },
           "id": 22,
           "options": {
@@ -3851,6 +3824,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 32,
+  "version": 33,
   "weekStart": ""
 }
