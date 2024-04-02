@@ -570,7 +570,7 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 3,
+        "w": 6,
         "x": 18,
         "y": 9
       },
@@ -599,7 +599,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(id) FROM MadelineProto.bot_users",
+          "rawSql": "SELECT COUNT(*) as Pics FROM MadelineProto.bot_users",
           "refId": "A",
           "sql": {
             "columns": [
@@ -625,72 +625,50 @@
             "limit": 50
           },
           "table": "bot_users"
-        }
-      ],
-      "title": "Bot users",
-      "type": "stat"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unitScale": true
         },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 3,
-        "x": 21,
-        "y": 9
-      },
-      "id": 31,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "10.3.3",
-      "targets": [
         {
           "dataset": "MadelineProto",
           "datasource": "MySQL",
           "editorMode": "code",
           "format": "table",
+          "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(id) FROM MadelineProto.bot_inline_users",
-          "refId": "A",
+          "rawSql": "SELECT COUNT(*) as Inline FROM MadelineProto.bot_inline_users",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as Publisher FROM MadelineProto.bot_publisher_users LIMIT 50 ",
+          "refId": "C",
           "sql": {
             "columns": [
               {
                 "name": "COUNT",
                 "parameters": [
                   {
-                    "name": "id",
+                    "name": "*",
                     "type": "functionParameter"
                   }
                 ],
@@ -707,10 +685,10 @@
             ],
             "limit": 50
           },
-          "table": "bot_users"
+          "table": "bot_publisher_users"
         }
       ],
-      "title": "Bot inline users",
+      "title": "Bot users",
       "type": "stat"
     },
     {
@@ -950,7 +928,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -1149,7 +1128,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -1220,6 +1200,33 @@
               "rawQuery": true,
               "rawSql": "SELECT\n  FROM_UNIXTIME(timestamp, '%Y-%m-%d %H:00:00') as timestamp,\n  COUNT(action) as inline_actions,\n  user_id as inline_users\nFROM MadelineProto.bot_inline_actions\nGROUP BY timestamp",
               "refId": "B",
+              "sql": {
+                "columns": [
+                  {
+                    "parameters": [],
+                    "type": "function"
+                  }
+                ],
+                "groupBy": [
+                  {
+                    "property": {
+                      "type": "string"
+                    },
+                    "type": "groupBy"
+                  }
+                ],
+                "limit": 50
+              }
+            },
+            {
+              "dataset": "MadelineProto",
+              "datasource": "MySQL",
+              "editorMode": "code",
+              "format": "table",
+              "hide": false,
+              "rawQuery": true,
+              "rawSql": "SET SESSION time_zone = 'Asia/Tbilisi'",
+              "refId": "C",
               "sql": {
                 "columns": [
                   {
@@ -1323,7 +1330,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1498,7 +1506,254 @@
               "refId": "A"
             }
           ],
-          "title": "logs",
+          "title": "Pics",
+          "transformations": [
+            {
+              "id": "extractFields",
+              "options": {
+                "format": "json",
+                "jsonPaths": [],
+                "keepTime": true,
+                "replace": true,
+                "source": "Line"
+              }
+            },
+            {
+              "id": "extractFields",
+              "options": {
+                "format": "json",
+                "source": "message"
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "id": true,
+                  "message": true,
+                  "service": true,
+                  "timestamp": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 0,
+                  "action": 3,
+                  "channel": 12,
+                  "from": 10,
+                  "id": 8,
+                  "level": 1,
+                  "message": 6,
+                  "page": 9,
+                  "query": 4,
+                  "service": 7,
+                  "timestamp": 5,
+                  "to": 11,
+                  "user": 2
+                },
+                "renameByName": {
+                  "timestamp": "Time"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": "Loki",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unitScale": true
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "level"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 27
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Time"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 159
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "message"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 610
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "error"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 116
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "user"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 207
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "query"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 326
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "action"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 101
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "page"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 52
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "from"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 98
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "to"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 101
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "channel"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 241
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 40
+          },
+          "id": 36,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "10.3.3",
+          "targets": [
+            {
+              "datasource": "Loki",
+              "editorMode": "builder",
+              "expr": "{filename=\"/var/log/tg-publisher-bot.log\"} |= ``",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "Publisher",
           "transformations": [
             {
               "id": "extractFields",
@@ -1583,7 +1838,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1648,7 +1904,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 24
           },
           "id": 12,
           "options": {
@@ -1754,7 +2010,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1819,7 +2076,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 24
           },
           "id": 11,
           "options": {
@@ -1917,7 +2174,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1982,7 +2240,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 40
+            "y": 32
           },
           "id": 5,
           "options": {
@@ -2080,7 +2338,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2145,7 +2404,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 40
+            "y": 32
           },
           "id": 13,
           "options": {
@@ -2224,7 +2483,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2289,7 +2549,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 48
+            "y": 40
           },
           "id": 18,
           "options": {
@@ -2388,7 +2648,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2501,7 +2762,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 48
+            "y": 40
           },
           "id": 34,
           "options": {
@@ -2594,7 +2855,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2659,7 +2921,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 56
+            "y": 48
           },
           "id": 17,
           "options": {
@@ -2772,14 +3034,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2848,7 +3112,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 112
+            "y": 25
           },
           "id": 1,
           "options": {
@@ -2864,7 +3128,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2923,14 +3187,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -2938,7 +3204,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 112
+            "y": 25
           },
           "id": 2,
           "options": {
@@ -2953,7 +3219,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2997,14 +3263,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -3012,7 +3280,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 120
+            "y": 33
           },
           "id": 3,
           "options": {
@@ -3027,7 +3295,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -3071,14 +3339,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -3086,7 +3356,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 120
+            "y": 33
           },
           "id": 4,
           "options": {
@@ -3101,7 +3371,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -3145,14 +3415,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -3160,7 +3432,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 128
+            "y": 41
           },
           "id": 19,
           "options": {
@@ -3175,7 +3447,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -3223,14 +3495,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -3238,7 +3512,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 128
+            "y": 41
           },
           "id": 21,
           "options": {
@@ -3253,7 +3527,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -3375,14 +3649,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -3403,7 +3679,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 136
+            "y": 49
           },
           "id": 20,
           "options": {
@@ -3419,7 +3695,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -3466,14 +3742,16 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -3481,7 +3759,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 136
+            "y": 49
           },
           "id": 22,
           "options": {
@@ -3496,7 +3774,7 @@
             },
             "showHeader": true
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -3576,6 +3854,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 30,
+  "version": 31,
   "weekStart": ""
 }
