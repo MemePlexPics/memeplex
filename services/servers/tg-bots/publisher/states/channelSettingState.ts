@@ -7,7 +7,6 @@ import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   countPublisherSubscriptionsByChannelId,
   deletePublisherChannelById,
-  deletePublisherSubscription,
   deletePublisherSubscriptionsByChannelId
 } from '../../../../../utils/mysql-queries'
 
