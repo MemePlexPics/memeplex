@@ -49,3 +49,4 @@ export { selectPublisherSubscriptionsByChannelId } from './selectPublisherSubscr
 export { deletePublisherSubscriptionsByKeyword } from './deletePublisherSubscriptionsByKeyword'
 export { deletePublisherChannelById } from './deletePublisherChannelById'
 export { deletePublisherSubscriptionsByChannelId } from './deletePublisherSubscriptionsByChannelId'
+export { selectLatestInlineSelectedMemes } from './selectLatestInlineSelectedMemes'
