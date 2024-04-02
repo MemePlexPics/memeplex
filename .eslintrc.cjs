@@ -37,7 +37,7 @@ module.exports = {
             ],
             rules: {
                 '@typescript-eslint/indent': [
-                    'error',
+                    'warn',
                     2
                 ],
                 semi: [
@@ -50,7 +50,7 @@ module.exports = {
     ignorePatterns: ['vite.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],
     rules: {
         indent: [
-            'error',
+            'warn',
             4
         ],
         'no-control-regex': 0,

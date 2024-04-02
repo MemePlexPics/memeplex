@@ -54,9 +54,7 @@
       "indexes": {
         "user_id": {
           "name": "user_id",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -65,12 +63,8 @@
           "name": "bot_actions_user_id_bot_users_id_fk",
           "tableFrom": "bot_actions",
           "tableTo": "bot_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "restrict"
         }
@@ -144,9 +138,7 @@
       "indexes": {
         "user_id": {
           "name": "user_id",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -155,12 +147,8 @@
           "name": "bot_inline_actions_user_id_bot_inline_users_id_fk",
           "tableFrom": "bot_inline_actions",
           "tableTo": "bot_inline_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "restrict"
         }
@@ -420,10 +408,7 @@
       "uniqueConstraints": {
         "unique_address_protocol": {
           "name": "unique_address_protocol",
-          "columns": [
-            "address",
-            "protocol"
-          ]
+          "columns": ["address", "protocol"]
         }
       }
     },

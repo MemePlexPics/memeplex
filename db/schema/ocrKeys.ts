@@ -1,6 +1,6 @@
-import { mysqlTable, varchar, datetime } from "drizzle-orm/mysql-core"
+import { mysqlTable, varchar, datetime } from 'drizzle-orm/mysql-core'
 
-export const ocrKeys = mysqlTable("ocr_keys", {
-	ocrKey: varchar("ocr_key", { length: 255 }).notNull(),
-	timeout: datetime("timeout", { mode: 'string'}).default('NULL'),
+export const ocrKeys = mysqlTable('ocr_keys', {
+  ocrKey: varchar('ocr_key', { length: 255 }).notNull(),
+  timeout: datetime('timeout', { mode: 'string' }).default('NULL')
 })
