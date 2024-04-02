@@ -6,8 +6,9 @@ export const countPublisherSubscriptionsByChannelId = async (
   db: MySql2Database<Record<string, never>>,
   channelId: number
 ) => {
-  return await db
+  const [response] = await db
     .select({ value: count() })
     .from(botPublisherSubscriptions)
     .where(eq(botPublisherSubscriptions.channelId, channelId))
+  return response.value
 }
