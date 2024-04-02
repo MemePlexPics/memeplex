@@ -8,13 +8,14 @@ import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
 import { enterToState, handleDistributionQueue, handleKeyAction, handleMemePost } from './utils'
 import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
-import { getDbConnection } from '../../../../utils'
+import { InfoMessage, getDbConnection, getElasticClient, logError, logInfo } from '../../../../utils'
 import { loopRetrying } from '../../../../utils'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
 import { insertPublisherUser } from '../../../../utils/mysql-queries'
 
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
+const elastic = getElasticClient();
 
 bot.use(
   session({
@@ -54,7 +55,6 @@ bot.start(async (ctx) => {
   `)
   await enterToState(ctx, mainState)
 
-  // TODO: move all orm queries into mysql-queris folder
   const db = await getDbConnection()
   await insertPublisherUser(db, {
     id: ctx.from.id,
@@ -63,20 +63,31 @@ bot.start(async (ctx) => {
   })
 })
 
+bot.command('menu', async (ctx) => {
+  await enterToState(ctx, mainState)
+})
+
 bot.on('callback_query', async (ctx) => {
   // @ts-expect-error Property 'data' does not exist on type 'CallbackQuery'
   const callbackQuery = ctx.update.callback_query.data
   const [state, ...restCb] = callbackQuery.split('|')
   if (state === 'post') {
-    await handleMemePost(ctx, restCb[0])
+    await handleMemePost(elastic, ctx, restCb[0], restCb[1])
     return
   }
   if (state === 'key') {
     await handleKeyAction(ctx, restCb[0], restCb[1])
     return
   }
-
-  await states[ctx.session.state].onCallback(ctx, callbackQuery)
+  try {
+    await states[ctx.session.state].onCallback(ctx, callbackQuery)
+  } catch (error) {
+    if (error instanceof InfoMessage) {
+      await logInfo(logger, error);
+    } else {
+      await logError(logger, error);
+    }
+  }
 })
 
 bot.on(message('text'), async (ctx) => {
@@ -91,6 +102,18 @@ const start = async () => {
       port: 3082
     }
   })
+  bot.telegram.setMyCommands([
+    {
+      command: 'menu',
+      description: 'Меню',
+    }
+  ])
+  bot.telegram.setMyDescription(`
+    Это description
+  `)
+  bot.telegram.setMyShortDescription(`
+    Это short description
+  `)
   logger.info({ info: 'Telegram bot started' })
 
   process.once('SIGINT', () => bot.stop('SIGINT'))
