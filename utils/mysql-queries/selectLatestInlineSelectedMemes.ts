@@ -1,6 +1,6 @@
 import { MySql2Database } from 'drizzle-orm/mysql2'
 import { botInlineActions } from '../../db/schema'
-import { eq } from 'drizzle-orm'
+import { desc, eq } from 'drizzle-orm'
 
 export const selectLatestInlineSelectedMemes = async (
   db: MySql2Database<Record<string, never>>,
@@ -10,5 +10,6 @@ export const selectLatestInlineSelectedMemes = async (
     .selectDistinct({ selectedId: botInlineActions.selectedId })
     .from(botInlineActions)
     .where(eq(botInlineActions.action, 'select'))
+    .orderBy(desc(botInlineActions.timestamp))
     .limit(limit)
 }
