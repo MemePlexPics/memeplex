@@ -85,6 +85,7 @@ const handle404 = async (req, res) => {
     return res.status(404).send();
 };
 
+// eslint-disable-next-line no-unused-vars
 app.use(async (err, req, res, next) => {
     if (err.message === '404') return handle404(req, res);
     await handleMethodError(err);

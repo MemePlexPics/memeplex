@@ -13,6 +13,7 @@
   "include": [
     "constants/**/*",
     "db/**/*",
+    "scripts/**/*",
     "services/**/*",
     "utils/**/*",
     "drizzle.config.ts"
