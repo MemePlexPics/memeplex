@@ -4,18 +4,13 @@ import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { mainState } from "."
 import { getDbConnection } from '../../../../../utils'
-import { botPublisherSubscriptions } from "../../../../../db/schema"
-import { eq } from "drizzle-orm"
-import { deletePublisherKeyword } from "../../../../../utils/mysql-queries"
+import { deletePublisherKeyword, deletePublisherSubscriptionsByKeyword, selectPublisherSubscriptionsByChannelId } from "../../../../../utils/mysql-queries"
 
 export const keywordSettingsState: TState<EState> = {
     stateName: EState.KEYWORD_SETTINGS,
     inlineMenu: async (ctx) => {
         const db = await getDbConnection()
-        const keywordRows = await db
-            .select({ keyword: botPublisherSubscriptions.keyword })
-            .from(botPublisherSubscriptions)
-            .where(eq(botPublisherSubscriptions.channelId, ctx.session.channel.id))
+        const keywordRows = await selectPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
         return {
             text: `Настройка ключевых слов @${ctx.session.channel.name}`,
             buttons: keywordRows.map(keywordRow => ([
@@ -36,9 +31,7 @@ export const keywordSettingsState: TState<EState> = {
             const [keyword, command] = callback.split('|')
             if (command === 'del') {
                 const db = await getDbConnection()
-                await db
-                    .delete(botPublisherSubscriptions)
-                    .where(eq(botPublisherSubscriptions.keyword, keyword))
+                await deletePublisherSubscriptionsByKeyword(db, keyword)
                 await deletePublisherKeyword(db, keyword)
             }
             await enterToState(ctx, mainState)

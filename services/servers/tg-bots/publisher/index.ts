@@ -6,13 +6,12 @@ import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
-import { enterToState, handleDistributionQueue } from './utils'
+import { enterToState, handleDistributionQueue, handleKeyAction, handleMemePost } from './utils'
 import { addChannelState, addKeywordsState, channelSelectState, channelSettingState, keywordSettingsState, mainState } from './states'
 import { getDbConnection } from '../../../../utils'
-import { botPublisherUsers } from '../../../../db/schema'
-import { sql } from 'drizzle-orm'
 import { loopRetrying } from '../../../../utils'
-import { deletePublisherSubscription, selectPublisherChannelsByUserId } from '../../../../utils/mysql-queries'
+import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
+import { insertPublisherUser } from '../../../../utils/mysql-queries'
 
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, { telegram: { webhookReply: false } })
 const logger = getLogger('tg-publisher-bot')
@@ -57,11 +56,11 @@ bot.start(async (ctx) => {
 
   // TODO: move all orm queries into mysql-queris folder
   const db = await getDbConnection()
-  await db.insert(botPublisherUsers).values({
+  await insertPublisherUser(db, {
     id: ctx.from.id,
     user: getTelegramUser(ctx.from).user,
     timestamp: Date.now() / 1000,
-  }).onDuplicateKeyUpdate({ set: { id: sql`id` } })
+  })
 })
 
 bot.on('callback_query', async (ctx) => {
@@ -69,21 +68,11 @@ bot.on('callback_query', async (ctx) => {
   const callbackQuery = ctx.update.callback_query.data
   const [state, ...restCb] = callbackQuery.split('|')
   if (state === 'post') {
-    await ctx.telegram.forwardMessage(restCb[0], ctx.chat.id, ctx.callbackQuery.message.message_id)
-    await ctx.reply(`Мем успешно опубликован.`)
+    await handleMemePost(ctx, restCb[0])
     return
   }
-
   if (state === 'key') {
-    if (restCb[0] === 'del') {
-      const keyword = restCb[1]
-      const db = await getDbConnection()
-      const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
-      for (const channel of userChannels) {
-        await deletePublisherSubscription(db, channel.id, keyword)
-      }
-      await ctx.reply(`Ключевое слово «${keyword}» успешно удалено.`)
-    }
+    await handleKeyAction(ctx, restCb[0], restCb[1])
     return
   }
 
@@ -109,8 +98,8 @@ const start = async () => {
 
   await loopRetrying(async () => handleDistributionQueue(bot, logger), {
     logger,
-    afterCallbackDelayMs: 10_000,
-    catchDelayMs: 10_000,
+    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
+    catchDelayMs: LOOP_RETRYING_DELAY,
   })
 }
 
