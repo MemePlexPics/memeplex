@@ -16,9 +16,12 @@ export const mainState: TState<EState> = {
   stateName: EState.MAIN,
   inlineMenu: async (ctx) => {
     const db = await getDbConnection()
-    const userChannels = await countPublisherChannelsByUserId(db, ctx.from.id)
+    const userChannelsCount = await countPublisherChannelsByUserId(
+      db,
+      ctx.from.id
+    )
     const buttons = [[Key.callback('Добавить канал', EState.ADD_CHANNEL)]]
-    if (userChannels[0].values !== 0) {
+    if (userChannelsCount !== 0) {
       buttons.push([Key.callback('Настройки подписок', EState.CHANNEL_SELECT)])
     } else {
       buttons.push([Key.callback('Добавить ключевые слова', ADD_MYSELF)])

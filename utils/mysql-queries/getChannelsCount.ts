@@ -6,7 +6,7 @@ export const getChannelsCount = async (
   db: MySql2Database<Record<string, never>>,
   { onlyAvailable, name }: { onlyAvailable: string; name: string }
 ) => {
-  return await db
+  const [response] = await db
     .select({ values: count() })
     .from(channels)
     .where(
@@ -17,4 +17,5 @@ export const getChannelsCount = async (
           : undefined
       )
     )
+  return response.values
 }
