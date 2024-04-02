@@ -80,6 +80,7 @@ services:
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 'yes'
       MARIADB_AUTO_UPGRADE: 'yes'
+      TZ: 'Asia/Tbilisi'
     env_file:
       - ./.mysql.env
     command:
