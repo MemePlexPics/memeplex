@@ -15,7 +15,7 @@ export const tgParser = async (logger) => {
     try {
         amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
         sendImageDataCh = await amqp.createChannel();
-        
+
         const mysql = await getMysqlClient();
         const channels = await selectAvailableChannels(mysql);
         mysql.close();

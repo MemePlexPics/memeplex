@@ -11,12 +11,16 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
         const { from: sessionFrom, to: sessionTo } = ctx.session.latest;
         const from = isUpdate ? sessionTo : undefined;
         const to = isUpdate ? undefined : sessionFrom;
-        logUserAction(ctx.from, {
-            latest: {
-                from,
-                to,
+        logUserAction(
+            ctx.from,
+            {
+                latest: {
+                    from,
+                    to,
+                },
             },
-        }, logger);
+            logger,
+        );
         const response = await getLatestMemes(
             client,
             from,
@@ -30,8 +34,8 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
                 link_preview_options: {
                     url: new URL(
                         `https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`,
-                    ).href
-                }
+                    ).href,
+                },
             });
         }
 

@@ -47,13 +47,13 @@ export async function ocrSpace(input, options = {}) {
     const formData = new FormData();
     const detectedInput = detectInput(input);
     switch (detectedInput) {
-        case 'file':
-            formData.append('file', fs.createReadStream(input));
-            break;
-        case 'url':
-        case 'base64Image':
-            formData.append(detectedInput, input);
-            break;
+    case 'file':
+        formData.append('file', fs.createReadStream(input));
+        break;
+    case 'url':
+    case 'base64Image':
+        formData.append(detectedInput, input);
+        break;
     }
     formData.append('language', String(language || 'eng'));
     formData.append('isOverlayRequired', String(isOverlayRequired || 'false'));

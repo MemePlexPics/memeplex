@@ -5,7 +5,7 @@ import * as schema from '../db/schema'
 
 const main = async () => {
   const client = await getMysqlClient()
-  
+
   await migrate(
     drizzle(client, {
       schema,
@@ -13,7 +13,7 @@ const main = async () => {
     }),
     { migrationsFolder: './db/migrations' }
   )
-  
+
   await client.end()
 }
 
