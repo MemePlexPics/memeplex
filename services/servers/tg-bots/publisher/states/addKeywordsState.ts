@@ -40,9 +40,9 @@ export const addKeywordsState: TState<EState> = {
       return
     }
 
-    await insertPublisherKeywords(db, keywordValues)
+    await insertPublisherKeywords(db, keywordValuesNotEmpty)
 
-    const subscriptions = keywords.map((keyword) => ({
+    const subscriptions = keywordValuesNotEmpty.map(({ keyword }) => ({
       keyword,
       channelId: ctx.session.channel.id
     }))
