@@ -3,7 +3,7 @@ import { EState } from "../constants"
 import { TState, TTelegrafContext } from "../types"
 import { enterToState } from "../utils"
 import { mainState } from "."
-import { getDbConnection } from '../../../../../utils'
+import { InfoMessage, getDbConnection } from '../../../../../utils'
 import { deletePublisherKeyword, deletePublisherSubscriptionsByKeyword, selectPublisherSubscriptionsByChannelId } from "../../../../../utils/mysql-queries"
 
 export const keywordSettingsState: TState<EState> = {
@@ -35,6 +35,8 @@ export const keywordSettingsState: TState<EState> = {
                 await deletePublisherKeyword(db, keyword)
             }
             await enterToState(ctx, mainState)
+            return
         }
+        throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
 }

@@ -1,2 +1,2 @@
-export const getTgChannelName = (link) =>
+export const getTgChannelName = (link: string) =>
     link.replace('https://t.me/', '').replace('@', '');

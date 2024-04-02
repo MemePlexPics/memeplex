@@ -22,9 +22,17 @@ export const addKeywordsState: TState<EState> = {
             .split('\n')
             .map(line => line.split(','))
             .flat()
-        const keywordValues = keywords.map((keyword) => ({
-            keyword: keyword.replace('|', '').toLowerCase(),
-        }))
+        const keywordValues = keywords.map((keyword) => {
+            const keywordTrimmed = keyword.replace('|', '').toLowerCase().trim()
+            return {
+                keyword: keywordTrimmed,
+            }
+        })
+        const keywordValuesNotEmpty = keywordValues.filter(keywordObj => keywordObj.keyword.length)
+        if (keywordValuesNotEmpty.length === 0) {
+            await ctx.reply('В отправленном сообщении не обнаружено ключевых слов, только запятые или переносы строк')
+            return
+        }
 
         await insertPublisherKeywords(db, keywordValues)
 
