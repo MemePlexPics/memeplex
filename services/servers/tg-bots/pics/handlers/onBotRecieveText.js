@@ -19,12 +19,16 @@ export const onBotRecieveText = async (ctx, client, logger) => {
             ctx.session.search.query ||
             ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH);
         const page = ctx.session.search.nextPage || 1;
-        await logUserAction(ctx.from, {
-            search: {
-                query,
-                page,
+        await logUserAction(
+            ctx.from,
+            {
+                search: {
+                    query,
+                    page,
+                },
             },
-        }, logger);
+            logger,
+        );
         const response = await searchMemes(
             client,
             query,
@@ -42,8 +46,8 @@ export const onBotRecieveText = async (ctx, client, logger) => {
                 link_preview_options: {
                     url: new URL(
                         `https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`,
-                    ).href
-                }
+                    ).href,
+                },
             });
         }
         if (page < response.totalPages) {

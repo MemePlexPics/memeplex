@@ -68,8 +68,7 @@ export const recogniseTextOcrSpace = async (fileName, language) => {
         throw error;
     }
 
-    if (res.IsErroredOnProcessing)
-        throw new Error(res?.ErrorMessage?.join());
+    if (res.IsErroredOnProcessing) throw new Error(res?.ErrorMessage?.join());
 
     if (!Array.isArray(res?.ParsedResults)) {
         const mysql = await getMysqlClient();

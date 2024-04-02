@@ -1,8 +1,5 @@
 import 'dotenv/config';
-import {
-    TG_API_PAGE_LIMIT,
-    TG_API_RATE_LIMIT,
-} from '../../../constants';
+import { TG_API_PAGE_LIMIT, TG_API_RATE_LIMIT } from '../../../constants';
 import { delay, getMysqlClient } from '../../../utils';
 import process from 'process';
 import { setChannelUnavailable } from '.';
@@ -32,8 +29,9 @@ export const getMessagesAfter = async function* (
                 responseJson.errors[0].exception ===
                     'danog\\MadelineProto\\PeerNotInDbException';
             const errorMessage = responseJson.errors[0].message;
-            const isInvalid = ['CHANNEL_PRIVATE', 'CHANNEL_INVALID']
-                .includes(errorMessage);
+            const isInvalid = ['CHANNEL_PRIVATE', 'CHANNEL_INVALID'].includes(
+                errorMessage,
+            );
             if (isDeleted) {
                 await setChannelUnavailable(channelName);
                 throw new Error(`❌ Channel ${channelName} is not available`);
