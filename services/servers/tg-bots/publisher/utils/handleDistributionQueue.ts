@@ -8,9 +8,8 @@ import { delay, getDbConnection } from '../../../../../utils'
 import { Logger } from 'winston'
 import { TPublisherDistributionQueueMsg } from '../../../../ocr/types'
 import fs from 'fs/promises'
-import { botPublisherChannels } from '../../../../../db/schema'
-import { inArray } from 'drizzle-orm'
 import { Key } from 'telegram-keyboard'
+import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
     const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT);
@@ -27,17 +26,13 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
             continue;
         }
         const payload = JSON.parse(msg.content.toString()) as TPublisherDistributionQueueMsg;
-        console.log(payload)
         distributionTimeout(600_000, logger, msg);
 
         const buttons = []
 
         const db = await getDbConnection()
 
-        const channels = await db
-            .select()
-            .from(botPublisherChannels)
-            .where(inArray(botPublisherChannels.id, payload.channelIds))
+        const channels = await selectPublisherChannelsById(db, payload.channelIds)
 
         channels.forEach(channel => buttons.push([
             Key.callback(`✅ ${channel.username}`, `post|${channel.id}|${payload.memeId}`)
