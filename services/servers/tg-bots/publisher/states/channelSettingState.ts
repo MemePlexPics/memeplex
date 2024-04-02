@@ -20,7 +20,7 @@ export const channelSettingState: TState<EState> = {
       db,
       ctx.session.channel.id
     )
-    const hasKeywords = keywordsCount?.[0]?.value !== 0
+    const hasKeywords = keywordsCount !== 0
     const buttons = [
       [Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS)],
       [Key.callback('🗑 Отвязать канал', DELETE_CHANNEL)],

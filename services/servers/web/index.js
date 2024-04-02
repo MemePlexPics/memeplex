@@ -8,6 +8,7 @@ import {
     getMysqlClient,
     checkFileExists,
     shuffleArray,
+    getDbConnection,
 } from '../../../utils';
 import {
     MAX_SEARCH_QUERY_LENGTH,
@@ -113,19 +114,18 @@ app.get('/getLatest', async (req, res) => {
 
 app.get('/getChannelList', async (req, res) => {
     const { page, onlyAvailable, filter } = req.query;
-    const mysql = await getMysqlClient();
+    const db = await getDbConnection();
     const filters = {
         onlyAvailable,
         name: filter,
     };
     const channels = await getChannels(
-        mysql,
+        db,
         page,
         CHANNEL_LIST_PAGE_SIZE,
         filters,
     );
-    const count = await getChannelsCount(mysql, filters);
-    mysql.close();
+    const count = await getChannelsCount(db, filters);
     return res.send({
         result: channels,
         totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
