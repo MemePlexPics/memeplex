@@ -1,7 +1,7 @@
 import { TMemeEntity } from '.'
 
 export type TPublisherDistributionQueueMsg = {
-  userId: string
+  userId: number
   memeId: string
   document: TMemeEntity
   keywords: string[]

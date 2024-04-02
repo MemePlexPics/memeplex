@@ -12,7 +12,7 @@ import {
 export const addKeywordsState: TState<EState> = {
   stateName: EState.ADD_KEYWORDS,
   message: () =>
-    'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке)',
+    'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке',
   inlineMenu: () => ({
     text: 'Добавление ключевых слов',
     buttons: [Key.callback('⬅️ Назад', EState.CHANNEL_SETTINGS)]

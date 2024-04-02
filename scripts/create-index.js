@@ -50,6 +50,8 @@ async function deleteIndex(indexName) {
 
 try {
     await deleteIndex(ELASTIC_INDEX);
-} catch (_) {}
+} catch (error) {
+    console.error(error);
+}
 
 await createIndex(ELASTIC_INDEX);

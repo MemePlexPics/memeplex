@@ -61,6 +61,7 @@ const logAdminAction = (req, res, next) => {
     next();
 };
 
+// eslint-disable-next-line no-unused-vars
 adminRouter.get('/', (req, res) => {
     throw new Error('404');
 });

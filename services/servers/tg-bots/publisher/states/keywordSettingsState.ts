@@ -44,7 +44,7 @@ export const keywordSettingsState: TState<EState> = {
         await deletePublisherSubscriptionsByKeyword(db, keyword)
         await deletePublisherKeyword(db, keyword)
       }
-      await enterToState(ctx, mainState)
+      await enterToState(ctx, keywordSettingsState)
       return
     }
     throw new InfoMessage(`Unknown menu state: ${callback}`)
