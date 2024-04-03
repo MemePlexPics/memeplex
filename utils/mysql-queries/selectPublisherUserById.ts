@@ -1,9 +1,9 @@
-import { MySql2Database } from 'drizzle-orm/mysql2'
 import { botPublisherUsers } from '../../db/schema'
 import { eq } from 'drizzle-orm'
+import { TDbConnection } from '../types'
 
 export const selectPublisherUserById = async (
-  db: MySql2Database<Record<string, never>>,
+  db: TDbConnection,
   id: number
 ) => {
   return await db

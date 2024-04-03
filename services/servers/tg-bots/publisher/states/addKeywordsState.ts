@@ -48,6 +48,7 @@ export const addKeywordsState: TState<EState> = {
     }))
 
     await insertPublisherSubscription(db, subscriptions)
+    db.close()
 
     await ctx.reply('Ключевые слова добавлены!')
     await enterToState(ctx, channelSettingState)

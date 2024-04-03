@@ -18,6 +18,7 @@ export const keywordSettingsState: TState<EState> = {
       db,
       ctx.session.channel.id
     )
+    db.close()
     return {
       text: `Настройка ключевых слов @${ctx.session.channel.name}`,
       buttons: keywordRows
@@ -43,6 +44,7 @@ export const keywordSettingsState: TState<EState> = {
         const db = await getDbConnection()
         await deletePublisherSubscriptionsByKeyword(db, keyword)
         await deletePublisherKeyword(db, keyword)
+        db.close()
       }
       await enterToState(ctx, keywordSettingsState)
       return
