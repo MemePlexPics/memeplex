@@ -126,6 +126,7 @@ app.get('/getChannelList', async (req, res) => {
         filters,
     );
     const count = await getChannelsCount(db, filters);
+    db.close();
     return res.send({
         result: channels,
         totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),

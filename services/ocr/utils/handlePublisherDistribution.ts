@@ -44,6 +44,7 @@ export const handlePublisherDistribution = async (
       queue[userId].keywords.push(keyword)
     }
   }
+  db.close()
 
   for (const userId in queue) {
     const buffer = Buffer.from(
