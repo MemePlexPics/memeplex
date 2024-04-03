@@ -43,7 +43,7 @@ export const handleDistributionQueue = async (
     const channels = await selectPublisherChannelsById(db, payload.channelIds)
 
     channels.forEach((channel) => {
-      if (channel.id === payload.userId) return
+      if (channel.id === payload.userId) return null
       buttons.push([
         Key.callback(
           `✅ ${channel.username}`,
@@ -53,7 +53,7 @@ export const handleDistributionQueue = async (
     })
 
     payload.keywords.forEach((keyword) =>
-      buttons.push([Key.callback(`🗑️ ${keyword}`, `key|del|${keyword}`)])
+      buttons.push([Key.callback(`🗑️ «${keyword}» (отписаться)`, `key|del|${keyword}`)])
     )
 
     try {

@@ -35,7 +35,7 @@ export const addKeywordsState: TState<EState> = {
     )
     if (keywordValuesNotEmpty.length === 0) {
       await ctx.reply(
-        'В отправленном сообщении не обнаружено ключевых слов, только запятые или переносы строк'
+        'В отправленном сообщении не обнаружено слов, только запятые и/или переносы строк'
       )
       return
     }
