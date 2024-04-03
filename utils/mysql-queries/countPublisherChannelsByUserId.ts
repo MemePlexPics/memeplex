@@ -1,9 +1,9 @@
-import { MySql2Database } from 'drizzle-orm/mysql2'
 import { botPublisherChannels } from '../../db/schema'
 import { count, eq } from 'drizzle-orm'
+import { TDbConnection } from '../types'
 
 export const countPublisherChannelsByUserId = async (
-  db: MySql2Database<Record<string, never>>,
+  db: TDbConnection,
   userId: number
 ) => {
   const [response] = await db

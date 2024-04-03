@@ -16,6 +16,7 @@ export const handleKeyAction = async (
     for (const channel of userChannels) {
       await deletePublisherSubscription(db, channel.id, keyword)
     }
+    db.close()
     await ctx.reply(`Ключевое слово «${keyword}» успешно удалено.`)
   }
 }

@@ -1,9 +1,9 @@
-import { MySql2Database } from 'drizzle-orm/mysql2'
 import { botPublisherSubscriptions } from '../../db/schema'
 import { and, eq } from 'drizzle-orm'
+import { TDbConnection } from '../types'
 
 export const deletePublisherSubscription = async (
-  db: MySql2Database<Record<string, never>>,
+  db: TDbConnection,
   channelId: number,
   keyword: string
 ) => {

@@ -74,6 +74,7 @@ export const addChannelState: TState<EState> = {
         type: chat.type,
         timestamp
       })
+      db.close()
       await enterToState(ctx, addKeywordsState)
       return
     }

@@ -20,6 +20,7 @@ export const mainState: TState<EState> = {
       db,
       ctx.from.id
     )
+    db.close()
     const buttons = [[Key.callback('Добавить канал', EState.ADD_CHANNEL)]]
     if (userChannelsCount !== 0) {
       buttons.push([Key.callback('Настройки подписок', EState.CHANNEL_SELECT)])
@@ -48,6 +49,7 @@ export const mainState: TState<EState> = {
         subscribers: 0,
         timestamp
       })
+      db.close()
       await enterToState(ctx, addKeywordsState)
     }
     if (state === EState.ADD_CHANNEL) {

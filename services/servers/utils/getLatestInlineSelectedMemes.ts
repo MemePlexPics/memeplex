@@ -6,6 +6,7 @@ import { getMemesById } from "./getMemesById"
 export const getLatestInlineSelectedMemes = async (client: Client, abortController: AbortController) => {
   const db = await getDbConnection()
   const latestMemes = await selectLatestInlineSelectedMemes(db, 15)
+  db.close()
   const latestMemeIds = latestMemes.map(meme => meme.selectedId)
   const memeEntities = await getMemesById(client, latestMemeIds, abortController)
 
