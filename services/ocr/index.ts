@@ -22,7 +22,7 @@ export const ocr = async (logger) => {
     receiveImageFileClearTimeout: () => void
 
   try {
-    elastic = getElasticClient()
+    elastic = await getElasticClient()
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     let receiveImageFileTimeout: (
       ms: number,
