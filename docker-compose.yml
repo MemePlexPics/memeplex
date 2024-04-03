@@ -9,9 +9,9 @@ services:
       path.repo: ./backup
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
-      xpack.security.transport.ssl.key: certs/elastic-certificates.p12
-      xpack.security.transport.ssl.certificate: certs/elastic-certificates.crt
-      xpack.security.transport.ssl.certificate_authorities: certs/elastic-stack-ca.p12
+      xpack.security.transport.ssl.key: /usr/share/elasticsearch/config/certs/elastic-certificates.key
+      xpack.security.transport.ssl.certificate: /usr/share/elasticsearch/config/certs/elastic-certificates.crt
+      xpack.security.transport.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/elastic-stack-ca.pem
       # cluster.routing.allocation.disk.threshold_enabled: false
     mem_limit: 10GB
     ports:
@@ -19,6 +19,7 @@ services:
     volumes:
       - ./data/elastic:/usr/share/elasticsearch/data
       - ./backup/elastic/:/usr/share/elasticsearch/backup/elastic/
+      - ./certs:/usr/share/elasticsearch/config/certs
 
   rabbitmq:
     image: rabbitmq:3
