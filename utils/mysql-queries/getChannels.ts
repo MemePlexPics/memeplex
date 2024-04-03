@@ -1,9 +1,9 @@
-import { MySql2Database } from 'drizzle-orm/mysql2'
 import { channels } from '../../db/schema'
 import { and, asc, desc, eq, like } from 'drizzle-orm'
+import { TDbConnection } from '../types'
 
 export const getChannels = async (
-  db: MySql2Database<Record<string, never>>,
+  db: TDbConnection,
   page: number,
   size: number,
   { onlyAvailable, name }: { onlyAvailable: string; name: string }

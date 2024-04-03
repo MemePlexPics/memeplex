@@ -1,8 +1,8 @@
-import { MySql2Database } from 'drizzle-orm/mysql2'
 import { botPublisherKeywords } from '../../db/schema'
+import { TDbConnection } from '../types'
 
 export const getPublisherKeywords = (
-  db: MySql2Database<Record<string, never>>
+  db: TDbConnection
 ) => {
   return db.select().from(botPublisherKeywords)
 }

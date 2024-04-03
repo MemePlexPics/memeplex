@@ -37,10 +37,9 @@ export const handleDistributionQueue = async (
     distributionTimeout(600_000, logger, msg)
 
     const buttons = []
-
     const db = await getDbConnection()
-
     const channels = await selectPublisherChannelsById(db, payload.channelIds)
+    db.close()
 
     channels.forEach((channel) => {
       if (channel.id === payload.userId) return null
