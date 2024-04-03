@@ -42,9 +42,9 @@ export const getElasticClient = async () => {
       password: process.env.ELASTIC_PASSWORD
     },
     tls: {
-      key: await fs.readFile('./certs/elastic-certificates.p12'),
+      key: await fs.readFile('./certs/elastic-certificates.key'),
       cert: await fs.readFile('./certs/elastic-certificates.crt'),
-      ca: await fs.readFile('./certs/elastic-stack-ca.p12'),
+      ca: await fs.readFile('./certs/elastic-stack-ca.pem'),
       rejectUnauthorized: true
     }
   })
