@@ -4,7 +4,6 @@ import mysql from 'mysql2/promise'
 import process from 'process'
 import { promises as fs } from 'fs'
 
-import { getProxyForKey, getRandomKey } from './mysql-queries'
 import { InfoMessage } from './custom-errors'
 import { Logger } from 'winston'
 
@@ -154,34 +153,4 @@ export function getDateUtc() {
 
 export function dateToYyyyMmDdHhMmSs(date) {
   return new Date(date).toISOString().slice(0, 19).replace('T', ' ')
-}
-
-export async function chooseRandomOCRSpaceKey() {
-  const mysql = await getMysqlClient()
-  // Select a random key without timeout or with the early date
-  const keys = await getRandomKey(mysql)
-  if (!keys.length) {
-    throw new Error('❌ There are no keys without timeout')
-  }
-  const keyData = keys[0]
-  const finalKeyData: {
-    key: string
-    timeout: Date
-    proxy?: string
-    protocol?: string
-  } = {
-    key: keyData.ocr_key,
-    timeout: keyData.timeout
-  }
-  const foundProxy = await getProxyForKey(mysql, keyData.ocr_key)
-  if (!foundProxy) throw new Error('There are no available free proxies')
-  finalKeyData.proxy = foundProxy.address
-  finalKeyData.protocol = foundProxy.protocol
-  if (!finalKeyData.proxy)
-    throw new Error(`❌ Proxy for ${finalKeyData.key} isn't found`)
-
-  console.log(
-    `💬 ${finalKeyData.key} ${finalKeyData.proxy} (${finalKeyData.protocol}) ${foundProxy.speed}ms`
-  )
-  return finalKeyData
 }
