@@ -40,9 +40,7 @@ export async function ocrSpace(input, options = {}) {
         scale,
         isTable,
         OCREngine,
-        host,
-        port,
-        protocol,
+        proxy
     } = options;
     const formData = new FormData();
     const detectedInput = detectInput(input);
@@ -83,7 +81,7 @@ export async function ocrSpace(input, options = {}) {
         maxContentLength: Infinity,
         maxBodyLength: Infinity,
     };
-    insertProxyToRequest(request, protocol, host, port);
+    if (proxy) insertProxyToRequest(request, proxy.protocol, proxy.host, proxy.port);
     const response = await axios(request);
     return response.data;
 }
