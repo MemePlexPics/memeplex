@@ -7,6 +7,11 @@ services:
       discovery.type: single-node
       xpack.security.enabled: true
       path.repo: ./backup
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.security.transport.ssl.key: certs/elastic-certificates.p12
+      xpack.security.transport.ssl.certificate: certs/elastic-certificates.crt
+      xpack.security.transport.ssl.certificate_authorities: certs/elastic-stack-ca.p12
       # cluster.routing.allocation.disk.threshold_enabled: false
     mem_limit: 10GB
     ports:

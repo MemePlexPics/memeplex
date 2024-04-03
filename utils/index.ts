@@ -34,7 +34,7 @@ export const getMysqlClient = async (options?: { connectTimeout: number }) => {
   return client
 }
 
-export const getElasticClient = () => {
+export const getElasticClient = async () => {
   const client = new Client({
     node: process.env.ELASTIC_ENDPOINT,
     auth: {
@@ -42,7 +42,10 @@ export const getElasticClient = () => {
       password: process.env.ELASTIC_PASSWORD
     },
     tls: {
-      rejectUnauthorized: false
+      key: await fs.readFile('./certs/elastic-certificates.p12'),
+      cert: await fs.readFile('./certs/elastic-certificates.crt'),
+      ca: await fs.readFile('./certs/elastic-stack-ca.p12'),
+      rejectUnauthorized: true
     }
   })
   return client
@@ -53,7 +56,7 @@ export const connectToElastic = async (logger: Logger) => {
     let connect: Client
     await loopRetrying(
       async () => {
-        connect = getElasticClient()
+        connect = await getElasticClient()
         return true
       },
       { logger }

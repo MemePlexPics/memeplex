@@ -36,7 +36,7 @@ const bot = new Telegraf<TTelegrafContext>(
   { telegram: { webhookReply: false } }
 )
 const logger = getLogger('tg-publisher-bot')
-const elastic = getElasticClient()
+const elastic = await getElasticClient()
 
 bot.use(
   session({
