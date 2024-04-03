@@ -4,7 +4,7 @@ import process from 'process';
 import { getElasticClient } from '../utils/index';
 import { ELASTIC_INDEX } from '../constants/index';
 
-const client = getElasticClient();
+const client = await getElasticClient();
 const PUBLIC_PATH = './frontend/src/public';
 
 const getOldestEntityTimestamp = async () => {
