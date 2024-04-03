@@ -41,8 +41,8 @@ export const handlePublisherDistribution = async (
           channelIds: []
         }
       queue[userId].channelIds.push(channelId)
+      queue[userId].keywords.push(keyword)
     }
-    queue[userId].keywords.push(keyword)
   }
 
   for (const userId in queue) {
@@ -52,7 +52,6 @@ export const handlePublisherDistribution = async (
         ...queue[userId]
       })
     )
-    console.log(userId, queue[userId])
     amqpChannel.sendToQueue(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, buffer, {
       persistent: true
     })
