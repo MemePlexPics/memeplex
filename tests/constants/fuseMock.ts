@@ -40,5 +40,5 @@ export const fuseMock = [
     propaganda because it makes right wingers
     defend a multiracial and gender-egalitarian
     society.
-  `
+  `,
 ] as const

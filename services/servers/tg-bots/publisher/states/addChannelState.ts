@@ -8,18 +8,17 @@ import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 
 export const addChannelState: TState<EState> = {
   stateName: EState.ADD_CHANNEL,
-  message: () =>
-    'Введитие название канала в формате @name или https://t.me/name',
+  message: () => 'Введитие название канала в формате @name или https://t.me/name',
   inlineMenu: () => ({
     text: 'Добавление канала',
-    buttons: [Key.callback('⬅️ Назад', EState.MAIN)]
+    buttons: [Key.callback('⬅️ Назад', EState.MAIN)],
   }),
-  onCallback: (ctx) => enterToState(ctx, mainState),
+  onCallback: ctx => enterToState(ctx, mainState),
   onText: async (ctx, text) => {
     const channel = getTgChannelName(text)
     if (!channel) {
       await ctx.reply(
-        'Пожалуйста, проверьте корректность названия. Формат: @name или https://t.me/name'
+        'Пожалуйста, проверьте корректность названия. Формат: @name или https://t.me/name',
       )
       return
     }
@@ -30,12 +29,10 @@ export const addChannelState: TState<EState> = {
                 Вернитесь назад в главное меню или отправьте название канала.`)
       return
     }
-    const administrators = await ctx.telegram.getChatAdministrators(
-      `@${channel}`
-    )
+    const administrators = await ctx.telegram.getChatAdministrators(`@${channel}`)
     let isOurUserAnAdmin: boolean
     let isOurBotAnAdmin: boolean
-    administrators.some((admin) => {
+    administrators.some(admin => {
       if (!isOurUserAnAdmin && admin.user.id === ctx.from.id) {
         isOurUserAnAdmin = true
       } else if (!isOurBotAnAdmin && admin.user.id === ctx.botInfo.id) {
@@ -61,7 +58,7 @@ export const addChannelState: TState<EState> = {
       ctx.session.channel = {
         id: chat.id,
         name: channel,
-        type: chat.type
+        type: chat.type,
       }
 
       const db = await getDbConnection()
@@ -72,11 +69,11 @@ export const addChannelState: TState<EState> = {
         username: channel,
         subscribers,
         type: chat.type,
-        timestamp
+        timestamp,
       })
       db.close()
       await enterToState(ctx, addKeywordsState)
       return
     }
-  }
+  },
 }

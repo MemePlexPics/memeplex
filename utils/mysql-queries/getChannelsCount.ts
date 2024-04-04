@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const getChannelsCount = async (
   db: TDbConnection,
-  { onlyAvailable, name }: { onlyAvailable: string; name: string }
+  { onlyAvailable, name }: { onlyAvailable: string; name: string },
 ) => {
   const [response] = await db
     .select({ values: count() })
@@ -14,8 +14,8 @@ export const getChannelsCount = async (
         onlyAvailable === 'true' ? eq(channels.availability, 1) : undefined,
         name && /[0-9a-zA-Z_]+/.test(name)
           ? like(channels.name, `%${name}%`) // LIKE is case-insensetive in MariaDB
-          : undefined
-      )
+          : undefined,
+      ),
     )
   return response.values
 }

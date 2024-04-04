@@ -1,11 +1,7 @@
 import 'dotenv/config'
 import amqplib, { Connection, Channel, GetMessage } from 'amqplib'
 import process from 'process'
-import {
-  AMQP_IMAGE_FILE_CHANNEL,
-  ELASTIC_INDEX,
-  EMPTY_QUEUE_RETRY_DELAY
-} from '../../constants'
+import { AMQP_IMAGE_FILE_CHANNEL, ELASTIC_INDEX, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
 import { getElasticClient, delay, logError } from '../../utils'
 import { recogniseText, getNewDoc, blackListChecker } from './utils'
 import { Client } from '@elastic/elasticsearch'
@@ -14,7 +10,7 @@ import { handlePublisherDistribution } from './utils'
 import { Logger } from 'winston'
 
 // Listens for messages containing images, outputs messages containing OCR'd text
-export const ocr = async (logger) => {
+export const ocr = async logger => {
   let elastic: Client,
     amqp: Connection,
     receiveImageFileCh: Channel,
@@ -24,16 +20,9 @@ export const ocr = async (logger) => {
   try {
     elastic = await getElasticClient()
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
-    let receiveImageFileTimeout: (
-      ms: number,
-      logger: Logger,
-      msg: GetMessage
-    ) => void
-    ;[
-      receiveImageFileCh,
-      receiveImageFileTimeout,
-      receiveImageFileClearTimeout
-    ] = await getAmqpQueue(amqp, AMQP_IMAGE_FILE_CHANNEL)
+    let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void
+    ;[receiveImageFileCh, receiveImageFileTimeout, receiveImageFileClearTimeout] =
+      await getAmqpQueue(amqp, AMQP_IMAGE_FILE_CHANNEL)
     botPublisherDistributionCh = await amqp.createChannel()
 
     for (;;) {
@@ -48,14 +37,10 @@ export const ocr = async (logger) => {
         const document = getNewDoc(payload, texts)
         const meme = await elastic.index({
           index: ELASTIC_INDEX,
-          document
+          document,
         })
         try {
-          await handlePublisherDistribution(
-            botPublisherDistributionCh,
-            document,
-            meme._id
-          )
+          await handlePublisherDistribution(botPublisherDistributionCh, document, meme._id)
         } catch (error) {
           await logError(logger, error)
         }

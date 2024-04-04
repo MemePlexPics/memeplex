@@ -7,7 +7,7 @@ export const getNewDoc = (payload, texts): TMemeEntity => {
     channelName: payload.channelName,
     messageId: payload.messageId,
     date: payload.date,
-    eng: texts.eng
+    eng: texts.eng,
   }
 
   return doc

@@ -5,7 +5,7 @@ import process from 'process'
 import { getAmqpQueue } from '../../../../utils'
 import {
   AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
-  EMPTY_QUEUE_RETRY_DELAY
+  EMPTY_QUEUE_RETRY_DELAY,
 } from '../../../../../constants'
 import { delay, getDbConnection } from '../../../../../utils'
 import { Logger } from 'winston'
@@ -14,14 +14,11 @@ import fs from 'fs/promises'
 import { Key } from 'telegram-keyboard'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
 
-export const handleDistributionQueue = async (
-  bot: Telegraf<TTelegrafContext>,
-  logger: Logger
-) => {
+export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [
     distributionCh,
-    distributionTimeout
+    distributionTimeout,
     // distributionTimeotClear
   ] = await getAmqpQueue(amqp, AMQP_PUBLISHER_DISTRIBUTION_CHANNEL)
 
@@ -31,9 +28,7 @@ export const handleDistributionQueue = async (
       await delay(EMPTY_QUEUE_RETRY_DELAY)
       continue
     }
-    const payload = JSON.parse(
-      msg.content.toString()
-    ) as TPublisherDistributionQueueMsg
+    const payload = JSON.parse(msg.content.toString()) as TPublisherDistributionQueueMsg
     distributionTimeout(600_000, logger, msg)
 
     const buttons = []
@@ -41,31 +36,26 @@ export const handleDistributionQueue = async (
     const channels = await selectPublisherChannelsById(db, payload.channelIds)
     db.close()
 
-    channels.forEach((channel) => {
+    channels.forEach(channel => {
       if (channel.id === Number(payload.userId)) return null
-      buttons.push([
-        Key.callback(
-          `✅ ${channel.username}`,
-          `post|${channel.id}|${payload.memeId}`
-        )
-      ])
+      buttons.push([Key.callback(`✅ ${channel.username}`, `post|${channel.id}|${payload.memeId}`)])
     })
 
-    payload.keywords.forEach((keyword) =>
-      buttons.push([Key.callback(`🗑️ «${keyword}» (отписаться)`, `key|del|${keyword}`)])
+    payload.keywords.forEach(keyword =>
+      buttons.push([Key.callback(`🗑️ «${keyword}» (отписаться)`, `key|del|${keyword}`)]),
     )
 
     try {
       await bot.telegram.sendPhoto(
         payload.userId,
         {
-          source: await fs.readFile(payload.document.fileName)
+          source: await fs.readFile(payload.document.fileName),
         },
         {
           reply_markup: {
-            inline_keyboard: buttons
-          }
-        }
+            inline_keyboard: buttons,
+          },
+        },
       )
       distributionCh.ack(msg)
     } catch (e) {

@@ -1,13 +1,10 @@
 import { getDbConnection } from '../../../utils'
-import {
-  AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
-  fuseOptions
-} from '../../../constants'
+import { AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, fuseOptions } from '../../../constants'
 import {
   getPublisherKeywords,
   selectPublisherChannelById,
   selectPublisherSubscriptionsByKeyword,
-  selectPublisherUserById
+  selectPublisherUserById,
 } from '../../../utils/mysql-queries'
 import { Channel } from 'amqplib'
 import { TMemeEntity, TPublisherDistributionQueueMsg } from '../types'
@@ -16,25 +13,19 @@ import Fuse from 'fuse.js'
 export const handlePublisherDistribution = async (
   amqpChannel: Channel,
   document: TMemeEntity,
-  memeId: string
+  memeId: string,
 ) => {
   const db = await getDbConnection()
   const keywords = await getPublisherKeywords(db)
 
-  const queue: Record<
-    number,
-    Omit<TPublisherDistributionQueueMsg, 'userId'>
-  > = {}
+  const queue: Record<number, Omit<TPublisherDistributionQueueMsg, 'userId'>> = {}
 
   let userId: number
   const fuse = new Fuse([document.eng], fuseOptions)
   for (const { keyword } of keywords) {
     const results = fuse.search(keyword)
     if (!results.length) return
-    const subscriptions = await selectPublisherSubscriptionsByKeyword(
-      db,
-      keyword
-    )
+    const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
     for (const { channelId } of subscriptions) {
       const [channel] = await selectPublisherChannelById(db, channelId)
       const [user] = await selectPublisherUserById(db, channel.userId)
@@ -44,7 +35,7 @@ export const handlePublisherDistribution = async (
           memeId,
           document,
           keywords: [],
-          channelIds: []
+          channelIds: [],
         }
       queue[userId].channelIds.push(channelId)
       queue[userId].keywords.push(keyword)
@@ -56,11 +47,11 @@ export const handlePublisherDistribution = async (
     const buffer = Buffer.from(
       JSON.stringify({
         userId,
-        ...queue[userId]
-      })
+        ...queue[userId],
+      }),
     )
     amqpChannel.sendToQueue(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, buffer, {
-      persistent: true
+      persistent: true,
     })
   }
 }

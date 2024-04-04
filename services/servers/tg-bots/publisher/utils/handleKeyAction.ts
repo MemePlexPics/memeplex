@@ -1,15 +1,11 @@
 import { getDbConnection } from '../../../../../utils'
 import {
   deletePublisherSubscription,
-  selectPublisherChannelsByUserId
+  selectPublisherChannelsByUserId,
 } from '../../../../../utils/mysql-queries'
 import { TTelegrafContext } from '../types'
 
-export const handleKeyAction = async (
-  ctx: TTelegrafContext,
-  command: 'del',
-  keyword: string
-) => {
+export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', keyword: string) => {
   if (command === 'del') {
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)

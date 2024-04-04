@@ -9,16 +9,16 @@ export const botActions = mysqlTable(
       .notNull()
       .references(() => botUsers.id, {
         onDelete: 'restrict',
-        onUpdate: 'restrict'
+        onUpdate: 'restrict',
       }),
     action: varchar('action', { length: 32 }).notNull(),
     query: varchar('query', { length: 255 }).default('NULL'),
     page: varchar('page', { length: 128 }).notNull(),
-    timestamp: int('timestamp').notNull()
+    timestamp: int('timestamp').notNull(),
   },
-  (table) => {
+  table => {
     return {
-      userId: index('user_id').on(table.userId)
+      userId: index('user_id').on(table.userId),
     }
-  }
+  },
 )

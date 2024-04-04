@@ -8,7 +8,11 @@ export const recogniseText = async (msg, logger) => {
     const texts = {};
 
     for (const language of payload.languages) {
-        let rawText = await recogniseTextOcrSpace(payload.fileName, language, logger);
+        let rawText = await recogniseTextOcrSpace(
+            payload.fileName,
+            language,
+            logger,
+        );
 
         if (rawText) {
             texts[language] = rawText;

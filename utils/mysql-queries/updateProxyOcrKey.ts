@@ -6,15 +6,10 @@ export const updateProxyOcrKey = async (
   db: TDbConnection,
   ocrKey: string,
   proxy: string,
-  protocol: string
+  protocol: string,
 ) => {
   await db
     .update(proxies)
     .set({ ocrKey })
-    .where(
-      and(
-        eq(proxies.address, proxy),
-        eq(proxies.protocol, protocol)
-      )
-    )
+    .where(and(eq(proxies.address, proxy), eq(proxies.protocol, protocol)))
 }
