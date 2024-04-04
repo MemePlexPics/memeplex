@@ -83,24 +83,26 @@ export async function checkFileExists(file) {
   }
 }
 
-export async function logError(logger, e) {
+export async function logError(logger: Logger, e: Error, additionalInfo?: object) {
   if (logger) {
     logger.error({
       error: e.name,
       message: e.message,
       stack: e.stack,
+      ...additionalInfo,
     })
     return
   }
   console.error('❌', e)
 }
 
-export async function logInfo(logger, e) {
+export async function logInfo(logger: Logger, e: Error, additionalInfo?: object) {
   if (logger) {
     logger.info({
       error: e.name,
       message: e.message,
       stack: e.stack,
+      ...additionalInfo,
     })
     return
   }
