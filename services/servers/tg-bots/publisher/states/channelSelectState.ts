@@ -9,23 +9,18 @@ import { ChatFromGetChat } from 'telegraf/typings/core/types/typegram'
 
 export const channelSelectState: TState<EState> = {
   stateName: EState.CHANNEL_SELECT,
-  inlineMenu: async (ctx) => {
+  inlineMenu: async ctx => {
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
     db.close()
     return {
       text: 'Выберите канал',
       buttons: userChannels
-        .map(({ id, username, type }) => [
-          Key.callback(username, `${id}|${username}|${type}`)
-        ])
-        .concat([[Key.callback('➕ Добавить канал', EState.ADD_CHANNEL)]])
+        .map(({ id, username, type }) => [Key.callback(username, `${id}|${username}|${type}`)])
+        .concat([[Key.callback('➕ Добавить канал', EState.ADD_CHANNEL)]]),
     }
   },
-  onCallback: async <EState>(
-    ctx: TTelegrafContext,
-    callback: EState | string
-  ) => {
+  onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
     if (callback === EState.ADD_CHANNEL) {
       await enterToState(ctx, addChannelState)
       return
@@ -35,11 +30,11 @@ export const channelSelectState: TState<EState> = {
       ctx.session.channel = {
         id: Number(id),
         name: username,
-        type: type as ChatFromGetChat['type']
+        type: type as ChatFromGetChat['type'],
       }
       await enterToState(ctx, channelSettingState)
       return
     }
     throw new InfoMessage(`Unknown menu state: ${callback}`)
-  }
+  },
 }

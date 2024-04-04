@@ -3,7 +3,7 @@ import { TDbConnection } from '../types'
 
 export const insertPublisherChannel = async (
   db: TDbConnection,
-  values: typeof botPublisherChannels.$inferInsert
+  values: typeof botPublisherChannels.$inferInsert,
 ) => {
   await db
     .insert(botPublisherChannels)

@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const insertPublisherKeywords = async (
   db: TDbConnection,
-  keywordValues: (typeof botPublisherKeywords.$inferInsert)[]
+  keywordValues: (typeof botPublisherKeywords.$inferInsert)[],
 ) => {
   await db
     .insert(botPublisherKeywords)

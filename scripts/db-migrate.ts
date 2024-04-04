@@ -9,9 +9,9 @@ const main = async () => {
   await migrate(
     drizzle(client, {
       schema,
-      mode: 'default'
+      mode: 'default',
     }),
-    { migrationsFolder: './db/migrations' }
+    { migrationsFolder: './db/migrations' },
   )
 
   await client.end()

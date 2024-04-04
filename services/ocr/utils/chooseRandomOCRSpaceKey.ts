@@ -1,6 +1,6 @@
-import { getProxyForKey } from "."
-import { getDbConnection } from "../../../utils"
-import { selectRandomOcrKey, selectRandomOcrKeyPro } from "../../../utils/mysql-queries"
+import { getProxyForKey } from '.'
+import { getDbConnection } from '../../../utils'
+import { selectRandomOcrKey, selectRandomOcrKeyPro } from '../../../utils/mysql-queries'
 
 export async function chooseRandomOCRSpaceKey() {
   const db = await getDbConnection()
@@ -28,14 +28,13 @@ export async function chooseRandomOCRSpaceKey() {
     protocol?: string
   } = {
     key: keyData.ocrKey,
-    timeout: keyData.timeout
+    timeout: keyData.timeout,
   }
   const foundProxy = await getProxyForKey(db, keyData.ocrKey)
   db.close()
   if (!foundProxy) throw new Error('There are no available free proxies')
   finalKeyData.proxy = foundProxy.address
   finalKeyData.protocol = foundProxy.protocol
-  if (!finalKeyData.proxy)
-    throw new Error(`❌ Proxy for ${finalKeyData.key} isn't found`)
+  if (!finalKeyData.proxy) throw new Error(`❌ Proxy for ${finalKeyData.key} isn't found`)
   return finalKeyData
 }

@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const selectPublisherSubscriptionsByChannelId = async (
   db: TDbConnection,
-  channelId: number
+  channelId: number,
 ) => {
   return await db
     .select({ keyword: botPublisherSubscriptions.keyword })

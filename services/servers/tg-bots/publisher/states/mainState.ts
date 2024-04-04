@@ -6,7 +6,7 @@ import { addChannelState, addKeywordsState, channelSelectState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   countPublisherChannelsByUserId,
-  insertPublisherChannel
+  insertPublisherChannel,
 } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
 
@@ -14,12 +14,9 @@ const ADD_MYSELF = 'add_myself'
 
 export const mainState: TState<EState> = {
   stateName: EState.MAIN,
-  inlineMenu: async (ctx) => {
+  inlineMenu: async ctx => {
     const db = await getDbConnection()
-    const userChannelsCount = await countPublisherChannelsByUserId(
-      db,
-      ctx.from.id
-    )
+    const userChannelsCount = await countPublisherChannelsByUserId(db, ctx.from.id)
     db.close()
     const buttons = [[Key.callback('Добавить канал', EState.ADD_CHANNEL)]]
     if (userChannelsCount !== 0) {
@@ -29,7 +26,7 @@ export const mainState: TState<EState> = {
     }
     return {
       text: 'Меню подписок',
-      buttons
+      buttons,
     }
   },
   onCallback: async (ctx, state) => {
@@ -38,7 +35,7 @@ export const mainState: TState<EState> = {
       ctx.session.channel = {
         name: username.user,
         id: ctx.from.id,
-        type: 'private'
+        type: 'private',
       }
       const db = await getDbConnection()
       const timestamp = Date.now() / 1000
@@ -47,7 +44,7 @@ export const mainState: TState<EState> = {
         userId: ctx.from.id,
         username: username.user,
         subscribers: 0,
-        timestamp
+        timestamp,
       })
       db.close()
       await enterToState(ctx, addKeywordsState)
@@ -61,5 +58,5 @@ export const mainState: TState<EState> = {
       return
     }
     throw new InfoMessage(`Unknown menu state: ${state}`)
-  }
+  },
 }
