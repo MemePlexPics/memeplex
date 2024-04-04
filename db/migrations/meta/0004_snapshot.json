@@ -54,9 +54,7 @@
       "indexes": {
         "user_id": {
           "name": "user_id",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -65,12 +63,8 @@
           "name": "bot_actions_user_id_bot_users_id_fk",
           "tableFrom": "bot_actions",
           "tableTo": "bot_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "restrict"
         }
@@ -144,9 +138,7 @@
       "indexes": {
         "user_id": {
           "name": "user_id",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": false
         }
       },
@@ -155,12 +147,8 @@
           "name": "bot_inline_actions_user_id_bot_inline_users_id_fk",
           "tableFrom": "bot_inline_actions",
           "tableTo": "bot_inline_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "restrict"
         }
@@ -250,12 +238,8 @@
           "name": "bot_publisher_channels_user_id_fk",
           "tableFrom": "bot_publisher_channels",
           "tableTo": "bot_publisher_users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -263,9 +247,7 @@
       "compositePrimaryKeys": {
         "bot_publisher_channels_id": {
           "name": "bot_publisher_channels_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}
@@ -286,9 +268,7 @@
       "compositePrimaryKeys": {
         "bot_publisher_keywords_keyword": {
           "name": "bot_publisher_keywords_keyword",
-          "columns": [
-            "keyword"
-          ]
+          "columns": ["keyword"]
         }
       },
       "uniqueConstraints": {}
@@ -324,12 +304,8 @@
           "name": "bot_publisher_subscriptions_keyword_fk",
           "tableFrom": "bot_publisher_subscriptions",
           "tableTo": "bot_publisher_keywords",
-          "columnsFrom": [
-            "keyword"
-          ],
-          "columnsTo": [
-            "keyword"
-          ],
+          "columnsFrom": ["keyword"],
+          "columnsTo": ["keyword"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -337,12 +313,8 @@
           "name": "bot_publisher_subscriptions__channel_id_fk",
           "tableFrom": "bot_publisher_subscriptions",
           "tableTo": "bot_publisher_channels",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -350,18 +322,13 @@
       "compositePrimaryKeys": {
         "bot_publisher_subscriptions_id": {
           "name": "bot_publisher_subscriptions_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {
         "keyword_id-channel_id": {
           "name": "keyword_id-channel_id",
-          "columns": [
-            "keyword",
-            "channel_id"
-          ]
+          "columns": ["keyword", "channel_id"]
         }
       }
     },
@@ -402,9 +369,7 @@
       "compositePrimaryKeys": {
         "bot_publisher_users_id": {
           "name": "bot_publisher_users_id",
-          "columns": [
-            "id"
-          ]
+          "columns": ["id"]
         }
       },
       "uniqueConstraints": {}
@@ -562,9 +527,7 @@
       "compositePrimaryKeys": {
         "ocr_keys_ocr_key": {
           "name": "ocr_keys_ocr_key",
-          "columns": [
-            "ocr_key"
-          ]
+          "columns": ["ocr_key"]
         }
       },
       "uniqueConstraints": {}
@@ -592,9 +555,7 @@
       "compositePrimaryKeys": {
         "ocr_keys_pro_ocr_key": {
           "name": "ocr_keys_pro_ocr_key",
-          "columns": [
-            "ocr_key"
-          ]
+          "columns": ["ocr_key"]
         }
       },
       "uniqueConstraints": {}
@@ -689,10 +650,7 @@
       "uniqueConstraints": {
         "unique_address_protocol": {
           "name": "unique_address_protocol",
-          "columns": [
-            "address",
-            "protocol"
-          ]
+          "columns": ["address", "protocol"]
         }
       }
     },

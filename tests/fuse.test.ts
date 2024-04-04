@@ -4,7 +4,7 @@ import { fuseMock } from './constants'
 
 const testCases: { query: string; expected: string[] }[] = [
   { query: 'марина', expected: [fuseMock[0], fuseMock[1]] },
-  { query: 'beware of the pipeline', expected: [fuseMock[2]] }
+  { query: 'beware of the pipeline', expected: [fuseMock[2]] },
 ]
 
 describe('Fuse.js tests', () => {
@@ -17,7 +17,7 @@ describe('Fuse.js tests', () => {
   testCases.forEach(({ query, expected }) => {
     test(`Search for "${query}"`, () => {
       const results = fuse.search(query)
-      const found = results.map((result) => result.item)
+      const found = results.map(result => result.item)
       expect(found).toEqual(expected)
     })
   })

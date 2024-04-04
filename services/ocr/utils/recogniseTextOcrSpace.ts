@@ -1,19 +1,11 @@
 import { chooseRandomOCRSpaceKey, handle403, handleDeadProxy, handleProxyError, ocrSpace } from '.'
-import {
-  getMysqlClient,
-} from '../../../utils'
-import {
-  updateProxyAvailability,
-} from '../../../utils/mysql-queries'
+import { getMysqlClient } from '../../../utils'
+import { updateProxyAvailability } from '../../../utils/mysql-queries'
 import { OCR_SPACE_PRO_API_USA } from '../../../constants'
 import { Logger } from 'winston'
 
 export const recogniseTextOcrSpace = async (fileName: string, language: string, logger: Logger) => {
-  const {
-    key: apiKey,
-    proxy,
-    protocol,
-  } = await chooseRandomOCRSpaceKey()
+  const { key: apiKey, proxy, protocol } = await chooseRandomOCRSpaceKey()
   logger.verbose(`💬 Key: ${apiKey} ${proxy ? `${proxy} (${protocol})` : ''}`)
   try {
     const [host, port] = proxy ? proxy.split(':') : [null, null]

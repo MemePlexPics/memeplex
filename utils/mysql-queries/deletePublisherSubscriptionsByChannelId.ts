@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const deletePublisherSubscriptionsByChannelId = async (
   db: TDbConnection,
-  channelId: number
+  channelId: number,
 ) => {
   await db
     .delete(botPublisherSubscriptions)

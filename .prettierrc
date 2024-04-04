@@ -14,7 +14,7 @@
         }
       },
       {
-        "files": ["./frontend/src/**/*.{ts,tsx}"],
+        "files": ["*.ts", "*.tsx"],
         "options": {
           "tabWidth": 2,
           "singleQuote": true,

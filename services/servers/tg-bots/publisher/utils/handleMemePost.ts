@@ -7,11 +7,11 @@ export const handleMemePost = async (
   client: Client,
   ctx: TTelegrafContext,
   chatId: string | number,
-  memeId: string
+  memeId: string,
 ) => {
   const meme = await getMeme(client, memeId)
   await ctx.telegram.sendPhoto(chatId, {
-    source: await fs.readFile(meme.fileName)
+    source: await fs.readFile(meme.fileName),
   })
   await ctx.reply(`Мем успешно опубликован.`)
 }

@@ -1,8 +1,12 @@
-import { AxiosResponse } from "axios"
-import { InfoMessage, getMysqlClient } from "../../../utils"
-import { updateProxyAvailability } from "../../../utils/mysql-queries"
+import { AxiosResponse } from 'axios'
+import { InfoMessage, getMysqlClient } from '../../../utils'
+import { updateProxyAvailability } from '../../../utils/mysql-queries'
 
-export const handleDeadProxy = async (res: AxiosResponse['data'], proxy?: string, protocol?: string) => {
+export const handleDeadProxy = async (
+  res: AxiosResponse['data'],
+  proxy?: string,
+  protocol?: string,
+) => {
   if (proxy && !Array.isArray(res?.ParsedResults)) {
     const mysql = await getMysqlClient()
     await updateProxyAvailability(mysql, proxy, protocol, false)

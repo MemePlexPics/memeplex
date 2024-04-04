@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const insertPublisherUser = async (
   db: TDbConnection,
-  values: typeof botPublisherUsers.$inferInsert
+  values: typeof botPublisherUsers.$inferInsert,
 ) => {
   await db
     .insert(botPublisherUsers)
