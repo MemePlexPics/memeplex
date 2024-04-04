@@ -24,7 +24,7 @@ export const handlePublisherDistribution = async (
 
   let userId: number
   for (const { keyword } of keywords) {
-    // if (!document.eng.toLowerCase().includes(keyword)) return
+    if (!document.eng.toLowerCase().includes(keyword)) return
     const subscriptions = await selectPublisherSubscriptionsByKeyword(
       db,
       keyword
