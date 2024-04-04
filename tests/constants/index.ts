@@ -1,0 +1,1 @@
+export { fuseMock } from './fuseMock'

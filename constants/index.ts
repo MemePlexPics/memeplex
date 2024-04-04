@@ -3,6 +3,7 @@ import process from 'process'
 export { PROXY_LIST_API_URLS } from './PROXY_LIST_API_URLS'
 export { OCR_SPACE_PRO_API_USA } from './OCR_SPACE_PRO_API'
 export { OCR_SPACE_PRO_API_EU } from './OCR_SPACE_PRO_API'
+export { fuseOptions } from './fuseOptions'
 
 // TODO: split into files?
 // rabbitmq channel names

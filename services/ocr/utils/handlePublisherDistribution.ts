@@ -1,5 +1,8 @@
 import { getDbConnection } from '../../../utils'
-import { AMQP_PUBLISHER_DISTRIBUTION_CHANNEL } from '../../../constants'
+import {
+  AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
+  fuseOptions
+} from '../../../constants'
 import {
   getPublisherKeywords,
   selectPublisherChannelById,
@@ -8,6 +11,7 @@ import {
 } from '../../../utils/mysql-queries'
 import { Channel } from 'amqplib'
 import { TMemeEntity, TPublisherDistributionQueueMsg } from '../types'
+import Fuse from 'fuse.js'
 
 export const handlePublisherDistribution = async (
   amqpChannel: Channel,
@@ -18,13 +22,15 @@ export const handlePublisherDistribution = async (
   const keywords = await getPublisherKeywords(db)
 
   const queue: Record<
-  number,
-  Omit<TPublisherDistributionQueueMsg, 'userId'>
+    number,
+    Omit<TPublisherDistributionQueueMsg, 'userId'>
   > = {}
 
   let userId: number
+  const fuse = new Fuse([document.eng], fuseOptions)
   for (const { keyword } of keywords) {
-    if (!document.eng.toLowerCase().includes(keyword)) return
+    const results = fuse.search(keyword)
+    if (!results.length) return
     const subscriptions = await selectPublisherSubscriptionsByKeyword(
       db,
       keyword
