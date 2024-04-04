@@ -6,7 +6,7 @@ import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
-import { enterToState, handleDistributionQueue, handleKeyAction, handleMemePost } from './utils'
+import { enterToState, handleCallbackQuery, handleDistributionQueue } from './utils'
 import {
   addChannelState,
   addKeywordsState,
@@ -84,24 +84,14 @@ bot.command('menu', async ctx => {
 })
 
 bot.on('callback_query', async ctx => {
-  // @ts-expect-error Property 'data' does not exist on type 'CallbackQuery'
-  const callbackQuery = ctx.update.callback_query.data
-  const [state, ...restCb] = callbackQuery.split('|')
-  if (state === 'post') {
-    await handleMemePost(elastic, ctx, restCb[0], restCb[1])
-    return
-  }
-  if (state === 'key') {
-    await handleKeyAction(ctx, restCb[0], restCb[1])
-    return
-  }
   try {
-    await states[ctx.session.state].onCallback(ctx, callbackQuery)
+    await handleCallbackQuery(ctx, elastic, states)
+    await ctx.answerCbQuery()
   } catch (error) {
     if (error instanceof InfoMessage) {
       await logInfo(logger, error)
     } else {
-      await logError(logger, error)
+      await logError(logger, error, { ctx })
     }
   }
 })
