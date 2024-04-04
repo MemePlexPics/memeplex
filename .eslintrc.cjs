@@ -45,6 +45,12 @@ module.exports = {
                     'never'
                 ]
             }
+        },
+        {
+            files: ["tests/**/*"],
+            env: {
+              jest: true
+            }
         }
     ],
     ignorePatterns: ['vite.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],

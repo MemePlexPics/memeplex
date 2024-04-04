@@ -16,6 +16,7 @@
     "scripts/**/*",
     "services/**/*",
     "utils/**/*",
+    "tests/**/*",
     "drizzle.config.ts"
   ],
 }
