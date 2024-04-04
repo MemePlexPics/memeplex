@@ -33,7 +33,9 @@ export const handlePublisherDistribution = async (
       if (!queue[userId])
         queue[userId] = {
           memeId,
-          document,
+          document: {
+            fileName: document.fileName,
+          },
           keywords: [],
           channelIds: [],
         }
