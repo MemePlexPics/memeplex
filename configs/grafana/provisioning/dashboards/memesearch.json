@@ -301,7 +301,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 9,
         "x": 0,
         "y": 9
@@ -411,11 +411,23 @@
                 "value": 130
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "plan"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
           }
         ]
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 5,
         "x": 9,
         "y": 9
@@ -443,7 +455,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys;",
+          "rawSql": "SELECT\n  'free' AS plan,\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys\nUNION ALL\nSELECT\n  'pro' AS plan,\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys_pro;\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -497,7 +509,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 4,
         "x": 14,
         "y": 9
@@ -569,7 +581,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 5,
         "w": 6,
         "x": 18,
         "y": 9
@@ -788,7 +800,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 14
       },
       "id": 6,
       "options": {
@@ -880,7 +892,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 23
       },
       "id": 30,
       "panels": [
@@ -941,7 +953,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 31
+            "y": 24
           },
           "id": 29,
           "options": {
@@ -1147,7 +1159,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 31
+            "y": 24
           },
           "id": 35,
           "options": {
@@ -1465,7 +1477,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 39
+            "y": 32
           },
           "id": 23,
           "options": {
@@ -1712,7 +1724,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 41
           },
           "id": 36,
           "options": {
@@ -1800,7 +1812,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 24
       },
       "id": 7,
       "panels": [
@@ -1823,7 +1835,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1888,7 +1901,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 56
+            "y": 25
           },
           "id": 12,
           "options": {
@@ -1994,7 +2007,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2059,7 +2073,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 56
+            "y": 25
           },
           "id": 11,
           "options": {
@@ -2157,7 +2171,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2222,7 +2237,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 64
+            "y": 33
           },
           "id": 5,
           "options": {
@@ -2320,7 +2335,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2385,7 +2401,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 64
+            "y": 33
           },
           "id": 13,
           "options": {
@@ -2464,7 +2480,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2529,7 +2546,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 72
+            "y": 41
           },
           "id": 18,
           "options": {
@@ -2628,7 +2645,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2741,7 +2759,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 72
+            "y": 41
           },
           "id": 34,
           "options": {
@@ -2834,7 +2852,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2899,7 +2918,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 80
+            "y": 49
           },
           "id": 17,
           "options": {
@@ -2989,7 +3008,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 25
       },
       "id": 8,
       "panels": [
@@ -3089,7 +3108,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 57
+            "y": 73
           },
           "id": 1,
           "options": {
@@ -3180,7 +3199,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 57
+            "y": 73
           },
           "id": 2,
           "options": {
@@ -3255,7 +3274,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 65
+            "y": 81
           },
           "id": 3,
           "options": {
@@ -3330,7 +3349,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 65
+            "y": 81
           },
           "id": 4,
           "options": {
@@ -3405,7 +3424,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 73
+            "y": 89
           },
           "id": 19,
           "options": {
@@ -3484,7 +3503,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 73
+            "y": 89
           },
           "id": 21,
           "options": {
@@ -3650,7 +3669,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 81
+            "y": 97
           },
           "id": 20,
           "options": {
@@ -3729,7 +3748,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 81
+            "y": 97
           },
           "id": 22,
           "options": {
@@ -3824,6 +3843,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 33,
+  "version": 36,
   "weekStart": ""
 }
