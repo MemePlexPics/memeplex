@@ -42,7 +42,7 @@ export const handleDistributionQueue = async (
     db.close()
 
     channels.forEach((channel) => {
-      if (channel.id === payload.userId) return null
+      if (channel.id === Number(payload.userId)) return null
       buttons.push([
         Key.callback(
           `✅ ${channel.username}`,
