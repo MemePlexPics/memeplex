@@ -14,7 +14,7 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string, 
     proxy,
     protocol,
   } = await chooseRandomOCRSpaceKey()
-  logger.verbose(`💬 OCR: ${apiKey} ${proxy ? `${proxy} (${protocol})` : ''}`)
+  logger.verbose(`💬 Key: ${apiKey} ${proxy ? `${proxy} (${protocol})` : ''}`)
   try {
     const [host, port] = proxy ? proxy.split(':') : [null, null]
     const res = await ocrSpace(fileName, {
