@@ -37,9 +37,5 @@ export async function chooseRandomOCRSpaceKey() {
   finalKeyData.protocol = foundProxy.protocol
   if (!finalKeyData.proxy)
     throw new Error(`❌ Proxy for ${finalKeyData.key} isn't found`)
-
-  console.log(
-    `💬 ${finalKeyData.key} ${finalKeyData.proxy} (${finalKeyData.protocol}) ${foundProxy.speed}ms`
-  )
   return finalKeyData
 }
