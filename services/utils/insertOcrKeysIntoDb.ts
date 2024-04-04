@@ -11,10 +11,10 @@ export const insertOcrKeysIntoDb = async () => {
   const keysPro = process.env.OCR_SPACE_API_KEYS_PRO
 
   const db = await getDbConnection()
-  const keysTrimmed = keys.split(',').map((key) => ({ ocrKey: key.trim() }))
+  const keysTrimmed = keys.split(',').map(key => ({ ocrKey: key.trim() }))
   await insertOcrKeys(db, keysTrimmed)
   if (keysPro) {
-    const keysProTrimmed = keysPro.split(',').map((key) => ({ ocrKey: key.trim() }))
+    const keysProTrimmed = keysPro.split(',').map(key => ({ ocrKey: key.trim() }))
     await insertOcrKeysPro(db, keysProTrimmed)
   }
 }

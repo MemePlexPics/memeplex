@@ -7,39 +7,33 @@ import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   countPublisherSubscriptionsByChannelId,
   deletePublisherChannelById,
-  deletePublisherSubscriptionsByChannelId
+  deletePublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 
 const DELETE_CHANNEL = 'delete_channel'
 
 export const channelSettingState: TState<EState> = {
   stateName: EState.CHANNEL_SETTINGS,
-  inlineMenu: async (ctx) => {
+  inlineMenu: async ctx => {
     const db = await getDbConnection()
-    const keywordsCount = await countPublisherSubscriptionsByChannelId(
-      db,
-      ctx.session.channel.id
-    )
+    const keywordsCount = await countPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
     db.close()
     const hasKeywords = keywordsCount !== 0
     const buttons = [
       [Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS)],
       [Key.callback('🗑 Отвязать канал', DELETE_CHANNEL)],
-      [Key.callback('🏠 В главное меню', EState.MAIN)]
+      [Key.callback('🏠 В главное меню', EState.MAIN)],
     ]
     if (hasKeywords)
       buttons.splice(1, 0, [
-        Key.callback('✏️ Редактировать ключевые слова', EState.KEYWORD_SETTINGS)
+        Key.callback('✏️ Редактировать ключевые слова', EState.KEYWORD_SETTINGS),
       ])
     return {
       text: `Настройка подписки ${ctx.session.channel.name}`,
-      buttons
+      buttons,
     }
   },
-  onCallback: async <EState>(
-    ctx: TTelegrafContext,
-    callback: EState | string
-  ) => {
+  onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
     if (callback === EState.ADD_KEYWORDS) {
       await enterToState(ctx, addKeywordsState)
       return
@@ -64,5 +58,5 @@ export const channelSettingState: TState<EState> = {
       return
     }
     throw new InfoMessage(`Unknown menu state: ${callback}`)
-  }
+  },
 }

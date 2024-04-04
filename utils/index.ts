@@ -17,8 +17,7 @@ export { checkProxyAnonimity } from './checkProxyAnonimity'
 export { getDbConnection } from './getDbConnection'
 
 // TODO: split into files?
-export const delay = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms))
+export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const getMysqlClient = async (options?: { connectTimeout: number }) => {
   const client = await mysql.createConnection({
@@ -27,7 +26,7 @@ export const getMysqlClient = async (options?: { connectTimeout: number }) => {
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    connectTimeout: options?.connectTimeout || 10_000
+    connectTimeout: options?.connectTimeout || 10_000,
   })
 
   return client
@@ -38,14 +37,14 @@ export const getElasticClient = async () => {
     node: process.env.ELASTIC_ENDPOINT,
     auth: {
       username: process.env.ELASTIC_USERNAME,
-      password: process.env.ELASTIC_PASSWORD
+      password: process.env.ELASTIC_PASSWORD,
     },
     tls: {
       key: await fs.readFile('./certs/elastic-certificates.key'),
       cert: await fs.readFile('./certs/elastic-certificates.crt'),
       ca: await fs.readFile('./certs/elastic-stack-ca.pem'),
-      rejectUnauthorized: true
-    }
+      rejectUnauthorized: true,
+    },
   })
   return client
 }
@@ -58,7 +57,7 @@ export const connectToElastic = async (logger: Logger) => {
         connect = await getElasticClient()
         return true
       },
-      { logger }
+      { logger },
     )
     return connect
   }
@@ -71,7 +70,7 @@ export const connectToElastic = async (logger: Logger) => {
 
   return {
     client,
-    reconnect
+    reconnect,
   }
 }
 
@@ -89,7 +88,7 @@ export async function logError(logger, e) {
     logger.error({
       error: e.name,
       message: e.message,
-      stack: e.stack
+      stack: e.stack,
     })
     return
   }
@@ -101,7 +100,7 @@ export async function logInfo(logger, e) {
     logger.info({
       error: e.name,
       message: e.message,
-      stack: e.stack
+      stack: e.stack,
     })
     return
   }
@@ -119,14 +118,13 @@ export async function loopRetrying(
     logger: undefined,
     catchDelayMs: 0,
     afterCallbackDelayMs: 0,
-    afterErrorCallback: async () => {}
-  }
+    afterErrorCallback: async () => {},
+  },
 ) {
   for (;;) {
     try {
       const result = await callback()
-      if (options.afterCallbackDelayMs)
-        await delay(options.afterCallbackDelayMs)
+      if (options.afterCallbackDelayMs) await delay(options.afterCallbackDelayMs)
       if (result) break
     } catch (e) {
       if (e instanceof InfoMessage) await logInfo(options.logger, e)

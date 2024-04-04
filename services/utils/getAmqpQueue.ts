@@ -4,15 +4,13 @@ import { Logger } from 'winston'
 
 export const getAmqpQueue = async (
   amqp: Connection,
-  queue: string
-): Promise<
-  [Channel, (ms: number, logger: Logger, msg: GetMessage) => void, () => void]
-  > => {
+  queue: string,
+): Promise<[Channel, (ms: number, logger: Logger, msg: GetMessage) => void, () => void]> => {
   const channel = await amqp.createChannel()
   let timeoutId: NodeJS.Timeout
 
   await channel.assertQueue(queue, {
-    durable: true
+    durable: true,
   })
   await channel.prefetch(1) // let it process one message at a time
 

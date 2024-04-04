@@ -6,12 +6,12 @@ export const getChannels = async (
   db: TDbConnection,
   page: number,
   size: number,
-  { onlyAvailable, name }: { onlyAvailable: string; name: string }
+  { onlyAvailable, name }: { onlyAvailable: string; name: string },
 ) => {
   return await db
     .select({
       name: channels.name,
-      availability: channels.availability
+      availability: channels.availability,
     })
     .from(channels)
     .where(
@@ -19,8 +19,8 @@ export const getChannels = async (
         onlyAvailable === 'true' ? eq(channels.availability, 1) : undefined,
         name && /[0-9a-zA-Z_]+/.test(name)
           ? like(channels.name, `%${name}%`) // LIKE is case-insensetive in MariaDB
-          : undefined
-      )
+          : undefined,
+      ),
     )
     .orderBy(desc(channels.availability), asc(channels.name))
     .limit(size)

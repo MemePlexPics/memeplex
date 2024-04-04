@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const insertOcrKeysPro = async (
   db: TDbConnection,
-  values: typeof ocrKeysPro.$inferInsert[]
+  values: (typeof ocrKeysPro.$inferInsert)[],
 ) => {
   return await db
     .insert(ocrKeysPro)

@@ -6,35 +6,29 @@ import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
-import {
-  enterToState,
-  handleDistributionQueue,
-  handleKeyAction,
-  handleMemePost
-} from './utils'
+import { enterToState, handleDistributionQueue, handleKeyAction, handleMemePost } from './utils'
 import {
   addChannelState,
   addKeywordsState,
   channelSelectState,
   channelSettingState,
   keywordSettingsState,
-  mainState
+  mainState,
 } from './states'
 import {
   InfoMessage,
   getDbConnection,
   getElasticClient,
   logError,
-  logInfo
+  logInfo,
 } from '../../../../utils'
 import { loopRetrying } from '../../../../utils'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
 import { insertPublisherUser } from '../../../../utils/mysql-queries'
 
-const bot = new Telegraf<TTelegrafContext>(
-  process.env.TELEGRAM_PUBLISHER_BOT_TOKEN,
-  { telegram: { webhookReply: false } }
-)
+const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, {
+  telegram: { webhookReply: false },
+})
 const logger = getLogger('tg-publisher-bot')
 const elastic = await getElasticClient()
 
@@ -42,7 +36,7 @@ bot.use(
   session({
     defaultSession: () => ({
       channel: undefined,
-      state: EState.MAIN
+      state: EState.MAIN,
     }),
     store: MySQL<TTelegrafSession>({
       host: process.env.DB_HOST,
@@ -50,9 +44,9 @@ bot.use(
       database: process.env.DB_DATABASE,
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
-      table: 'telegraf_publisher_sessions'
-    })
-  })
+      table: 'telegraf_publisher_sessions',
+    }),
+  }),
 )
 
 const states: Record<EState, TState<EState>> = {
@@ -61,10 +55,10 @@ const states: Record<EState, TState<EState>> = {
   [EState.CHANNEL_SELECT]: channelSelectState,
   [EState.CHANNEL_SETTINGS]: channelSettingState,
   [EState.KEYWORD_SETTINGS]: keywordSettingsState,
-  [EState.MAIN]: mainState
+  [EState.MAIN]: mainState,
 }
 
-bot.start(async (ctx) => {
+bot.start(async ctx => {
   await ctx.reply(`
     Добро пожаловать в MemePlex Publisher!
 
@@ -80,16 +74,16 @@ bot.start(async (ctx) => {
   await insertPublisherUser(db, {
     id: ctx.from.id,
     user: getTelegramUser(ctx.from).user,
-    timestamp: Date.now() / 1000
+    timestamp: Date.now() / 1000,
   })
   db.close()
 })
 
-bot.command('menu', async (ctx) => {
+bot.command('menu', async ctx => {
   await enterToState(ctx, mainState)
 })
 
-bot.on('callback_query', async (ctx) => {
+bot.on('callback_query', async ctx => {
   // @ts-expect-error Property 'data' does not exist on type 'CallbackQuery'
   const callbackQuery = ctx.update.callback_query.data
   const [state, ...restCb] = callbackQuery.split('|')
@@ -112,7 +106,7 @@ bot.on('callback_query', async (ctx) => {
   }
 })
 
-bot.on(message('text'), async (ctx) => {
+bot.on(message('text'), async ctx => {
   await states[ctx.session.state].onText?.(ctx, ctx.update.message.text)
 })
 
@@ -121,14 +115,14 @@ const start = async () => {
     webhook: {
       domain: process.env.MEMEPLEX_WEBSITE_DOMAIN,
       path: '/' + process.env.TELEGRAM_PUBLISHER_BOT_WEBHOOK_PATH,
-      port: 3082
-    }
+      port: 3082,
+    },
   })
   bot.telegram.setMyCommands([
     {
       command: 'menu',
-      description: 'Меню'
-    }
+      description: 'Меню',
+    },
   ])
   bot.telegram.setMyDescription(`
     Это description
@@ -144,7 +138,7 @@ const start = async () => {
   await loopRetrying(async () => handleDistributionQueue(bot, logger), {
     logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
-    catchDelayMs: LOOP_RETRYING_DELAY
+    catchDelayMs: LOOP_RETRYING_DELAY,
   })
 }
 

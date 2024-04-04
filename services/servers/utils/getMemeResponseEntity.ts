@@ -1,16 +1,13 @@
 import { TElasticMemeEntity } from '../../types'
 
-export const getMemeResponseEntity = (
-  id: string,
-  source: TElasticMemeEntity
-) => {
+export const getMemeResponseEntity = (id: string, source: TElasticMemeEntity) => {
   return {
     id,
     fileName: source.fileName,
     channel: source.channelName,
     message: source.messageId,
     text: {
-      eng: source.eng
-    }
+      eng: source.eng,
+    },
   }
 }

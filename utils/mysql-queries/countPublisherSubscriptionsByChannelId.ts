@@ -4,7 +4,7 @@ import { TDbConnection } from '../types'
 
 export const countPublisherSubscriptionsByChannelId = async (
   db: TDbConnection,
-  channelId: number
+  channelId: number,
 ) => {
   const [response] = await db
     .select({ value: count() })
