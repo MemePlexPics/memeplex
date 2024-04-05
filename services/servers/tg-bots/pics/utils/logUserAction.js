@@ -25,7 +25,7 @@ export const logUserAction = async (from, action, logger) => {
             action.search.query,
             action.search.page,
         );
-        mysql.close();
+        await mysql.end();
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'search',
@@ -42,7 +42,7 @@ export const logUserAction = async (from, action, logger) => {
             null,
             [action.latest.from, action.latest.to].join(','),
         );
-        mysql.close();
+        await mysql.end();
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'latest',
@@ -61,7 +61,7 @@ export const logUserAction = async (from, action, logger) => {
             action.inline_search.page,
             action.inline_search.chat_type,
         );
-        mysql.close();
+        await mysql.end();
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'inline_search',
@@ -80,7 +80,7 @@ export const logUserAction = async (from, action, logger) => {
             null,
             null,
         );
-        mysql.close();
+        await mysql.end();
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             action: 'inline_select',
@@ -90,7 +90,7 @@ export const logUserAction = async (from, action, logger) => {
     } else if (action.start) {
         const mysql = await getMysqlClient();
         await insertBotUser(mysql, id, user);
-        mysql.close();
+        await mysql.end();
         // TODO: remove it after 2024-03-21 (two weeks)?
         logEntity = {
             start: action.start,

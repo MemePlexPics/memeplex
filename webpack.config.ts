@@ -7,7 +7,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 const config: Configuration = {
     entry: {
-        memesearch: './services/memesearch.js',
+        memesearch: './services/memesearch.ts',
         tgPublisherBot: './services/servers/tg-bots/publisher/index.ts',
         tgPicsBot: './services/servers/tg-bots/pics/index.js',
         web: './services/servers/web/index.js',

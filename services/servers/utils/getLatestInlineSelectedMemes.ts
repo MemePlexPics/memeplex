@@ -9,7 +9,7 @@ export const getLatestInlineSelectedMemes = async (
 ) => {
   const db = await getDbConnection()
   const latestMemes = await selectLatestInlineSelectedMemes(db, 15)
-  db.close()
+  await db.close()
   const latestMemeIds = latestMemes.map(meme => meme.selectedId)
   const memeEntities = await getMemesById(client, latestMemeIds, abortController)
 

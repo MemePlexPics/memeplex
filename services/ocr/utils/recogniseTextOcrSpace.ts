@@ -31,7 +31,7 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string, 
     if (proxy) {
       const mysql = await getMysqlClient()
       await updateProxyAvailability(mysql, proxy, protocol, true)
-      mysql.end()
+      await mysql.end()
     }
 
     const text = []

@@ -1,0 +1,1 @@
+export { amqpQueueMessageCounter } from './amqpQueueMessageCounter'
