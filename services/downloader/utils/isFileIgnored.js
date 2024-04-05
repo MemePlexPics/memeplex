@@ -34,6 +34,6 @@ export const isFileIgnored = async (logger, destination, payload) => {
         return true;
     }
     await insertPHash(mysql, pHash);
-    mysql.close();
+    await mysql.end();
     return false;
 };

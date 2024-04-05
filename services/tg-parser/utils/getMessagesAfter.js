@@ -69,7 +69,7 @@ export const getMessagesAfter = async function* (
                         mysql,
                         forwardedFrom,
                     );
-                    mysql.close();
+                    await mysql.end();
                     if (response)
                         logger.info(
                             `Channel @${forwardedFrom} was automatically suggested (forward)`,

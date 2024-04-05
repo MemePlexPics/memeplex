@@ -49,8 +49,8 @@ export const ocr = async logger => {
     }
   } finally {
     receiveImageFileClearTimeout()
-    if (receiveImageFileCh) receiveImageFileCh.close()
-    if (amqp) amqp.close()
-    if (elastic) elastic.close()
+    if (receiveImageFileCh) await receiveImageFileCh.close()
+    if (amqp) await amqp.close()
+    if (elastic) await elastic.close()
   }
 }

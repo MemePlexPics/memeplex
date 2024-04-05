@@ -12,5 +12,5 @@ export const handleTimeout = async (apiKey, timeout, logger) => {
     }
     const mysql = await getMysqlClient();
     await saveKeyTimeout(mysql, apiKey, null);
-    mysql.close();
+    await mysql.end();
 };

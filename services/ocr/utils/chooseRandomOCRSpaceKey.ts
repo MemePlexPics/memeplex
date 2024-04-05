@@ -7,7 +7,7 @@ export async function chooseRandomOCRSpaceKey() {
   // Select a random key without timeout or with the early date
   const keysPro = await selectRandomOcrKeyPro(db)
   if (keysPro.length) {
-    db.close()
+    await db.close()
     return {
       key: keysPro[0].ocrKey,
       timeout: keysPro[0].timeout,
@@ -16,7 +16,7 @@ export async function chooseRandomOCRSpaceKey() {
 
   const keys = await selectRandomOcrKey(db)
   if (!keys.length) {
-    db.close()
+    await db.close()
     throw new Error('❌ There are no keys without timeout')
   }
 
@@ -31,7 +31,7 @@ export async function chooseRandomOCRSpaceKey() {
     timeout: keyData.timeout,
   }
   const foundProxy = await getProxyForKey(db, keyData.ocrKey)
-  db.close()
+  await db.close()
   if (!foundProxy) throw new Error('There are no available free proxies')
   finalKeyData.proxy = foundProxy.address
   finalKeyData.protocol = foundProxy.protocol

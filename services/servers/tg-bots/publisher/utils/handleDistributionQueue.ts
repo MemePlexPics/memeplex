@@ -34,7 +34,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
     const buttons = []
     const db = await getDbConnection()
     const channels = await selectPublisherChannelsById(db, payload.channelIds)
-    db.close()
+    await db.close()
 
     channels.forEach(channel => {
       if (channel.id === Number(payload.userId)) return null
