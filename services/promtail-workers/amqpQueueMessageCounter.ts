@@ -4,7 +4,7 @@ import { AMQP_IMAGE_DATA_CHANNEL, AMQP_IMAGE_FILE_CHANNEL, AMQP_CHECK_PROXY_CHAN
 import { sendToLoki } from '../../utils'
 import { Logger } from 'winston'
 
-export const amqpQueueMessageCounter = async (logger: Logger) => {
+export const amqpQueueMessageCounter = async (_logger: Logger) => {
   const queues = [
     AMQP_IMAGE_DATA_CHANNEL,
     AMQP_IMAGE_FILE_CHANNEL,
