@@ -8,7 +8,7 @@ export const getLogger = (loggers, service) => {
         new winston.transports.File({
             filename: `logs/${service}.log`,
             maxsize: 1024 * 1024 * 10, // bytes
-            // maxFiles: 5,
+            maxFiles: 99999,
             tailable: true,
         }),
     ];
