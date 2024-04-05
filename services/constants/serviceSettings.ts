@@ -34,7 +34,7 @@ export const serviceSettings = [
     name: 'promtail-workers',
     service: amqpQueueMessageCounter,
     loopSettings: {
-      afterCallbackDelayMs: 60_000,
+      afterCallbackDelayMs: 10_000,
     },
   },
 ]
