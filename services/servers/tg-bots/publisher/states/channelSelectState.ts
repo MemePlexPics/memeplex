@@ -12,7 +12,7 @@ export const channelSelectState: TState<EState> = {
   inlineMenu: async ctx => {
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
-    db.close()
+    await db.close()
     return {
       text: 'Выберите канал',
       buttons: userChannels

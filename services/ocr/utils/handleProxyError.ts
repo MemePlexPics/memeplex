@@ -21,7 +21,7 @@ export const handleProxyError = async (error: AxiosError, proxy?: string, protoc
   ) {
     const mysql = await getMysqlClient()
     await updateProxyAvailability(mysql, proxy, protocol, false)
-    mysql.end()
+    await mysql.end()
     throw new InfoMessage(`Proxy error:, «${error.code}» ${error.name} ${error.message}`)
   }
 }

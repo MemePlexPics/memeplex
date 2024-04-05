@@ -17,7 +17,7 @@ export const channelSettingState: TState<EState> = {
   inlineMenu: async ctx => {
     const db = await getDbConnection()
     const keywordsCount = await countPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
-    db.close()
+    await db.close()
     const hasKeywords = keywordsCount !== 0
     const buttons = [
       [Key.callback('➕ Добавить ключевые слова', EState.ADD_KEYWORDS)],
@@ -46,7 +46,7 @@ export const channelSettingState: TState<EState> = {
       const db = await getDbConnection()
       await deletePublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
       await deletePublisherChannelById(db, ctx.session.channel.id)
-      db.close()
+      await db.close()
       await ctx.reply(`Канал успешно удален`)
       ctx.session.channel = undefined
       await enterToState(ctx, mainState)

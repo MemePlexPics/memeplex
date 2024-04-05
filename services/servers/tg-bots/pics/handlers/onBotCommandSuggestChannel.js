@@ -15,7 +15,7 @@ export const onBotCommandSuggestChannel = async (ctx, logger) => {
     try {
         const mysql = await getMysqlClient();
         const response = await insertChannelSuggestion(mysql, channelName);
-        mysql.close();
+        await mysql.end();
         if (response)
             logUserAction(
                 ctx.from,

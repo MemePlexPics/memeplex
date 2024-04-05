@@ -1,1 +1,0 @@
-export { serviceSettings } from './serviceSettings';

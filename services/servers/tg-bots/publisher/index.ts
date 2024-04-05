@@ -76,7 +76,7 @@ bot.start(async ctx => {
     user: getTelegramUser(ctx.from).user,
     timestamp: Date.now() / 1000,
   })
-  db.close()
+  await db.close()
 })
 
 bot.command('menu', async ctx => {
