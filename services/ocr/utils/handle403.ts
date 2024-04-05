@@ -8,7 +8,7 @@ export const handle403 = async (error: AxiosError, apiKey: string) => {
     const newTimeout = dateToYyyyMmDdHhMmSs(Date.now() + OCR_SPACE_403_DELAY)
     const mysql = await getMysqlClient()
     await saveKeyTimeout(mysql, apiKey, newTimeout)
-    mysql.end()
+    await mysql.end()
     throw new InfoMessage(
       `❗️ 403 from ocr.space for key ${apiKey}, ${error.name}: ${error.message}`,
     )

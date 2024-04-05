@@ -29,7 +29,7 @@ services:
     ports:
       - 5672:5672
     volumes:
-      - "./data/rabbitmq:/var/lib/rabbitmq/mnesia/"
+      - ./data/rabbitmq:/var/lib/rabbitmq/mnesia
 
   loki:
     image: grafana/loki

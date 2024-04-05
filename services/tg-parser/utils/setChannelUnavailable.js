@@ -5,5 +5,5 @@ import { updateChannelAvailability } from '../../../utils/mysql-queries';
 export const setChannelUnavailable = async (channelName) => {
     const mysql = await getMysqlClient();
     await updateChannelAvailability(mysql, channelName, false);
-    mysql.close();
+    await mysql.end();
 };

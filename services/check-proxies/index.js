@@ -30,7 +30,7 @@ export const checkProxies = async (logger) => {
         for (;;) {
             const mysql = await getMysqlClient();
             await maintaneProxies(mysql, ipWithoutProxy, logger);
-            mysql.close();
+            await mysql.end();
             const msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL);
             if (!msg) {
                 await delay(EMPTY_QUEUE_RETRY_DELAY);
@@ -47,13 +47,13 @@ export const checkProxies = async (logger) => {
                 const { proxy } = payload;
                 const mysql = await getMysqlClient();
                 await handleAddingProxy(mysql, proxy, ipWithoutProxy, logger);
-                mysql.close();
+                await mysql.end();
             }
             checkProxyCh.ack(msg);
         }
     } finally {
         clearTimeout(timeoutId);
-        if (checkProxyCh) checkProxyCh.close();
-        if (amqp) amqp.close();
+        if (checkProxyCh) await checkProxyCh.close();
+        if (amqp) await amqp.close();
     }
 };

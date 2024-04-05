@@ -12,7 +12,7 @@ export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', key
     for (const channel of userChannels) {
       await deletePublisherSubscription(db, channel.id, keyword)
     }
-    db.close()
+    await db.close()
     await ctx.reply(`Ключевое слово «${keyword}» успешно удалено.`)
   }
 }

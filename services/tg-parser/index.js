@@ -18,7 +18,7 @@ export const tgParser = async (logger) => {
 
         const mysql = await getMysqlClient();
         const channels = await selectAvailableChannels(mysql);
-        mysql.close();
+        await mysql.end();
         logger.info(`fetching ${channels.length} channels`);
 
         for (const { name, /* langs, */ timestamp } of channels) {
@@ -42,7 +42,7 @@ export const tgParser = async (logger) => {
                 if (message.date > timestamp) {
                     const mysql = await getMysqlClient();
                     await updateChannelTimestamp(mysql, name, message.date);
-                    mysql.close();
+                    await mysql.end();
                 }
             }
         }
