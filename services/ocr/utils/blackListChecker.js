@@ -5,7 +5,7 @@ import { selectBlackList } from '../../../utils/mysql-queries';
 export const blackListChecker = async (text) => {
     const mysql = await getMysqlClient();
     const blackList = await selectBlackList(mysql);
-    mysql.close();
+    await mysql.end();
     const regex = new RegExp(blackList.replace('\n', '|'), 'i');
 
     return !regex.test(text);

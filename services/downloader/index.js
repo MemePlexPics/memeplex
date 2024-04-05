@@ -57,8 +57,8 @@ export const downloader = async (logger) => {
         }
     } finally {
         clearTimeout(timeoutId);
-        if (sendImageFileCh) sendImageFileCh.close();
-        if (receiveImageDataCh) receiveImageDataCh.close();
-        if (amqp) amqp.close();
+        if (sendImageFileCh) await sendImageFileCh.close();
+        if (receiveImageDataCh) await receiveImageDataCh.close();
+        if (amqp) await amqp.close();
     }
 };

@@ -126,7 +126,7 @@ app.get('/getChannelList', async (req, res) => {
         filters,
     );
     const count = await getChannelsCount(db, filters);
-    db.close();
+    await db.close();
     return res.send({
         result: channels,
         totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),
@@ -152,7 +152,7 @@ app.get('/getMeme', async (req, res) => {
 app.get('/getFeaturedChannelList', async (req, res) => {
     const mysql = await getMysqlClient();
     const channels = await getFeaturedChannelList(mysql);
-    mysql.close();
+    await mysql.end();
     return res.send({
         result: shuffleArray(channels),
     });
@@ -163,7 +163,7 @@ app.post('/suggestChannel', async (req, res) => {
     if (!channel) return res.status(500).send();
     const mysql = await getMysqlClient();
     const response = await insertChannelSuggestion(mysql, channel);
-    mysql.close();
+    await mysql.end();
     if (response) logger.info(`${req.ip} added @${channel} to suggested`);
     return res.send();
 });
@@ -179,7 +179,7 @@ app.get('/getChannelSuggestionList', async (req, res) => {
         filters,
     );
     const count = await getChannelSuggestionsCount(mysql, filters);
-    mysql.close();
+    await mysql.end();
     return res.send({
         result: channels,
         totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),

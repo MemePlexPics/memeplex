@@ -31,16 +31,18 @@ export const findNewProxies = async (logger) => {
             const proxyData = Buffer.from(
                 JSON.stringify({ action: 'add', proxy }),
             );
+            // TODO: get rid of the AMQP_CHECK_PROXY_CHANNEL?
+            await checkProxyCh.purgeQueue(AMQP_CHECK_PROXY_CHANNEL);
             checkProxyCh.sendToQueue(AMQP_CHECK_PROXY_CHANNEL, proxyData, {
                 persistent: true,
             });
         }
-        mysql.close();
+        await mysql.end();
         logger.info(
             `💬 Looking completed: ${notCheckedProxiesCount} new proxies to check`,
         );
     } finally {
-        if (checkProxyCh) checkProxyCh.close();
-        if (amqp) amqp.close();
+        if (checkProxyCh) await checkProxyCh.close();
+        if (amqp) await amqp.close();
     }
 };
