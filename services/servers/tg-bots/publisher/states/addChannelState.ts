@@ -1,4 +1,3 @@
-import { Key } from 'telegram-keyboard'
 import { addKeywordsState, mainState } from '.'
 import { EState } from '../constants'
 import { TState } from '../types'
@@ -8,12 +7,16 @@ import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 
 export const addChannelState: TState<EState> = {
   stateName: EState.ADD_CHANNEL,
-  message: () => 'Введитие название канала в формате @name или https://t.me/name',
-  inlineMenu: () => ({
-    text: 'Добавление канала',
-    buttons: [Key.callback('⬅️ Назад', EState.MAIN)],
-  }),
-  onCallback: ctx => enterToState(ctx, mainState),
+  menu: async () => {
+    return {
+      text: 'Введитие название канала в формате @name или https://t.me/name',
+      buttons: [
+        [
+          ['⬅️ Назад', (ctx) => enterToState(ctx, mainState)]
+        ],
+      ],
+    }
+  },
   onText: async (ctx, text) => {
     const channel = getTgChannelName(text)
     if (!channel) {
