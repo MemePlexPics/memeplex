@@ -1,5 +1,5 @@
 import { ChatFromGetChat } from 'telegraf/typings/core/types/typegram'
-import { EState } from '../constants'
+// import { EState } from '../constants'
 
 export type TTelegrafSession = {
   channel?: {
@@ -7,6 +7,6 @@ export type TTelegrafSession = {
     id?: number
     type: ChatFromGetChat['type']
   }
-  state: EState
+  // state: EState
   lastMenuId?: number
 }
