@@ -26,7 +26,7 @@ export const enterToState = async <GStateName extends EState>(
         await onTextOptions[text](ctx)
         return
       }
-      await stateNew.onText(ctx, text)
+      await stateNew.onText?.(ctx, text)
     }
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
   }
