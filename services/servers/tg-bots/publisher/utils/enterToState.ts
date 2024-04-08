@@ -34,14 +34,11 @@ export const enterToState = async <GStateName extends EState>(
   }
   if (stateNew.inlineMenu) {
     const inlineMenu = await stateNew.inlineMenu(ctx)
-    // @ts-expect-error remove_keyboard bullshit, questinable type unition
-    const menu = await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).setOptions({
-      one_time_keyboard: true,
-    }).inline())
-    // if (ctx.session.lastMenuId) {
-    //   await ctx.deleteMessage(ctx.session.lastMenuId)
-    // }
-    // ctx.session.lastMenuId = menu.message_id
+    const menu = await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).inline())
+    if (ctx.session.lastMenuId) {
+      await ctx.deleteMessage(ctx.session.lastMenuId)
+    }
+    ctx.session.lastMenuId = menu.message_id
   }
   if (stateNew.message) {
     const message = stateNew.message?.(ctx)
