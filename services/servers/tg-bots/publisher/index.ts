@@ -90,6 +90,7 @@ bot.on('callback_query', async (ctx) => {
 })
 
 bot.on(message('text'), async (ctx) => {
+  console.log(ctx.sessionInMemory)
   if (!ctx.sessionInMemory?.onText) return void
   await ctx.sessionInMemory.onText(ctx, ctx.update.message.text)
 })
