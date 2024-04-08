@@ -7,7 +7,7 @@ import { InfoMessage, getDbConnection } from '../../../../../utils'
 import { selectPublisherChannelsByUserId } from '../../../../../utils/mysql-queries'
 import { ChatFromGetChat } from 'telegraf/typings/core/types/typegram'
 
-export const channelSelectState: TState<EState> = {
+export const channelSelectState: TState<EState> = () => ({
   stateName: EState.CHANNEL_SELECT,
   inlineMenu: async ctx => {
     const db = await getDbConnection()
@@ -37,4 +37,4 @@ export const channelSelectState: TState<EState> = {
     }
     throw new InfoMessage(`Unknown menu state: ${callback}`)
   },
-}
+})

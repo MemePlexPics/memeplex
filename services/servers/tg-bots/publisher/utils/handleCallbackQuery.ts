@@ -1,9 +1,8 @@
 import { Client } from "@elastic/elasticsearch"
 import { handleKeyAction, handleMemePost } from "."
-import { EState } from "../constants"
-import { TState, TTelegrafContext } from "../types"
+import { TTelegrafContext } from "../types"
 
-export const handleCallbackQuery = async (ctx: TTelegrafContext, elastic: Client, states: Record<EState, TState<EState>>) => {
+export const handleCallbackQuery = async (ctx: TTelegrafContext, elastic: Client) => {
   // @ts-expect-error Property 'data' does not exist on type 'CallbackQuery'
   const callbackQuery = ctx.update.callback_query.data
   const [state, ...restCb] = callbackQuery.split('|')
@@ -15,5 +14,5 @@ export const handleCallbackQuery = async (ctx: TTelegrafContext, elastic: Client
     await handleKeyAction(ctx, restCb[0], restCb[1])
     return
   }
-  await states[ctx.session.state].onCallback(ctx, callbackQuery)
+  await ctx.sessionInMemory.onCallback?.(ctx, callbackQuery)
 }
