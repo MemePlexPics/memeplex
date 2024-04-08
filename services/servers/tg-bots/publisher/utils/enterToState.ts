@@ -19,7 +19,7 @@ export const enterToState = async <GStateName extends EState>(
   }
   if (state.menu) {
     const onTextOptions: Record<string, (ctx?: TTelegrafContext) => Promise<unknown> | unknown> = {}
-    const buttons = (await state.menu()).map(buttonRow => buttonRow.map(button => {
+    const buttons = (await state.menu(ctx)).map(buttonRow => buttonRow.map(button => {
       if (Array.isArray(button)) {
         const [text, callback] = button
         onTextOptions[text] = callback
