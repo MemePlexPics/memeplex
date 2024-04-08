@@ -26,7 +26,9 @@ export const enterToState = async <GStateName extends EState>(
         await onTextOptions[text](ctx)
         return
       }
-      await stateNew.onText?.(ctx, text)
+      if (stateNew.onText) {
+        await stateNew.onText(ctx, text)
+      }
     }
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
   }
@@ -40,6 +42,8 @@ export const enterToState = async <GStateName extends EState>(
     //   await ctx.deleteMessage(ctx.session.lastMenuId)
     // }
     // ctx.session.lastMenuId = menu.message_id
+  }
+  if (stateNew.message) {
     const message = stateNew.message?.(ctx)
     if (message) await ctx.reply(message)
   }
