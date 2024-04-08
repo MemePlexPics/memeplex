@@ -7,7 +7,7 @@ import {
   countPublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 
-export const channelSettingState: TState<EState> = {
+export const channelSettingState: TState<EState> = () => ({
   stateName: EState.CHANNEL_SETTINGS,
   menu: async (ctx) => {
     const db = await getDbConnection()
@@ -41,4 +41,4 @@ export const channelSettingState: TState<EState> = {
       buttons,
     }
   },
-}
+})
