@@ -7,10 +7,12 @@ export const enterToState = async <GStateName extends EState>(
   ctx: TTelegrafContext,
   state: TState<GStateName>,
 ) => {
-  ctx.session.state = state.stateName
-  if (state.menu) {
+  const stateNew = await state(ctx)
+  ctx.sessionInMemory = stateNew
+  ctx.session.state = stateNew.stateName
+  if (stateNew.menu) {
     const onTextOptions: Record<string, (ctx?: TTelegrafContext) => Promisable<unknown>> = {}
-    const { text: menuText, buttons: buttonsRaw } = await state.menu(ctx)
+    const { text: menuText, buttons: buttonsRaw } = await stateNew.menu(ctx)
     const buttons = buttonsRaw.map(buttonRow => buttonRow.map(button => {
       if (Array.isArray(button)) {
         const [buttonText, callback] = button
@@ -19,17 +21,17 @@ export const enterToState = async <GStateName extends EState>(
       }
       return button
     }))
-    state.onText = async (ctx, text) => {
+    ctx.sessionInMemory.onText = async (ctx, text) => {
       if (onTextOptions[text]) {
         await onTextOptions[text](ctx)
         return
       }
-      await state.onText(ctx, text)
+      await stateNew.onText(ctx, text)
     }
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
   }
-  if (state.inlineMenu) {
-    const inlineMenu = await state.inlineMenu(ctx)
+  if (stateNew.inlineMenu) {
+    const inlineMenu = await stateNew.inlineMenu(ctx)
     // @ts-expect-error remove_keyboard bullshit, questinable type unition
     const menu = await ctx.reply(inlineMenu.text, new Keyboard([], {
       one_time_keyboard: true,
@@ -38,7 +40,7 @@ export const enterToState = async <GStateName extends EState>(
     //   await ctx.deleteMessage(ctx.session.lastMenuId)
     // }
     // ctx.session.lastMenuId = menu.message_id
-    const message = state.message?.(ctx)
+    const message = stateNew.message?.(ctx)
     if (message) await ctx.reply(message)
   }
 }
