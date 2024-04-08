@@ -76,7 +76,7 @@ bot.start(async ctx => {
 // })
 
 bot.on('callback_query', async (ctx) => {
-  console.log(ctx)
+  console.log('cb', ctx)
   try {
     await handleCallbackQuery(ctx, elastic)
     await ctx.answerCbQuery()
@@ -90,7 +90,7 @@ bot.on('callback_query', async (ctx) => {
 })
 
 bot.on(message('text'), async (ctx) => {
-  console.log(ctx.sessionInMemory)
+  console.log('text', ctx)
   if (!ctx.sessionInMemory?.onText) return void
   await ctx.sessionInMemory.onText(ctx, ctx.update.message.text)
 })
