@@ -33,14 +33,14 @@ bot.use(
       channel: undefined,
       state: EState.MAIN,
     }),
-    store: MySQL<TTelegrafSession>({
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      database: process.env.DB_DATABASE,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      table: 'telegraf_publisher_sessions',
-    }),
+    // store: MySQL<TTelegrafSession>({
+    //   host: process.env.DB_HOST,
+    //   port: Number(process.env.DB_PORT),
+    //   database: process.env.DB_DATABASE,
+    //   user: process.env.DB_USER,
+    //   password: process.env.DB_PASSWORD,
+    //   table: 'telegraf_publisher_sessions',
+    // }),
   }),
 )
 
