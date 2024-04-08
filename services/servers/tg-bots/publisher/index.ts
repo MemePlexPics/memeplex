@@ -71,9 +71,9 @@ bot.start(async ctx => {
   await db.close()
 })
 
-bot.command('menu', async (ctx) => {
-  await enterToState(ctx, () => ctx.sessionInMemory)
-})
+// bot.command('menu', async (ctx) => {
+//   await enterToState(ctx, () => ctx.sessionInMemory)
+// })
 
 bot.on('callback_query', async (ctx) => {
   console.log(ctx)
@@ -102,10 +102,10 @@ const start = async () => {
     },
   })
   bot.telegram.setMyCommands([
-    {
-      command: 'menu',
-      description: 'Меню',
-    },
+    // {
+    //   command: 'menu',
+    //   description: 'Меню',
+    // },
   ])
   bot.telegram.setMyDescription(`
     Это description

@@ -35,9 +35,9 @@ export const enterToState = async <GStateName extends EState>(
   if (stateNew.inlineMenu) {
     const inlineMenu = await stateNew.inlineMenu(ctx)
     // @ts-expect-error remove_keyboard bullshit, questinable type unition
-    const menu = await ctx.reply(inlineMenu.text, new Keyboard([], {
+    const menu = await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).setOptions({
       one_time_keyboard: true,
-    }).make(inlineMenu.buttons).inline())
+    }).inline())
     // if (ctx.session.lastMenuId) {
     //   await ctx.deleteMessage(ctx.session.lastMenuId)
     // }
