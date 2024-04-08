@@ -9,7 +9,6 @@ export const enterToState = async <GStateName extends EState>(
 ) => {
   const stateNew = await state(ctx)
   ctx.sessionInMemory = stateNew
-  ctx.session.state = stateNew.stateName
   if (stateNew.menu) {
     const onTextOptions: Record<string, (ctx?: TTelegrafContext) => Promisable<unknown>> = {}
     const { text: menuText, buttons: buttonsRaw } = await stateNew.menu(ctx)
