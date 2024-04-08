@@ -5,7 +5,7 @@ import { enterToState } from '../utils'
 import { getDbConnection, getTgChannelName } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 
-export const addChannelState: TState<EState> = {
+export const addChannelState: TState<EState> = () => ({
   stateName: EState.ADD_CHANNEL,
   menu: async () => {
     return {
@@ -79,4 +79,4 @@ export const addChannelState: TState<EState> = {
       return
     }
   },
-}
+})

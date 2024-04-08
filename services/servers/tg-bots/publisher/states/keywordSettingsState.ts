@@ -10,7 +10,7 @@ import {
   selectPublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 
-export const keywordSettingsState: TState<EState> = {
+export const keywordSettingsState: TState<EState> = () => ({
   stateName: EState.KEYWORD_SETTINGS,
   menu: async (ctx) => {
     return {
@@ -58,4 +58,4 @@ export const keywordSettingsState: TState<EState> = {
     }
     throw new InfoMessage(`Unknown menu state: ${callback}`)
   },
-}
+})

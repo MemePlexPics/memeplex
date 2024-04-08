@@ -5,14 +5,9 @@ import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
-import { TState, TTelegrafContext, TTelegrafSession } from './types'
+import { TStateObject, TTelegrafContext, TTelegrafSession } from './types'
 import { enterToState, handleCallbackQuery, handleDistributionQueue } from './utils'
 import {
-  addChannelState,
-  addKeywordsState,
-  channelSelectState,
-  channelSettingState,
-  keywordSettingsState,
   mainState,
 } from './states'
 import {
@@ -49,14 +44,11 @@ bot.use(
   }),
 )
 
-const states: Record<EState, TState<EState>> = {
-  [EState.ADD_CHANNEL]: addChannelState,
-  [EState.ADD_KEYWORDS]: addKeywordsState,
-  [EState.CHANNEL_SELECT]: channelSelectState,
-  [EState.CHANNEL_SETTINGS]: channelSettingState,
-  [EState.KEYWORD_SETTINGS]: keywordSettingsState,
-  [EState.MAIN]: mainState,
-}
+bot.use(
+  session<TStateObject, TTelegrafContext, 'sessionInMemory'>({
+    property: 'sessionInMemory',
+  }),
+)
 
 bot.start(async ctx => {
   await ctx.reply(`
@@ -80,12 +72,12 @@ bot.start(async ctx => {
 })
 
 bot.command('menu', async ctx => {
-  await enterToState(ctx, mainState)
+  await enterToState(ctx, () => ctx.sessionInMemory)
 })
 
 bot.on('callback_query', async ctx => {
   try {
-    await handleCallbackQuery(ctx, elastic, states)
+    await handleCallbackQuery(ctx, elastic)
     await ctx.answerCbQuery()
   } catch (error) {
     if (error instanceof InfoMessage) {
@@ -97,7 +89,7 @@ bot.on('callback_query', async ctx => {
 })
 
 bot.on(message('text'), async ctx => {
-  await states[ctx.session.state].onText?.(ctx, ctx.update.message.text)
+  await ctx.sessionInMemory.onText?.(ctx, ctx.update.message.text)
 })
 
 const start = async () => {
