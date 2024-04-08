@@ -22,6 +22,7 @@ export const enterToState = async <GStateName extends EState>(
       return button
     }))
     ctx.sessionInMemory.onText = async (ctx, text) => {
+      console.log(text, onTextOptions)
       if (onTextOptions[text]) {
         await onTextOptions[text](ctx)
         return
