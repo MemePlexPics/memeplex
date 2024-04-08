@@ -71,11 +71,12 @@ bot.start(async ctx => {
   await db.close()
 })
 
-bot.command('menu', async ctx => {
+bot.command('menu', async (ctx) => {
   await enterToState(ctx, () => ctx.sessionInMemory)
 })
 
-bot.on('callback_query', async ctx => {
+bot.on('callback_query', async (ctx) => {
+  console.log(ctx)
   try {
     await handleCallbackQuery(ctx, elastic)
     await ctx.answerCbQuery()
@@ -88,7 +89,7 @@ bot.on('callback_query', async ctx => {
   }
 })
 
-bot.on(message('text'), async ctx => {
+bot.on(message('text'), async (ctx) => {
   await ctx.sessionInMemory.onText?.(ctx, ctx.update.message.text)
 })
 
