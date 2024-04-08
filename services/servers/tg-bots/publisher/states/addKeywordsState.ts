@@ -1,4 +1,3 @@
-import { Key } from 'telegram-keyboard'
 import { EState } from '../constants'
 import { TState } from '../types'
 import { enterToState } from '../utils'
@@ -11,13 +10,16 @@ import {
 
 export const addKeywordsState: TState<EState> = {
   stateName: EState.ADD_KEYWORDS,
-  message: () =>
-    'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке',
-  inlineMenu: () => ({
-    text: 'Добавление ключевых слов',
-    buttons: [Key.callback('⬅️ Назад', EState.CHANNEL_SETTINGS)],
-  }),
-  onCallback: ctx => enterToState(ctx, channelSettingState),
+  menu: async () => {
+    return {
+      text: 'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке',
+      buttons: [
+        [
+          ['⬅️ Назад', (ctx) => enterToState(ctx, channelSettingState)]
+        ],
+      ],
+    }
+  },
   onText: async (ctx, keywordsRaw) => {
     const db = await getDbConnection()
     const keywords = keywordsRaw
