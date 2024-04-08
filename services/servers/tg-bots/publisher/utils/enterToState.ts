@@ -1,6 +1,7 @@
 import { Keyboard } from 'telegram-keyboard'
 import { TState, TTelegrafContext } from '../types'
 import { EState } from '../constants'
+import { Promisable } from '../../../../../types'
 
 export const enterToState = async <GStateName extends EState>(
   ctx: TTelegrafContext,
@@ -18,12 +19,13 @@ export const enterToState = async <GStateName extends EState>(
     if (message) await ctx.reply(message)
   }
   if (state.menu) {
-    const onTextOptions: Record<string, (ctx?: TTelegrafContext) => Promise<unknown> | unknown> = {}
-    const buttons = (await state.menu(ctx)).map(buttonRow => buttonRow.map(button => {
+    const onTextOptions: Record<string, (ctx?: TTelegrafContext) => Promisable<unknown>> = {}
+    const { text: menuText, buttons: buttonsRaw } = await state.menu(ctx)
+    const buttons = buttonsRaw.map(buttonRow => buttonRow.map(button => {
       if (Array.isArray(button)) {
-        const [text, callback] = button
-        onTextOptions[text] = callback
-        return text
+        const [buttonText, callback] = button
+        onTextOptions[buttonText] = callback
+        return buttonText
       }
       return button
     }))
@@ -34,6 +36,6 @@ export const enterToState = async <GStateName extends EState>(
       }
       await state.onText(ctx, text)
     }
-    await ctx.reply('', Keyboard.make(buttons).reply())
+    await ctx.reply(menuText, Keyboard.make(buttons).reply())
   }
 }
