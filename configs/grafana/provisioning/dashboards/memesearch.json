@@ -253,214 +253,6 @@
       "type": "timeseries"
     },
     {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              }
-            ]
-          },
-          "unitScale": true
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 9,
-        "x": 0,
-        "y": 9
-      },
-      "id": 16,
-      "options": {
-        "minVizHeight": 200,
-        "minVizWidth": 200,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": false,
-        "sizing": "auto"
-      },
-      "pluginVersion": "10.3.3",
-      "targets": [
-        {
-          "dataset": "MadelineProto",
-          "datasource": "MySQL",
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN anonymity IN ('anonymous', 'elite') THEN 1 END) AS anonymous,\n  COUNT(CASE WHEN ocr_key IS NOT NULL THEN 1 END) as with_key,\n  COUNT(CASE WHEN availability = 1 AND anonymity IN ('anonymous', 'elite') THEN 1 END) AS available,\n  COUNT(CASE WHEN ocr_key IS NOT NULL AND availability = 1 AND anonymity IN ('anonymous', 'elite') THEN 1 END) as available_with_key\nFROM\n  MadelineProto.proxies;\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [
-                  {
-                    "name": "*",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "proxies"
-        }
-      ],
-      "title": "Proxies",
-      "type": "gauge"
-    },
-    {
-      "datasource": "MySQL",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unitScale": true
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "total"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 48
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "without_timeout"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 130
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "plan"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 80
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 5,
-        "x": 9,
-        "y": 9
-      },
-      "id": 15,
-      "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "frameIndex": 0,
-        "showHeader": true,
-        "sortBy": []
-      },
-      "pluginVersion": "10.3.3",
-      "targets": [
-        {
-          "dataset": "MadelineProto",
-          "datasource": "MySQL",
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  'free' AS plan,\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys\nUNION ALL\nSELECT\n  'pro' AS plan,\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys_pro;\n",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "name": "COUNT",
-                "parameters": [
-                  {
-                    "name": "*",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "ocr_keys"
-        }
-      ],
-      "title": "OCR keys",
-      "transformations": [],
-      "type": "table"
-    },
-    {
       "datasource": "ElasticSearch",
       "fieldConfig": {
         "defaults": {
@@ -484,7 +276,7 @@
       "gridPos": {
         "h": 5,
         "w": 4,
-        "x": 14,
+        "x": 0,
         "y": 9
       },
       "id": 25,
@@ -556,14 +348,14 @@
       "gridPos": {
         "h": 5,
         "w": 6,
-        "x": 18,
+        "x": 4,
         "y": 9
       },
       "id": 27,
       "options": {
         "colorMode": "value",
         "graphMode": "area",
-        "justifyMode": "auto",
+        "justifyMode": "center",
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
@@ -677,6 +469,222 @@
       "type": "stat"
     },
     {
+      "datasource": "MySQL",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 10,
+        "y": 9
+      },
+      "id": 38,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as Active FROM MadelineProto.channels WHERE availability = 1",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50,
+            "whereJsonTree": {
+              "children1": [
+                {
+                  "id": "baba8898-4567-489a-bcde-f18ebf3525b4",
+                  "properties": {
+                    "field": "availability",
+                    "fieldSrc": "field",
+                    "operator": "equal",
+                    "value": [
+                      "1"
+                    ],
+                    "valueSrc": [
+                      "value"
+                    ],
+                    "valueType": [
+                      "text"
+                    ]
+                  },
+                  "type": "rule"
+                }
+              ],
+              "id": "899a99ba-0123-4456-b89a-b18ebd06f214",
+              "type": "group"
+            },
+            "whereString": "availability = '1'"
+          },
+          "table": "channels"
+        },
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as Suggested FROM MadelineProto.channel_suggestions WHERE processed IS NULL",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Channels",
+      "type": "stat"
+    },
+    {
+      "datasource": "MySQL",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 9,
+        "x": 15,
+        "y": 9
+      },
+      "id": 16,
+      "options": {
+        "minVizHeight": 200,
+        "minVizWidth": 200,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": false,
+        "sizing": "auto"
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  COUNT(*) AS total,\n  COUNT(CASE WHEN anonymity IN ('anonymous', 'elite') THEN 1 END) AS anonymous,\n  COUNT(CASE WHEN ocr_key IS NOT NULL THEN 1 END) as with_key,\n  COUNT(CASE WHEN availability = 1 AND anonymity IN ('anonymous', 'elite') THEN 1 END) AS available,\n  COUNT(CASE WHEN ocr_key IS NOT NULL AND availability = 1 AND anonymity IN ('anonymous', 'elite') THEN 1 END) as available_with_key\nFROM\n  MadelineProto.proxies;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "proxies"
+        }
+      ],
+      "title": "Proxies",
+      "type": "gauge"
+    },
+    {
       "datasource": "Loki",
       "fieldConfig": {
         "defaults": {
@@ -771,7 +779,7 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 24,
+        "w": 19,
         "x": 0,
         "y": 14
       },
@@ -860,6 +868,133 @@
       "type": "table"
     },
     {
+      "datasource": "MySQL",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 48
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "without_timeout"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "plan"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 5,
+        "x": 19,
+        "y": 14
+      },
+      "id": 15,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "frameIndex": 0,
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  'free' AS plan,\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys\nUNION ALL\nSELECT\n  'pro' AS plan,\n  COUNT(*) AS total,\n  COUNT(CASE WHEN timeout IS NULL OR timeout < DATE_ADD(NOW(), INTERVAL 30 MINUTE) THEN 1 END) AS without_timeout,\n  MIN(timeout) AS oldest_timeout\nFROM\n  MadelineProto.ocr_keys_pro;\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "ocr_keys"
+        }
+      ],
+      "title": "OCR keys",
+      "transformations": [],
+      "type": "table"
+    },
+    {
       "collapsed": true,
       "gridPos": {
         "h": 1,
@@ -926,7 +1061,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 24
+            "y": 32
           },
           "id": 29,
           "options": {
@@ -1132,7 +1267,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 24
+            "y": 32
           },
           "id": 35,
           "options": {
@@ -1450,7 +1585,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 40
           },
           "id": 23,
           "options": {
@@ -1697,7 +1832,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 41
+            "y": 49
           },
           "id": 36,
           "options": {
@@ -1874,7 +2009,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 25
+            "y": 33
           },
           "id": 12,
           "options": {
@@ -2046,7 +2181,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 25
+            "y": 33
           },
           "id": 11,
           "options": {
@@ -2210,7 +2345,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 33
+            "y": 41
           },
           "id": 5,
           "options": {
@@ -2374,7 +2509,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 33
+            "y": 41
           },
           "id": 13,
           "options": {
@@ -2519,7 +2654,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 41
+            "y": 49
           },
           "id": 18,
           "options": {
@@ -2732,7 +2867,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 41
+            "y": 49
           },
           "id": 34,
           "options": {
@@ -2891,7 +3026,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 49
+            "y": 57
           },
           "id": 17,
           "options": {
@@ -3032,7 +3167,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 49
+            "y": 57
           },
           "id": 14,
           "options": {
@@ -3221,7 +3356,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 97
+            "y": 105
           },
           "id": 1,
           "options": {
@@ -3312,7 +3447,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 97
+            "y": 105
           },
           "id": 2,
           "options": {
@@ -3387,7 +3522,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 105
+            "y": 113
           },
           "id": 3,
           "options": {
@@ -3462,7 +3597,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 105
+            "y": 113
           },
           "id": 4,
           "options": {
@@ -3537,7 +3672,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 113
+            "y": 121
           },
           "id": 19,
           "options": {
@@ -3616,7 +3751,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 113
+            "y": 121
           },
           "id": 21,
           "options": {
@@ -3782,7 +3917,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 121
+            "y": 129
           },
           "id": 20,
           "options": {
@@ -3861,7 +3996,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 121
+            "y": 129
           },
           "id": 22,
           "options": {
