@@ -15,8 +15,9 @@
     "db/**/*",
     "scripts/**/*",
     "services/**/*",
-    "utils/**/*",
     "tests/**/*",
+    "types/**/*",
+    "utils/**/*",
     "drizzle.config.ts"
   ],
 }

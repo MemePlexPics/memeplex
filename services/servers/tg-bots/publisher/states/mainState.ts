@@ -25,7 +25,10 @@ export const mainState: TState<EState> = {
         await enterToState(ctx, addKeywordsState)
       }]])
     }
-    return buttons
+    return {
+      text: 'Меню подписок',
+      buttons,
+    }
   },
   // inlineMenu: async ctx => {
   //   const db = await getDbConnection()
