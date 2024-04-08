@@ -14,5 +14,7 @@ export const handleCallbackQuery = async (ctx: TTelegrafContext, elastic: Client
     await handleKeyAction(ctx, restCb[0], restCb[1])
     return
   }
-  await ctx.sessionInMemory.onCallback?.(ctx, callbackQuery)
+  if (ctx.sessionInMemory.onCallback) {
+    await ctx.sessionInMemory.onCallback(ctx, callbackQuery)
+  }
 }
