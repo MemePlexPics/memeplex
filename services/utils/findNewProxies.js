@@ -16,6 +16,10 @@ export const findNewProxies = async (logger) => {
         checkProxyCh = await amqp.createChannel();
         const mysql = await getMysqlClient();
         let notCheckedProxiesCount = proxies.length;
+        if (proxies.length) {
+            // TODO: get rid of the AMQP_CHECK_PROXY_CHANNEL?
+            await checkProxyCh.purgeQueue(AMQP_CHECK_PROXY_CHANNEL);
+        }
         for (const proxy of proxies) {
             const proxyString = `${proxy.ip}:${proxy.port}`;
             const found = await findExistedProxy(
@@ -31,8 +35,6 @@ export const findNewProxies = async (logger) => {
             const proxyData = Buffer.from(
                 JSON.stringify({ action: 'add', proxy }),
             );
-            // TODO: get rid of the AMQP_CHECK_PROXY_CHANNEL?
-            await checkProxyCh.purgeQueue(AMQP_CHECK_PROXY_CHANNEL);
             checkProxyCh.sendToQueue(AMQP_CHECK_PROXY_CHANNEL, proxyData, {
                 persistent: true,
             });
