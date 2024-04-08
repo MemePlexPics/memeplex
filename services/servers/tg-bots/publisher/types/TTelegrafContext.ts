@@ -1,6 +1,7 @@
 import { Context } from 'telegraf'
-import { TTelegrafSession } from '.'
+import { TStateObject, TTelegrafSession } from '.'
 
 export type TTelegrafContext = Context & {
   session: TTelegrafSession
+  sessionInMemory: TStateObject
 }

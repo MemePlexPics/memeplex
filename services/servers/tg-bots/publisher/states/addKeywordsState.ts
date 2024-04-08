@@ -8,7 +8,7 @@ import {
   insertPublisherSubscription,
 } from '../../../../../utils/mysql-queries'
 
-export const addKeywordsState: TState<EState> = {
+export const addKeywordsState: TState<EState> = () => ({
   stateName: EState.ADD_KEYWORDS,
   menu: async () => {
     return {
@@ -54,4 +54,4 @@ export const addKeywordsState: TState<EState> = {
     await enterToState(ctx, channelSettingState)
     return
   },
-}
+})
