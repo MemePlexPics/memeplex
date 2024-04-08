@@ -86,7 +86,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -186,7 +187,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -229,6 +231,23 @@
             "replace": false,
             "source": "Line"
           }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": [
+                "labels",
+                "Time",
+                "Line",
+                "tsNs",
+                "id",
+                "image_data",
+                "image_files",
+                "publisher_distibution"
+              ]
+            }
+          }
         }
       ],
       "type": "timeseries"
@@ -249,7 +268,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -275,7 +295,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -337,7 +357,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -399,7 +420,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -455,7 +476,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -480,7 +502,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "alias": "",
@@ -526,7 +548,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -553,7 +576,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -680,7 +703,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -765,7 +789,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.2.3",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": "Loki",
@@ -889,7 +913,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -901,7 +926,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 48
+            "y": 24
           },
           "id": 29,
           "options": {
@@ -1094,7 +1119,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -1106,7 +1132,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 48
+            "y": 24
           },
           "id": 35,
           "options": {
@@ -1274,7 +1300,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1423,7 +1450,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 56
+            "y": 32
           },
           "id": 23,
           "options": {
@@ -1520,7 +1547,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1669,7 +1697,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 65
+            "y": 41
           },
           "id": 36,
           "options": {
@@ -1788,7 +1816,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -1861,7 +1890,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -1959,7 +1988,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2032,7 +2062,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2122,7 +2152,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2195,7 +2226,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2285,7 +2316,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2358,7 +2390,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2429,7 +2461,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2502,7 +2535,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2593,7 +2626,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2714,7 +2748,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2799,7 +2833,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": [
               {
@@ -2872,7 +2907,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.2.3",
+          "pluginVersion": "10.3.3",
           "targets": [
             {
               "datasource": "Loki",
@@ -2988,7 +3023,8 @@
                     "value": 80
                   }
                 ]
-              }
+              },
+              "unitScale": true
             },
             "overrides": []
           },
@@ -3913,13 +3949,13 @@
     "list": []
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 59,
+  "version": 38,
   "weekStart": ""
 }
