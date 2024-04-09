@@ -9,7 +9,7 @@ const config: Configuration = {
     entry: {
         memesearch: './services/memesearch.ts',
         tgPublisherBot: './services/servers/tg-bots/publisher/index.ts',
-        tgPicsBot: './services/servers/tg-bots/pics/index.js',
+        tgPicsBot: './services/servers/tg-bots/pics/index.ts',
         web: './services/servers/web/index.js',
     },
     mode: isProduction ? 'production' : 'development',

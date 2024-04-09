@@ -1,1 +1,0 @@
-export { defaultSession } from './defaultSession';
