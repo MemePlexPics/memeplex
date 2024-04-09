@@ -70,6 +70,8 @@ export const rus = {
     channelList: 'Список каналов',
     telegramChannel: 'Телеграм канал',
     telegramBot: 'Бот',
+    addMemes: 'Добавить мемы',
+    leaveFeedback: 'Оставить отзыв',
     about: 'О нас',
   },
 }
