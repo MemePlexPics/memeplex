@@ -55,7 +55,7 @@ export const SidebarMenu = () => {
       external: true,
     },
     {
-      to: 'https://t.me/MemePlexBot',
+      to: 'https://t.me/MemePlexBot?start=website',
       text: t('page.telegramBot'),
       external: true,
     },
