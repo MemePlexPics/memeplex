@@ -72,6 +72,8 @@ export const eng: TI18nLocalization = {
     channelList: 'Channel list',
     telegramChannel: 'Telegram channel',
     telegramBot: 'Telegram bot',
+    addMemes: 'Add memes',
+    leaveFeedback: 'Leave feedback',
     about: 'About',
   },
 }
