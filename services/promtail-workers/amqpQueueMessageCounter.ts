@@ -1,6 +1,11 @@
 import amqplib from 'amqplib'
 
-import { AMQP_IMAGE_DATA_CHANNEL, AMQP_IMAGE_FILE_CHANNEL, AMQP_CHECK_PROXY_CHANNEL, AMQP_PUBLISHER_DISTRIBUTION_CHANNEL } from "../../constants"
+import {
+  AMQP_IMAGE_DATA_CHANNEL,
+  AMQP_IMAGE_FILE_CHANNEL,
+  AMQP_CHECK_PROXY_CHANNEL,
+  AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
+} from '../../constants'
 import { sendToLoki } from '../../utils'
 import { Logger } from 'winston'
 
