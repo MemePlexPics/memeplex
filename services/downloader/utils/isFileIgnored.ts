@@ -17,7 +17,7 @@ export const isFileIgnored = async (logger: Logger, destination: string, payload
   const url = buildImageUrl(payload)
   logger.verbose(`downloading: ${url} -> ${destination}`)
   // Check if a message has been deleted from a channel
-  const isEmpty = (await downloadFile(url, destination, logger)) === null
+  const isEmpty = (await downloadFile(url, destination)) === null
   if (isEmpty) return true
 
   // compute pHash
