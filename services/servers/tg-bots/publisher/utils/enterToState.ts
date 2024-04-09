@@ -10,10 +10,6 @@ export const enterToState = async <GStateName extends EState>(
   if (state.menu) {
     const { text: menuText, buttons } = await getMenuButtonsAndHandlers(ctx, state)
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
-  } else {
-    await ctx.editMessageReplyMarkup({
-      inline_keyboard: [],
-    })
   }
   if (state.inlineMenu) {
     const inlineMenu = await state.inlineMenu(ctx)
