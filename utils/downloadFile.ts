@@ -4,7 +4,7 @@ import { promisify } from 'util'
 
 const pipelineAsync = promisify(pipeline)
 
-export const downloadFile = async (url, dest) => {
+export const downloadFile = async (url: string, dest: string) => {
   const response = await fetch(url)
   if (
     response.statusText === 'Empty message' ||
