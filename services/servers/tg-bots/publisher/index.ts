@@ -5,9 +5,14 @@ import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
-import { TStateObject, TTelegrafContext, TTelegrafSession } from './types'
-import { enterToState, handleCallbackQuery, handleDistributionQueue } from './utils'
+import { TState, TTelegrafContext, TTelegrafSession } from './types'
+import { enterToState, getMenuButtonsAndHandlers, handleCallbackQuery, handleDistributionQueue } from './utils'
 import {
+  addChannelState,
+  addKeywordsState,
+  channelSelectState,
+  channelSettingState,
+  keywordSettingsState,
   mainState,
 } from './states'
 import {
@@ -33,23 +38,25 @@ bot.use(
       channel: undefined,
       state: EState.MAIN,
     }),
-    // store: MySQL<TTelegrafSession>({
-    //   host: process.env.DB_HOST,
-    //   port: Number(process.env.DB_PORT),
-    //   database: process.env.DB_DATABASE,
-    //   user: process.env.DB_USER,
-    //   password: process.env.DB_PASSWORD,
-    //   table: 'telegraf_publisher_sessions',
-    // }),
+    store: MySQL<TTelegrafSession>({
+      host: process.env.DB_HOST,
+      port: Number(process.env.DB_PORT),
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      table: 'telegraf_publisher_sessions',
+    }),
   }),
 )
 
-bot.use(
-  session<TStateObject, TTelegrafContext, 'sessionInMemory'>({
-    property: 'sessionInMemory',
-    defaultSession: () => ({})
-  }),
-)
+const states: Record<EState, TState> = {
+  [EState.ADD_CHANNEL]: addChannelState,
+  [EState.ADD_KEYWORDS]: addKeywordsState,
+  [EState.CHANNEL_SELECT]: channelSelectState,
+  [EState.CHANNEL_SETTINGS]: channelSettingState,
+  [EState.KEYWORD_SETTINGS]: keywordSettingsState,
+  [EState.MAIN]: mainState,
+}
 
 bot.start(async ctx => {
   await ctx.reply(`
@@ -79,7 +86,7 @@ bot.start(async ctx => {
 bot.on('callback_query', async (ctx) => {
   console.log('cb', ctx)
   try {
-    await handleCallbackQuery(ctx, elastic)
+    await handleCallbackQuery(ctx, elastic, states)
     await ctx.answerCbQuery()
   } catch (error) {
     if (error instanceof InfoMessage) {
@@ -91,10 +98,16 @@ bot.on('callback_query', async (ctx) => {
 })
 
 bot.on(message('text'), async (ctx) => {
-  console.log(ctx.update.message.text)
-  console.log(ctx.sessionInMemory)
-  if (!ctx.sessionInMemory?.onText) return void
-  await ctx.sessionInMemory.onText(ctx, ctx.update.message.text)
+  const text = ctx.update.message.text
+  if (states[ctx.session.state].menu) {
+    const { onTextHandlers } = await getMenuButtonsAndHandlers(ctx, states[ctx.session.state])
+    const handler = onTextHandlers[text]
+    if (handler) {
+      await handler(ctx, text)
+      return
+    }
+  }
+  await states[ctx.session.state].onText?.(ctx, text)
 })
 
 const start = async () => {
@@ -105,12 +118,12 @@ const start = async () => {
       port: 3082,
     },
   })
-  bot.telegram.setMyCommands([
-    // {
-    //   command: 'menu',
-    //   description: 'Меню',
-    // },
-  ])
+  // bot.telegram.setMyCommands([
+  //   {
+  //     command: 'menu',
+  //     description: 'Меню',
+  //   },
+  // ])
   bot.telegram.setMyDescription(`
     Это description
   `)
