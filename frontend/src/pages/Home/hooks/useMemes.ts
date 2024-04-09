@@ -111,7 +111,7 @@ export const useMemes = (query: string) => {
   useEffect(() => {
     if (request.isLoaded && request.data) {
       if (operation === EMemesOperation.INIT || operation === EMemesOperation.REINIT) {
-        if (request.data.totalPages > 1) {
+        if (query && request.data.totalPages > 1) {
           setNotification({
             text: t('notification.pagesLeft', { number: request.data.totalPages }),
             type: ENotificationType.OK,
