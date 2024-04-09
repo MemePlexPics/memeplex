@@ -47,14 +47,14 @@ const createSitemapForDay = async (entities, day) => {
     const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${entities
-    .map(
-        (entity) => `    <url>
+        .map(
+            (entity) => `    <url>
         <loc>https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${entity.id}</loc>
         <lastmod>${day}</lastmod>
         <changefreq>never</changefreq>
     </url>`,
-    )
-    .join('\n')}
+        )
+        .join('\n')}
 </urlset>`;
     fs.writeFileSync(`${PUBLIC_PATH}/sitemaps/${day}.xml`, sitemap);
 };
@@ -70,12 +70,12 @@ const createMainSitemap = (files) => {
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${['channelList', 'about'].map((path) => getPageUrlEntity(path)).join('\n')}
 ${files
-    .map(
-        (file) => `    <sitemap>
+        .map(
+            (file) => `    <sitemap>
         <loc>https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/sitemaps/${file}</loc>
     </sitemap>`,
-    )
-    .join('\n')}
+        )
+        .join('\n')}
 </sitemapindex>`;
     fs.writeFileSync(`${PUBLIC_PATH}/sitemap.xml`, sitemapIndex);
 };

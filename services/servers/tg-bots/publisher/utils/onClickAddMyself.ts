@@ -1,7 +1,7 @@
-import { getDbConnection } from "../../../../../utils"
-import { insertPublisherChannel } from "../../../../../utils/mysql-queries"
-import { getTelegramUser } from "../../utils"
-import { TTelegrafContext } from "../types"
+import { getDbConnection } from '../../../../../utils'
+import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
+import { getTelegramUser } from '../../utils'
+import { TTelegrafContext } from '../types'
 
 export const onClickAddMyself = async (ctx: TTelegrafContext) => {
   const username = getTelegramUser(ctx.from, '')

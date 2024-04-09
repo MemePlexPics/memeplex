@@ -10,11 +10,7 @@ export const addChannelState: TState = {
   menu: async () => {
     return {
       text: 'Введитие название канала в формате @name или https://t.me/name',
-      buttons: [
-        [
-          ['⬅️ Назад', (ctx) => enterToState(ctx, mainState)]
-        ],
-      ],
+      buttons: [[['⬅️ Назад', ctx => enterToState(ctx, mainState)]]],
     }
   },
   onText: async (ctx, text) => {

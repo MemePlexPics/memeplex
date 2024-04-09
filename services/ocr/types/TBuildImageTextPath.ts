@@ -1,4 +1,4 @@
-import { TMemeEntity } from "."
+import { TMemeEntity } from '.'
 
 export type TBuildImageTextPath = (
   params: TMemeEntity & {
