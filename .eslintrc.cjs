@@ -61,7 +61,7 @@ module.exports = {
             }
         }
     ],
-    ignorePatterns: ['vite.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],
+    ignorePatterns: ['webpack.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],
     rules: {
         indent: [
             'warn',
