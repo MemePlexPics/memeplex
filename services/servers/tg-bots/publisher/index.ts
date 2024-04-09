@@ -85,7 +85,7 @@ bot.start(async ctx => {
 })
 
 // bot.command('menu', async (ctx) => {
-//   await enterToState(ctx, () => ctx.sessionInMemory)
+//   await enterToState(ctx, () => states[ctx.session.state])
 // })
 
 bot.on('callback_query', async ctx => {
