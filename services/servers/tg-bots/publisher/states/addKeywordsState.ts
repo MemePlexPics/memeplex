@@ -13,11 +13,7 @@ export const addKeywordsState: TState = {
   menu: async () => {
     return {
       text: 'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке',
-      buttons: [
-        [
-          ['⬅️ Назад', (ctx) => enterToState(ctx, channelSettingState)]
-        ],
-      ],
+      buttons: [[['⬅️ Назад', ctx => enterToState(ctx, channelSettingState)]]],
     }
   },
   onText: async (ctx, keywordsRaw) => {

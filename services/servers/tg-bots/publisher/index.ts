@@ -6,7 +6,12 @@ import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
 import { EState } from './constants'
 import { TState, TTelegrafContext, TTelegrafSession } from './types'
-import { enterToState, getMenuButtonsAndHandlers, handleCallbackQuery, handleDistributionQueue } from './utils'
+import {
+  enterToState,
+  getMenuButtonsAndHandlers,
+  handleCallbackQuery,
+  handleDistributionQueue,
+} from './utils'
 import {
   addChannelState,
   addKeywordsState,
@@ -83,7 +88,7 @@ bot.start(async ctx => {
 //   await enterToState(ctx, () => ctx.sessionInMemory)
 // })
 
-bot.on('callback_query', async (ctx) => {
+bot.on('callback_query', async ctx => {
   console.log('cb', ctx)
   try {
     await handleCallbackQuery(ctx, elastic, states)
@@ -97,7 +102,7 @@ bot.on('callback_query', async (ctx) => {
   }
 })
 
-bot.on(message('text'), async (ctx) => {
+bot.on(message('text'), async ctx => {
   const text = ctx.update.message.text
   if (states[ctx.session.state].menu) {
     const { onTextHandlers } = await getMenuButtonsAndHandlers(ctx, states[ctx.session.state])

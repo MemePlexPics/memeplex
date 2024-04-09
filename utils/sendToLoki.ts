@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios from 'axios'
 
 export const sendToLoki = async (stream: { [name: string]: string }, messages: string[]) => {
   const datetime = Date.now() * 1000 * 1000
@@ -6,9 +6,7 @@ export const sendToLoki = async (stream: { [name: string]: string }, messages: s
     streams: [
       {
         stream,
-        values: messages.map(message => 
-          [String(datetime), message],
-        ),
+        values: messages.map(message => [String(datetime), message]),
       },
     ],
   })

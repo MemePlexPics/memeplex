@@ -7,7 +7,7 @@ import winston, { Logger } from 'winston'
 const loggers = winston.loggers
 
 const startServices = async (loggerMain: Logger) => {
-  serviceSettings.forEach((service) => {
+  serviceSettings.forEach(service => {
     const logger = getLogger(loggers, service.name)
     loopRetrying(
       async () => {

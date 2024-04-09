@@ -73,7 +73,7 @@ export const SidebarMenu = () => {
       to: 'https://github.com/MemePlexPics/memeplex',
       text: 'Github',
       external: true,
-      isHidden: !isMobile
+      isHidden: !isMobile,
     },
   ]
 
@@ -94,34 +94,32 @@ export const SidebarMenu = () => {
       {!isFolded ? (
         <div {...stylex.props(s.content)}>
           <ul {...stylex.props(s.list, s.menu)}>
-            {menuEntitites.map((entity) => {
+            {menuEntitites.map(entity => {
               if (entity.isHidden) return null
               return (
                 <li key={entity.text}>
-                  {entity.external
-                    ? (
-                      <Link
-                        to={entity.to}
-                        target='_blank'
-                        {...stylex.props(s.link)}
-                      >
-                        <span>{entity.text}</span>
-                        <FontAwesomeIcon
-                          icon={faArrowUpRightFromSquare}
-                          color='gray'
-                          size='xs'
-                        />
-                      </Link>
-                    )
-                    : (
-                      <NavLink
-                        to={entity.to}
-                        activeStyle={s.activeLink}
-                        stylexStyles={[s.link]}
-                      >
-                        <span>{entity.text}</span>
-                      </NavLink>
-                    )}
+                  {entity.external ? (
+                    <Link
+                      to={entity.to}
+                      target='_blank'
+                      {...stylex.props(s.link)}
+                    >
+                      <span>{entity.text}</span>
+                      <FontAwesomeIcon
+                        icon={faArrowUpRightFromSquare}
+                        color='gray'
+                        size='xs'
+                      />
+                    </Link>
+                  ) : (
+                    <NavLink
+                      to={entity.to}
+                      activeStyle={s.activeLink}
+                      stylexStyles={[s.link]}
+                    >
+                      <span>{entity.text}</span>
+                    </NavLink>
+                  )}
                 </li>
               )
             })}
