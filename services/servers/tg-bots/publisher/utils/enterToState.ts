@@ -1,47 +1,30 @@
 import { Keyboard } from 'telegram-keyboard'
 import { TState, TTelegrafContext } from '../types'
 import { EState } from '../constants'
-import { Promisable } from '../../../../../types'
+import { getMenuButtonsAndHandlers } from '.'
 
 export const enterToState = async <GStateName extends EState>(
   ctx: TTelegrafContext,
   state: TState<GStateName>,
 ) => {
-  const stateNew = await state(ctx)
-  ctx.sessionInMemory = stateNew
-  if (stateNew.menu) {
-    const onTextOptions: Record<string, (ctx?: TTelegrafContext) => Promisable<unknown>> = {}
-    const { text: menuText, buttons: buttonsRaw } = await stateNew.menu(ctx)
-    const buttons = buttonsRaw.map(buttonRow => buttonRow.map(button => {
-      if (Array.isArray(button)) {
-        const [buttonText, callback] = button
-        onTextOptions[buttonText] = callback
-        return buttonText
-      }
-      return button
-    }))
-    ctx.sessionInMemory.onText = async (ctx, text) => {
-      console.log(text, onTextOptions)
-      if (onTextOptions[text]) {
-        await onTextOptions[text](ctx)
-        return
-      }
-      if (stateNew.onText) {
-        await stateNew.onText(ctx, text)
-      }
-    }
+  if (state.menu) {
+    const { text: menuText, buttons } = await getMenuButtonsAndHandlers(ctx, state)
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
+  } else {
+    await ctx.editMessageReplyMarkup({
+      inline_keyboard: [],
+    })
   }
-  if (stateNew.inlineMenu) {
-    const inlineMenu = await stateNew.inlineMenu(ctx)
+  if (state.inlineMenu) {
+    const inlineMenu = await state.inlineMenu(ctx)
     const menu = await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).inline())
     if (ctx.session.lastMenuId) {
       await ctx.deleteMessage(ctx.session.lastMenuId)
     }
     ctx.session.lastMenuId = menu.message_id
   }
-  if (stateNew.message) {
-    const message = stateNew.message?.(ctx)
+  if (state.message) {
+    const message = await state.message?.(ctx)
     if (message) await ctx.reply(message)
   }
 }
