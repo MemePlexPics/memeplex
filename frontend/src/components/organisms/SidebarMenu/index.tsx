@@ -27,6 +27,56 @@ export const SidebarMenu = () => {
     if (isFoldable) setIsFolded(true)
   }, [location])
 
+  const menuEntitites: {
+    to: string
+    text: string
+    external?: boolean
+    isHidden?: boolean
+  }[] = [
+    {
+      to: '/',
+      text: t('page.home'),
+    },
+    {
+      to: '/admin',
+      text: t('page.admin'),
+    },
+    {
+      to: '/channelList',
+      text: t('page.channelList'),
+    },
+    {
+      to: '/about',
+      text: t('page.about'),
+    },
+    {
+      to: 'https://t.me/MemePlex_Pics',
+      text: t('page.telegramChannel'),
+      external: true,
+    },
+    {
+      to: 'https://t.me/MemePlexBot',
+      text: t('page.telegramBot'),
+      external: true,
+    },
+    {
+      to: 'https://t.me/MemePlexAddBot',
+      text: t('page.addMemes'),
+      external: true,
+    },
+    {
+      to: 'https://t.me/MemePlexAddBot',
+      text: t('page.leaveFeedback'),
+      external: true,
+    },
+    {
+      to: 'https://github.com/MemePlexPics/memeplex',
+      text: 'Github',
+      external: true,
+      isHidden: !isMobile
+    },
+  ]
+
   return (
     <div
       {...stylex.props(s.sidebar, isFolded ? null : s.isActive)}
@@ -44,85 +94,37 @@ export const SidebarMenu = () => {
       {!isFolded ? (
         <div {...stylex.props(s.content)}>
           <ul {...stylex.props(s.list, s.menu)}>
-            <li>
-              <NavLink
-                to='/'
-                activeStyle={s.activeLink}
-                stylexStyles={[s.link]}
-              >
-                {t('page.home')}
-              </NavLink>
-            </li>
-            {localStorage.getItem('isAdmin') === '1' ? (
-              <li>
-                <NavLink
-                  to='/admin'
-                  activeStyle={s.activeLink}
-                  stylexStyles={[s.link]}
-                >
-                  {t('page.admin')}
-                </NavLink>
-              </li>
-            ) : null}
-            <li>
-              <NavLink
-                to='/channelList'
-                activeStyle={s.activeLink}
-                stylexStyles={[s.link]}
-              >
-                {t('page.channelList')}
-              </NavLink>
-            </li>
-            <li>
-              <NavLink
-                to='/about'
-                activeStyle={s.activeLink}
-                stylexStyles={[s.link]}
-              >
-                {t('page.about')}
-              </NavLink>
-            </li>
-            <li>
-              <Link
-                to='https://t.me/MemePlex_Pics'
-                target='_blank'
-                {...stylex.props(s.link)}
-              >
-                <span>{t('page.telegramChannel')}</span>
-                <FontAwesomeIcon
-                  icon={faArrowUpRightFromSquare}
-                  color='gray'
-                />
-              </Link>
-            </li>
-            <li>
-              <Link
-                to='https://t.me/MemePlexBot'
-                target='_blank'
-                {...stylex.props(s.link)}
-              >
-                <span>{t('page.telegramBot')}</span>
-                <FontAwesomeIcon
-                  icon={faArrowUpRightFromSquare}
-                  color='gray'
-                />
-              </Link>
-            </li>
-            {isMobile ? (
-              <li>
-                <Link
-                  to='https://github.com/MemePlexPics/memeplex'
-                  target='_blank'
-                  {...stylex.props(s.link)}
-                >
-                  <span>Github</span>
-                  <FontAwesomeIcon
-                    icon={faArrowUpRightFromSquare}
-                    color='gray'
-                  />
-                </Link>
-              </li>
-            ) : null}
+            {menuEntitites.map((entity) => {
+              if (entity.isHidden) return null
+              return (
+                <li key={entity.text}>
+                  {entity.external
+                    ? (
+                      <Link
+                        to={entity.to}
+                        target='_blank'
+                        {...stylex.props(s.link)}
+                      >
+                        <span>{entity.text}</span>
+                        <FontAwesomeIcon
+                          icon={faArrowUpRightFromSquare}
+                          color='gray'
+                          size='xs'
+                        />
+                      </Link>
+                    )
+                    : (
+                      <NavLink
+                        to={entity.to}
+                        activeStyle={s.activeLink}
+                        stylexStyles={[s.link]}
+                      >
+                        <span>{entity.text}</span>
+                      </NavLink>
+                    )}
+                </li>
+              )
+            })}
           </ul>
           <div {...stylex.props(s.languageSelectorContainer)}>
             <label>Language:</label>
