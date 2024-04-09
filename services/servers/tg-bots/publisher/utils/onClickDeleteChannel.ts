@@ -1,6 +1,9 @@
-import { getDbConnection } from "../../../../../utils"
-import { deletePublisherChannelById, deletePublisherSubscriptionsByChannelId } from "../../../../../utils/mysql-queries"
-import { TTelegrafContext } from "../types"
+import { getDbConnection } from '../../../../../utils'
+import {
+  deletePublisherChannelById,
+  deletePublisherSubscriptionsByChannelId,
+} from '../../../../../utils/mysql-queries'
+import { TTelegrafContext } from '../types'
 
 export const onClickDeleteChannel = async (ctx: TTelegrafContext) => {
   const db = await getDbConnection()

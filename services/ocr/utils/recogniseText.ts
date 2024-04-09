@@ -15,10 +15,7 @@ export const recogniseText = async (msg: GetMessage, logger: Logger) => {
   const texts: Record<string, string> = {}
 
   for (const language of payload.languages) {
-    const rawText = await recogniseTextOcrSpace(
-      payload.fileName,
-      language,
-    )
+    const rawText = await recogniseTextOcrSpace(payload.fileName, language)
 
     if (rawText) {
       texts[language] = rawText
@@ -26,9 +23,7 @@ export const recogniseText = async (msg: GetMessage, logger: Logger) => {
       await fs.writeFile(textFile, rawText)
       logger.verbose(`recognized text: ${rawText}`)
     } else {
-      logger.verbose(
-        `text wasn't recognized: ${payload.fileName}`,
-      )
+      logger.verbose(`text wasn't recognized: ${payload.fileName}`)
     }
   }
 
