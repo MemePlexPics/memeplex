@@ -7,6 +7,7 @@ export const enterToState = async <GStateName extends EState>(
   ctx: TTelegrafContext,
   state: TState<GStateName>,
 ) => {
+  ctx.session.state = state.stateName
   if (state.menu) {
     const { text: menuText, buttons } = await getMenuButtonsAndHandlers(ctx, state)
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
@@ -14,9 +15,6 @@ export const enterToState = async <GStateName extends EState>(
   if (state.inlineMenu) {
     const inlineMenu = await state.inlineMenu(ctx)
     const menu = await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).inline())
-    if (ctx.session.lastMenuId) {
-      await ctx.deleteMessage(ctx.session.lastMenuId)
-    }
     ctx.session.lastMenuId = menu.message_id
   }
   if (state.message) {
