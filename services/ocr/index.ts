@@ -10,7 +10,7 @@ import { handlePublisherDistribution } from './utils'
 import { Logger } from 'winston'
 
 // Listens for messages containing images, outputs messages containing OCR'd text
-export const ocr = async logger => {
+export const ocr = async (logger: Logger) => {
   let elastic: Client,
     amqp: Connection,
     receiveImageFileCh: Channel,
@@ -20,8 +20,8 @@ export const ocr = async logger => {
   try {
     elastic = await getElasticClient()
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
-    let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void
-    ;[receiveImageFileCh, receiveImageFileTimeout, receiveImageFileClearTimeout] =
+    let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void;
+    [receiveImageFileCh, receiveImageFileTimeout, receiveImageFileClearTimeout] =
       await getAmqpQueue(amqp, AMQP_IMAGE_FILE_CHANNEL)
     botPublisherDistributionCh = await amqp.createChannel()
 
@@ -33,7 +33,12 @@ export const ocr = async logger => {
       }
       receiveImageFileTimeout(600_000, logger, msg)
       const { payload, texts } = await recogniseText(msg, logger)
-      if (texts.eng && (await blackListChecker(texts.eng))) {
+      if (!texts.eng) {
+        receiveImageFileCh.ack(msg)
+        return
+      }
+      const didStopWordsCheckPassed = await blackListChecker(texts.eng)
+      if (didStopWordsCheckPassed) {
         const document = getNewDoc(payload, texts)
         const meme = await elastic.index({
           index: ELASTIC_INDEX,
@@ -44,6 +49,8 @@ export const ocr = async logger => {
         } catch (error) {
           await logError(logger, error)
         }
+      } else {
+        logger.verbose(`Declined (stop words): ${payload.fileName}`)
       }
       receiveImageFileCh.ack(msg)
     }

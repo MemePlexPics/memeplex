@@ -7,7 +7,7 @@ import {
   countPublisherChannelsByUserId,
 } from '../../../../../utils/mysql-queries'
 
-export const mainState: TState<EState> = () => ({
+export const mainState: TState = {
   stateName: EState.MAIN,
   menu: async (ctx) => {
     const db = await getDbConnection()
@@ -27,4 +27,4 @@ export const mainState: TState<EState> = () => ({
       buttons,
     }
   },
-})
+}
