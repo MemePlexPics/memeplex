@@ -1,11 +1,7 @@
 import { atomWithStorage } from 'jotai/utils'
 
-const navigatorLanguage = navigator.language
-  ? navigator.language.split('-')[0]
-  : undefined
-const defaultValue = navigatorLanguage === 'ru'
-  ? 'ru'
-  : 'en'
+const navigatorLanguage = navigator.language ? navigator.language.split('-')[0] : undefined
+const defaultValue = navigatorLanguage === 'ru' ? 'ru' : 'en'
 
 export const languageAtom = atomWithStorage<'ru' | 'en'>(
   'language',

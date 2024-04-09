@@ -17,7 +17,6 @@ export { checkProxyAnonimity } from './checkProxyAnonimity'
 export { getDbConnection } from './getDbConnection'
 export { sendToLoki } from './sendToLoki'
 
-
 // TODO: split into files?
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
