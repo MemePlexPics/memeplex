@@ -24,6 +24,7 @@ export const handlePublisherDistribution = async (
   const fuse = new Fuse([document.eng], fuseOptions)
   for (const { keyword } of keywords) {
     const results = fuse.search(keyword)
+    console.log(keyword, document.eng)
     if (!results.length) return
     const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
     for (const { channelId } of subscriptions) {

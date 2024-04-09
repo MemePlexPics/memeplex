@@ -11,7 +11,10 @@ describe('Fuse.js tests', () => {
   let fuse: Fuse<string>
 
   beforeAll(() => {
-    fuse = new Fuse(fuseMock, fuseOptions)
+    fuse = new Fuse(fuseMock, {
+      ...fuseOptions,
+      includeScore: true,
+    })
   })
 
   testCases.forEach(({ query, expected }) => {
