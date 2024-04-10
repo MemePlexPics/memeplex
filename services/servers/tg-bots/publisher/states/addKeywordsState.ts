@@ -1,6 +1,6 @@
 import { EState } from '../constants'
 import { TState } from '../types'
-import { enterToState } from '../utils'
+import { enterToState, logUserAction } from '../utils'
 import { channelSettingState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import {
@@ -17,6 +17,9 @@ export const addKeywordsState: TState = {
     }
   },
   onText: async (ctx, keywordsRaw) => {
+    const logEntity = {
+      state: EState.ADD_CHANNEL,
+    }
     const db = await getDbConnection()
     const keywords = keywordsRaw
       .split('\n')
@@ -47,6 +50,11 @@ export const addKeywordsState: TState = {
     await db.close()
 
     await ctx.reply('Ключевые слова добавлены!')
+    logUserAction(ctx.from, {
+      ...logEntity,
+      info: `Added`,
+      keywords: keywordValuesNotEmpty.join(', '),
+    })
     await enterToState(ctx, channelSettingState)
     return
   },
