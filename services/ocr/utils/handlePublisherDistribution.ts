@@ -42,8 +42,8 @@ export const handlePublisherDistribution = async (
           channelIds: [],
         }
       queue[userId].channelIds.push(channelId)
-      queue[userId].keywords.push(keyword)
     }
+    queue[userId].keywords.push(keyword)
   }
   await db.close()
 
