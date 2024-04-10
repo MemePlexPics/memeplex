@@ -53,7 +53,7 @@ export const addKeywordsState: TState = {
     logUserAction(ctx.from, {
       ...logEntity,
       info: `Added`,
-      keywords: keywordValuesNotEmpty.join(', '),
+      keywords: keywordValuesNotEmpty.map(keywordRow => keywordRow.keyword).join(', '),
     })
     await enterToState(ctx, channelSettingState)
     return
