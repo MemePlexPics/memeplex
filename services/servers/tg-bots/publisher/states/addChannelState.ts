@@ -2,7 +2,7 @@ import { addKeywordsState, mainState } from '.'
 import { EState } from '../constants'
 import { TState } from '../types'
 import { enterToState, logUserAction } from '../utils'
-import { getDbConnection, getTgChannelName, logError } from '../../../../../utils'
+import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { ChatFromGetChat } from '@telegraf/types'
 
@@ -62,12 +62,9 @@ export const addChannelState: TState = {
         return isOurUserAnAdmin && isOurBotAnAdmin
       })
     } catch (error) {
-      if (error.message === 'member list is inaccessible') {
-        await ctx.reply(`Необходимо добавить бота в канал и предоставить админ-права`)
-        return
-      }
-      await logError(global.logger, error)
-      throw error
+      await ctx.reply(`Необходимо добавить бота в канал и предоставить админ-права`)
+      await logInfo(global.logger, error)
+      return
     }
     if (!isOurUserAnAdmin) {
       await ctx.reply(`
