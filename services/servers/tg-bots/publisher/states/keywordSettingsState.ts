@@ -1,7 +1,7 @@
 import { Key } from 'telegram-keyboard'
 import { EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
-import { enterToState } from '../utils'
+import { enterToState, logUserAction } from '../utils'
 import { mainState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
@@ -66,6 +66,11 @@ export const keywordSettingsState: TState = {
         await deletePublisherSubscriptionsByKeyword(db, keyword)
         await deletePublisherKeyword(db, keyword)
         await db.close()
+        logUserAction(ctx.from, {
+          state: EState.KEYWORD_SETTINGS,
+          error: `Deleted`,
+          keyword,
+        })
       }
       await enterToState(ctx, keywordSettingsState)
       return
