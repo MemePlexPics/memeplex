@@ -84,11 +84,11 @@ bot.start(async ctx => {
   })
   await db.close()
   logUserAction(ctx.from, {
-    start: ctx.payload || 1
+    start: ctx.payload || 1,
   })
 })
 
-bot.command('menu', async (ctx) => {
+bot.command('menu', async ctx => {
   await enterToState(ctx, states[ctx.session.state])
 })
 
