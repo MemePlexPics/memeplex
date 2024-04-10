@@ -4,6 +4,7 @@ import { TState } from '../types'
 import { enterToState, logUserAction } from '../utils'
 import { getDbConnection, getTgChannelName } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
+import { ChatFromGetChat } from '@telegraf/types'
 
 export const addChannelState: TState = {
   stateName: EState.ADD_CHANNEL,
@@ -29,7 +30,13 @@ export const addChannelState: TState = {
       })
       return
     }
-    const chat = await ctx.telegram.getChat(`@${channel}`)
+    let chat: ChatFromGetChat
+    try {
+      chat = await ctx.telegram.getChat(`@${channel}`)
+    } catch (error) {
+      await ctx.reply('Убедитесь в корректности введенного названия')
+      return
+    }
     if (chat.type === 'private') {
       await ctx.reply(`
                 Для того, чтобы подписаться самому, выберите в главном меню кнопку "Добавить себя".
