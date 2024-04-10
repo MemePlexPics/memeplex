@@ -61,7 +61,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
           reply_markup: {
             inline_keyboard: buttons,
           },
-          caption: `[MemePlex](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId}) ${originalLink}`,
+          caption: `[[MemePlex](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId})] ${originalLink}`,
         },
       )
       distributionCh.ack(msg)
