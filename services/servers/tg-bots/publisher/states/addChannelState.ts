@@ -2,7 +2,7 @@ import { addKeywordsState, mainState } from '.'
 import { EState } from '../constants'
 import { TState } from '../types'
 import { enterToState, logUserAction } from '../utils'
-import { getDbConnection, getTgChannelName } from '../../../../../utils'
+import { getDbConnection, getTgChannelName, logError } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { ChatFromGetChat } from '@telegraf/types'
 
@@ -49,17 +49,26 @@ export const addChannelState: TState = {
       })
       return
     }
-    const administrators = await ctx.telegram.getChatAdministrators(`@${channel}`)
     let isOurUserAnAdmin: boolean
     let isOurBotAnAdmin: boolean
-    administrators.some(admin => {
-      if (!isOurUserAnAdmin && admin.user.id === ctx.from.id) {
-        isOurUserAnAdmin = true
-      } else if (!isOurBotAnAdmin && admin.user.id === ctx.botInfo.id) {
-        isOurBotAnAdmin = true
+    try {
+      const administrators = await ctx.telegram.getChatAdministrators(`@${channel}`)
+      administrators.some(admin => {
+        if (!isOurUserAnAdmin && admin.user.id === ctx.from.id) {
+          isOurUserAnAdmin = true
+        } else if (!isOurBotAnAdmin && admin.user.id === ctx.botInfo.id) {
+          isOurBotAnAdmin = true
+        }
+        return isOurUserAnAdmin && isOurBotAnAdmin
+      })
+    } catch (error) {
+      if (error.message === 'member list is inaccessible') {
+        await ctx.reply(`Необходимо добавить бота в канал и предоставить админ-права`)
+        return
       }
-      return isOurUserAnAdmin && isOurBotAnAdmin
-    })
+      await logError(global.logger, error)
+      throw error
+    }
     if (!isOurUserAnAdmin) {
       await ctx.reply(`
                 Добавить подписку на канал может только администратор канала.
