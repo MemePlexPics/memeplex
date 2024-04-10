@@ -26,6 +26,7 @@ export const handlePublisherDistribution = async (
     const results = fuse.search(keyword)
     if (!results.length) continue
     const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
+    const keywordsSet = new Set<string>()
     for (const { channelId } of subscriptions) {
       const [channel] = await selectPublisherChannelById(db, channelId)
       const [user] = await selectPublisherUserById(db, channel.userId)
@@ -42,8 +43,9 @@ export const handlePublisherDistribution = async (
           channelIds: [],
         }
       queue[userId].channelIds.push(channelId)
+      keywordsSet.add(keyword)
     }
-    queue[userId].keywords.push(keyword)
+    if (keywordsSet.size) queue[userId].keywords = [...keywordsSet]
   }
   await db.close()
 
