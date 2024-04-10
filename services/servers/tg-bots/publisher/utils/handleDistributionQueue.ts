@@ -57,11 +57,11 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
           source: await fs.readFile(payload.document.fileName),
         },
         {
-          parse_mode: 'Markdown',
+          parse_mode: 'MarkdownV2',
           reply_markup: {
             inline_keyboard: buttons,
           },
-          caption: `[\\[MemePlex\\]](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId}) ${originalLink}`,
+          caption: `[(MemePlex)](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId}) ${originalLink}`,
         },
       )
       distributionCh.ack(msg)
