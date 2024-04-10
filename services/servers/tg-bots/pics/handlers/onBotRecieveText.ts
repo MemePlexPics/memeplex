@@ -4,7 +4,8 @@ import { Markup } from 'telegraf'
 import { MAX_SEARCH_QUERY_LENGTH, TG_BOT_PAGE_SIZE } from '../../../../../constants'
 import { logError } from '../../../../../utils'
 import { searchMemes } from '../../../utils/searchMemes'
-import { getBotAnswerString, logUserAction, resetSearchSession } from '../utils'
+import { logUserAction, resetSearchSession } from '../utils'
+import { getBotAnswerString } from '../../utils'
 
 export const onBotRecieveText = async (ctx, client, logger) => {
   try {
