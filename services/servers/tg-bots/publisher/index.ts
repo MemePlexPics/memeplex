@@ -11,6 +11,7 @@ import {
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
   handleDistributionQueue,
+  logUserAction,
 } from './utils'
 import {
   addChannelState,
@@ -82,6 +83,9 @@ bot.start(async ctx => {
     timestamp: Date.now() / 1000,
   })
   await db.close()
+  logUserAction(ctx.from, {
+    start: ctx.payload || 1
+  })
 })
 
 // bot.command('menu', async (ctx) => {
