@@ -88,9 +88,9 @@ bot.start(async ctx => {
   })
 })
 
-// bot.command('menu', async (ctx) => {
-//   await enterToState(ctx, () => states[ctx.session.state])
-// })
+bot.command('menu', async (ctx) => {
+  await enterToState(ctx, states[ctx.session.state])
+})
 
 bot.on('callback_query', async ctx => {
   console.log('cb', ctx)
@@ -139,12 +139,12 @@ const start = async () => {
       port: 3082,
     },
   })
-  // bot.telegram.setMyCommands([
-  //   {
-  //     command: 'menu',
-  //     description: 'Меню',
-  //   },
-  // ])
+  bot.telegram.setMyCommands([
+    {
+      command: 'menu',
+      description: 'Вызвать текущее меню',
+    },
+  ])
   bot.telegram.setMyDescription(`
     Это description
   `)
