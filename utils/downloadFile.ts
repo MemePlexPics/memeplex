@@ -8,7 +8,9 @@ export const downloadFile = async (url: string, dest: string) => {
   const response = await fetch(url)
   if (
     response.statusText === 'Empty message' ||
-    response.statusText.includes('Undefined array key "sizes"') // f.e. https://t.me/bonedpizza/118877
+    response.statusText === 'Undefined array key "sizes"' || // f.e. https://t.me/bonedpizza/118877
+    // the channel had to be disabled, but the images were there
+    response.statusText === 'This peer is not present in the internal peer database'
   )
     return null
   if (!response.ok) throw new Error(`Failed to fetch ${url}: ${response.statusText}`)
