@@ -35,6 +35,8 @@ export const handlePublisherDistribution = async (
           memeId,
           document: {
             fileName: document.fileName,
+            channelName: document.channelName,
+            messageId: document.messageId,
           },
           keywords: [],
           channelIds: [],
