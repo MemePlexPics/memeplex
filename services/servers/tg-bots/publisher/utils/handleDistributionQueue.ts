@@ -13,6 +13,7 @@ import { TPublisherDistributionQueueMsg } from '../../../../ocr/types'
 import fs from 'fs/promises'
 import { Key } from 'telegram-keyboard'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
+import { getBotAnswerString } from '../../utils'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -46,6 +47,10 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
     )
 
     try {
+      const originalLink = getBotAnswerString({
+        channel: payload.document.channelName,
+        message: String(payload.document.messageId),
+      })
       await bot.telegram.sendPhoto(
         payload.userId,
         {
@@ -55,6 +60,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
           reply_markup: {
             inline_keyboard: buttons,
           },
+          caption: `[MemePlex](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId}) ${originalLink}`,
         },
       )
       distributionCh.ack(msg)

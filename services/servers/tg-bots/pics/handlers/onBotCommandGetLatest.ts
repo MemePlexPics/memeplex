@@ -4,7 +4,8 @@ import process from 'process'
 import { TG_BOT_PAGE_SIZE } from '../../../../../constants'
 import { logError } from '../../../../../utils'
 import { getLatestMemes } from '../../../utils'
-import { getBotAnswerString, logUserAction } from '../utils'
+import { logUserAction } from '../utils'
+import { getBotAnswerString } from '../../utils'
 
 export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
   try {
