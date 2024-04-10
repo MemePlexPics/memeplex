@@ -1,6 +1,8 @@
+import { logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
+import { EState } from '../constants'
 import { TTelegrafContext } from '../types'
 
 export const onClickAddMyself = async (ctx: TTelegrafContext) => {
@@ -20,4 +22,8 @@ export const onClickAddMyself = async (ctx: TTelegrafContext) => {
     timestamp,
   })
   await db.close()
+  logUserAction(ctx.from, {
+    state: EState.MAIN,
+    error: `Added himself`,
+  })
 }

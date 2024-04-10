@@ -34,7 +34,7 @@ import { insertPublisherUser } from '../../../../utils/mysql-queries'
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, {
   telegram: { webhookReply: false },
 })
-const logger = getLogger('tg-publisher-bot')
+global.logger = getLogger('tg-publisher-bot')
 const elastic = await getElasticClient()
 
 bot.use(
@@ -95,9 +95,9 @@ bot.on('callback_query', async ctx => {
     await ctx.answerCbQuery()
   } catch (error) {
     if (error instanceof InfoMessage) {
-      await logInfo(logger, error)
+      await logInfo(global.logger, error)
     } else {
-      await logError(logger, error, { ctx })
+      await logError(global.logger, error, { ctx })
     }
   }
 })
@@ -113,6 +113,18 @@ bot.on(message('text'), async ctx => {
     }
   }
   await states[ctx.session.state].onText?.(ctx, text)
+})
+
+bot.catch(async (err, ctx) => {
+  const error =
+    err instanceof Error
+      ? err
+      : {
+        name: 'Unknown error',
+        message: JSON.stringify(err),
+      }
+  await logError(global.logger, error, { ctx: JSON.stringify(ctx.update) })
+  bot.stop()
 })
 
 const start = async () => {
@@ -135,13 +147,13 @@ const start = async () => {
   bot.telegram.setMyShortDescription(`
     Это short description
   `)
-  logger.info({ info: 'Telegram bot started' })
+  global.logger.info({ info: 'Telegram bot started' })
 
   process.once('SIGINT', () => bot.stop('SIGINT'))
   process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
-  await loopRetrying(async () => handleDistributionQueue(bot, logger), {
-    logger,
+  await loopRetrying(async () => handleDistributionQueue(bot, global.logger), {
+    logger: global.logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
     catchDelayMs: LOOP_RETRYING_DELAY,
   })
