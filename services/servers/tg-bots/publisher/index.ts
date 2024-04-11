@@ -1,6 +1,7 @@
 import process from 'process'
 import 'dotenv/config'
 import { Telegraf, session } from 'telegraf'
+import rateLimit from 'telegraf-ratelimit'
 import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../utils'
@@ -52,6 +53,17 @@ bot.use(
       password: process.env.DB_PASSWORD,
       table: 'telegraf_publisher_sessions',
     }),
+  }),
+)
+
+bot.use(
+  rateLimit({
+    window: 3_000,
+    limit: 3,
+    onLimitExceeded: async ctx => {
+      logUserAction(ctx.from, { info: 'exceeded rate limit' })
+      await ctx.reply('Wait a few seconds before trying again')
+    },
   }),
 )
 
