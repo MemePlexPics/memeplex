@@ -10,7 +10,7 @@ export const fuseSearch = (list: readonly string[], query: string) => {
   }
 
   let processedQuery = query
-  if (query.length >= 7 && /^[a-zА-Я]+$/i.test(query)) {
+  if (query.length >= 10 && /^[a-zА-Я]+$/i.test(query)) {
     const trimmedQuery = removeLastSyllable(query)
     if (trimmedQuery && trimmedQuery !== query) {
       processedQuery = trimmedQuery
