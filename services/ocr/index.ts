@@ -20,8 +20,8 @@ export const ocr = async (logger: Logger) => {
   try {
     elastic = await getElasticClient()
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
-    let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void
-    ;[receiveImageFileCh, receiveImageFileTimeout, receiveImageFileClearTimeout] =
+    let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void;
+    [receiveImageFileCh, receiveImageFileTimeout, receiveImageFileClearTimeout] =
       await getAmqpQueue(amqp, AMQP_IMAGE_FILE_CHANNEL)
     botPublisherDistributionCh = await amqp.createChannel()
 

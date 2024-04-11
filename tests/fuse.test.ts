@@ -1,27 +1,18 @@
-import Fuse from 'fuse.js'
-import { fuseOptions } from '../constants'
-import { fuseMock } from './constants'
-
-const testCases: { query: string; expected: string[] }[] = [
-  { query: 'марина', expected: [fuseMock[0], fuseMock[1]] },
-  { query: 'beware of the pipeline', expected: [fuseMock[2]] },
-]
+import { fuseCases, fuseMock } from './constants'
+import { fuseSearch } from '../utils'
 
 describe('Fuse.js tests', () => {
-  let fuse: Fuse<string>
-
-  beforeAll(() => {
-    fuse = new Fuse(fuseMock, {
-      ...fuseOptions,
-      includeScore: true,
-    })
-  })
-
-  testCases.forEach(({ query, expected }) => {
+  fuseCases.forEach(({ query, expected, notExpected }) => {
     test(`Search for "${query}"`, () => {
-      const results = fuse.search(query)
+      const results = fuseSearch(fuseMock, query)
+      console.log(query, results)
       const found = results.map(result => result.item)
-      expect(found).toEqual(expected)
+      if (expected) {
+        expect(found).toEqual(expected)
+      }
+      if (notExpected) {
+        expect(found).not.toEqual(notExpected)
+      }
     })
   })
 })
