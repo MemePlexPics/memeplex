@@ -54,6 +54,24 @@ Send me a text to search memes by caption.`,
   logUserAction(ctx.from, { start: ctx.payload || 1 }, logger)
 })
 
+bot.command('help', async ctx => {
+  await ctx.reply(`
+Этот бот ищет мемы по тексту с картинки. Просто отправьте свой запрос.
+Также работает в группах: введите @MemePlexBot и затем фразу.
+
+- Канал с анонсами: @memeplex_pics
+- Сайт: https://memeplex.pics
+- Добавить мем: @MemePlexAddBot
+
+Как искать?
+
+- Лучше работает запрос по ключевым словам
+- Не нужно описывать картинку - в индекс попадает только сам текст, а не описание
+- Не нужно добавлять "мем", "картинка" и т.п.
+- Если нет буквального совпадения по фразе, перестановка слов местами не имеет эффекта
+  `)
+})
+
 bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true, client, logger))
 
 bot.command('suggest_channel', ctx => onBotCommandSuggestChannel(ctx, logger))
@@ -109,6 +127,20 @@ const start = async () => {
       port: 3081,
     },
   })
+  bot.telegram.setMyCommands([
+    {
+      command: 'get_latest',
+      description: 'Загрузить последние мемы',
+    },
+    {
+      command: 'suggest_channel',
+      description: 'Предложить канал',
+    },
+    {
+      command: 'help',
+      description: 'Вывести справку',
+    },
+  ])
   logger.info({ info: 'Telegram bot started' })
 
   process.once('SIGINT', () => bot.stop('SIGINT'))
