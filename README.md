@@ -57,7 +57,7 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 - Set up RabbitMQ - set `AMQP_ENDPOINT` in `.env`
 - Set `ELASTIC_ENDPOINT` in `.env`
 - Run `docker compose up -d` to start docker services
-- Run `bash ./scripts/elastic-certs.sh` to create a self-signed TLS certificate for ElasticSearch
+- Run `bash ./scripts/elastic-certs.sh "8.11.3"` to create a self-signed TLS certificate for ElasticSearch
 - Run `node ./scripts/create-index.js` to create an ElasticSearch index
 - Run `npm run migrations:run` to create MySQL tables
 - Run `npm run build:front` to build static frontend files
