@@ -38,7 +38,9 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
     channels.forEach(channel => {
       if (channel.id === Number(payload.userId)) return null
-      buttons.push([Key.callback(`➡️ Отправить в @${channel.username}`, `post|${channel.id}|${payload.memeId}`)])
+      buttons.push([
+        Key.callback(`➡️ Отправить в @${channel.username}`, `post|${channel.id}|${payload.memeId}`),
+      ])
     })
 
     payload.keywords.forEach(keyword =>
