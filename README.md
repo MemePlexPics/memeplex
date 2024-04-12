@@ -58,7 +58,7 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 - Set `ELASTIC_ENDPOINT` in `.env`
 - Run `docker compose up -d` to start docker services
 - Run `bash ./scripts/elastic-certs.sh` to create a self-signed TLS certificate for ElasticSearch
-- Run `node ./scripts/create-index.js` to create an ElasticSearch index
+- Run `npx tsx ./scripts/create-index.ts` to create (or replace) an ElasticSearch index
 - Run `npm run migrations:run` to create MySQL tables
 - Run `npm run build:front` to build static frontend files
 - Run `npm run build:back` to transpile files for backend
@@ -94,12 +94,13 @@ rsync --archive -progress --update user@host:remote_path local_path
 
 ```bash
 # Run to init a snapshot repository for ElasticSearch
-bash ./scripts/backup/init-elastic.sh
+bash ./scripts/backup/elastic-init.sh
 
 # Run to start taking snapshot
-bash ./scripts/backup/elastic.sh
+bash ./scripts/backup/elastic-snapshot.sh
 
-# You should find the snapshot you took in the ./backup/elastic directory
+# Run to restore ElasticSearch from snapshots
+bash ./scripts/backup/elastic-restore.sh
 ```
 
 ### Mysql:
