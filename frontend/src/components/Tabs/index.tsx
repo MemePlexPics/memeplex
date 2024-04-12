@@ -37,13 +37,7 @@ export const Tabs = (props: {
         ))}
       </div>
       <div>
-        {props.children?.map(element => ({
-          ...element,
-          props: {
-            ...element.props,
-            ...stylex.props(element.key === currentTab ? s.isActiveContent : s.tabContent),
-          },
-        }))}
+        {props.children?.find(element => element.key === currentTab)}
       </div>
     </div>
   )

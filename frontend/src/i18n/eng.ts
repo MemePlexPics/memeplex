@@ -35,6 +35,7 @@ export const eng: TI18nLocalization = {
     channels: 'Channels',
     suggested: 'Suggested',
     featured: 'Featured',
+    blacklist: 'Black list',
   },
   notification: {
     removeChannel: 'Remove the channel',
@@ -55,6 +56,7 @@ export const eng: TI18nLocalization = {
     removeFeatured: 'Remove the featured',
     pagesLeft: 'There are {{number}} more pages',
     removeChannelMemes: 'Delete all memes from @{{channel}}?',
+    blacklistUpdated: 'Blacklist successfully updated',
   },
   button: {
     search: 'Search',

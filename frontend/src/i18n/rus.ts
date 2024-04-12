@@ -33,6 +33,7 @@ export const rus = {
     channels: 'Каналы',
     suggested: 'Предложенные',
     featured: 'Избранные',
+    blacklist: 'Черный список',
   },
   notification: {
     removeChannel: 'Удалить канал',
@@ -53,6 +54,7 @@ export const rus = {
     removeFeatured: 'Удалить избранный',
     pagesLeft: 'Еще {{number}} страниц',
     removeChannelMemes: 'Удалить все мемы канала @{{channel}}?',
+    blacklistUpdated: 'Черный список успешно обновлен',
   },
   button: {
     search: 'Поиск',
