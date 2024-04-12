@@ -47,7 +47,7 @@ export const useFetch = <GData>(
         setStatus(response.status)
         if (!response.ok) throw new Error("Network response wasn't ok")
 
-        const result = await response.json()
+        const result = await response.json() as GData
         setData(result)
         setState('success')
       } catch (error) {
@@ -68,7 +68,7 @@ export const useFetch = <GData>(
     }
   }, options?.deps)
 
-  // @ts-ignore
+  // @ts-expect-error TODO: fix the type
   return {
     data: isLoaded && data ? data : null,
     error: isError && error ? error : null,
