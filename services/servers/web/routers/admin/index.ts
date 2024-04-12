@@ -17,10 +17,7 @@ export const adminRouter = express.Router()
 
 const logger = winston.createLogger({
   defaultMeta: { service: 'web-admin' },
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json(),
-  ),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   transports: [
     new winston.transports.File({
       filename: 'logs/web-admin.log',

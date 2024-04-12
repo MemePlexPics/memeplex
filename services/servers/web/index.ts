@@ -24,12 +24,7 @@ import {
   getFeaturedChannelList,
   selectBlackList,
 } from '../../../utils/mysql-queries'
-import {
-  searchMemes,
-  getLatestMemes,
-  getMeme,
-  downloadTelegramChannelAvatar,
-} from '../utils'
+import { searchMemes, getLatestMemes, getMeme, downloadTelegramChannelAvatar } from '../utils'
 import winston from 'winston'
 import { adminRouter } from './routers'
 
@@ -37,10 +32,7 @@ const app = express()
 
 const logger = winston.createLogger({
   defaultMeta: { service: 'web' },
-  format: winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.json(),
-  ),
+  format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
   transports: [
     new winston.transports.File({
       filename: 'logs/web.log',
@@ -60,7 +52,7 @@ app.set('trust proxy', true)
 app.set('elasticClient', client)
 app.use('/admin', adminRouter)
 
-const handleMethodError = async (error) => {
+const handleMethodError = async error => {
   await logError(logger, error)
   if (error.message === 'connect ECONNREFUSED ::1:9200') {
     await reconnect()
@@ -68,11 +60,7 @@ const handleMethodError = async (error) => {
 }
 
 const handle404 = async (req, res) => {
-  if (
-    ['/admin', '/channelList', '/memes', '/about'].some((path) =>
-      req.originalUrl.includes(path),
-    )
-  )
+  if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
     return res.sendFile(
       join(
         dirname(fileURLToPath(import.meta.url)),
@@ -94,7 +82,8 @@ app.use(async (err, req, res, _next) => {
 })
 
 app.get('/search', async (req, res) => {
-  if (typeof req.query.query !== 'string' || typeof req.query.page !== 'string') throw new Error(`Wrong params: «${req.query}»`)
+  if (typeof req.query.query !== 'string' || typeof req.query.page !== 'string')
+    throw new Error(`Wrong params: «${req.query}»`)
   const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH)
   const page = parseInt(req.query.page)
   const result = await searchMemes(client, query, page, SEARCH_PAGE_SIZE)
@@ -103,13 +92,7 @@ app.get('/search', async (req, res) => {
 
 app.get('/getLatest', async (req, res) => {
   const { from, to, filters } = req.query
-  const response = await getLatestMemes(
-    client,
-    from,
-    to,
-    SEARCH_PAGE_SIZE,
-    filters,
-  )
+  const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE, filters)
   return res.send(response)
 })
 
@@ -120,12 +103,7 @@ app.get('/getChannelList', async (req, res) => {
     onlyAvailable: onlyAvailable as string,
     name: filter as string,
   }
-  const channels = await getChannels(
-    db,
-    Number(page),
-    CHANNEL_LIST_PAGE_SIZE,
-    filters,
-  )
+  const channels = await getChannels(db, Number(page), CHANNEL_LIST_PAGE_SIZE, filters)
   const count = await getChannelsCount(db, filters)
   await db.close()
   return res.send({
@@ -174,12 +152,7 @@ app.get('/getChannelSuggestionList', async (req, res) => {
   const { page, filter } = req.query
   const mysql = await getMysqlClient()
   const filters = { name: filter }
-  const channels = await getChannelSuggestions(
-    mysql,
-    page,
-    CHANNEL_LIST_PAGE_SIZE,
-    filters,
-  )
+  const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE, filters)
   const count = await getChannelSuggestionsCount(mysql, filters)
   await mysql.end()
   return res.send({
@@ -196,7 +169,7 @@ app.get('/blacklist', async (req, res) => {
     return res.status(204).send()
   }
   return res.send({
-    words: blacklist[0].words
+    words: blacklist[0].words,
   })
 })
 
