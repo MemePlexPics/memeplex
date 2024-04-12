@@ -47,7 +47,7 @@ export const useFetch = <GData>(
         setStatus(response.status)
         if (!response.ok) throw new Error("Network response wasn't ok")
 
-        const result = await response.json() as GData
+        const result = (await response.json()) as GData
         setData(result)
         setState('success')
       } catch (error) {
