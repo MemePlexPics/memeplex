@@ -36,9 +36,7 @@ export const Tabs = (props: {
           </div>
         ))}
       </div>
-      <div>
-        {props.children?.find(element => element.key === currentTab)}
-      </div>
+      <div>{props.children?.find(element => element.key === currentTab)}</div>
     </div>
   )
 }
