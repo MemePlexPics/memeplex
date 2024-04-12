@@ -28,6 +28,7 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
     ? await searchMemes(client, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
     : {
       result: await getLatestInlineSelectedMemes(client, abortController),
+      totalPages: 1,
     }
 
   const results = response.result.map(meme => {
