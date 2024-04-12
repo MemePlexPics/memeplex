@@ -9,9 +9,10 @@ import './style.css'
 export const ButtonScrollToTop = () => {
   const [isActive, setIsActive] = useState(false)
 
+  // FIX: why is it broken?
   useEventListener('scroll', () => {
-    setIsActive(document.documentElement.scrollTop > 20)
-  })
+    setIsActive((document.getElementById('site-content')?.scrollTop ?? 0)  > 20)
+  }, document.getElementById('site-content'))
 
   if (!isActive) return null
 
