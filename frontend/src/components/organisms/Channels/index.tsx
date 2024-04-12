@@ -7,13 +7,14 @@ import { AddChannelForm, ChannelList } from '../..'
 import { useAdminRequest, useNotification } from '../../../hooks'
 import { addChannel, removeChannel } from '../../../services'
 import { setChannelMemesState } from '../../../services/admin'
-import { memesFilterAtom } from '../../../store/atoms'
+import { memesFilterAtom, pageOptionsAtom } from '../../../store/atoms'
 import { dialogConfirmationAtom } from '../../../store/atoms/dialogConfirmationAtom'
 import { EMemeState } from '../../../types/enums'
 import { getFieldsWithUntrueValues } from '../../../utils'
 import { ENotificationType } from '../../Notification/constants'
 
 import { Input } from '@/components/atoms'
+import { pageOptionsDefault } from '@/pages/Home/hooks/constants'
 
 export const Channels = (props: { password: string; className?: string }) => {
   const { t } = useTranslation()
@@ -23,6 +24,7 @@ export const Channels = (props: { password: string; className?: string }) => {
   const [channelsUpdateSwitch, setChannelsUpdateSwitch] = useState(true)
   const [nameFilter, setNameFilter] = useState('')
   const setMemeFilters = useSetAtom(memesFilterAtom)
+  const setSearchOptions = useSetAtom(pageOptionsAtom)
   const navigate = useNavigate()
 
   const handleAddChannel = async (channel: string, langs: string[]) => {
@@ -99,6 +101,7 @@ export const Channels = (props: { password: string; className?: string }) => {
 
   const onClickImages = (channel: string) => {
     setMemeFilters({ channel: [channel] })
+    setSearchOptions(pageOptionsDefault)
     navigate('/')
   }
 

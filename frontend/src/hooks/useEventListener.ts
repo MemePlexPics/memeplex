@@ -7,7 +7,7 @@ export const useEventListener = <GEvent extends Event = Event>(
   options?: boolean | AddEventListenerOptions,
   dependencies?: unknown[],
 ) => {
-  const targetElement = element || window
+  const targetElement = element ?? window
   const callbackRef = useRef(callback)
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export const useEventListener = <GEvent extends Event = Event>(
     targetElement.addEventListener(
       eventType,
       handler as EventListenerOrEventListenerObject,
-      options || {},
+      options ?? {},
     )
 
     return () => {

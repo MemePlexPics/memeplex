@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 
 import { Tabs } from '@/components'
 import { InputPassword } from '@/components/molecules'
-import { Channels, FeaturedChannels, SuggestedChannels } from '@/components/organisms'
+import { BlaclListSettings, Channels, FeaturedChannels, SuggestedChannels } from '@/components/organisms'
 import { useMeta, useTitle, useTranslatedState } from '@/hooks'
 import { adminPasswordAtom } from '@/store/atoms'
 
@@ -16,6 +16,7 @@ export const AdminPage = () => {
     t('tab.channels'),
     t('tab.suggested'),
     t('tab.featured'),
+    t('tab.blacklist'),
   ])
   const [currentTab, setCurrentTab] = useState<string>('')
 
@@ -47,6 +48,10 @@ export const AdminPage = () => {
         />
         <FeaturedChannels
           key={t('tab.featured')}
+          password={password}
+        />
+        <BlaclListSettings
+          key={t('tab.blacklist')}
           password={password}
         />
       </Tabs>
