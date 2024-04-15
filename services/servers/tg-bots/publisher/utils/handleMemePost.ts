@@ -14,4 +14,5 @@ export const handleMemePost = async (
     source: await fs.readFile(meme.fileName),
   })
   await ctx.reply(`Мем успешно опубликован.`)
+  global.logger.info(`Meme posted: ${memeId} into @${chatId}`)
 }
