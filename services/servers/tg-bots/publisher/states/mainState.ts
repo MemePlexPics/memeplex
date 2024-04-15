@@ -12,7 +12,7 @@ export const mainState: TState = {
     const userChannelsCount = await countPublisherChannelsByUserId(db, ctx.from.id)
     await db.close()
     const buttons: TMenuButton[][] = [
-      [['Привязать канал', () => enterToState(ctx, addChannelState)]],
+      [['Привязать свой канал', () => enterToState(ctx, addChannelState)]],
     ]
     if (userChannelsCount !== 0) {
       buttons.push([['Настройки подписок', () => enterToState(ctx, channelSelectState)]])

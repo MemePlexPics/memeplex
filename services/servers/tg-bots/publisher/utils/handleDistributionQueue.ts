@@ -66,6 +66,9 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       logger.error(e)
       distributionCh.nack(msg)
       await delay(1000)
+    } finally {
+      if (distributionCh) await distributionCh.close()
+      if (amqp) await amqp.close()
     }
   }
 }
