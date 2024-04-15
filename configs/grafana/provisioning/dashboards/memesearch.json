@@ -1061,7 +1061,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 32
+            "y": 24
           },
           "id": 29,
           "options": {
@@ -1267,7 +1267,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 32
+            "y": 24
           },
           "id": 35,
           "options": {
@@ -1585,7 +1585,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 32
           },
           "id": 23,
           "options": {
@@ -1832,7 +1832,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 49
+            "y": 41
           },
           "id": 36,
           "options": {
@@ -1882,7 +1882,7 @@
               "options": {
                 "excludeByName": {
                   "id": true,
-                  "message": true,
+                  "message": false,
                   "service": true,
                   "timestamp": true
                 },
@@ -1943,8 +1943,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2115,8 +2114,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2279,8 +2277,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2443,8 +2440,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2588,8 +2584,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2753,8 +2748,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2960,8 +2954,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3150,8 +3143,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4091,6 +4083,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 38,
+  "version": 39,
   "weekStart": ""
 }
