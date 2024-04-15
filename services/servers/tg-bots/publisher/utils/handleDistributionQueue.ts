@@ -19,7 +19,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
   const [
     distributionCh,
     distributionTimeout,
-    // distributionTimeotClear
+    distributionTimeotClear
   ] = await getAmqpQueue(amqp, AMQP_PUBLISHER_DISTRIBUTION_CHANNEL)
 
   for (;;) {
@@ -67,6 +67,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       distributionCh.nack(msg)
       await delay(1000)
     } finally {
+      distributionTimeotClear()
       if (distributionCh) await distributionCh.close()
       if (amqp) await amqp.close()
     }
