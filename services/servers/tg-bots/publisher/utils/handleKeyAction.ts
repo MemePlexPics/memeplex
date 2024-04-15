@@ -3,6 +3,7 @@ import {
   deletePublisherSubscription,
   selectPublisherChannelsByUserId,
 } from '../../../../../utils/mysql-queries'
+import { getTelegramUser } from '../../utils'
 import { TTelegrafContext } from '../types'
 
 export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', keyword: string) => {
@@ -14,5 +15,7 @@ export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', key
     }
     await db.close()
     await ctx.reply(`Ключевое слово «${keyword}» успешно удалено.`)
+    const user = getTelegramUser(ctx.from)
+    global.logger.info(`Keyword unsubscribe: ${user} from the «${keyword}»`)
   }
 }
