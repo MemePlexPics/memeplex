@@ -1,8 +1,6 @@
-import { TMemeEntity } from '.'
+import { TAmqpImageFileChannelMessage } from '../../types'
 
 export type TBuildImageTextPath = (
-  params: TMemeEntity & {
-    photoId: string
-  },
+  params: TAmqpImageFileChannelMessage,
   language: string,
 ) => Promise<string>

@@ -15,6 +15,7 @@ import { ENotificationType } from '../../Notification/constants'
 
 import { Input } from '@/components/atoms'
 import { pageOptionsDefault } from '@/pages/Home/hooks/constants'
+import { TNewChannel } from '@/types'
 
 export const Channels = (props: { password: string; className?: string }) => {
   const { t } = useTranslation()
@@ -27,11 +28,11 @@ export const Channels = (props: { password: string; className?: string }) => {
   const setSearchOptions = useSetAtom(pageOptionsAtom)
   const navigate = useNavigate()
 
-  const handleAddChannel = async (channel: string, langs: string[]) => {
-    const response = await addChannel(channel, langs, props.password)
+  const handleAddChannel = async (channel: TNewChannel) => {
+    const response = await addChannel(channel, props.password)
     if (!handleAdminRequest(response)) return false
     setNotification({
-      text: t('notification.channelAdded', { channel }),
+      text: t('notification.channelAdded', { channel: channel.name }),
       type: ENotificationType.OK,
     })
     setChannelsUpdateSwitch(!channelsUpdateSwitch)
@@ -71,9 +72,9 @@ export const Channels = (props: { password: string; className?: string }) => {
     return true
   }
 
-  const onAddChannel = async (channel: string, langs: string[]) => {
-    const areFieldsValid = validChannelAndPasswordField(channel)
-    if (areFieldsValid) return handleAddChannel(channel, langs)
+  const onAddChannel = async (channel: TNewChannel) => {
+    const areFieldsValid = validChannelAndPasswordField(channel.name)
+    if (areFieldsValid) return handleAddChannel(channel)
     return false
   }
 

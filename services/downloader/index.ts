@@ -1,6 +1,6 @@
 /* global Buffer */
 import 'dotenv/config'
-import amqplib from 'amqplib'
+import amqplib, { Channel, Connection, GetMessage } from 'amqplib'
 import process from 'process'
 import {
   AMQP_IMAGE_DATA_CHANNEL,
@@ -8,26 +8,24 @@ import {
   EMPTY_QUEUE_RETRY_DELAY,
 } from '../../constants'
 import { delay } from '../../utils'
-import { handleNackByTimeout } from '../utils'
+import { getAmqpQueue } from '../utils'
 import { buildImagePath } from './utils'
 import { isFileIgnored } from './utils'
 import { Logger } from 'winston'
+import { TAmqpImageDataChannelMessage } from '../types'
 
 export const downloader = async (logger: Logger) => {
-  let amqp, sendImageFileCh, receiveImageDataCh, timeoutId
+  let amqp: Connection,
+    sendImageFileCh: Channel,
+    receiveImageDataCh: Channel,
+    receiveImageDataChTimeout: (ms: number, logger: Logger, msg: GetMessage) => void,
+    receiveImageDataChClearTimeout: () => void
+
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     sendImageFileCh = await amqp.createChannel()
-    receiveImageDataCh = await amqp.createChannel()
-
-    await receiveImageDataCh.assertQueue(AMQP_IMAGE_DATA_CHANNEL, {
-      durable: true,
-    })
-    // TODO: incapsulate?
-    receiveImageDataCh
-      .on('close', () => clearTimeout(timeoutId))
-      .on('ack', () => clearTimeout(timeoutId))
-      .on('nack', () => clearTimeout(timeoutId))
+    ;[receiveImageDataCh, receiveImageDataChTimeout, receiveImageDataChClearTimeout] =
+      await getAmqpQueue(amqp, AMQP_IMAGE_FILE_CHANNEL)
 
     for (;;) {
       const msg = await receiveImageDataCh.get(AMQP_IMAGE_DATA_CHANNEL)
@@ -35,8 +33,8 @@ export const downloader = async (logger: Logger) => {
         await delay(EMPTY_QUEUE_RETRY_DELAY)
         continue
       }
-      timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, receiveImageDataCh), 600_000)
-      const payload = JSON.parse(msg.content.toString())
+      receiveImageDataChTimeout(600_000, logger, msg)
+      const payload: TAmqpImageDataChannelMessage = JSON.parse(msg.content.toString())
       const destination = await buildImagePath(payload)
 
       const isIgnored = await isFileIgnored(logger, destination, payload)
@@ -54,7 +52,7 @@ export const downloader = async (logger: Logger) => {
       receiveImageDataCh.ack(msg)
     }
   } finally {
-    clearTimeout(timeoutId)
+    receiveImageDataChClearTimeout()
     if (sendImageFileCh) await sendImageFileCh.close()
     if (receiveImageDataCh) await receiveImageDataCh.close()
     if (amqp) await amqp.close()

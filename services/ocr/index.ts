@@ -8,6 +8,7 @@ import { Client } from '@elastic/elasticsearch'
 import { getAmqpQueue } from '../utils'
 import { handlePublisherDistribution } from './utils'
 import { Logger } from 'winston'
+import { TAmqpImageFileChannelMessage } from '../types'
 
 // Listens for messages containing images, outputs messages containing OCR'd text
 export const ocr = async (logger: Logger) => {
@@ -32,7 +33,8 @@ export const ocr = async (logger: Logger) => {
         continue
       }
       receiveImageFileTimeout(600_000, logger, msg)
-      const { payload, texts } = await recogniseText(msg, logger)
+      const payload: TAmqpImageFileChannelMessage = JSON.parse(msg.content.toString())
+      const texts = await recogniseText(payload, logger)
       if (!texts.eng) {
         receiveImageFileCh.ack(msg)
         return
