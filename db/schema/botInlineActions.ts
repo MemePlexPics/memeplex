@@ -4,7 +4,7 @@ import { botInlineUsers } from '.'
 export const botInlineActions = mysqlTable(
   'bot_inline_actions',
   {
-    id: int('id').autoincrement().notNull(),
+    id: int('id').autoincrement().primaryKey(),
     userId: int('user_id')
       .notNull()
       .references(() => botInlineUsers.id, {
