@@ -19,7 +19,7 @@ export const fuseSearch = (list: readonly string[], query: string) => {
       }
     }
   } else if (query.length <= 4) {
-    fuseOptions.threshold = 0
+    // fuseOptions.threshold = 0
     const results = []
     const [text] = list
     const words = text.toLowerCase().split(' ')
