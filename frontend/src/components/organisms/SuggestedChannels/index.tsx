@@ -20,7 +20,14 @@ export const SuggestedChannels = (props: { password: string; className?: string 
   const { handleAdminRequest } = useAdminRequest()
 
   const handleAddChannel = async (channel: string, langs: string[]) => {
-    const response = await addChannel(channel, langs, props.password)
+    const response = await addChannel(
+      {
+        name: channel,
+        langs,
+        withText: false,
+      },
+      props.password,
+    )
     if (!handleAdminRequest(response)) return false
     setNotification({
       text: t('notification.channelAdded', { channel }),
