@@ -3,7 +3,7 @@ import { mysqlTable, int, varchar, unique, boolean, datetime } from 'drizzle-orm
 export const proxies = mysqlTable(
   'proxies',
   {
-    id: int('id').autoincrement().notNull(),
+    id: int('id').autoincrement().primaryKey(),
     address: varchar('address', { length: 255 }).notNull(),
     protocol: varchar('protocol', { length: 10 }).notNull(),
     availability: boolean('availability').notNull(),
