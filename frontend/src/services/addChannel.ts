@@ -1,6 +1,8 @@
 import { getUrl } from '../utils'
 
-export const addChannel = async (channel: string, langs: string[], password: string) => {
+import { TNewChannel } from '@/types'
+
+export const addChannel = async (channel: TNewChannel, password: string) => {
   const response = await fetch(getUrl('/admin/channel'), {
     method: 'POST',
     headers: {
@@ -8,7 +10,6 @@ export const addChannel = async (channel: string, langs: string[], password: str
     },
     body: JSON.stringify({
       channel,
-      langs,
       password,
     }),
   })
