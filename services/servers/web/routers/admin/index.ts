@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { RequestHandler } from 'express'
 import process from 'process'
 import winston from 'winston'
 import {
@@ -28,7 +28,7 @@ const logger = winston.createLogger({
   ],
 })
 
-const isAdmin = (req, res, next) => {
+const isAdmin: RequestHandler = (req, res, next) => {
   const { password } = req.body
   if (password === process.env.MEMEPLEX_ADMIN_PASSWORD) {
     res.locals.role = 'Admin'
@@ -46,7 +46,7 @@ const isAdmin = (req, res, next) => {
   return res.status(403).send()
 }
 
-const logAdminAction = (req, res, next) => {
+const logAdminAction: RequestHandler = (req, res, next) => {
   res.on('finish', () => {
     if (res.locals.logAction)
       logger.info({

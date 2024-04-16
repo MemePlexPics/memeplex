@@ -79,7 +79,7 @@ If you have a telegram channel, you can suggest it [here](https://memeplex.pics/
 2. Rebuild the frontend using `npm run build` or just run `cp -r ./frontend/src/public/sitemaps ./frontend/dist/. && cp ./frontend/src/public/sitemap.xml ./frontend/dist/sitemap.xml`
 - It might be a good idea to run it via Cron at the beginning of the day, like this:
 ```bash
-0 0 * * * bash -c 'cd /path/to/project && node ./scripts/generate-sitemap.js && cp -r ./frontend/src/public/sitemaps ./frontend/dist/. && cp ./frontend/src/public/sitemap.xml ./frontend/dist/sitemap.xml'
+0 0 * * * bash -c 'cd /path/to/project && npx tsx ./scripts/generate-sitemap.ts && cp -r ./frontend/src/public/sitemaps ./frontend/dist/. && cp ./frontend/src/public/sitemap.xml ./frontend/dist/sitemap.xml'
 ```
 
 ## Backup
