@@ -185,6 +185,10 @@ module.exports = {
         ignore: [0, 1, 2, 24, 60, 200, 204, 403, 404, 500, 503, 1000]
       }
     ],
+    '@typescript-eslint/consistent-type-definitions': [
+      'warn',
+      'type',
+    ],
     'react/no-access-state-in-setstate': 'error',
     'react/no-danger': 'error',
     'react/jsx-uses-react': 'off',
