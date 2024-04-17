@@ -46,9 +46,7 @@ bot.use(
 )
 
 bot.start(async ctx => {
-  await ctx.reply(i18n['ru'].message.start,
-    { parse_mode: 'Markdown' },
-  )
+  await ctx.reply(i18n['ru'].message.start)
   logUserAction(ctx.from, { start: ctx.payload || 1 }, logger)
 })
 
@@ -69,7 +67,11 @@ bot.action('button_latest_newer', ctx => onBotCommandGetLatest(ctx, true, client
 bot.on(message('text'), async ctx => {
   resetSearchSession(ctx)
   await onBotRecieveText(ctx, client, logger)
-  if (['мем'].some(word => new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text))) {
+  if (
+    ['мем'].some(word =>
+      new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
+    )
+  ) {
     await ctx.reply(i18n['ru'].message.redundantWords)
   }
 })
