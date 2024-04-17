@@ -40,7 +40,9 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     if (page < response.totalPages) {
       await ctx.reply(
         `Page ${page} of ${response.totalPages}`,
-        Markup.inlineKeyboard([Markup.button.callback(i18n['ru'].button.loadMore, 'button_search_more')]),
+        Markup.inlineKeyboard([
+          Markup.button.callback(i18n['ru'].button.loadMore, 'button_search_more'),
+        ]),
       )
       ctx.session.search = {
         nextPage: page + 1,

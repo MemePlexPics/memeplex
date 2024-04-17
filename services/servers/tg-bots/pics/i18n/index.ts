@@ -1,5 +1,5 @@
-import { ru } from "./ru"
+import { ru } from './ru'
 
 export const i18n = {
-  ru
+  ru,
 }
