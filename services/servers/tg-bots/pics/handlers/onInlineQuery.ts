@@ -3,6 +3,7 @@ import process from 'process'
 import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
 import { logUserAction } from '../utils'
+import { i18n } from '../i18n'
 
 export const onInlineQuery = async (ctx, page, client, sessionInline, logger) => {
   const query = ctx.inlineQuery.query
@@ -56,9 +57,9 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
         {
           type: 'article',
           id: query,
-          title: 'Ничего не найдено',
+          title: i18n['ru'].message.nothingFound,
           input_message_content: {
-            message_text: 'Ничего не найдено',
+            message_text: i18n['ru'].message.nothingFound,
           },
         },
       ])

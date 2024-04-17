@@ -6,6 +6,7 @@ import { logError } from '../../../../../utils'
 import { searchMemes } from '../../../utils/searchMemes'
 import { logUserAction, resetSearchSession } from '../utils'
 import { getBotAnswerString } from '../../utils'
+import { i18n } from '../i18n'
 
 export const onBotRecieveText = async (ctx, client, logger) => {
   try {
@@ -25,7 +26,7 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     const response = await searchMemes(client, query, page, TG_BOT_PAGE_SIZE)
 
     if (response.totalPages === 0) {
-      await ctx.reply('Nothing found')
+      await ctx.reply(i18n['ru'].message.nothingFound)
       return
     }
     for (const meme of response.result) {
@@ -39,7 +40,7 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     if (page < response.totalPages) {
       await ctx.reply(
         `Page ${page} of ${response.totalPages}`,
-        Markup.inlineKeyboard([Markup.button.callback('Load more', 'button_search_more')]),
+        Markup.inlineKeyboard([Markup.button.callback(i18n['ru'].button.loadMore, 'button_search_more')]),
       )
       ctx.session.search = {
         nextPage: page + 1,
@@ -50,6 +51,6 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     resetSearchSession(ctx)
   } catch (e) {
     await logError(logger, e)
-    await ctx.reply('An error occurred, please try again later')
+    await ctx.reply(i18n['ru'].message.error)
   }
 }
