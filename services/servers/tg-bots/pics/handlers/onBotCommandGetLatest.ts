@@ -6,6 +6,7 @@ import { logError } from '../../../../../utils'
 import { getLatestMemes } from '../../../utils'
 import { logUserAction } from '../utils'
 import { getBotAnswerString } from '../../utils'
+import { i18n } from '../i18n'
 
 export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
   try {
@@ -38,15 +39,15 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
 
     const isLastNewPage = isUpdate && response.totalPages === 0
     const finalReplyText = isLastNewPage
-      ? 'There are no new memes since last request'
+      ? i18n['ru'].message.noNewMemes
       : `${response.totalPages - 1} more ${isUpdate ? 'new pages' : 'pages in the past'}`
     const buttons = Markup.inlineKeyboard([
-      Markup.button.callback('Load newer', 'button_latest_newer'),
-      Markup.button.callback('Load older', 'button_latest_older'),
+      Markup.button.callback(i18n['ru'].button.loadNewer, 'button_latest_newer'),
+      Markup.button.callback(i18n['ru'].button.loadOlder, 'button_latest_older'),
     ])
     await ctx.reply(finalReplyText, buttons)
   } catch (e) {
     await logError(logger, e)
-    await ctx.reply('An error occurred, please try again later')
+    await ctx.reply(i18n['ru'].message.error)
   }
 }
