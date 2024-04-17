@@ -85,6 +85,11 @@ bot.action('button_latest_newer', ctx => onBotCommandGetLatest(ctx, true, client
 bot.on(message('text'), async ctx => {
   resetSearchSession(ctx)
   await onBotRecieveText(ctx, client, logger)
+  if (['мем'].some(word => new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text))) {
+    await ctx.reply(`Не нужно описывать картинку - в индекс попадает только сам текст с неё, а не описание.
+В частности, не нужно добавлять в запрос "мем", "картинка" и т.п.
+    `)
+  }
 })
 
 const sessionInline = {}
