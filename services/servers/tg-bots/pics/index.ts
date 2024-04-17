@@ -14,6 +14,7 @@ import {
 } from './handlers'
 import { defaultSession } from './constants'
 import { getLogger } from '../utils'
+import { i18n } from './i18n'
 
 const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN)
 const logger = getLogger('tg-bot')
@@ -39,37 +40,20 @@ bot.use(
     limit: 15,
     onLimitExceeded: async ctx => {
       logUserAction(ctx.from, { info: 'exceeded rate limit' }, logger)
-      await ctx.reply('Wait a few seconds before trying again')
+      await ctx.reply(i18n['ru'].message.rateLimit)
     },
   }),
 )
 
 bot.start(async ctx => {
-  await ctx.reply(
-    `Welcome to [MemePlex](https://memeplex.pics)!
-
-Send me a text to search memes by caption.`,
+  await ctx.reply(i18n['ru'].message.start,
     { parse_mode: 'Markdown' },
   )
   logUserAction(ctx.from, { start: ctx.payload || 1 }, logger)
 })
 
 bot.command('help', async ctx => {
-  await ctx.reply(`
-Этот бот ищет мемы по тексту с картинки. Просто отправьте свой запрос.
-Также работает в группах: введите @MemePlexBot и затем фразу.
-
-- Канал с анонсами: @memeplex_pics
-- Сайт: https://memeplex.pics
-- Добавить мем: @MemePlexAddBot
-
-Как искать?
-
-- Лучше работает запрос по ключевым словам
-- Не нужно описывать картинку - в индекс попадает только сам текст, а не описание
-- Не нужно добавлять "мем", "картинка" и т.п.
-- Если нет буквального совпадения по фразе, перестановка слов местами не имеет эффекта
-  `)
+  await ctx.reply(i18n['ru'].message.start)
 })
 
 bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true, client, logger))
@@ -86,9 +70,7 @@ bot.on(message('text'), async ctx => {
   resetSearchSession(ctx)
   await onBotRecieveText(ctx, client, logger)
   if (['мем'].some(word => new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text))) {
-    await ctx.reply(`Не нужно описывать картинку - в индекс попадает только сам текст с неё, а не описание.
-В частности, не нужно добавлять в запрос "мем", "картинка" и т.п.
-    `)
+    await ctx.reply(i18n['ru'].message.redundantWords)
   }
 })
 
@@ -135,15 +117,15 @@ const start = async () => {
   bot.telegram.setMyCommands([
     {
       command: 'get_latest',
-      description: 'Загрузить последние мемы',
+      description: i18n['ru'].command.getLatest,
     },
     {
       command: 'suggest_channel',
-      description: 'Предложить канал',
+      description: i18n['ru'].command.suggestChannel,
     },
     {
       command: 'help',
-      description: 'Вывести справку',
+      description: i18n['ru'].command.help,
     },
   ])
   logger.info({ info: 'Telegram bot started' })
