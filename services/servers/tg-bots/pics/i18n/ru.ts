@@ -28,7 +28,7 @@ export const ru = {
   command: {
     getLatest: 'Загрузить последние мемы',
     suggestChannel: 'Предложить канал',
-    help:  'Вывести справку',
+    help: 'Вывести справку',
   },
   button: {
     loadNewer: 'Загрузить новые',
