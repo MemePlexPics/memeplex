@@ -19,16 +19,18 @@ export const handlePublisherDistribution = async (
 
   const queue: Record<number, Omit<TPublisherDistributionQueueMsg, 'userId'>> = {}
 
-  let userId: number
+  const keywordsByUser = {}
   for (const { keyword } of keywords) {
     const results = fuseSearch([document.eng], keyword)
     if (!results.length) continue
     const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
-    const keywordsSet = new Set<string>()
     for (const { channelId } of subscriptions) {
       const [channel] = await selectPublisherChannelById(db, channelId)
       const [user] = await selectPublisherUserById(db, channel.userId)
-      userId = user.id
+      const userId = user.id
+      if (!keywordsByUser[userId]) {
+        keywordsByUser[userId] = new Set<string>()
+      }
       if (!queue[userId])
         queue[userId] = {
           memeId,
@@ -41,9 +43,8 @@ export const handlePublisherDistribution = async (
           channelIds: [],
         }
       queue[userId].channelIds.push(channelId)
-      keywordsSet.add(keyword)
+      keywordsByUser[userId].add(keyword)
     }
-    if (keywordsSet.size) queue[userId].keywords = [...keywordsSet]
   }
   await db.close()
 
@@ -52,6 +53,7 @@ export const handlePublisherDistribution = async (
       JSON.stringify({
         userId,
         ...queue[userId],
+        keywords: [...keywordsByUser[userId]],
       }),
     )
     amqpChannel.sendToQueue(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, buffer, {
