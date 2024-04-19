@@ -26,9 +26,7 @@ ${keywords}
     }, 'Выберите группу ключевых слов для подписки.\n')
     return {
       text,
-      buttons: keywordGroups.map(({ name }) => [
-        Key.callback(`➕ Подписаться на «${name}»`, name),
-      ]),
+      buttons: keywordGroups.map(({ name }) => [Key.callback(`➕ Подписаться на «${name}»`, name)]),
     }
   },
   menu: async () => {

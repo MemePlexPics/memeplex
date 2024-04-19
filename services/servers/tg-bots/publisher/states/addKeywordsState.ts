@@ -13,7 +13,7 @@ export const addKeywordsState: TState = {
 Если вы затрудняетесь с выбором - можете выбрать группы подобранных нами ключевых слов, для этого нажмите соответствующую кнопку в меню снизу.`,
       buttons: [
         [['Добавить группу ключевых слов', ctx => enterToState(ctx, keywordGroupSelectState)]],
-        [['⬅️ Назад', ctx => enterToState(ctx, channelSettingState)]]
+        [['⬅️ Назад', ctx => enterToState(ctx, channelSettingState)]],
       ],
     }
   },
