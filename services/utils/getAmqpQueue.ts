@@ -23,6 +23,7 @@ export const getAmqpQueue = async (
     .on('nack', timeoutClear)
 
   const timeoutSetter = (ms: number, logger: Logger, msg: GetMessage) => {
+    timeoutClear()
     timeoutId = setTimeout(() => handleNackByTimeout(logger, msg, channel), ms)
   }
 
