@@ -15,19 +15,19 @@ export const keywordGroupSelectState: TState = {
     const db = await getDbConnection()
     const keywordGroups = await selectPublisherKeywordGroups(db)
     await db.close()
-    const text = keywordGroups.reduce((string, { name, keywords }) => {
+    const text = keywordGroups.reduce<string>((string, { name, keywords }) => {
       return (
         string +
         `
-      ${name}:
-      ${keywords}
+${name}:
+${keywords}
     `
       )
-    }, 'Выберите группу ключевых слов для подписки\n')
+    }, 'Выберите группу ключевых слов для подписки.\n')
     return {
       text,
       buttons: keywordGroups.map(({ name }) => [
-        Key.callback(`➕ Добавить группу «${name}»`, name),
+        Key.callback(`➕ Подписаться на «${name}»`, name),
       ]),
     }
   },
@@ -43,6 +43,7 @@ export const keywordGroupSelectState: TState = {
     if (!keywordGroup.length) throw new InfoMessage(`Unknown menu state: ${callback}`)
     const keywords = keywordGroup[0].keywords.split(', ').map(keyword => ({ keyword }))
     await addSubscription(db, ctx.session.channel.id, keywords)
+    await ctx.reply(`Вы успешно подписали на ключевые слова из группы ${callback}`)
     await db.close()
     return
   },
