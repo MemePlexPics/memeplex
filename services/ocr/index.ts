@@ -1,4 +1,5 @@
 import 'dotenv/config'
+import fs from 'fs/promises'
 import amqplib, { Connection, Channel, GetMessage } from 'amqplib'
 import process from 'process'
 import { AMQP_IMAGE_FILE_CHANNEL, ELASTIC_INDEX, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
@@ -52,6 +53,7 @@ export const ocr = async (logger: Logger) => {
           await logError(logger, error)
         }
       } else {
+        fs.unlink(payload.fileName)
         logger.verbose(`Declined (stop words): ${payload.fileName}`)
       }
       receiveImageFileCh.ack(msg)

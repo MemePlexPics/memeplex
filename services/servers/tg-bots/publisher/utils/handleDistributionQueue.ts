@@ -16,11 +16,10 @@ import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
-  const [
-    distributionCh,
-    distributionTimeout,
-    distributionTimeotClear
-  ] = await getAmqpQueue(amqp, AMQP_PUBLISHER_DISTRIBUTION_CHANNEL)
+  const [distributionCh, distributionTimeout, distributionTimeotClear] = await getAmqpQueue(
+    amqp,
+    AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
+  )
 
   try {
     for (;;) {
@@ -29,8 +28,8 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         await delay(EMPTY_QUEUE_RETRY_DELAY)
         continue
       }
-      const payload = JSON.parse(msg.content.toString()) as TPublisherDistributionQueueMsg
       distributionTimeout(600_000, logger, msg)
+      const payload = JSON.parse(msg.content.toString()) as TPublisherDistributionQueueMsg
 
       const buttons = []
       const db = await getDbConnection()
@@ -40,7 +39,10 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       channels.forEach(channel => {
         if (channel.id === Number(payload.userId)) return null
         buttons.push([
-          Key.callback(`➡️ Отправить в @${channel.username}`, `post|${channel.id}|${payload.memeId}`),
+          Key.callback(
+            `➡️ Отправить в @${channel.username}`,
+            `post|${channel.id}|${payload.memeId}`,
+          ),
         ])
       })
 
