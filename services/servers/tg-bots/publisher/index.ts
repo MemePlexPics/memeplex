@@ -19,6 +19,7 @@ import {
   addKeywordsState,
   channelSelectState,
   channelSettingState,
+  keywordGroupSelectState,
   keywordSettingsState,
   mainState,
 } from './states'
@@ -73,6 +74,7 @@ const states: Record<EState, TState> = {
   [EState.CHANNEL_SELECT]: channelSelectState,
   [EState.CHANNEL_SETTINGS]: channelSettingState,
   [EState.KEYWORD_SETTINGS]: keywordSettingsState,
+  [EState.KEYWORD_GROUP_SELECT]: keywordGroupSelectState,
   [EState.MAIN]: mainState,
 }
 
