@@ -5,7 +5,7 @@ export const botPublisherChannels = mysqlTable(
   'bot_publisher_channels',
   {
     id: bigint('id', { mode: 'number' }).primaryKey(),
-    userId: int('user_id').notNull(),
+    userId: bigint('user_id', { mode: 'number' }).notNull(),
     username: varchar('username', { length: 255 }).notNull(),
     subscribers: int('subscribers').notNull(),
     type: varchar('type', { length: 32 }),
