@@ -43,7 +43,7 @@ ${keywords}
     if (!keywordGroup.length) throw new InfoMessage(`Unknown menu state: ${callback}`)
     const keywords = keywordGroup[0].keywords.split(', ').map(keyword => ({ keyword }))
     await addSubscription(db, ctx.session.channel.id, keywords)
-    await ctx.reply(`Вы успешно подписали на ключевые слова из группы ${callback}`)
+    await ctx.reply(`Вы успешно подписали на ключевые слова из группы «${callback}»`)
     await db.close()
     return
   },
