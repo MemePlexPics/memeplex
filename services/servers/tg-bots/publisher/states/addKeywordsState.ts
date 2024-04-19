@@ -1,12 +1,8 @@
 import { EState } from '../constants'
 import { TState } from '../types'
-import { enterToState, logUserAction } from '../utils'
+import { addSubscription, enterToState, logUserAction } from '../utils'
 import { channelSettingState } from '.'
 import { getDbConnection } from '../../../../../utils'
-import {
-  insertPublisherKeywords,
-  insertPublisherSubscription,
-} from '../../../../../utils/mysql-queries'
 
 export const addKeywordsState: TState = {
   stateName: EState.ADD_KEYWORDS,
@@ -39,14 +35,7 @@ export const addKeywordsState: TState = {
       return
     }
 
-    await insertPublisherKeywords(db, keywordValuesNotEmpty)
-
-    const subscriptions = keywordValuesNotEmpty.map(({ keyword }) => ({
-      keyword,
-      channelId: ctx.session.channel.id,
-    }))
-
-    await insertPublisherSubscription(db, subscriptions)
+    await addSubscription(db, ctx.session.channel.id, keywordValuesNotEmpty)
     await db.close()
 
     await ctx.reply('Ключевые слова добавлены!')
