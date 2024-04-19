@@ -50,7 +50,11 @@ export const keywordSettingsState: TState = {
     }
   },
   inlineMenu: async ctx => {
-    if (!ctx.session.pagination) ctx.session.pagination.page = 1
+    if (!ctx.session.pagination) {
+      ctx.session.pagination = {
+        page: 1
+      }
+    }
     const page = ctx.session.pagination.page
     const db = await getDbConnection()
     const totalSubscriptions = await countPublisherSubscriptionsByChannelId(
