@@ -3,8 +3,9 @@ import { EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { enterToState, logUserAction } from '../utils'
 import { mainState } from '.'
-import { InfoMessage, getDbConnection } from '../../../../../utils'
+import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
+  countPublisherSubscriptionsByChannelId,
   deletePublisherKeyword,
   deletePublisherSubscriptionsByKeyword,
   selectPublisherSubscriptionsByChannelId,
@@ -40,6 +41,7 @@ export const keywordSettingsState: TState = {
             '🏠 В главное меню',
             async () => {
               ctx.session.channel = undefined
+              ctx.session.pagination = undefined
               await enterToState(ctx, mainState)
             },
           ],
@@ -48,33 +50,53 @@ export const keywordSettingsState: TState = {
     }
   },
   inlineMenu: async ctx => {
+    if (ctx.session.pagination) ctx.session.pagination.page = 1
+    const page = ctx.session.pagination.page
     const db = await getDbConnection()
-    const keywordRows = await selectPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
+    const totalSubscriptions = await countPublisherSubscriptionsByChannelId(
+      db,
+      ctx.session.channel.id,
+    )
+    const paginationButtons = []
+    const pageSize = 98 // 100 is the maximum, 98 to don't mind pagination buttons
+    if (page > 1) paginationButtons.push(Key.callback(`◀️ Назад`, `page|back`))
+    if ((totalSubscriptions - (page - 1) * pageSize) / 100 > 1)
+      paginationButtons.push(Key.callback(`▶️ Вперед`, `page|next`))
+    const keywordRows = await sqlWithPagination(
+      selectPublisherSubscriptionsByChannelId(db, ctx.session.channel.id).$dynamic(),
+      page,
+      pageSize,
+    )
     await db.close()
     return {
       text: `Список ключевых слов @${ctx.session.channel.name}`,
-      buttons: keywordRows.map(keywordRow => [
-        Key.callback(`🗑 ${keywordRow.keyword}`, `${keywordRow.keyword}|del`),
-      ]),
+      buttons: keywordRows
+        .map(keywordRow => [Key.callback(`🗑 ${keywordRow.keyword}`, `del|${keywordRow.keyword}`)])
+        .concat(paginationButtons),
     }
   },
-  onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {
-    if (typeof callback === 'string') {
-      const [keyword, command] = callback.split('|')
-      if (command === 'del') {
-        const db = await getDbConnection()
-        await deletePublisherSubscriptionsByKeyword(db, keyword)
-        await deletePublisherKeyword(db, keyword)
-        await db.close()
-        logUserAction(ctx.from, {
-          state: EState.KEYWORD_SETTINGS,
-          error: `Deleted`,
-          keyword,
-        })
+  onCallback: async (ctx: TTelegrafContext, callback: string) => {
+    const [command, argument] = callback.split('|')
+    if (command === 'del') {
+      const db = await getDbConnection()
+      await deletePublisherSubscriptionsByKeyword(db, argument)
+      await deletePublisherKeyword(db, argument)
+      await db.close()
+      logUserAction(ctx.from, {
+        state: EState.KEYWORD_SETTINGS,
+        error: `Deleted`,
+        keyword: argument,
+      })
+    } else if (command === 'page') {
+      if (argument === 'next') {
+        ctx.session.pagination.page++
+      } else {
+        ctx.session.pagination.page--
       }
-      await enterToState(ctx, keywordSettingsState)
-      return
+    } else {
+      throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
-    throw new InfoMessage(`Unknown menu state: ${callback}`)
+    await enterToState(ctx, keywordSettingsState)
+    return
   },
 }
