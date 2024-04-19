@@ -1,15 +1,19 @@
 import { EState } from '../constants'
 import { TState } from '../types'
 import { addSubscription, enterToState, logUserAction } from '../utils'
-import { channelSettingState } from '.'
+import { channelSettingState, keywordGroupSelectState } from '.'
 import { getDbConnection } from '../../../../../utils'
 
 export const addKeywordsState: TState = {
   stateName: EState.ADD_KEYWORDS,
   menu: async () => {
     return {
-      text: 'Введите список ключевых слов через запятую или каждое ключевое слово на новой строке',
-      buttons: [[['⬅️ Назад', ctx => enterToState(ctx, channelSettingState)]]],
+      text: `Введите список ключевых слов через запятую или каждое ключевое слово на новой строке.
+      Если вы затрудняетесь с выбором - можете выбрать группы подобранных нами ключевых слов, для этого нажмите соответствующую кнопку в меню снизу.`,
+      buttons: [
+        [['Добавить группу ключевых слов', ctx => enterToState(ctx, keywordGroupSelectState)]],
+        [['⬅️ Назад', ctx => enterToState(ctx, channelSettingState)]]
+      ],
     }
   },
   onText: async (ctx, keywordsRaw) => {
