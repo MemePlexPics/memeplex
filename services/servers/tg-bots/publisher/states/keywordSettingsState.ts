@@ -76,7 +76,7 @@ export const keywordSettingsState: TState = {
       text: `Список ключевых слов @${ctx.session.channel.name}`,
       buttons: keywordRows
         .map(keywordRow => [Key.callback(`🗑 ${keywordRow.keyword}`, `del|${keywordRow.keyword}`)])
-        .concat(paginationButtons),
+        .concat([paginationButtons]),
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
