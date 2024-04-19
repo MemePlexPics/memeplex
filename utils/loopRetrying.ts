@@ -2,7 +2,7 @@ import { Logger } from 'winston'
 import { InfoMessage, delay, logError, logInfo } from '.'
 
 export async function loopRetrying(
-  callback,
+  callback: () => Promise<unknown | boolean>,
   options: {
     logger?: Logger
     catchDelayMs?: number
