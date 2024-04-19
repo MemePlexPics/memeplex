@@ -2,6 +2,7 @@ import fs from 'fs/promises'
 import { TTelegrafContext } from '../types'
 import { getMeme } from '../../../utils'
 import { Client } from '@elastic/elasticsearch'
+import { logUserAction } from '.'
 
 export const handleMemePost = async (
   client: Client,
@@ -14,5 +15,9 @@ export const handleMemePost = async (
     source: await fs.readFile(meme.fileName),
   })
   await ctx.reply(`Мем успешно опубликован.`)
-  global.logger.info(`Meme posted: ${memeId} into @${chatId}`)
+  logUserAction(ctx.from, {
+    info: `Meme posted`,
+    chatId,
+    memeId,
+  })
 }
