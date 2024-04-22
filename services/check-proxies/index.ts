@@ -1,10 +1,7 @@
 import 'dotenv/config'
 import amqplib, { Channel, Connection, GetMessage } from 'amqplib'
 import process from 'process'
-import {
-  AMQP_CHECK_PROXY_CHANNEL,
-  EMPTY_QUEUE_RETRY_DELAY,
-} from '../../constants'
+import { AMQP_CHECK_PROXY_CHANNEL, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
 import { delay, getMysqlClient } from '../../utils'
 import { handleAddingProxy, maintaneProxies } from './utils'
 import { Logger } from 'winston'
@@ -16,8 +13,10 @@ export const checkProxies = async (logger: Logger) => {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     checkProxyCh = await amqp.createChannel()
     let checkProxyChTimeout: (ms: number, logger: Logger, msg: GetMessage) => void
-    [checkProxyCh, checkProxyChTimeout, checkProxyChClearTimeout] =
-    await getAmqpQueue(amqp, AMQP_CHECK_PROXY_CHANNEL)
+    ;[checkProxyCh, checkProxyChTimeout, checkProxyChClearTimeout] = await getAmqpQueue(
+      amqp,
+      AMQP_CHECK_PROXY_CHANNEL,
+    )
 
     const ipWithoutProxyResponse = await fetch('https://api64.ipify.org')
     const ipWithoutProxy = await ipWithoutProxyResponse.text()
