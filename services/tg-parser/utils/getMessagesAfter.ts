@@ -48,6 +48,7 @@ export const getMessagesAfter = async function* (
     }
     const chats = {}
     for (const chat of responseJson.response.chats) {
+      if (!chat.broadcast) continue
       chats['-100' + chat.id] = chat.username
     }
     for (const message of responseJson.response.messages) {
