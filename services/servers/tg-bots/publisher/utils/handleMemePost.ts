@@ -14,16 +14,16 @@ export const handleMemePost = async (
   memeId: string,
 ) => {
   const meme = await getMeme(client, memeId)
-  const replyParameters = {
-    message_id: ctx.callbackQuery.message.message_id,
+  const replyToMeme = {
+    reply_parameters: {
+      message_id: ctx.callbackQuery.message.message_id,
+    },
   }
   try {
     await ctx.telegram.sendPhoto(chatId, {
       source: await fs.readFile(meme.fileName),
     })
-    await ctx.reply(i18n['ru'].message.memePostedSuccessfully, {
-      reply_parameters: replyParameters,
-    })
+    await ctx.reply(i18n['ru'].message.memePostedSuccessfully, replyToMeme)
     logUserAction(ctx.from, {
       info: `Meme posted`,
       chatId,
@@ -37,9 +37,7 @@ export const handleMemePost = async (
       error instanceof Error &&
       error.message === '400: Bad Request: need administrator rights in the channel chat'
     ) {
-      await ctx.reply(i18n['ru'].message.adminRightForPost, {
-        reply_parameters: replyParameters,
-      })
+      await ctx.reply(i18n['ru'].message.adminRightForPost, replyToMeme)
       return
     }
     await ctx.answerCbQuery()
