@@ -107,7 +107,6 @@ bot.command('menu', async ctx => {
 })
 
 bot.on('callback_query', async ctx => {
-  console.log('cb', ctx)
   try {
     await handleCallbackQuery(ctx, elastic, states[ctx.session.state].onCallback)
     await ctx.answerCbQuery()
