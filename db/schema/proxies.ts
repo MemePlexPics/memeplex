@@ -1,4 +1,4 @@
-import { mysqlTable, int, varchar, unique, boolean, datetime } from 'drizzle-orm/mysql-core'
+import { mysqlTable, int, varchar, unique, datetime, tinyint } from 'drizzle-orm/mysql-core'
 
 export const proxies = mysqlTable(
   'proxies',
@@ -6,7 +6,7 @@ export const proxies = mysqlTable(
     id: int('id').autoincrement().primaryKey(),
     address: varchar('address', { length: 255 }).notNull(),
     protocol: varchar('protocol', { length: 10 }).notNull(),
-    availability: boolean('availability').notNull(),
+    availability: tinyint('availability').notNull(),
     anonymity: varchar('anonymity', { length: 12 }),
     ocrKey: varchar('ocr_key', { length: 255 }).default('NULL'),
     speed: int('speed'),

@@ -9,7 +9,7 @@ export const selectFastestAvailableProxyWithoutKey = async (db: TDbConnection) =
     .where(
       and(
         inArray(proxies.anonymity, ['anonymous', 'elite']),
-        eq(proxies.availability, true),
+        eq(proxies.availability, 1),
         eq(proxies.ocrKey, null),
       ),
     )
