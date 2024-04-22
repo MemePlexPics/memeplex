@@ -7,6 +7,7 @@ import { getDbConnection } from '../../../../../utils'
 import { updatePublisherChannelById } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
+import { ECallback } from '../constants'
 
 export const handleMemePost = async (
   client: Client,
@@ -27,10 +28,16 @@ export const handleMemePost = async (
     if (isCommonMessage(ctx.callbackQuery.message)) {
       await ctx.editMessageReplyMarkup({
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
-          row.filter(
-            column =>
-              !isCallbackButton(column) || column.callback_data !== `post|${chatId}|${memeId}`,
-          ),
+          row.map(column => {
+            if (!isCallbackButton(column)) return column
+            if (column.callback_data === `${ECallback.POST}|${chatId}|${memeId}`) {
+              const [_, channel] = column.text.split('@')
+              return {
+                text: `✅ Отправлено в @${channel}`,
+                callback_data: ECallback.IGNORE,
+              }
+            }
+          }),
         ),
       })
     }

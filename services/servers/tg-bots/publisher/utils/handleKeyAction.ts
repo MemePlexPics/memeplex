@@ -4,11 +4,16 @@ import {
   deletePublisherSubscription,
   selectPublisherChannelsByUserId,
 } from '../../../../../utils/mysql-queries'
+import { ECallback, EKeywordAction } from '../constants'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { TTelegrafContext } from '../types'
 
-export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', keyword: string) => {
-  if (command === 'del') {
+export const handleKeyAction = async (
+  ctx: TTelegrafContext,
+  command: EKeywordAction,
+  keyword: string,
+) => {
+  if (command === EKeywordAction.DELETE) {
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
     for (const channel of userChannels) {
@@ -20,7 +25,8 @@ export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', key
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
           row.filter(
             column =>
-              !isCallbackButton(column) || column.callback_data !== `key|${command}|${keyword}`,
+              !isCallbackButton(column) ||
+              column.callback_data !== `${ECallback.KEY}|${EKeywordAction.DELETE}|${keyword}`,
           ),
         ),
       })
