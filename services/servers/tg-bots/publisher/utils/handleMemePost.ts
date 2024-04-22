@@ -15,7 +15,7 @@ export const handleMemePost = async (
 ) => {
   const meme = await getMeme(client, memeId)
   const replyParameters = {
-    message_id: ctx.message.message_id,
+    message_id: ctx.callbackQuery.message.message_id,
   }
   try {
     await ctx.telegram.sendPhoto(chatId, {
@@ -33,7 +33,10 @@ export const handleMemePost = async (
     const db = await getDbConnection()
     await updatePublisherChannelById(db, { subscribers }, chatId)
   } catch (error) {
-    if (error instanceof Error && error.message === 'need administrator rights in the channel chat') {
+    if (
+      error instanceof Error &&
+      error.message === '400: Bad Request: need administrator rights in the channel chat'
+    ) {
       await ctx.reply(i18n['ru'].message.adminRightForPost, {
         reply_parameters: replyParameters,
       })
