@@ -29,14 +29,14 @@ export const handleMemePost = async (
       await ctx.editMessageReplyMarkup({
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
           row.map(column => {
-            if (!isCallbackButton(column)) return column
-            if (column.callback_data === `${ECallback.POST}|${chatId}|${memeId}`) {
+            if (isCallbackButton(column) && column.callback_data === `${ECallback.POST}|${chatId}|${memeId}`) {
               const [_, channel] = column.text.split('@')
               return {
                 text: `✅ Отправлено в @${channel}`,
                 callback_data: ECallback.IGNORE,
               }
             }
+            return column
           }),
         ),
       })
