@@ -4,7 +4,7 @@ import {
   deletePublisherSubscription,
   selectPublisherChannelsByUserId,
 } from '../../../../../utils/mysql-queries'
-import { isAccessibleMessage, isCallbackButton, isCommonMessage } from '../typeguards'
+import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { TTelegrafContext } from '../types'
 
 export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', keyword: string) => {
@@ -15,10 +15,7 @@ export const handleKeyAction = async (ctx: TTelegrafContext, command: 'del', key
       await deletePublisherSubscription(db, channel.id, keyword)
     }
     await db.close()
-    if (
-      isAccessibleMessage(ctx.callbackQuery.message) &&
-      isCommonMessage(ctx.callbackQuery.message)
-    ) {
+    if (isCommonMessage(ctx.callbackQuery.message)) {
       await ctx.editMessageReplyMarkup({
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
           row.filter(
