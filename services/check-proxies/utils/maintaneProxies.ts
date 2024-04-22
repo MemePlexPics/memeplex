@@ -1,7 +1,7 @@
-import { checkProxyArray } from '.';
+import { checkProxyArray } from '.'
 
 export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
-    const [proxiesForRecheck] = await mysql.execute(`
+  const [proxiesForRecheck] = await mysql.execute(`
         SELECT * FROM proxies
         WHERE
             anonymity != 'transparent'
@@ -13,8 +13,8 @@ export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
             last_activity_datetime desc,
             speed asc
         LIMIT 1
-    `);
-    const [proxiesForResurrection] = await mysql.execute(`
+    `)
+  const [proxiesForResurrection] = await mysql.execute(`
         SELECT * FROM proxies
         WHERE
             anonymity != 'transparent'
@@ -25,7 +25,7 @@ export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
             last_activity_datetime desc,
             speed asc
         LIMIT 1
-    `);
-    const proxies = [...proxiesForRecheck, ...proxiesForResurrection];
-    await checkProxyArray(mysql, proxies, ipWithoutProxy, logger);
-};
+    `)
+  const proxies = [...proxiesForRecheck, ...proxiesForResurrection]
+  await checkProxyArray(mysql, proxies, ipWithoutProxy, logger)
+}
