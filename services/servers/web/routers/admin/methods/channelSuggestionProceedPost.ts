@@ -1,4 +1,4 @@
-import { getMysqlClient } from '../../../../../../utils'
+import { getDbConnection } from '../../../../../../utils'
 import { proceedChannelSuggestion } from '../../../../../../utils/mysql-queries'
 import { setLogAction } from '../utils'
 import { TRequestHandler } from '../types'
@@ -8,9 +8,9 @@ export const channelSuggestionProceedPost: TRequestHandler<{
 }> = async (req, res) => {
   const { channel } = req.body
   if (!channel) return res.status(500).send()
-  const mysql = await getMysqlClient()
-  await proceedChannelSuggestion(mysql, channel)
-  await mysql.end()
-  setLogAction(res, `✍️ @${channel}`)
+  const db = await getDbConnection()
+  await proceedChannelSuggestion(db, channel)
+  await db.close()
+  setLogAction(res, `@${channel}`)
   return res.send()
 }
