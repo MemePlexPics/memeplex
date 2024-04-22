@@ -13,6 +13,7 @@ import { TPublisherDistributionQueueMsg } from '../../../../ocr/types'
 import fs from 'fs/promises'
 import { Key } from 'telegram-keyboard'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
+import { ECallback, EKeywordAction } from '../constants'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -41,13 +42,18 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         buttons.push([
           Key.callback(
             `➡️ Отправить в @${channel.username}`,
-            `post|${channel.id}|${payload.memeId}`,
+            `${ECallback.POST}|${channel.id}|${payload.memeId}`,
           ),
         ])
       })
 
       payload.keywords.forEach(keyword =>
-        buttons.push([Key.callback(`🗑️ «${keyword}» (отписаться)`, `key|del|${keyword}`)]),
+        buttons.push([
+          Key.callback(
+            `🗑️ «${keyword}» (отписаться)`,
+            `${ECallback.KEY}|${EKeywordAction.DELETE}|${keyword}`,
+          ),
+        ]),
       )
 
       try {
