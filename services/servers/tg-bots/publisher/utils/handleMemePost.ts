@@ -5,6 +5,7 @@ import { Client } from '@elastic/elasticsearch'
 import { logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { updatePublisherChannelById } from '../../../../../utils/mysql-queries'
+import { i18n } from '../i18n'
 
 export const handleMemePost = async (
   client: Client,
@@ -13,16 +14,32 @@ export const handleMemePost = async (
   memeId: string,
 ) => {
   const meme = await getMeme(client, memeId)
-  await ctx.telegram.sendPhoto(chatId, {
-    source: await fs.readFile(meme.fileName),
-  })
-  await ctx.reply(`Мем успешно опубликован.`)
-  logUserAction(ctx.from, {
-    info: `Meme posted`,
-    chatId,
-    memeId,
-  })
-  const subscribers = await ctx.telegram.getChatMembersCount(chatId)
-  const db = await getDbConnection()
-  await updatePublisherChannelById(db, { subscribers }, chatId)
+  const replyParameters = {
+    message_id: ctx.message.message_id,
+  }
+  try {
+    await ctx.telegram.sendPhoto(chatId, {
+      source: await fs.readFile(meme.fileName),
+    })
+    await ctx.reply(i18n['ru'].message.memePostedSuccessfully, {
+      reply_parameters: replyParameters,
+    })
+    logUserAction(ctx.from, {
+      info: `Meme posted`,
+      chatId,
+      memeId,
+    })
+    const subscribers = await ctx.telegram.getChatMembersCount(chatId)
+    const db = await getDbConnection()
+    await updatePublisherChannelById(db, { subscribers }, chatId)
+  } catch (error) {
+    if (error instanceof Error && error.message === 'need administrator rights in the channel chat') {
+      await ctx.reply(i18n['ru'].message.adminRightForPost, {
+        reply_parameters: replyParameters,
+      })
+      return
+    }
+    await ctx.answerCbQuery()
+    throw error
+  }
 }
