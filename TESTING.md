@@ -19,7 +19,7 @@
 
 ## Admin Panel Functionality:
 
-- Approving channel
+- Approving channel (suggestion is being processed)
 - Adding featured channel
 - Deleting a single image
 - Filtering by single channels and suggested channels
