@@ -8,6 +8,7 @@ export const enterToState = async <GStateName extends EState>(
   state: TState<GStateName>,
 ) => {
   ctx.session.state = state.stateName
+  // TODO: split message text by 4 KiB (4096)
   if (state.menu) {
     const { text: menuText, buttons } = await getMenuButtonsAndHandlers(ctx, state)
     await ctx.reply(menuText, Keyboard.make(buttons).reply())
