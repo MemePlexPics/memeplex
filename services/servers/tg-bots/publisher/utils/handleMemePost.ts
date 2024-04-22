@@ -3,11 +3,13 @@ import { TTelegrafContext } from '../types'
 import { getMeme } from '../../../utils'
 import { Client } from '@elastic/elasticsearch'
 import { logUserAction } from '.'
+import { getDbConnection } from '../../../../../utils'
+import { updatePublisherChannelById } from '../../../../../utils/mysql-queries'
 
 export const handleMemePost = async (
   client: Client,
   ctx: TTelegrafContext,
-  chatId: string | number,
+  chatId: number,
   memeId: string,
 ) => {
   const meme = await getMeme(client, memeId)
@@ -20,4 +22,7 @@ export const handleMemePost = async (
     chatId,
     memeId,
   })
+  const subscribers = await ctx.telegram.getChatMembersCount(chatId)
+  const db = await getDbConnection()
+  await updatePublisherChannelById(db, { subscribers }, chatId)
 }

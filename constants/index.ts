@@ -23,7 +23,7 @@ export const TG_API_PARSE_FROM_DATE = (Date.now()/1000 - 24 * 3600) | 0 // From 
 export const ELASTIC_INDEX = 'image_text'
 export const ELASTIC_FUZZINESS = 1
 export const ELASTIC_PAGE_SIZE = 20
-export const MAX_SEARCH_QUERY_LENGTH = 300
+export const MAX_SEARCH_QUERY_LENGTH = 255
 // Page size for /serach handler
 export const SEARCH_PAGE_SIZE = 60
 // Page size for Telegram bot
