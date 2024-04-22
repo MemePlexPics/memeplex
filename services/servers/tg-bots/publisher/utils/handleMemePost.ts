@@ -6,6 +6,7 @@ import { logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { updatePublisherChannelById } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
+import { isCallbackButton, isCommonMessage } from '../typeguards'
 
 export const handleMemePost = async (
   client: Client,
@@ -23,6 +24,16 @@ export const handleMemePost = async (
     await ctx.telegram.sendPhoto(chatId, {
       source: await fs.readFile(meme.fileName),
     })
+    if (isCommonMessage(ctx.callbackQuery.message)) {
+      await ctx.editMessageReplyMarkup({
+        inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
+          row.filter(
+            column =>
+              !isCallbackButton(column) || column.callback_data !== `post|${chatId}|${memeId}`,
+          ),
+        ),
+      })
+    }
     await ctx.reply(i18n['ru'].message.memePostedSuccessfully, replyToMeme)
     logUserAction(ctx.from, {
       info: `Meme posted`,
