@@ -68,7 +68,7 @@ bot.on(message('text'), async ctx => {
   resetSearchSession(ctx)
   await onBotRecieveText(ctx, client, logger)
   if (
-    ['мем'].some(word =>
+    ['мем', 'видео', 'фото', 'картинка'].some(word =>
       new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
     )
   ) {
