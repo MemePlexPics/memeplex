@@ -56,6 +56,15 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         ]),
       )
 
+      payload.keywordGroups.forEach(keywordGroup =>
+        buttons.push([
+          Key.callback(
+            `🗑️ «${keywordGroup}» (отписаться)`,
+            `${ECallback.GROUP}|${EKeywordAction.DELETE}|${keywordGroup}`,
+          ),
+        ]),
+      )
+
       try {
         await bot.telegram.sendPhoto(
           payload.userId,
