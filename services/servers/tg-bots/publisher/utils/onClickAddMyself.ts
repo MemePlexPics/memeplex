@@ -24,6 +24,6 @@ export const onClickAddMyself = async (ctx: TTelegrafContext) => {
   await db.close()
   logUserAction(ctx.from, {
     state: EState.MAIN,
-    error: `Added himself`,
+    info: `Added himself`,
   })
 }

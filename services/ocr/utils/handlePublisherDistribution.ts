@@ -2,12 +2,17 @@ import { fuseSearch, getDbConnection } from '../../../utils'
 import { AMQP_PUBLISHER_DISTRIBUTION_CHANNEL } from '../../../constants'
 import {
   getPublisherKeywords,
-  selectPublisherChannelById,
+  selectPublisherGroupSubscriptionsByName,
+  selectPublisherKeywordGroups,
   selectPublisherSubscriptionsByKeyword,
-  selectPublisherUserById,
 } from '../../../utils/mysql-queries'
 import { Channel } from 'amqplib'
-import { TMemeEntity, TPublisherDistributionQueueMsg } from '../types'
+import {
+  TMemeEntity,
+  TPrePublisherDistributionQueue,
+  TPublisherDistributionQueueMsg,
+} from '../types'
+import { getPublisherUserByChannelIdAndTariffPlan } from '../../utils'
 
 export const handlePublisherDistribution = async (
   amqpChannel: Channel,
@@ -16,34 +21,65 @@ export const handlePublisherDistribution = async (
 ) => {
   const db = await getDbConnection()
   const keywords = await getPublisherKeywords(db)
+  const keywordGroups = await selectPublisherKeywordGroups(db)
+  const groupsByKeyword = keywordGroups.reduce<Record<string, string[]>>(
+    (obj, { name, keywords }) => {
+      keywords.split(', ').forEach(keyword => {
+        if (!obj[keyword]) obj[keyword] = []
+        obj[keyword].push(name)
+      })
+      return obj
+    },
+    {},
+  )
+  const allKeywords = new Set<string>()
+  keywords.forEach(({ keyword }) => allKeywords.add(keyword))
+  Object.keys(groupsByKeyword).forEach(keyword => allKeywords.add(keyword))
 
-  const queue: Record<number, Omit<TPublisherDistributionQueueMsg, 'userId'>> = {}
+  const queue: TPrePublisherDistributionQueue = {}
 
   const keywordsByUser = {}
-  for (const { keyword } of keywords) {
+  const keywordGroupsByUser = {}
+  const tariffPlanByUsers: Record<number, 'free' | 'premium'> = {}
+  for (const keyword of allKeywords) {
     const results = fuseSearch([document.eng], keyword)
     if (!results.length) continue
     const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
+    const groupSubscriptions = groupsByKeyword[keyword]
+      ? await selectPublisherGroupSubscriptionsByName(db, groupsByKeyword[keyword])
+      : []
     for (const { channelId } of subscriptions) {
-      const [channel] = await selectPublisherChannelById(db, channelId)
-      const [user] = await selectPublisherUserById(db, channel.userId)
-      const userId = user.id
+      const userId = await getPublisherUserByChannelIdAndTariffPlan(
+        db,
+        queue,
+        tariffPlanByUsers,
+        channelId,
+        memeId,
+        document,
+      )
+      if (tariffPlanByUsers[userId] === 'free') continue
       if (!keywordsByUser[userId]) {
         keywordsByUser[userId] = new Set<string>()
       }
-      if (!queue[userId])
-        queue[userId] = {
-          memeId,
-          document: {
-            fileName: document.fileName,
-            channelName: document.channelName,
-            messageId: document.messageId,
-          },
-          keywords: [],
-          channelIds: [],
-        }
       queue[userId].channelIds.push(channelId)
       keywordsByUser[userId].add(keyword)
+    }
+
+    for (const { groupName, channelId } of groupSubscriptions) {
+      const userId = await getPublisherUserByChannelIdAndTariffPlan(
+        db,
+        queue,
+        tariffPlanByUsers,
+        channelId,
+        memeId,
+        document,
+      )
+      if (tariffPlanByUsers[userId] === 'premium') continue
+      if (!keywordGroupsByUser[userId]) {
+        keywordGroupsByUser[userId] = new Set<string>()
+      }
+      queue[userId].channelIds.push(channelId)
+      keywordGroupsByUser[userId].add(groupName)
     }
   }
   await db.close()
@@ -51,10 +87,11 @@ export const handlePublisherDistribution = async (
   for (const userId in queue) {
     const buffer = Buffer.from(
       JSON.stringify({
-        userId,
+        userId: Number(userId),
         ...queue[userId],
         keywords: [...keywordsByUser[userId]],
-      }),
+        keywordGroups: [...keywordGroupsByUser[userId]],
+      } as TPublisherDistributionQueueMsg),
     )
     amqpChannel.sendToQueue(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, buffer, {
       persistent: true,

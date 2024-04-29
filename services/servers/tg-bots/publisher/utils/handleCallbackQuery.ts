@@ -1,5 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
-import { handleKeyAction, handleMemePost } from '.'
+import { handleInvoiceCreation, handleKeyAction, handleMemePost } from '.'
 import { TState, TTelegrafContext } from '../types'
 import { ECallback, EKeywordAction } from '../constants'
 import { isCallbackQueryUpdate, isDataQuery } from '../typeguards'
@@ -21,6 +21,10 @@ export const handleCallbackQuery = async (
   }
   if (state === ECallback.KEY) {
     await handleKeyAction(ctx, restCb[0] as EKeywordAction, restCb[1])
+    return
+  }
+  if (state === ECallback.PAY) {
+    await handleInvoiceCreation(ctx)
     return
   }
   await handler(ctx, callbackQuery)
