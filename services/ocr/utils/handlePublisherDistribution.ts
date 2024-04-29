@@ -89,8 +89,8 @@ export const handlePublisherDistribution = async (
       JSON.stringify({
         userId: Number(userId),
         ...queue[userId],
-        keywords: [...keywordsByUser[userId]],
-        keywordGroups: [...keywordGroupsByUser[userId]],
+        keywords: keywordsByUser[userId] ? [...keywordsByUser[userId]] : [],
+        keywordGroups: keywordGroupsByUser[userId] ? [...keywordGroupsByUser[userId]] : [],
       } as TPublisherDistributionQueueMsg),
     )
     amqpChannel.sendToQueue(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, buffer, {
