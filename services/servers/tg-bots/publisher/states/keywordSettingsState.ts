@@ -1,5 +1,5 @@
 import { Key } from 'telegram-keyboard'
-import { EState } from '../constants'
+import { EKeywordAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { enterToState, logUserAction } from '../utils'
 import { mainState } from '.'
@@ -10,16 +10,17 @@ import {
   deletePublisherSubscriptionsByKeyword,
   selectPublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
+import { i18n } from '../i18n'
 
 export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
   menu: async ctx => {
     return {
-      text: 'Настройка ключевых слов',
+      text: i18n['ru'].message.keywordSettings,
       buttons: [
         [
           [
-            'Вывести кл. слова через запятую',
+            i18n['ru'].button.sendKeywords,
             async () => {
               const db = await getDbConnection()
               const keywordRows = await selectPublisherSubscriptionsByChannelId(
@@ -38,7 +39,7 @@ export const keywordSettingsState: TState = {
         ],
         [
           [
-            '🏠 В главное меню',
+            i18n['ru'].button.toMainMenu,
             async () => {
               ctx.session.channel = undefined
               ctx.session.pagination = undefined
@@ -63,9 +64,9 @@ export const keywordSettingsState: TState = {
     )
     const paginationButtons = []
     const pageSize = 98 // 100 is the maximum, 98 to don't mind pagination buttons
-    if (page > 1) paginationButtons.push(Key.callback(`◀️ Назад`, `page|back`))
+    if (page > 1) paginationButtons.push(Key.callback(i18n['ru'].button.back, `page|back`))
     if ((totalSubscriptions - (page - 1) * pageSize) / 100 > 1)
-      paginationButtons.push(Key.callback(`▶️ Вперед`, `page|next`))
+      paginationButtons.push(Key.callback(i18n['ru'].button.forward, `page|next`))
     const keywordRows = await sqlWithPagination(
       selectPublisherSubscriptionsByChannelId(db, ctx.session.channel.id).$dynamic(),
       page,
@@ -75,7 +76,12 @@ export const keywordSettingsState: TState = {
     return {
       text: `Список ключевых слов @${ctx.session.channel.name}`,
       buttons: keywordRows
-        .map(keywordRow => [Key.callback(`🗑 ${keywordRow.keyword}`, `del|${keywordRow.keyword}`)])
+        .map(keywordRow => [
+          Key.callback(
+            `🗑 ${keywordRow.keyword}`,
+            `${EKeywordAction.DELETE}|${keywordRow.keyword}`,
+          ),
+        ])
         .concat([paginationButtons]),
     }
   },

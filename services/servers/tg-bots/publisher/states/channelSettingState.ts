@@ -4,6 +4,7 @@ import { enterToState, onClickDeleteChannel } from '../utils'
 import { addKeywordsState, keywordSettingsState, mainState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { countPublisherSubscriptionsByChannelId } from '../../../../../utils/mysql-queries'
+import { i18n } from '../i18n'
 
 export const channelSettingState: TState = {
   stateName: EState.CHANNEL_SETTINGS,
@@ -13,10 +14,10 @@ export const channelSettingState: TState = {
     await db.close()
     const hasKeywords = keywordsCount !== 0
     const buttons: TMenuButton[][] = [
-      [['➕ Добавить ключевые слова', ctx => enterToState(ctx, addKeywordsState)]],
+      [[i18n['ru'].button.addKeywords, ctx => enterToState(ctx, addKeywordsState)]],
       [
         [
-          '🗑 Отвязать канал',
+          i18n['ru'].button.unlinkChannel,
           async ctx => {
             await onClickDeleteChannel(ctx)
             ctx.session.channel = undefined
@@ -26,7 +27,7 @@ export const channelSettingState: TState = {
       ],
       [
         [
-          '🏠 В главное меню',
+          i18n['ru'].button.toMainMenu,
           async ctx => {
             ctx.session.channel = undefined
             await enterToState(ctx, mainState)
@@ -36,7 +37,7 @@ export const channelSettingState: TState = {
     ]
     if (hasKeywords)
       buttons.splice(1, 0, [
-        ['✏️ Редактировать ключевые слова', ctx => enterToState(ctx, keywordSettingsState)],
+        [i18n['ru'].button.editKeywords, ctx => enterToState(ctx, keywordSettingsState)],
       ])
     return {
       text: `Настройка подписки ${ctx.session.channel.name}`,

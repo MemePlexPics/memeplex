@@ -12,6 +12,7 @@ import {
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
   handleDistributionQueue,
+  handleInvoiceQueue,
   logUserAction,
 } from './utils'
 import {
@@ -22,6 +23,7 @@ import {
   keywordGroupSelectState,
   keywordSettingsState,
   mainState,
+  publicationWithSettingsState,
 } from './states'
 import {
   InfoMessage,
@@ -33,6 +35,7 @@ import {
 import { loopRetrying } from '../../../../utils'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
 import { insertPublisherUser } from '../../../../utils/mysql-queries'
+import { i18n } from './i18n'
 
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_PUBLISHER_BOT_TOKEN, {
   telegram: { webhookReply: false },
@@ -61,9 +64,9 @@ bot.use(
   rateLimit({
     window: 3_000,
     limit: 3,
-    onLimitExceeded: async ctx => {
+    onLimitExceeded: async (ctx: TTelegrafContext) => {
       logUserAction(ctx.from, { info: 'exceeded rate limit' })
-      await ctx.reply('Wait a few seconds before trying again')
+      await ctx.reply(i18n['ru'].message.rateLimit)
     },
   }),
 )
@@ -75,19 +78,12 @@ const states: Record<EState, TState> = {
   [EState.CHANNEL_SETTINGS]: channelSettingState,
   [EState.KEYWORD_SETTINGS]: keywordSettingsState,
   [EState.KEYWORD_GROUP_SELECT]: keywordGroupSelectState,
+  [EState.PUBLICATION_WITH_SETTINGS]: publicationWithSettingsState,
   [EState.MAIN]: mainState,
 }
 
 bot.start(async ctx => {
-  await ctx.reply(`
-    Добро пожаловать в MemePlex Publisher!
-
-    Здесь вы можете подписать ваш канал, или себя, на ключевые слова мемов.
-    Как только у нас появится мем, содержащий указанное вами ключевое слово, мы перешлем его в текущий чат.
-
-    Для добавления канала боту необходимо предоставить административные права, чтобы он мог отправлять сообщения от лица канала.
-    Перед отправкой в канал вам необходимо будет одобрить отправку мема в текущем чате, нажав кнопку подтверждения.
-  `)
+  await ctx.reply(i18n['ru'].message.start)
   await enterToState(ctx, mainState)
 
   const db = await getDbConnection()
@@ -114,7 +110,7 @@ bot.on('callback_query', async ctx => {
     if (error instanceof InfoMessage) {
       await logInfo(global.logger, error)
     } else {
-      await logError(global.logger, error, { ctx })
+      await logError(global.logger, error, { update: ctx.update })
     }
   }
 })
@@ -155,7 +151,7 @@ const start = async () => {
   bot.telegram.setMyCommands([
     {
       command: 'menu',
-      description: 'Вызвать текущее меню',
+      description: i18n['ru'].command.callCurrentMenu,
     },
   ])
   bot.telegram.setMyDescription(`
@@ -169,7 +165,12 @@ const start = async () => {
   process.once('SIGINT', () => bot.stop('SIGINT'))
   process.once('SIGTERM', () => bot.stop('SIGTERM'))
 
-  await loopRetrying(async () => handleDistributionQueue(bot, global.logger), {
+  loopRetrying(() => handleDistributionQueue(bot, global.logger), {
+    logger: global.logger,
+    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
+    catchDelayMs: LOOP_RETRYING_DELAY,
+  })
+  loopRetrying(() => handleInvoiceQueue(bot, global.logger), {
     logger: global.logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
     catchDelayMs: LOOP_RETRYING_DELAY,
