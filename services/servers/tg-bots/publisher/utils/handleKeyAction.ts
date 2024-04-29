@@ -17,7 +17,7 @@ export const handleKeyAction = async (
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
     for (const channel of userChannels) {
-      await deletePublisherSubscription(db, channel.id, keyword)
+      await deletePublisherSubscription(db, channel.id, [keyword])
     }
     await db.close()
     if (isCommonMessage(ctx.callbackQuery.message)) {

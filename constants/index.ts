@@ -11,6 +11,8 @@ export const AMQP_IMAGE_DATA_CHANNEL = 'image_data'
 export const AMQP_IMAGE_FILE_CHANNEL = 'image_files'
 export const AMQP_CHECK_PROXY_CHANNEL = 'check_proxy'
 export const AMQP_PUBLISHER_DISTRIBUTION_CHANNEL = 'publisher_distibution'
+export const AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL = 'publisher_to_cryptopay'
+export const AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL = 'cryptopay_to_publisher'
 // how much time to sleep between fetching all data, ms
 export const CYCLE_SLEEP_TIMEOUT = (Number(process.env.CYCLE_SLEEP_TIMEOUT) * 1) || 30_000
 export const OCR_SPACE_403_DELAY = 1_800_000 // 3600 / 180, the limit is 180 per hour
