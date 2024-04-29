@@ -3,8 +3,9 @@ import { enterToState, logUserAction } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { EState } from '../constants'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
-import { addKeywordsState } from '../states'
+import { addKeywordsState, keywordGroupSelectState } from '../states'
 import { i18n } from '../i18n'
+import { getPublisherUserTariffPlan } from '../../../../utils'
 
 export const addChannel = async (ctx, text) => {
   const logEntity = {
@@ -44,7 +45,7 @@ export const addChannel = async (ctx, text) => {
 
     logUserAction(ctx.from, {
       ...logEntity,
-      error: `Adding private channel`,
+      error: `Adding a private channel`,
       channel,
     })
     return
@@ -102,13 +103,15 @@ export const addChannel = async (ctx, text) => {
       type: chat.type,
       timestamp,
     })
-    await db.close()
     logUserAction(ctx.from, {
       ...logEntity,
       info: `Added`,
       channel,
     })
-    await enterToState(ctx, addKeywordsState)
+    const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
+    await db.close()
+    const nextState = userTariff === 'premium' ? addKeywordsState : keywordGroupSelectState
+    await enterToState(ctx, nextState)
     return
   }
 }
