@@ -11,7 +11,8 @@ import { i18n } from '../i18n'
 export const onBotRecieveText = async (ctx, client, logger) => {
   try {
     const query =
-      ctx.session.search.query || ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH)
+      ctx.session.search.query ||
+      ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH).replace(/[@]?MemePlexBot/i, '')
     const page = ctx.session.search.nextPage || 1
     await logUserAction(
       ctx.from,

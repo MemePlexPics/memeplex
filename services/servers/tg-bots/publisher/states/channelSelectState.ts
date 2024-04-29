@@ -2,22 +2,32 @@ import { Key } from 'telegram-keyboard'
 import { EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { enterToState } from '../utils'
-import { addChannelState, channelSettingState } from '.'
+import { addChannelState, channelSettingState, mainState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import { selectPublisherChannelsByUserId } from '../../../../../utils/mysql-queries'
 import { ChatFromGetChat } from 'telegraf/typings/core/types/typegram'
+import { i18n } from '../i18n'
 
 export const channelSelectState: TState = {
   stateName: EState.CHANNEL_SELECT,
+  menu: async ctx => {
+    return {
+      text: i18n['ru'].message.addKeywords,
+      buttons: [
+        [[i18n['ru'].button.subscriptionSettings, () => enterToState(ctx, channelSelectState)]],
+        [[i18n['ru'].button.back, ctx => enterToState(ctx, mainState)]],
+      ],
+    }
+  },
   inlineMenu: async ctx => {
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
     await db.close()
     return {
-      text: 'Выберите канал',
+      text: i18n['ru'].message.chooseChannel,
       buttons: userChannels
         .map(({ id, username, type }) => [Key.callback(username, `${id}|${username}|${type}`)])
-        .concat([[Key.callback('➕ Добавить канал', EState.ADD_CHANNEL)]]),
+        .concat([[Key.callback(i18n['ru'].button.addChannel, EState.ADD_CHANNEL)]]),
     }
   },
   onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {

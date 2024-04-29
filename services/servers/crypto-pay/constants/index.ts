@@ -1,0 +1,1 @@
+export { ECryptoPayHostname } from './ECryptoPayHostname'

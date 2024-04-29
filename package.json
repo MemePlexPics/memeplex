@@ -27,6 +27,7 @@
   "license": "ISC",
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.3",
+    "@foile/crypto-pay-api": "^1.0.4",
     "@telegraf/session": "^2.0.0-beta.7",
     "amqplib": "^0.10.3",
     "axios": "^1.6.3",
