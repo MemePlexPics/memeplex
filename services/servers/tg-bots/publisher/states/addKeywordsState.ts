@@ -9,10 +9,10 @@ export const addKeywordsState: TState = {
   stateName: EState.ADD_KEYWORDS,
   menu: async () => {
     return {
-      text: i18n['ru'].message.addKeywords,
+      text: i18n['ru'].message.addKeywords(),
       buttons: [
-        [[i18n['ru'].button.addKyewordGroup, ctx => enterToState(ctx, keywordGroupSelectState)]],
-        [[i18n['ru'].button.back, ctx => enterToState(ctx, channelSettingState)]],
+        [[i18n['ru'].button.addKyewordGroup(), ctx => enterToState(ctx, keywordGroupSelectState)]],
+        [[i18n['ru'].button.back(), ctx => enterToState(ctx, channelSettingState)]],
       ],
     }
   },
@@ -33,14 +33,14 @@ export const addKeywordsState: TState = {
     })
     const keywordValuesNotEmpty = keywordValues.filter(keywordObj => keywordObj.keyword.length)
     if (keywordValuesNotEmpty.length === 0) {
-      await ctx.reply(i18n['ru'].message.delimetersInsteadOfKeywords)
+      await ctx.reply(i18n['ru'].message.delimetersInsteadOfKeywords())
       return
     }
 
     await addSubscription(db, ctx.session.channel.id, keywordValuesNotEmpty)
     await db.close()
 
-    await ctx.reply(i18n['ru'].message.addedKeywords)
+    await ctx.reply(i18n['ru'].message.addedKeywords())
     logUserAction(ctx.from, {
       ...logEntity,
       info: `Added`,
