@@ -38,8 +38,8 @@ export const handlePublisherDistribution = async (
 
   const queue: TPrePublisherDistributionQueue = {}
 
-  const keywordsByUser = {}
-  const keywordGroupsByUser = {}
+  const keywordsByUser: Record<number, Set<string>> = {}
+  const keywordGroupsByUser: Record<number, Set<string>> = {}
   const tariffPlanByUsers: Record<number, 'free' | 'premium'> = {}
   for (const keyword of allKeywords) {
     const results = fuseSearch([document.eng], keyword)
@@ -87,7 +87,7 @@ export const handlePublisherDistribution = async (
   for (const userId in queue) {
     if (
       !queue[userId].channelIds.length ||
-      (!keywordsByUser[userId]?.length && !keywordGroupsByUser[userId]?.length)
+      (!keywordsByUser[userId]?.size && !keywordGroupsByUser[userId]?.size)
     )
       continue
     const buffer = Buffer.from(

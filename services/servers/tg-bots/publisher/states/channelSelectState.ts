@@ -12,7 +12,7 @@ export const channelSelectState: TState = {
   stateName: EState.CHANNEL_SELECT,
   menu: async ctx => {
     return {
-      text: i18n['ru'].message.addKeywords(),
+      text: i18n['ru'].message.channelSelectMenu(),
       buttons: [
         [[i18n['ru'].button.subscriptionSettings(), () => enterToState(ctx, channelSelectState)]],
         [[i18n['ru'].button.back(), ctx => enterToState(ctx, mainState)]],
