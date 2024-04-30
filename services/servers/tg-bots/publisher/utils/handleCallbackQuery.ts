@@ -27,5 +27,5 @@ export const handleCallbackQuery = async (
     await handleInvoiceCreation(ctx)
     return
   }
-  await handler(ctx, callbackQuery)
+  if (handler) await handler(ctx, callbackQuery)
 }
