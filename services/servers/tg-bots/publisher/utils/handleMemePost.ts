@@ -44,7 +44,7 @@ export const handleMemePost = async (
         ),
       })
     }
-    await ctx.reply(i18n['ru'].message.memePostedSuccessfully, replyToMeme)
+    await ctx.reply(i18n['ru'].message.memePostedSuccessfully(), replyToMeme)
     logUserAction(ctx.from, {
       info: `Meme posted`,
       chatId,
@@ -58,7 +58,7 @@ export const handleMemePost = async (
       error instanceof Error &&
       error.message === '400: Bad Request: need administrator rights in the channel chat'
     ) {
-      await ctx.reply(i18n['ru'].message.adminRightForPost, replyToMeme)
+      await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
       return
     }
     await ctx.answerCbQuery()

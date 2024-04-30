@@ -57,9 +57,9 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
         {
           type: 'article',
           id: query,
-          title: i18n['ru'].message.nothingFound,
+          title: i18n['ru'].message.nothingFound(),
           input_message_content: {
-            message_text: i18n['ru'].message.nothingFound,
+            message_text: i18n['ru'].message.nothingFound(),
           },
         },
       ])

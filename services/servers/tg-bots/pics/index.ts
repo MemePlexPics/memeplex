@@ -40,18 +40,18 @@ bot.use(
     limit: 15,
     onLimitExceeded: async ctx => {
       logUserAction(ctx.from, { info: 'exceeded rate limit' }, logger)
-      await ctx.reply(i18n['ru'].message.rateLimit)
+      await ctx.reply(i18n['ru'].message.rateLimit())
     },
   }),
 )
 
 bot.start(async ctx => {
-  await ctx.reply(i18n['ru'].message.start)
+  await ctx.reply(i18n['ru'].message.start())
   logUserAction(ctx.from, { start: ctx.payload || 1 }, logger)
 })
 
 bot.command('help', async ctx => {
-  await ctx.reply(i18n['ru'].message.start)
+  await ctx.reply(i18n['ru'].message.start())
 })
 
 bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true, client, logger))
@@ -72,7 +72,7 @@ bot.on(message('text'), async ctx => {
       new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
     )
   ) {
-    await ctx.reply(i18n['ru'].message.redundantWords)
+    await ctx.reply(i18n['ru'].message.redundantWords())
   }
 })
 
@@ -119,15 +119,15 @@ const start = async () => {
   bot.telegram.setMyCommands([
     {
       command: 'get_latest',
-      description: i18n['ru'].command.getLatest,
+      description: i18n['ru'].command.getLatest(),
     },
     {
       command: 'suggest_channel',
-      description: i18n['ru'].command.suggestChannel,
+      description: i18n['ru'].command.suggestChannel(),
     },
     {
       command: 'help',
-      description: i18n['ru'].command.help,
+      description: i18n['ru'].command.help(),
     },
   ])
   logger.info({ info: 'Telegram bot started' })
