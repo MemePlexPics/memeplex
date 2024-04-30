@@ -1,5 +1,5 @@
 import { Key } from 'telegram-keyboard'
-import { ECallback, EState } from '../constants'
+import { ECallback, EKeywordGroupAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { addSubscription, deleteSubscription, enterToState, logUserAction } from '../utils'
 import { addKeywordsState } from '.'
@@ -13,6 +13,7 @@ import {
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { getPublisherUserTariffPlan } from '../../../../utils'
+import { isCallbackButton, isCommonMessage } from '../typeguards'
 
 export const keywordGroupSelectState: TState = {
   stateName: EState.KEYWORD_GROUP_SELECT,
@@ -37,12 +38,14 @@ ${keywords}
     }, 'Выберите группу ключевых слов для подписки.\n')
     const buttons = keywordGroups.map(({ name }) => {
       const isSubscribed = userKeywordGroups.has(name)
-      const buttonText = isSubscribed ? `➖ Отписаться от «${name}»` : `➕ Подписаться на «${name}»`
-      const callback = `${isSubscribed ? 'del' : 'sub'}|${name}`
+      const buttonText = isSubscribed
+        ? i18n['ru'].button.unsubscribeKeyword(name)
+        : i18n['ru'].button.subscribeKeyword(name)
+      const callback = `${isSubscribed ? EKeywordGroupAction.UNSUBSCRIBE : EKeywordGroupAction.SUBSCRIBE}|${name}`
       return [Key.callback(buttonText, callback)]
     })
     if (userTariff === 'free')
-      buttons.push([Key.callback('💵 Оплатить платный тариф', ECallback.PAY)])
+      buttons.push([Key.callback(i18n['ru'].button.subscribeToPremium(), ECallback.PAY)])
     return {
       text,
       buttons,
@@ -52,12 +55,12 @@ ${keywords}
     const db = await getDbConnection()
     const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
     db.close()
-    const text = `${i18n['ru'].message.keywordGroupsMenu}
+    const text = `${i18n['ru'].message.keywordGroupsMenu()}
 
-${userTariff === 'free' ? i18n['ru'].message.freeTariff : ''}`
+${userTariff === 'free' ? i18n['ru'].message.freeTariff() : ''}`
     return {
       text,
-      buttons: [[[i18n['ru'].button.back, ctx => enterToState(ctx, addKeywordsState)]]],
+      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, addKeywordsState)]]],
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
@@ -65,13 +68,15 @@ ${userTariff === 'free' ? i18n['ru'].message.freeTariff : ''}`
     const db = await getDbConnection()
     const keywordGroup = await selectPublisherKeywordGroupByName(db, groupName)
     if (!keywordGroup.length) throw new InfoMessage(`Unknown menu state: ${callback}`)
+
     logUserAction(ctx.from, {
       state: EState.KEYWORD_GROUP_SELECT,
       operation,
       group: groupName,
     })
     const keywords = keywordGroup[0].keywords.split(', ')
-    if (operation === 'sub') {
+
+    if (operation === EKeywordGroupAction.SUBSCRIBE) {
       await insertPublisherGroupSubscription(db, [
         {
           groupName,
@@ -80,13 +85,36 @@ ${userTariff === 'free' ? i18n['ru'].message.freeTariff : ''}`
       ])
       const keywordsForInsert = keywords.map(keyword => ({ keyword }))
       await addSubscription(db, ctx.session.channel.id, keywordsForInsert)
-      await ctx.reply(`Вы успешно подписались на ключевые слова из группы «${groupName}»`)
-    } else if (operation === 'del') {
+    } else if (operation === EKeywordGroupAction.UNSUBSCRIBE) {
       await deletePublisherGroupSubscription(db, ctx.session.channel.id, groupName)
       await deleteSubscription(db, ctx.session.channel.id, keywords)
-      await ctx.reply(`Вы успешно отписались от ключевых слов из группы «${groupName}»`)
+    } else {
+      throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
     await db.close()
+
+    if (isCommonMessage(ctx.callbackQuery.message)) {
+      const newOperation =
+        operation === EKeywordGroupAction.UNSUBSCRIBE
+          ? EKeywordGroupAction.SUBSCRIBE
+          : EKeywordGroupAction.UNSUBSCRIBE
+      await ctx.editMessageReplyMarkup({
+        inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
+          row.map(column => {
+            if (isCallbackButton(column) && column.callback_data === `${operation}|${groupName}`) {
+              return {
+                text:
+                  operation === EKeywordGroupAction.UNSUBSCRIBE
+                    ? i18n['ru'].button.subscribeKeyword(groupName)
+                    : i18n['ru'].button.unsubscribeKeyword(groupName),
+                callback_data: `${newOperation}|${groupName}`,
+              }
+            }
+            return column
+          }),
+        ),
+      })
+    }
     return
   },
 }
