@@ -87,7 +87,7 @@ export const handlePublisherDistribution = async (
   for (const userId in queue) {
     if (
       !queue[userId].channelIds.length ||
-      (!keywordsByUser[userId].length && !keywordGroupsByUser[userId].length)
+      (!keywordsByUser[userId]?.length && !keywordGroupsByUser[userId]?.length)
     )
       continue
     const buffer = Buffer.from(
