@@ -14,10 +14,10 @@ export const channelSettingState: TState = {
     await db.close()
     const hasKeywords = keywordsCount !== 0
     const buttons: TMenuButton[][] = [
-      [[i18n['ru'].button.addKeywords, ctx => enterToState(ctx, addKeywordsState)]],
+      [[i18n['ru'].button.addKeywords(), ctx => enterToState(ctx, addKeywordsState)]],
       [
         [
-          i18n['ru'].button.unlinkChannel,
+          i18n['ru'].button.unlinkChannel(),
           async ctx => {
             await onClickDeleteChannel(ctx)
             ctx.session.channel = undefined
@@ -27,7 +27,7 @@ export const channelSettingState: TState = {
       ],
       [
         [
-          i18n['ru'].button.toMainMenu,
+          i18n['ru'].button.toMainMenu(),
           async ctx => {
             ctx.session.channel = undefined
             await enterToState(ctx, mainState)
@@ -37,7 +37,7 @@ export const channelSettingState: TState = {
     ]
     if (hasKeywords)
       buttons.splice(1, 0, [
-        [i18n['ru'].button.editKeywords, ctx => enterToState(ctx, keywordSettingsState)],
+        [i18n['ru'].button.editKeywords(), ctx => enterToState(ctx, keywordSettingsState)],
       ])
     return {
       text: `Настройка подписки ${ctx.session.channel.name}`,

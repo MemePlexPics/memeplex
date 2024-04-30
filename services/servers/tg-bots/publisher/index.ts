@@ -66,7 +66,7 @@ bot.use(
     limit: 3,
     onLimitExceeded: async (ctx: TTelegrafContext) => {
       logUserAction(ctx.from, { info: 'exceeded rate limit' })
-      await ctx.reply(i18n['ru'].message.rateLimit)
+      await ctx.reply(i18n['ru'].message.rateLimit())
     },
   }),
 )
@@ -83,7 +83,7 @@ const states: Record<EState, TState> = {
 }
 
 bot.start(async ctx => {
-  await ctx.reply(i18n['ru'].message.start)
+  await ctx.reply(i18n['ru'].message.start())
   await enterToState(ctx, mainState)
 
   const db = await getDbConnection()
@@ -150,7 +150,7 @@ const start = async () => {
   bot.telegram.setMyCommands([
     {
       command: 'menu',
-      description: i18n['ru'].command.callCurrentMenu,
+      description: i18n['ru'].command.callCurrentMenu(),
     },
   ])
   bot.telegram.setMyDescription(`
