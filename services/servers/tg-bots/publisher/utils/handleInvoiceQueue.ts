@@ -41,7 +41,11 @@ export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger
         await insertPublisherPremiumUser(db, payload.userId)
         await db.close()
         await bot.telegram.sendMessage(payload.userId, '🎉 Оплата успешно произведена!')
+      } else {
+        cryptoPayToPublisherCh.nack(msg)
+        continue
       }
+      cryptoPayToPublisherCh.ack(msg)
     }
   } finally {
     cryptoPayToPublisherTimeotClear()
