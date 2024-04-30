@@ -13,7 +13,7 @@ export const addChannel = async (ctx, text) => {
   }
   const channel = getTgChannelName(text)
   if (!channel) {
-    await ctx.reply(i18n['ru'].message.checkChannelNameFormat)
+    await ctx.reply(i18n['ru'].message.checkChannelNameFormat())
     logUserAction(ctx.from, {
       ...logEntity,
       error: `Incorrect channel`,
@@ -37,11 +37,11 @@ export const addChannel = async (ctx, text) => {
   try {
     chat = await ctx.telegram.getChat(`@${channel}`)
   } catch (error) {
-    await ctx.reply(i18n['ru'].message.checkChannelName)
+    await ctx.reply(i18n['ru'].message.checkChannelName())
     return
   }
   if (chat.type === 'private') {
-    await ctx.reply(i18n['ru'].message.addedUserInsteadOfChannel)
+    await ctx.reply(i18n['ru'].message.addedUserInsteadOfChannel())
 
     logUserAction(ctx.from, {
       ...logEntity,
@@ -63,12 +63,12 @@ export const addChannel = async (ctx, text) => {
       return isOurUserAnAdmin && isOurBotAnAdmin
     })
   } catch (error) {
-    await ctx.reply(i18n['ru'].message.botMustBeInTheChannelAndHaveAdminRights, readyButton)
+    await ctx.reply(i18n['ru'].message.botMustBeInTheChannelAndHaveAdminRights(), readyButton)
     await logInfo(global.logger, error)
     return
   }
   if (!isOurUserAnAdmin) {
-    await ctx.reply(i18n['ru'].message.onlyAdminCanSubscribeChannel)
+    await ctx.reply(i18n['ru'].message.onlyAdminCanSubscribeChannel())
     logUserAction(ctx.from, {
       ...logEntity,
       error: `The user not an admin`,
@@ -77,7 +77,7 @@ export const addChannel = async (ctx, text) => {
     return
   }
   if (!isOurBotAnAdmin) {
-    await ctx.reply(i18n['ru'].message.botMustHaveAdminRights, readyButton)
+    await ctx.reply(i18n['ru'].message.botMustHaveAdminRights(), readyButton)
     logUserAction(ctx.from, {
       ...logEntity,
       error: `Admin rights not granted`,
