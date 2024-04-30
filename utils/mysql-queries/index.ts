@@ -67,3 +67,4 @@ export { selectPublisherGroupSubscriptionsByUserId } from './selectPublisherGrou
 export { deletePublisherGroupSubscription } from './deletePublisherGroupSubscription'
 export { insertPublisherGroupSubscription } from './insertPublisherGroupSubscription'
 export { insertPublisherPremiumUser } from './insertPublisherPremiumUser'
+export { deletePublisherGroupSubscriptionByChannelId } from './deletePublisherGroupSubscriptionByChannelId'
