@@ -39,15 +39,15 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
 
     const isLastNewPage = isUpdate && response.totalPages === 0
     const finalReplyText = isLastNewPage
-      ? i18n['ru'].message.noNewMemes
+      ? i18n['ru'].message.noNewMemes()
       : `${response.totalPages - 1} more ${isUpdate ? 'new pages' : 'pages in the past'}`
     const buttons = Markup.inlineKeyboard([
-      Markup.button.callback(i18n['ru'].button.loadNewer, 'button_latest_newer'),
-      Markup.button.callback(i18n['ru'].button.loadOlder, 'button_latest_older'),
+      Markup.button.callback(i18n['ru'].button.loadNewer(), 'button_latest_newer'),
+      Markup.button.callback(i18n['ru'].button.loadOlder(), 'button_latest_older'),
     ])
     await ctx.reply(finalReplyText, buttons)
   } catch (e) {
     await logError(logger, e)
-    await ctx.reply(i18n['ru'].message.error)
+    await ctx.reply(i18n['ru'].message.error())
   }
 }

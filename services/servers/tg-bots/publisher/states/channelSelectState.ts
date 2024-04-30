@@ -12,10 +12,10 @@ export const channelSelectState: TState = {
   stateName: EState.CHANNEL_SELECT,
   menu: async ctx => {
     return {
-      text: i18n['ru'].message.addKeywords,
+      text: i18n['ru'].message.addKeywords(),
       buttons: [
-        [[i18n['ru'].button.subscriptionSettings, () => enterToState(ctx, channelSelectState)]],
-        [[i18n['ru'].button.back, ctx => enterToState(ctx, mainState)]],
+        [[i18n['ru'].button.subscriptionSettings(), () => enterToState(ctx, channelSelectState)]],
+        [[i18n['ru'].button.back(), ctx => enterToState(ctx, mainState)]],
       ],
     }
   },
@@ -24,10 +24,10 @@ export const channelSelectState: TState = {
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
     await db.close()
     return {
-      text: i18n['ru'].message.chooseChannel,
+      text: i18n['ru'].message.chooseChannel(),
       buttons: userChannels
         .map(({ id, username, type }) => [Key.callback(username, `${id}|${username}|${type}`)])
-        .concat([[Key.callback(i18n['ru'].button.addChannel, EState.ADD_CHANNEL)]]),
+        .concat([[Key.callback(i18n['ru'].button.addChannel(), EState.ADD_CHANNEL)]]),
     }
   },
   onCallback: async <EState>(ctx: TTelegrafContext, callback: EState | string) => {

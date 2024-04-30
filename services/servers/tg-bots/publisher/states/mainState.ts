@@ -14,10 +14,10 @@ export const mainState: TState = {
     const userChannelsCount = await countPublisherChannelsByUserId(db, ctx.from.id)
     await db.close()
     const buttons: TMenuButton[][] = [
-      [[i18n['ru'].button.linkYourChannel, () => enterToState(ctx, addChannelState)]],
+      [[i18n['ru'].button.linkYourChannel(), () => enterToState(ctx, addChannelState)]],
       [
         [
-          i18n['ru'].button.addKeywords,
+          i18n['ru'].button.addKeywords(),
           async () => {
             await onClickAddMyself(ctx)
             const db = await getDbConnection()
@@ -30,11 +30,11 @@ export const mainState: TState = {
     ]
     if (userChannelsCount !== 0) {
       buttons.push([
-        [i18n['ru'].button.subscriptionSettings, () => enterToState(ctx, channelSelectState)],
+        [i18n['ru'].button.subscriptionSettings(), () => enterToState(ctx, channelSelectState)],
       ])
     }
     return {
-      text: i18n['ru'].message.subscriptionsMenu,
+      text: i18n['ru'].message.subscriptionsMenu(),
       buttons,
     }
   },
