@@ -12,7 +12,7 @@ import { TInvoice } from '../types'
 import { TAmqpCryptoPayToPublisherChannelMessage } from '../../../types'
 
 export const handleInvoiceCreation = async (
-  cryptoPay: ReturnType<typeof CryptoPay>,
+  cryptoPay: CryptoPay,
   logger: Logger,
 ) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
