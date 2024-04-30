@@ -85,6 +85,11 @@ export const handlePublisherDistribution = async (
   await db.close()
 
   for (const userId in queue) {
+    if (
+      !queue[userId].channelIds.length ||
+      (!keywordsByUser[userId].length && !keywordGroupsByUser[userId].length)
+    )
+      continue
     const buffer = Buffer.from(
       JSON.stringify({
         userId: Number(userId),
