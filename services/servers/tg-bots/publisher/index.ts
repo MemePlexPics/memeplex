@@ -137,7 +137,6 @@ bot.catch(async (err, ctx) => {
         message: JSON.stringify(err),
       }
   await logError(global.logger, error, { ctx: JSON.stringify(ctx.update) })
-  bot.stop()
 })
 
 const start = async () => {
