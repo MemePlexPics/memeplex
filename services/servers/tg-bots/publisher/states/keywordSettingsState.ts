@@ -16,11 +16,11 @@ export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
   menu: async ctx => {
     return {
-      text: i18n['ru'].message.keywordSettings,
+      text: i18n['ru'].message.keywordSettings(),
       buttons: [
         [
           [
-            i18n['ru'].button.sendKeywords,
+            i18n['ru'].button.sendKeywords(),
             async () => {
               const db = await getDbConnection()
               const keywordRows = await selectPublisherSubscriptionsByChannelId(
@@ -39,7 +39,7 @@ export const keywordSettingsState: TState = {
         ],
         [
           [
-            i18n['ru'].button.toMainMenu,
+            i18n['ru'].button.toMainMenu(),
             async () => {
               ctx.session.channel = undefined
               ctx.session.pagination = undefined
@@ -64,9 +64,9 @@ export const keywordSettingsState: TState = {
     )
     const paginationButtons = []
     const pageSize = 98 // 100 is the maximum, 98 to don't mind pagination buttons
-    if (page > 1) paginationButtons.push(Key.callback(i18n['ru'].button.back, `page|back`))
+    if (page > 1) paginationButtons.push(Key.callback(i18n['ru'].button.back(), `page|back`))
     if ((totalSubscriptions - (page - 1) * pageSize) / 100 > 1)
-      paginationButtons.push(Key.callback(i18n['ru'].button.forward, `page|next`))
+      paginationButtons.push(Key.callback(i18n['ru'].button.forward(), `page|next`))
     const keywordRows = await sqlWithPagination(
       selectPublisherSubscriptionsByChannelId(db, ctx.session.channel.id).$dynamic(),
       page,

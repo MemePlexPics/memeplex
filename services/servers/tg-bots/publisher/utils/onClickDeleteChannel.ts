@@ -13,7 +13,7 @@ export const onClickDeleteChannel = async (ctx: TTelegrafContext) => {
   await deletePublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
   await deletePublisherChannelById(db, ctx.session.channel.id)
   await db.close()
-  await ctx.reply(i18n['ru'].message.channelUnlinked)
+  await ctx.reply(i18n['ru'].message.channelUnlinked())
   logUserAction(ctx.from, {
     state: EState.CHANNEL_SETTINGS,
     error: `Unlinked`,

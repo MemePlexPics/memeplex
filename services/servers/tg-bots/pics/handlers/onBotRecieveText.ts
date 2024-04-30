@@ -27,7 +27,7 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     const response = await searchMemes(client, query, page, TG_BOT_PAGE_SIZE)
 
     if (response.totalPages === 0) {
-      await ctx.reply(i18n['ru'].message.nothingFound)
+      await ctx.reply(i18n['ru'].message.nothingFound())
       return
     }
     for (const meme of response.result) {
@@ -42,7 +42,7 @@ export const onBotRecieveText = async (ctx, client, logger) => {
       await ctx.reply(
         `Page ${page} of ${response.totalPages}`,
         Markup.inlineKeyboard([
-          Markup.button.callback(i18n['ru'].button.loadMore, 'button_search_more'),
+          Markup.button.callback(i18n['ru'].button.loadMore(), 'button_search_more'),
         ]),
       )
       ctx.session.search = {
@@ -54,6 +54,6 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     resetSearchSession(ctx)
   } catch (e) {
     await logError(logger, e)
-    await ctx.reply(i18n['ru'].message.error)
+    await ctx.reply(i18n['ru'].message.error())
   }
 }
