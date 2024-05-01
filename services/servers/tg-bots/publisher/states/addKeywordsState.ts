@@ -1,12 +1,34 @@
-import { EState } from '../constants'
+import { ECallback, EState } from '../constants'
 import { TState } from '../types'
 import { addSubscription, enterToState, logUserAction } from '../utils'
 import { channelSettingState, keywordGroupSelectState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
+import { getPublisherUserTariffPlan } from '../../../../utils'
 
 export const addKeywordsState: TState = {
   stateName: EState.ADD_KEYWORDS,
+  beforeInit: async ctx => {
+    const db = await getDbConnection()
+    const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
+    if (userTariff === 'free') {
+      await ctx.reply(i18n['ru'].message.freeTariff(), {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: i18n['ru'].button.subscribeToPremium(),
+                callback_data: ECallback.PAY,
+              },
+            ],
+          ],
+        },
+      })
+      await enterToState(ctx, keywordGroupSelectState)
+      return false
+    }
+    return true
+  },
   menu: async () => {
     return {
       text: i18n['ru'].message.addKeywords(),
