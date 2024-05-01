@@ -7,6 +7,8 @@ export const enterToState = async <GStateName extends EState>(
   ctx: TTelegrafContext,
   state: TState<GStateName>,
 ) => {
+  const isInit = await state.beforeInit(ctx)
+  if (!isInit) return
   ctx.session.state = state.stateName
   // TODO: split message text by 4 KiB (4096)
   if (state.menu) {

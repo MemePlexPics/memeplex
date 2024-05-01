@@ -8,7 +8,5 @@ export const deletePublisherGroupSubscriptionByChannelId = async (
 ) => {
   await db
     .delete(botPublisherGroupSubscriptions)
-    .where(
-      eq(botPublisherGroupSubscriptions.channelId, channelId),
-    )
+    .where(eq(botPublisherGroupSubscriptions.channelId, channelId))
 }

@@ -11,10 +11,7 @@ import { Logger } from 'winston'
 import { TInvoice } from '../types'
 import { TAmqpCryptoPayToPublisherChannelMessage } from '../../../types'
 
-export const handleInvoiceCreation = async (
-  cryptoPay: CryptoPay,
-  logger: Logger,
-) => {
+export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [publisherToCryptoPayCh, distributionTimeout, distributionTimeotClear] = await getAmqpQueue(
     amqp,
