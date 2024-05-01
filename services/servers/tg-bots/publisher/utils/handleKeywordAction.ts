@@ -8,7 +8,7 @@ import { ECallback, EKeywordAction } from '../constants'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { TTelegrafContext } from '../types'
 
-export const handleKeyAction = async (
+export const handleKeywordAction = async (
   ctx: TTelegrafContext,
   command: EKeywordAction,
   keyword: string,
