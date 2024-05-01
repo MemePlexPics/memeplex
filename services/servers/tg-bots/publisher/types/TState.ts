@@ -4,9 +4,10 @@ import { EState } from '../constants'
 
 export type TState<GStateName extends string = EState> = {
   stateName?: GStateName
-  menu?: (ctx?: TTelegrafContext) => Promisable<TMenu>
-  inlineMenu?: (ctx?: TTelegrafContext) => Promisable<TInlineMenu>
-  message?: (ctx?: TTelegrafContext) => Promisable<string>
+  beforeInit?: (ctx: TTelegrafContext) => Promisable<boolean>
+  menu?: (ctx: TTelegrafContext) => Promisable<TMenu>
+  inlineMenu?: (ctx: TTelegrafContext) => Promisable<TInlineMenu>
+  message?: (ctx: TTelegrafContext) => Promisable<string>
   onCallback?: (ctx: TTelegrafContext, callback: GStateName) => Promisable<unknown>
-  onText?: (ctx?: TTelegrafContext, text?: string) => Promisable<unknown>
+  onText?: (ctx: TTelegrafContext, text: string) => Promisable<unknown>
 }

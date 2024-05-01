@@ -1,8 +1,8 @@
 import { Key } from 'telegram-keyboard'
-import { ECallback, EKeywordGroupAction, EState } from '../constants'
+import { EKeywordGroupAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { addSubscription, deleteSubscription, enterToState, logUserAction } from '../utils'
-import { addKeywordsState } from '.'
+import { addKeywordsState, channelSettingState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   deletePublisherGroupSubscription,
@@ -21,7 +21,6 @@ export const keywordGroupSelectState: TState = {
     const db = await getDbConnection()
     const keywordGroups = await selectPublisherKeywordGroups(db)
     const userKeywordGroupsRaw = await selectPublisherGroupSubscriptionsByUserId(db, ctx.from.id)
-    const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
     const userKeywordGroups = userKeywordGroupsRaw.reduce((acc, { groupName }) => {
       acc.add(groupName)
       return acc
@@ -31,7 +30,7 @@ export const keywordGroupSelectState: TState = {
       return (
         string +
         `
-${name}:
+📂 ${name}:
 ${keywords}
     `
       )
@@ -41,11 +40,11 @@ ${keywords}
       const buttonText = isSubscribed
         ? i18n['ru'].button.unsubscribeKeyword(name)
         : i18n['ru'].button.subscribeKeyword(name)
-      const callback = `${isSubscribed ? EKeywordGroupAction.UNSUBSCRIBE : EKeywordGroupAction.SUBSCRIBE}|${name}`
-      return [Key.callback(buttonText, callback)]
+      const keyAction = isSubscribed
+        ? EKeywordGroupAction.UNSUBSCRIBE
+        : EKeywordGroupAction.SUBSCRIBE
+      return [Key.callback(buttonText, `${keyAction}|${name}`)]
     })
-    if (userTariff === 'free')
-      buttons.push([Key.callback(i18n['ru'].button.subscribeToPremium(), ECallback.PAY)])
     return {
       text,
       buttons,
@@ -55,12 +54,12 @@ ${keywords}
     const db = await getDbConnection()
     const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
     db.close()
-    const text = `${i18n['ru'].message.keywordGroupsMenu()}
-
-${userTariff === 'free' ? i18n['ru'].message.freeTariff() : ''}`
+    const isPremium = userTariff === 'premium'
+    const text = i18n['ru'].message.keywordGroupsMenu()
+    const previoisState = isPremium ? addKeywordsState : channelSettingState
     return {
       text,
-      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, addKeywordsState)]]],
+      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, previoisState)]]],
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
