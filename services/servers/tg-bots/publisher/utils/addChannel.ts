@@ -3,9 +3,8 @@ import { enterToState, logUserAction } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { EState } from '../constants'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
-import { addKeywordsState, keywordGroupSelectState } from '../states'
+import { addKeywordsState } from '../states'
 import { i18n } from '../i18n'
-import { getPublisherUserTariffPlan } from '../../../../utils'
 
 export const addChannel = async (ctx, text) => {
   const logEntity = {
@@ -103,15 +102,13 @@ export const addChannel = async (ctx, text) => {
       type: chat.type,
       timestamp,
     })
+    await db.close()
     logUserAction(ctx.from, {
       ...logEntity,
       info: `Added`,
       channel,
     })
-    const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
-    await db.close()
-    const nextState = userTariff === 'premium' ? addKeywordsState : keywordGroupSelectState
-    await enterToState(ctx, nextState)
+    await enterToState(ctx, addKeywordsState)
     return
   }
 }
