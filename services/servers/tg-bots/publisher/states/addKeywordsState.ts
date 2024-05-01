@@ -12,6 +12,7 @@ export const addKeywordsState: TState = {
     const db = await getDbConnection()
     const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
     if (userTariff === 'free') {
+      await enterToState(ctx, keywordGroupSelectState)
       await ctx.reply(i18n['ru'].message.freeTariff(), {
         reply_markup: {
           inline_keyboard: [
@@ -24,7 +25,6 @@ export const addKeywordsState: TState = {
           ],
         },
       })
-      await enterToState(ctx, keywordGroupSelectState)
       return false
     }
     return true
