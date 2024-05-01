@@ -43,9 +43,6 @@ const config: Configuration = {
     },
     resolve: {
         extensions: ['.ts', '.js'],
-        alias: {
-            'node-fetch': false // fix for node_modules/@foile/crypto-pay-api/src/api.js: fetch is not a function
-        }    
     },
     target: 'node',
 };
