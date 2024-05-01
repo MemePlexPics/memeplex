@@ -1,8 +1,8 @@
-import { Key } from 'telegram-keyboard'
+import { Key, Keyboard } from 'telegram-keyboard'
 import { EKeywordAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
-import { enterToState, logUserAction } from '../utils'
-import { mainState } from '.'
+import { enterToState, handlePaywall, logUserAction } from '../utils'
+import { keywordGroupSelectState, mainState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
   countPublisherSubscriptionsByChannelId,
@@ -11,9 +11,14 @@ import {
   selectPublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
+import { isCommonMessage } from '../typeguards'
 
 export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
+  beforeInit: async ctx => {
+    const db = await getDbConnection()
+    return await handlePaywall(db, ctx, keywordGroupSelectState)
+  },
   menu: async ctx => {
     return {
       text: i18n['ru'].message.keywordSettings(),
@@ -106,7 +111,10 @@ export const keywordSettingsState: TState = {
     } else {
       throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
-    await enterToState(ctx, keywordSettingsState)
+    if (isCommonMessage(ctx.callbackQuery.message)) {
+      const inlineMenu = await keywordSettingsState.inlineMenu(ctx)
+      await ctx.editMessageReplyMarkup(Keyboard.make(inlineMenu.buttons).inline().reply_markup)
+    }
     return
   },
 }
