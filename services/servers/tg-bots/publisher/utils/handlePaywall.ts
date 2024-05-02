@@ -1,11 +1,15 @@
-import { enterToState } from "."
-import { TDbConnection } from "../../../../../utils/types"
-import { getPublisherUserTariffPlan } from "../../../../utils"
-import { ECallback } from "../constants"
-import { i18n } from "../i18n"
-import { TState, TTelegrafContext } from "../types"
+import { enterToState } from '.'
+import { TDbConnection } from '../../../../../utils/types'
+import { getPublisherUserTariffPlan } from '../../../../utils'
+import { ECallback } from '../constants'
+import { i18n } from '../i18n'
+import { TState, TTelegrafContext } from '../types'
 
-export const handlePaywall = async (db: TDbConnection, ctx: TTelegrafContext, fallbackState?: TState) => {
+export const handlePaywall = async (
+  db: TDbConnection,
+  ctx: TTelegrafContext,
+  fallbackState?: TState,
+) => {
   const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
   if (userTariff === 'free') {
     if (fallbackState) {
