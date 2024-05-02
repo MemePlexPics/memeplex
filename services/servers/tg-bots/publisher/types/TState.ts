@@ -3,7 +3,7 @@ import { Promisable } from '../../../../../types'
 import { EState } from '../constants'
 
 export type TState<GStateName extends string = EState> = {
-  stateName?: GStateName
+  stateName: GStateName
   beforeInit?: (ctx: TTelegrafContext) => Promisable<boolean>
   menu?: (ctx: TTelegrafContext) => Promisable<TMenu>
   inlineMenu?: (ctx: TTelegrafContext) => Promisable<TInlineMenu>

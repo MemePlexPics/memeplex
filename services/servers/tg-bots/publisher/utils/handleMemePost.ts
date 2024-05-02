@@ -16,16 +16,16 @@ export const handleMemePost = async (
   memeId: string,
 ) => {
   const meme = await getMeme(client, memeId)
-  const replyToMeme = {
+  const replyToMeme = ctx.callbackQuery?.message ? {
     reply_parameters: {
       message_id: ctx.callbackQuery.message.message_id,
     },
-  }
+  } : undefined
   try {
     await ctx.telegram.sendPhoto(chatId, {
       source: await fs.readFile(meme.fileName),
     })
-    if (isCommonMessage(ctx.callbackQuery.message)) {
+    if (isCommonMessage(ctx.callbackQuery?.message) && ctx.callbackQuery.message.reply_markup) {
       await ctx.editMessageReplyMarkup({
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
           row.map(column => {

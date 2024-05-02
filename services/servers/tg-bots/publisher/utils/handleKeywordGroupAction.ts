@@ -20,7 +20,7 @@ export const handleKeywordGroupAction = async (
       await deletePublisherGroupSubscription(db, channel.id, keywordGroup)
     }
     await db.close()
-    if (isCommonMessage(ctx.callbackQuery.message)) {
+    if (isCommonMessage(ctx.callbackQuery?.message) && ctx.callbackQuery.message.reply_markup) {
       await ctx.editMessageReplyMarkup({
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
           row.filter(
@@ -32,11 +32,11 @@ export const handleKeywordGroupAction = async (
         ),
       })
     }
-    await ctx.reply(`Группа ключевых слов «${keywordGroup}» успешно удалена.`, {
+    await ctx.reply(`Группа ключевых слов «${keywordGroup}» успешно удалена.`, ctx.callbackQuery?.message ? {
       reply_parameters: {
         message_id: ctx.callbackQuery.message.message_id,
       },
-    })
+    } : undefined)
     logUserAction(ctx.from, {
       info: `Unsubscribe from a keyword group`,
       keywordGroup,
