@@ -10,6 +10,9 @@ import { i18n } from '../i18n'
 import { TTelegrafContext } from '../types'
 
 export const onClickDeleteChannel = async (ctx: TTelegrafContext) => {
+  if (!ctx.session.channel) {
+    throw new Error(`onClickDeleteChannel: ctx.session.channel is undefined`)
+  }
   const db = await getDbConnection()
   await deletePublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
   await deletePublisherGroupSubscriptionByChannelId(db, ctx.session.channel.id)

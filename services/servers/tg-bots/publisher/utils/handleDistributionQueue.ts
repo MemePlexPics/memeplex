@@ -11,9 +11,9 @@ import { delay, getDbConnection } from '../../../../../utils'
 import { Logger } from 'winston'
 import { TPublisherDistributionQueueMsg } from '../../../../ocr/types'
 import fs from 'fs/promises'
-import { Key } from 'telegram-keyboard'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
 import { ECallback, EKeywordAction } from '../constants'
+import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -32,7 +32,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       distributionTimeout(600_000, logger, msg)
       const payload = JSON.parse(msg.content.toString()) as TPublisherDistributionQueueMsg
 
-      const buttons = []
+      const buttons: InlineKeyboardButton.CallbackButton[][] = []
       const db = await getDbConnection()
       const channels = await selectPublisherChannelsById(db, payload.channelIds)
       await db.close()
@@ -40,28 +40,28 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       channels.forEach(channel => {
         if (channel.id === Number(payload.userId)) return null
         buttons.push([
-          Key.callback(
-            `➡️ Отправить в @${channel.username}`,
-            `${ECallback.POST}|${channel.id}|${payload.memeId}`,
-          ),
+          {
+            text: `➡️ Отправить в @${channel.username}`,
+            callback_data: `${ECallback.POST}|${channel.id}|${payload.memeId}`,
+          },
         ])
       })
 
       payload.keywords.forEach(keyword =>
         buttons.push([
-          Key.callback(
-            `🗑️ «${keyword}» (отписаться)`,
-            `${ECallback.KEY}|${EKeywordAction.DELETE}|${keyword}`,
-          ),
+          {
+            text: `🗑️ «${keyword}» (отписаться)`,
+            callback_data: `${ECallback.KEY}|${EKeywordAction.DELETE}|${keyword}`,
+          },
         ]),
       )
 
       payload.keywordGroups.forEach(keywordGroup =>
         buttons.push([
-          Key.callback(
-            `🗑️ «${keywordGroup}» (отписаться)`,
-            `${ECallback.GROUP}|${EKeywordAction.DELETE}|${keywordGroup}`,
-          ),
+          {
+            text: `🗑️ «${keywordGroup}» (отписаться)`,
+            callback_data: `${ECallback.GROUP}|${EKeywordAction.DELETE}|${keywordGroup}`,
+          },
         ]),
       )
 
