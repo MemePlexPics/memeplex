@@ -3,15 +3,57 @@ type TPayUrl = `https://t.me/${'CryptoBot' | 'CryptoTestnetBot'}?start=${TInvoic
 export type TInvoice = {
   invoice_id: number
   hash: string
-  currency_type: 'crypto' | 'flat'
-  asset: 'USDT' | 'TON' | 'BTC' | 'ETH' | 'LTC' | 'BNB' | 'TRX' | 'USDC'
   amount: string
-  pay_url: TPayUrl
+  fee_asset?: 'USDT' | 'TON' | 'BTC' | 'ETH' | 'LTC' | 'BNB' | 'TRX' | 'USDC' | 'JET' // Available if status is "paid"
+  fee_amount?: number // Available if status is "paid"
   bot_invoice_url: TPayUrl
-  description: string
-  status: 'active' | 'paid'
-  created_at: string
+  description?: string
+  status: 'active' | 'paid' | 'expired'
+  created_at: string // ISO 8601 format date
+  paid_usd_rate?: string // Available if status is "paid"
   allow_comments: boolean
   allow_anonymous: boolean
-  expiration_date: string
-}
+  expiration_date?: string // ISO 8601 format date
+  paid_at?: string // ISO 8601 format date
+  paid_anonymously: boolean
+  comment?: string
+  hidden_message?: string
+  payload?: string
+  paid_btn_name?: 'viewItem' | 'openChannel' | 'openBot' | 'callback'
+  paid_btn_url?: string
+} & (
+  | {
+    currency_type: 'crypto'
+    asset?: 'USDT' | 'TON' | 'BTC' | 'ETH' | 'LTC' | 'BNB' | 'TRX' | 'USDC' | 'JET'
+  }
+  | {
+    currency_type: 'fiat'
+    fiat?:
+    | 'USD'
+    | 'EUR'
+    | 'RUB'
+    | 'BYN'
+    | 'UAH'
+    | 'GBP'
+    | 'CNY'
+    | 'KZT'
+    | 'UZS'
+    | 'GEL'
+    | 'TRY'
+    | 'AMD'
+    | 'THB'
+    | 'INR'
+    | 'BRL'
+    | 'IDR'
+    | 'AZN'
+    | 'AED'
+    | 'PLN'
+    | 'ILS'
+    paid_asset?: 'USDT' | 'TON' | 'BTC' | 'ETH' | 'LTC' | 'BNB' | 'TRX' | 'USDC' | 'JET' // Available if currency_type is "fiat" and status is "paid"
+    paid_amount?: string // Available if currency_type is "fiat" and status is "paid"
+    paid_fiat_rate?: string // Available if currency_type is "fiat" and status is "paid"
+    accepted_assets?: Array<
+    'USDT' | 'TON' | 'BTC' | 'ETH' | 'LTC' | 'BNB' | 'TRX' | 'USDC' | 'JET'
+    > // Available if currency_type is "fiat"
+  }
+)
