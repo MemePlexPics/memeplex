@@ -1,15 +1,16 @@
 import amqplib from 'amqplib'
 import { CryptoPay, Assets } from '@foile/crypto-pay-api'
 import { getAmqpQueue } from '../../../utils'
-import { delay } from '../../../../utils'
+import { delay, getDbConnection } from '../../../../utils'
 import {
   AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL,
   AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL,
   EMPTY_QUEUE_RETRY_DELAY,
 } from '../../../../constants'
 import { Logger } from 'winston'
-import { TInvoice } from '../types'
+import { TInvoiceCreated } from '../types'
 import { TAmqpCryptoPayToPublisherChannelMessage } from '../../../types'
+import { insertPublisherInvoice } from '../../../../utils/mysql-queries'
 
 export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -29,11 +30,19 @@ export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger
       distributionTimeout(600_000, logger, msg)
       // TODO: type
       const payload = JSON.parse(msg.content.toString())
-      const invoice: TInvoice = await cryptoPay.createInvoice(Assets.TON, 1, {
+      const invoice: TInvoiceCreated = await cryptoPay.createInvoice(Assets.TON, 1, {
         description: `MemePush платный тариф для пользователя ${payload.user} (${payload.id})`,
         // expires_in: 60 * 60 * 24, // 24 hours
       })
       if (invoice.bot_invoice_url) {
+        const db = await getDbConnection()
+        await insertPublisherInvoice(db, {
+          id: invoice.invoice_id,
+          hash: invoice.hash,
+          userId: payload.id,
+          status: invoice.status,
+          createdAt: invoice.created_at,
+        })
         const content = Buffer.from(
           JSON.stringify({
             userId: payload.id,

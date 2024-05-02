@@ -1,2 +1,2 @@
+export { TInvoiceCreated } from './TInvoiceCreated'
 export { TInvoice } from './TInvoice'
-export { TInvoicePaid } from './TInvoicePaid'
