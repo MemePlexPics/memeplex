@@ -1,4 +1,11 @@
-import { chooseRandomOCRSpaceKey, handle403, handleDeadProxy, handleProxyError, ocrSpace } from '.'
+import {
+  chooseRandomOCRSpaceKey,
+  handle403,
+  handleDeadProxy,
+  handleProKeyError,
+  handleProxyError,
+  ocrSpace,
+} from '.'
 import { getMysqlClient } from '../../../utils'
 import { updateProxyAvailability } from '../../../utils/mysql-queries'
 import { OCR_SPACE_PRO_API_USA } from '../../../constants'
@@ -40,7 +47,11 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string) 
     return text.join(' ')
   } catch (error) {
     await handle403(error, apiKey)
-    await handleProxyError(error, proxy, protocol)
+    if (proxy) {
+      await handleProxyError(error, proxy, protocol)
+    } else {
+      await handleProKeyError(error, apiKey)
+    }
     throw error
   }
 }
