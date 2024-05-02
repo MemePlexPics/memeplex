@@ -43,6 +43,7 @@
     "telegraf": "^4.16.3",
     "telegraf-ratelimit": "^2.0.0",
     "telegram-keyboard": "^2.3.5",
+    "telegram-test-api": "^4.2.1",
     "tsx": "^4.7.1",
     "winston": "^3.11.0"
   },
