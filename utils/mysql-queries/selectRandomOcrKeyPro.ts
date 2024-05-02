@@ -10,7 +10,7 @@ export const selectRandomOcrKeyPro = async (db: TDbConnection) => {
     .where(
       or(
         eq(ocrKeysPro.timeout, null),
-        sql`'${ocrKeysPro.timeout}' < DATE_ADD(NOW(), INTERVAL ${OCR_SPACE_403_DELAY} MICROSECOND)`,
+        sql`'${ocrKeysPro.timeout}' < DATE_ADD(NOW(), INTERVAL ${OCR_SPACE_403_DELAY}000 MICROSECOND)`,
       ),
     )
     .orderBy(sql`RAND()`)
