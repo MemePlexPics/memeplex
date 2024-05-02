@@ -5,8 +5,9 @@ import { EState } from '../constants'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { addKeywordsState } from '../states'
 import { i18n } from '../i18n'
+import { TTelegrafContext } from '../types'
 
-export const addChannel = async (ctx, text) => {
+export const addChannel = async (ctx: TTelegrafContext, text: string) => {
   const logEntity = {
     state: EState.ADD_CHANNEL,
   }
@@ -49,8 +50,8 @@ export const addChannel = async (ctx, text) => {
     })
     return
   }
-  let isOurUserAnAdmin: boolean
-  let isOurBotAnAdmin: boolean
+  let isOurUserAnAdmin: boolean | undefined
+  let isOurBotAnAdmin: boolean | undefined
   try {
     const administrators = await ctx.telegram.getChatAdministrators(`@${channel}`)
     administrators.some(admin => {
