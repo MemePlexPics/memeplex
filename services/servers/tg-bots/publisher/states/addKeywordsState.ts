@@ -21,6 +21,9 @@ export const addKeywordsState: TState = {
     }
   },
   onText: async (ctx, keywordsRaw) => {
+    if (!ctx.session.channel) {
+      throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
+    }
     const logEntity = {
       state: EState.ADD_CHANNEL,
     }

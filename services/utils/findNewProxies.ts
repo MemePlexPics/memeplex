@@ -8,15 +8,16 @@ import { getProxies } from '.'
 import { Logger } from 'winston'
 
 export const findNewProxies = async (logger: Logger) => {
-  let amqp: Connection, checkProxyCh: Channel
+  let amqp: Connection | undefined, checkProxyCh: Channel | undefined
   const proxies = await getProxies()
-  logger.info(`💬 Proxy list fetched. ${proxies.length} entities`)
+  logger.info(`💬 Proxy list fetched. ${proxies?.length} entities`)
+  if (!proxies) return
   logger.info('💬 Starting to look for new ones')
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     checkProxyCh = await amqp.createChannel()
     const mysql = await getMysqlClient()
-    let notCheckedProxiesCount = proxies.length
+    let notCheckedProxiesCount = proxies.length 
     if (proxies.length) {
       // TODO: get rid of the AMQP_CHECK_PROXY_CHANNEL?
       await checkProxyCh.purgeQueue(AMQP_CHECK_PROXY_CHANNEL)

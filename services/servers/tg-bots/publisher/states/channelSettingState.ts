@@ -9,6 +9,9 @@ import { i18n } from '../i18n'
 export const channelSettingState: TState = {
   stateName: EState.CHANNEL_SETTINGS,
   menu: async ctx => {
+    if (!ctx.session.channel) {
+      throw new Error(`ctx.session.channel is undefined in channelSettingState`)
+    }
     const db = await getDbConnection()
     const keywordsCount = await countPublisherSubscriptionsByChannelId(db, ctx.session.channel.id)
     await db.close()
