@@ -14,6 +14,11 @@ export const handleMissedPaidInvoices = async (cryptoPay: CryptoPay) => {
   })
   invoices.items.forEach(async invoice => {
     const userId = invoice.description?.match(/\((.+)\)/)?.at(-1)
+    if (!userId) {
+      throw new Error(
+        `There is no userId in an invoice description: ${JSON.stringify(invoice)}`,
+      )
+    }
     await handlePaidInvoice(Number(userId), invoice.invoice_id)
   })
 }

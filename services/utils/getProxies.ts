@@ -24,7 +24,11 @@ export const getProxies = async () => {
       matches?.forEach(proxy => proxiesByProtocol[protocol].add(proxy))
     }
   }
-  return Object.entries(proxiesByProtocol).reduce((acc, [protocol, proxyList]) => {
+  return Object.entries(proxiesByProtocol).reduce<{
+    port: string
+    ip: string
+    protocol: string
+  }[]>((acc, [protocol, proxyList]) => {
     proxyList.forEach(proxy => {
       const [ip, port] = proxy.split(':')
       acc.push({
