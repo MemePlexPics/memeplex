@@ -57,6 +57,13 @@
       "when": 1714429132606,
       "tag": "0007_exotic_stone_men",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1714664576505,
+      "tag": "0008_blushing_amphibian",
+      "breakpoints": true
     }
   ]
 }
