@@ -7,7 +7,7 @@ export const handleNackByTimeout = (logger: Logger, msg: GetMessage, channel: Ch
     try {
       channel.nack(msg)
     } catch (e) {
-      if (!e.message.startsWith('Channel closed')) throw e
+      if (!(e instanceof Error) || !e.message.startsWith('Channel closed')) throw e
     }
   }
 }

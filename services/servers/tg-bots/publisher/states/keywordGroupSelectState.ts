@@ -63,10 +63,13 @@ ${keywords}
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
+    if (!ctx.session.channel) {
+      throw new Error(`ctx.session.channel is undefined in keywordGroupSelectState`)
+    }
     const [operation, groupName] = callback.split('|')
     const db = await getDbConnection()
     const keywordGroup = await selectPublisherKeywordGroupByName(db, groupName)
-    if (!keywordGroup.length) throw new InfoMessage(`Unknown menu state: ${callback}`)
+    if (!keywordGroup.length || !keywordGroup[0].keywords) throw new InfoMessage(`Unknown menu state: ${callback}`)
 
     logUserAction(ctx.from, {
       state: EState.KEYWORD_GROUP_SELECT,
@@ -82,7 +85,7 @@ ${keywords}
           channelId: ctx.session.channel.id,
         },
       ])
-      const keywordsForInsert = keywords.map(keyword => ({ keyword }))
+      const keywordsForInsert = keywords?.map(keyword => ({ keyword }))
       await addSubscription(db, ctx.session.channel.id, keywordsForInsert)
     } else if (operation === EKeywordGroupAction.UNSUBSCRIBE) {
       await deletePublisherGroupSubscription(db, ctx.session.channel.id, groupName)
@@ -92,7 +95,7 @@ ${keywords}
     }
     await db.close()
 
-    if (isCommonMessage(ctx.callbackQuery.message)) {
+    if (isCommonMessage(ctx.callbackQuery?.message) && ctx.callbackQuery.message.reply_markup) {
       const newOperation =
         operation === EKeywordGroupAction.UNSUBSCRIBE
           ? EKeywordGroupAction.SUBSCRIBE
