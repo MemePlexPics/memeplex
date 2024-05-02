@@ -8,11 +8,11 @@ export const handleMissedPaidInvoices = async (cryptoPay: CryptoPay) => {
   const db = await getDbConnection()
   const activeInvoices = await selectPublisherActiveInvoices(db)
   const activeInvoiceIds = activeInvoices.map(invoice => invoice.id)
-  const invoices: TInvoice[] = await cryptoPay.getInvoices({
+  const invoices: { items: TInvoice[] } = await cryptoPay.getInvoices({
     status: 'paid',
     invoice_ids: activeInvoiceIds,
   })
-  invoices.forEach(async invoice => {
+  invoices.items.forEach(async invoice => {
     const userId = invoice.description?.match(/\((.+)\)/)?.at(-1)
     await handlePaidInvoice(Number(userId), invoice.invoice_id)
   })
