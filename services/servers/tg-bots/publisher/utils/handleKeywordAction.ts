@@ -20,7 +20,7 @@ export const handleKeywordAction = async (
       await deletePublisherSubscription(db, channel.id, [keyword])
     }
     await db.close()
-    if (isCommonMessage(ctx.callbackQuery.message)) {
+    if (isCommonMessage(ctx.callbackQuery?.message) && ctx.callbackQuery.message.reply_markup?.inline_keyboard) {
       await ctx.editMessageReplyMarkup({
         inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
           row.filter(
@@ -31,11 +31,11 @@ export const handleKeywordAction = async (
         ),
       })
     }
-    await ctx.reply(`Ключевое слово «${keyword}» успешно удалено.`, {
+    await ctx.reply(`Ключевое слово «${keyword}» успешно удалено.`, ctx.callbackQuery?.message ? {
       reply_parameters: {
         message_id: ctx.callbackQuery.message.message_id,
       },
-    })
+    } : undefined)
     logUserAction(ctx.from, {
       info: `Unsubscribe from a keyword`,
       keyword,
