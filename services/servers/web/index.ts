@@ -92,7 +92,13 @@ app.get('/search', async (req, res) => {
 
 app.get('/getLatest', async (req, res) => {
   const { from, to, filters } = req.query
-  const response = await getLatestMemes(client, from, to, SEARCH_PAGE_SIZE, filters)
+  const response = await getLatestMemes(
+    client,
+    from,
+    to,
+    SEARCH_PAGE_SIZE,
+    typeof filters === 'string' ? filters : undefined,
+  )
   return res.send(response)
 })
 

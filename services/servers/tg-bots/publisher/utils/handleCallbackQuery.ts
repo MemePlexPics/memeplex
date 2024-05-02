@@ -1,5 +1,10 @@
 import { Client } from '@elastic/elasticsearch'
-import { handleInvoiceCreation, handleKeywordAction, handleKeywordGroupAction, handleMemePost } from '.'
+import {
+  handleInvoiceCreation,
+  handleKeywordAction,
+  handleKeywordGroupAction,
+  handleMemePost,
+} from '.'
 import { TState, TTelegrafContext } from '../types'
 import { ECallback, EKeywordAction } from '../constants'
 import { isCallbackQueryUpdate, isDataQuery } from '../typeguards'
