@@ -4,7 +4,7 @@ import { getDbConnection } from '../../../../utils'
 import { TInvoice } from '../types'
 import { handlePaidInvoice } from '.'
 
-export const handleMissedPaidInvoices = async (cryptoPay: CryptoPay) => {
+export const handlePaidInvoices = async (cryptoPay: CryptoPay) => {
   const db = await getDbConnection()
   const activeInvoices = await selectPublisherActiveInvoices(db)
   const activeInvoiceIds = activeInvoices.map(invoice => invoice.id)
@@ -15,10 +15,8 @@ export const handleMissedPaidInvoices = async (cryptoPay: CryptoPay) => {
   invoices.items.forEach(async invoice => {
     const userId = invoice.description?.match(/\((.+)\)/)?.at(-1)
     if (!userId) {
-      throw new Error(
-        `There is no userId in an invoice description: ${JSON.stringify(invoice)}`,
-      )
+      throw new Error(`There is no userId in an invoice description: ${JSON.stringify(invoice)}`)
     }
-    await handlePaidInvoice(Number(userId), invoice.invoice_id)
+    await handlePaidInvoice(userId, invoice.invoice_id)
   })
 }

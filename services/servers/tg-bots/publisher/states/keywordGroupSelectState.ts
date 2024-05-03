@@ -69,7 +69,8 @@ ${keywords}
     const [operation, groupName] = callback.split('|')
     const db = await getDbConnection()
     const keywordGroup = await selectPublisherKeywordGroupByName(db, groupName)
-    if (!keywordGroup.length || !keywordGroup[0].keywords) throw new InfoMessage(`Unknown menu state: ${callback}`)
+    if (!keywordGroup.length || !keywordGroup[0].keywords)
+      throw new InfoMessage(`Unknown menu state: ${callback}`)
 
     logUserAction(ctx.from, {
       state: EState.KEYWORD_GROUP_SELECT,
