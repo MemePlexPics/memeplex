@@ -3,7 +3,7 @@ import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../constants'
 import { getDbConnection } from '../../../../utils'
 import { updatePublisherInvoiceStatus } from '../../../../utils/mysql-queries'
 
-export const handlePaidInvoice = async (userId: number, invoiceId: number) => {
+export const handlePaidInvoice = async (userId: number | string, invoiceId: number) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const cryptoPayToPublisherCh = await amqp.createChannel()
 
