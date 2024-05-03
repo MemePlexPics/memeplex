@@ -1,6 +1,6 @@
 import fs from 'fs'
 import { getElasticClient } from '../utils'
-import { ELASTIC_INDEX } from '../constants'
+import { ELASTIC_INDEX, wordsForElasticEntititesCounter } from '../constants'
 import { Client } from '@elastic/elasticsearch'
 
 const countEntities = async (client: Client, words: string[]) => {
@@ -47,12 +47,8 @@ const saveResultToFile = (result: { [key: string]: number }, filePath: string) =
 
 const main =  async () => {
   const client = await getElasticClient()
-  const words = `
-Москва, moscow
-питер, петербург, ленинград
-Новосибирск, новосиб`
 
-  const result = await processMultilineString(words, client)
+  const result = await processMultilineString(wordsForElasticEntititesCounter, client)
 
   const jsonFilePath = './counted-words.json'
   saveResultToFile(result, jsonFilePath)
