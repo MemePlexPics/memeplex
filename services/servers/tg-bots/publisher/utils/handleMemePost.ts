@@ -16,11 +16,13 @@ export const handleMemePost = async (
   memeId: string,
 ) => {
   const meme = await getMeme(client, memeId)
-  const replyToMeme = ctx.callbackQuery?.message ? {
-    reply_parameters: {
-      message_id: ctx.callbackQuery.message.message_id,
-    },
-  } : undefined
+  const replyToMeme = ctx.callbackQuery?.message
+    ? {
+      reply_parameters: {
+        message_id: ctx.callbackQuery.message.message_id,
+      },
+    }
+    : undefined
   try {
     await ctx.telegram.sendPhoto(chatId, {
       source: await fs.readFile(meme.fileName),

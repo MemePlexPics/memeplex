@@ -17,7 +17,7 @@ export const findNewProxies = async (logger: Logger) => {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     checkProxyCh = await amqp.createChannel()
     const mysql = await getMysqlClient()
-    let notCheckedProxiesCount = proxies.length 
+    let notCheckedProxiesCount = proxies.length
     if (proxies.length) {
       // TODO: get rid of the AMQP_CHECK_PROXY_CHANNEL?
       await checkProxyCh.purgeQueue(AMQP_CHECK_PROXY_CHANNEL)

@@ -32,7 +32,7 @@ export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger
       const payload = JSON.parse(msg.content.toString())
       const invoice: TInvoiceCreated = await cryptoPay.createInvoice(Assets.TON, 1, {
         description: `MemePush платный тариф для пользователя ${payload.user} (${payload.id})`,
-        // expires_in: 60 * 60 * 24, // 24 hours
+        expires_in: 60 * 60 * 24 * 7, // 7 days
       })
       if (invoice.bot_invoice_url) {
         const db = await getDbConnection()
