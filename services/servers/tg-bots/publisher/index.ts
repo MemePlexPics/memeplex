@@ -25,6 +25,10 @@ const start = async () => {
       command: 'menu',
       description: i18n['ru'].command.callCurrentMenu(),
     },
+    {
+      command: 'help',
+      description: i18n['ru'].command.help(),
+    },
   ])
   bot.telegram.setMyDescription(`
     Это description

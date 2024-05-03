@@ -98,6 +98,10 @@ export const init = async (token: string, options: Partial<Telegraf.Options<TTel
     await enterToState(ctx, states[ctx.session.state])
   })
 
+  bot.command('help', async ctx => {
+    await ctx.reply(i18n['ru'].message.start())
+  })
+
   bot.on('callback_query', async ctx => {
     try {
       await handleCallbackQuery(ctx, elastic, states[ctx.session.state].onCallback)
