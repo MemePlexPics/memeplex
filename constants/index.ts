@@ -43,3 +43,4 @@ export const PROXY_TEST_TIMEOUT = 5_000
 export const PROXY_TESTING_FILE = 'http://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_272x92dp.png'
 // Available OCR languages
 export const OCR_LANGUAGES = ['eng', 'rus']
+export { wordsForElasticEntititesCounter } from './wordsForElasticEntititesCounter'
