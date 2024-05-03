@@ -10,11 +10,11 @@ const countEntities = async (client: Client, words: string[]) => {
         should: words.map(word => ({
           match: {
             eng: word,
-          }
+          },
         })),
-        minimum_should_match: 1
-      }
-    }
+        minimum_should_match: 1,
+      },
+    },
   }
 
   const response = await client.count({
@@ -45,7 +45,7 @@ const saveResultToFile = (result: { [key: string]: number }, filePath: string) =
   fs.writeFileSync(filePath, json, 'utf-8')
 }
 
-const main =  async () => {
+const main = async () => {
   const client = await getElasticClient()
 
   const result = await processMultilineString(wordsForElasticEntititesCounter, client)
