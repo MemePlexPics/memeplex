@@ -9,7 +9,7 @@ export const wordsForElasticEntititesCounter = `
 Челябинск
 Самара
 Уфа
-Ростов-на-Дону, ростов
+ростов
 Краснодар
 Омск
 Воронеж

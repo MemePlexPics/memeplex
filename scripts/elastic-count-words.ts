@@ -50,7 +50,7 @@ const main =  async () => {
 
   const result = await processMultilineString(wordsForElasticEntititesCounter, client)
 
-  const jsonFilePath = './counted-words.json'
+  const jsonFilePath = './data/counted-words.json'
   saveResultToFile(result, jsonFilePath)
   console.log(`Results saved to ${jsonFilePath}`)
 }
