@@ -32,7 +32,7 @@ export const handlePaidInvoices = async (cryptoPay: CryptoPay) => {
       if (!paidInvoiceIds.includes(activeInvoice.id)) {
         const expiredAt = new Date(activeInvoice.createdAt)
         expiredAt.setSeconds(expiredAt.getSeconds() + CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS)
-        if (expiredAt > new Date()) {
+        if (expiredAt < new Date()) {
           await updatePublisherInvoiceStatus(db, activeInvoice.id, 'expired')
         }
       }
