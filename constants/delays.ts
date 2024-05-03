@@ -1,0 +1,1 @@
+export const CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS = 60 * 60 * 24 * 7 // 7 days
