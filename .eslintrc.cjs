@@ -8,6 +8,7 @@ module.exports = {
     plugins: ['@typescript-eslint'],
     extends: [
         'eslint:recommended',
+        'plugin:drizzle/recommended',
         'prettier',
     ],
     parserOptions: {
@@ -87,6 +88,9 @@ module.exports = {
         semi: [
             'error',
             'always'
-        ]
+        ],
+        // TODO: remove these two after eslint-drizzle plugin will be tuned
+        'drizzle/enforce-delete-with-where': 'warn',
+        'drizzle/enforce-update-with-where': 'warn',
     }
 };
