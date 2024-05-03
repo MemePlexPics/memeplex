@@ -20,10 +20,9 @@ export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger
         continue
       }
       cryptoPayToPublisherTimeout(600_000, logger, msg)
-      const payload: { userId: number; bot_invoice_url?: string; status?: 'paid' } = JSON.parse(
-        msg.content.toString(),
-      )
-      if (payload.bot_invoice_url) {
+      const payload: { userId: number } & ({ bot_invoice_url: string } | { status: 'paid' }) =
+        JSON.parse(msg.content.toString())
+      if ('bot_invoice_url' in payload) {
         await bot.telegram.sendMessage(payload.userId, 'Ссылка для оплаты', {
           reply_markup: {
             inline_keyboard: [
