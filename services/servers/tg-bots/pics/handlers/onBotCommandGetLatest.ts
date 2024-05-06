@@ -7,8 +7,16 @@ import { getLatestMemes } from '../../../utils'
 import { logUserAction } from '../utils'
 import { getBotAnswerString } from '../../utils'
 import { i18n } from '../i18n'
+import { TTelegrafContext } from '../types'
+import { Client } from '@elastic/elasticsearch'
+import { Logger } from 'winston'
 
-export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
+export const onBotCommandGetLatest = async (
+  ctx: TTelegrafContext,
+  isUpdate: boolean,
+  client: Client,
+  logger: Logger,
+) => {
   try {
     const { from: sessionFrom, to: sessionTo } = ctx.session.latest
     const from = isUpdate ? sessionTo : undefined
@@ -27,7 +35,7 @@ export const onBotCommandGetLatest = async (ctx, isUpdate, client, logger) => {
 
     for (const meme of response.result) {
       await ctx.reply(getBotAnswerString(meme), {
-        parse_mode: 'markdown',
+        parse_mode: 'Markdown',
         link_preview_options: {
           url: new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href,
         },
