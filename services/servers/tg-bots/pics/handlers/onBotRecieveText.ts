@@ -7,12 +7,17 @@ import { searchMemes } from '../../../utils/searchMemes'
 import { logUserAction, resetSearchSession } from '../utils'
 import { getBotAnswerString } from '../../utils'
 import { i18n } from '../i18n'
+import { TTelegrafContext } from '../types'
+import { Client } from '@elastic/elasticsearch'
+import { Logger } from 'winston'
 
-export const onBotRecieveText = async (ctx, client, logger) => {
+export const onBotRecieveText = async (ctx: TTelegrafContext, client: Client, logger: Logger) => {
   try {
     const query =
       ctx.session.search.query ||
-      ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH).replace(/[@]?MemePlexBot/i, '')
+      ('message' in ctx.update &&
+        'text' in ctx.update.message &&
+        ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH).replace(/[@]?MemePlexBot/i, ''))
     const page = ctx.session.search.nextPage || 1
     await logUserAction(
       ctx.from,
@@ -32,7 +37,7 @@ export const onBotRecieveText = async (ctx, client, logger) => {
     }
     for (const meme of response.result) {
       await ctx.reply(getBotAnswerString(meme), {
-        parse_mode: 'markdown',
+        parse_mode: 'Markdown',
         link_preview_options: {
           url: new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`).href,
         },
