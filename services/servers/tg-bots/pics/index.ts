@@ -71,11 +71,10 @@ bot.on(message('text'), async ctx => {
   resetSearchSession(ctx)
   await onBotRecieveText(ctx, client, logger)
   if (
-    !ctx.session.search.nextPage &&
-    (/(\s+[^ ]+){3,}/.test(ctx.update.message.text) || // 4+ words
-      ['мем', 'видео', 'фото', 'картинка', 'где', 'из'].some(word =>
-        new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
-      ))
+    /(\s+[^ ]+){3,}/.test(ctx.update.message.text) || // 4+ words
+    ['мем', 'видео', 'фото', 'картинка', 'где', 'из'].some(word =>
+      new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
+    )
   ) {
     await ctx.reply(i18n['ru'].message.redundantWords())
   }
