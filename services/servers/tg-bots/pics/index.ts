@@ -15,15 +15,18 @@ import {
 import { defaultSession } from './constants'
 import { getLogger } from '../utils'
 import { i18n } from './i18n'
+import { TSessionInMemory, TTelegrafContext, TTelegrafSession } from './types'
 
-const bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN)
+const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_BOT_TOKEN)
 const logger = getLogger('tg-bot')
 const { client } = await connectToElastic(logger)
+
+const sessionInMemory: TSessionInMemory = {}
 
 bot.use(
   session({
     defaultSession: () => defaultSession,
-    store: MySQL({
+    store: MySQL<TTelegrafSession>({
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       database: process.env.DB_DATABASE,
@@ -68,30 +71,30 @@ bot.on(message('text'), async ctx => {
   resetSearchSession(ctx)
   await onBotRecieveText(ctx, client, logger)
   if (
-    ['мем', 'видео', 'фото', 'картинка', 'где', 'из'].some(word =>
-      new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
-    )
+    !ctx.session.search.nextPage &&
+    (/(\s+[^ ]+){3,}/.test(ctx.update.message.text) || // 4+ words
+      ['мем', 'видео', 'фото', 'картинка', 'где', 'из'].some(word =>
+        new RegExp('(^|\\s)' + word + '(\\s|$)', 'iu').test(ctx.update.message.text),
+      ))
   ) {
     await ctx.reply(i18n['ru'].message.redundantWords())
   }
 })
 
-const sessionInline = {}
-
 bot.on('inline_query', async ctx => {
-  if (!sessionInline[ctx.inlineQuery.from.id]) {
-    sessionInline[ctx.inlineQuery.from.id] = {}
+  if (!sessionInMemory[ctx.inlineQuery.from.id]) {
+    sessionInMemory[ctx.inlineQuery.from.id] = {}
   }
   const page = Number(ctx.inlineQuery.offset) || 1
-  if (sessionInline[ctx.inlineQuery.from.id]?.debounce) {
-    clearTimeout(sessionInline[ctx.inlineQuery.from.id].debounce)
+  if (sessionInMemory[ctx.inlineQuery.from.id]?.debounce) {
+    clearTimeout(sessionInMemory[ctx.inlineQuery.from.id].debounce)
   }
   if (page === 1) {
-    sessionInline[ctx.inlineQuery.from.id].debounce = setTimeout(
-      () => onInlineQuery(ctx, page, client, sessionInline, logger),
+    sessionInMemory[ctx.inlineQuery.from.id].debounce = setTimeout(
+      () => onInlineQuery(ctx, page, client, sessionInMemory, logger),
       500,
     )
-  } else await onInlineQuery(ctx, page, client, sessionInline, logger)
+  } else await onInlineQuery(ctx, page, client, sessionInMemory, logger)
 })
 
 bot.on('chosen_inline_result', async ctx => {
