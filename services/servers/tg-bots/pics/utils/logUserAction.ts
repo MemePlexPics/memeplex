@@ -17,7 +17,7 @@ export const logUserAction = async (
   action: {
     search?: {
       query: string
-      page: string
+      page: number
     }
     latest?: {
       from: number
