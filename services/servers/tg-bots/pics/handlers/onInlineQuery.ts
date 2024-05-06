@@ -4,8 +4,17 @@ import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
 import { logUserAction } from '../utils'
 import { i18n } from '../i18n'
+import { TSessionInMemory, TTelegrafContext } from '../types'
+import { Client } from '@elastic/elasticsearch'
+import { Logger } from 'winston'
 
-export const onInlineQuery = async (ctx, page, client, sessionInline, logger) => {
+export const onInlineQuery = async (
+  ctx: TTelegrafContext,
+  page: number,
+  client: Client,
+  sessionInMemory: TSessionInMemory,
+  logger: Logger,
+) => {
   const query = ctx.inlineQuery.query
 
   await logUserAction(
@@ -19,11 +28,11 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
     },
     logger,
   )
-  if (sessionInline[ctx.inlineQuery.from.id].abortController) {
-    sessionInline[ctx.inlineQuery.from.id].abortController.abort()
+  if (sessionInMemory[ctx.inlineQuery.from.id].abortController) {
+    sessionInMemory[ctx.inlineQuery.from.id].abortController.abort()
   }
   const abortController = new AbortController()
-  sessionInline[ctx.inlineQuery.from.id].abortController = abortController
+  sessionInMemory[ctx.inlineQuery.from.id].abortController = abortController
 
   const response = query
     ? await searchMemes(client, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
@@ -36,10 +45,10 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
     const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`)
       .href
     return {
-      type: 'photo',
+      type: 'photo' as const,
       id: meme.id,
       photo_url,
-      thumb_url: photo_url,
+      thumbnail_url: photo_url,
       // caption: meme.text.eng.substring(0, 1024),
       photo_width: 400,
       photo_height: 400,
@@ -47,7 +56,7 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
   })
 
   // If they are not equal, then there is at least one more new request from the same user
-  if (abortController === sessionInline[ctx.inlineQuery.from.id].abortController) {
+  if (abortController === sessionInMemory[ctx.inlineQuery.from.id].abortController) {
     if (results.length) {
       await ctx.answerInlineQuery(results, {
         next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
@@ -64,7 +73,7 @@ export const onInlineQuery = async (ctx, page, client, sessionInline, logger) =>
         },
       ])
     }
-    sessionInline[ctx.inlineQuery.from.id].debounce = 0
-    sessionInline[ctx.inlineQuery.from.id].abortController = undefined
+    sessionInMemory[ctx.inlineQuery.from.id].debounce = undefined
+    sessionInMemory[ctx.inlineQuery.from.id].abortController = undefined
   }
 }
