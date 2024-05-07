@@ -63,11 +63,9 @@ def process_message(ch, method, _properties, body):
     if not AMQP_NLP_TO_PUBLISHER_CHANNEL:
         raise ValueError("There is no AMQP_NLP_TO_PUBLISHER_CHANNEL in .env file")
     message = json.loads(body)
-    text = message['text']
     memeData = message['memeData']
-    memeId = message['memeId']
 
-    matched_keywords = match_text(text, memeData['keywords'])
+    matched_keywords = match_text(memeData['eng'], message['keywords'])
 
     connection_2 = pika.BlockingConnection(pika.URLParameters(AMQP_ENDPOINT))
     channel_2 = connection_2.channel()
@@ -78,7 +76,7 @@ def process_message(ch, method, _properties, body):
         exchange='',
         routing_key=AMQP_NLP_TO_PUBLISHER_CHANNEL,
         body=str({
-            'memeId': memeId,
+            'memeId': message['memeId'],
             'memeData': memeData,
             'matchedKeywords': matched_keywords,
         })
