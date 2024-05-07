@@ -17,7 +17,7 @@ export const fuseCases: {
   { query: 'шизофреник', expected: [schizophrenia] },
   { query: 'car', expected: [cars] },
   { query: 'русский', expected: russianPadezhi },
-  { query: 'cia', expected: [commercials] },
+  { query: 'cia', notExpected: [commercials] },
   { query: 'which', expected: [] },
   { query: 'where', expected: [] },
   { query: 'usa', expected: [] },

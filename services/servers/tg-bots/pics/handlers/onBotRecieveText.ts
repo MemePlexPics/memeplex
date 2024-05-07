@@ -1,4 +1,5 @@
 import process from 'process'
+import 'dotenv/config'
 import { Markup } from 'telegraf'
 
 import { MAX_SEARCH_QUERY_LENGTH, TG_BOT_PAGE_SIZE } from '../../../../../constants'

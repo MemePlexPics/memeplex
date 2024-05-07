@@ -1,5 +1,7 @@
 import amqplib from 'amqplib'
-import { CryptoPay, Assets } from '@foile/crypto-pay-api'
+import process from 'process'
+import 'dotenv/config'
+import { CryptoPay } from '@foile/crypto-pay-api'
 import { getAmqpQueue } from '../../../utils'
 import { delay, getDbConnection } from '../../../../utils'
 import {
