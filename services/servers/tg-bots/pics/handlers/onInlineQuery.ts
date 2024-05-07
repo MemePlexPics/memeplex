@@ -1,4 +1,5 @@
 import process from 'process'
+import 'dotenv/config'
 
 import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
