@@ -1,4 +1,6 @@
 import amqplib from 'amqplib'
+import process from 'process'
+import 'dotenv/config'
 import { Telegraf } from 'telegraf'
 import { TTelegrafContext } from '../types'
 import { Logger } from 'winston'
