@@ -1,4 +1,6 @@
 import amqplib from 'amqplib'
+import process from 'process'
+import 'dotenv/config'
 import { getTelegramUser } from '../../utils'
 import { TTelegrafContext } from '../types'
 import { AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL } from '../../../../../constants'

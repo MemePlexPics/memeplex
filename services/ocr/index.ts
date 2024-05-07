@@ -16,7 +16,6 @@ export const ocr = async (logger: Logger) => {
   let elastic: Client,
     amqp: Connection,
     receiveImageFileCh: Channel,
-    botPublisherDistributionCh: Channel,
     receiveImageFileClearTimeout: () => void
 
   try {
@@ -25,7 +24,6 @@ export const ocr = async (logger: Logger) => {
     let receiveImageFileTimeout: (ms: number, logger: Logger, msg: GetMessage) => void
     ;[receiveImageFileCh, receiveImageFileTimeout, receiveImageFileClearTimeout] =
       await getAmqpQueue(amqp, AMQP_IMAGE_FILE_CHANNEL)
-    botPublisherDistributionCh = await amqp.createChannel()
 
     for (;;) {
       const msg = await receiveImageFileCh.get(AMQP_IMAGE_FILE_CHANNEL)
@@ -48,7 +46,7 @@ export const ocr = async (logger: Logger) => {
           document,
         })
         try {
-          await handlePublisherDistribution(botPublisherDistributionCh, document, meme._id)
+          await handlePublisherDistribution(document, meme._id)
         } catch (error) {
           await logError(logger, error)
         }
