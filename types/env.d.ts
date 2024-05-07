@@ -10,6 +10,8 @@ declare global {
       ELASTIC_USERNAME: string
       ELASTIC_PASSWORD: string
       AMQP_ENDPOINT: string
+      AMQP_MEMES_TO_NLP_CHANNEL: string
+      AMQP_NLP_TO_PUBLISHER_CHANNEL: string
       TELEGRAM_API_ID: string
       TELEGRAM_API_HASH: string
       TELEGRAM_BOT_TOKEN: string
