@@ -1,4 +1,5 @@
 import process from 'process'
+import 'dotenv/config'
 import { downloadFile } from '../../../utils'
 
 export const downloadTelegramFile = async (channel, file_path) => {

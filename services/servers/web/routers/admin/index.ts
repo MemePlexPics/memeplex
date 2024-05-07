@@ -1,5 +1,6 @@
 import express, { RequestHandler } from 'express'
 import process from 'process'
+import 'dotenv/config'
 import winston from 'winston'
 import {
   channelPost,
