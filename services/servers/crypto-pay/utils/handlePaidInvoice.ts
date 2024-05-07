@@ -1,4 +1,6 @@
 import amqplib from 'amqplib'
+import process from 'process'
+import 'dotenv/config'
 import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../constants'
 import { getDbConnection } from '../../../../utils'
 import { updatePublisherInvoiceStatus } from '../../../../utils/mysql-queries'

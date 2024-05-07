@@ -2,6 +2,7 @@ import amqplib from 'amqplib'
 import { Telegraf } from 'telegraf'
 import { TTelegrafContext } from '../types'
 import process from 'process'
+import 'dotenv/config'
 import { getAmqpQueue } from '../../../../utils'
 import {
   AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
@@ -9,11 +10,11 @@ import {
 } from '../../../../../constants'
 import { delay, getDbConnection } from '../../../../../utils'
 import { Logger } from 'winston'
-import { TPublisherDistributionQueueMsg } from '../../../../ocr/types'
 import fs from 'fs/promises'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
 import { ECallback, EKeywordAction } from '../constants'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import { TPublisherDistributionQueueMsg } from '../../../../types'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)

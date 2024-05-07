@@ -1,4 +1,6 @@
 import amqplib from 'amqplib'
+import process from 'process'
+import 'dotenv/config'
 
 import {
   AMQP_IMAGE_DATA_CHANNEL,
