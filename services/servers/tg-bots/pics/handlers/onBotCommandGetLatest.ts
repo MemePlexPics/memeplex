@@ -1,5 +1,6 @@
 import { Markup } from 'telegraf'
 import process from 'process'
+import 'dotenv/config'
 
 import { TG_BOT_PAGE_SIZE } from '../../../../../constants'
 import { logError } from '../../../../../utils'
