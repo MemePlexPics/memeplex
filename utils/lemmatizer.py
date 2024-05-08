@@ -76,9 +76,9 @@ def process_message(ch, method, _properties, body):
         exchange='',
         routing_key=AMQP_NLP_TO_PUBLISHER_CHANNEL,
         body=str({
-            'memeId': message['memeId'],
-            'memeData': memeData,
-            'matchedKeywords': matched_keywords,
+            "memeId": message['memeId'],
+            "memeData": memeData,
+            "matchedKeywords": matched_keywords,
         })
     )
 
