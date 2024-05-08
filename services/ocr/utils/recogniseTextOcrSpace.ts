@@ -6,7 +6,7 @@ import {
   handleProxyError,
   ocrSpace,
 } from '.'
-import { getMysqlClient } from '../../../utils'
+import { InfoMessage, getMysqlClient } from '../../../utils'
 import { updateProxyAvailability } from '../../../utils/mysql-queries'
 import { OCR_SPACE_PRO_API_USA } from '../../../constants'
 
@@ -51,6 +51,12 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string) 
       await handleProxyError(error, proxy, protocol)
     } else {
       await handleProKeyError(error, apiKey)
+    }
+    if (
+      error.message.startsWith('E301') ||
+      error.message.startsWith('Unable to process the file')
+    ) {
+      throw new InfoMessage(`E301: Unable to process the file`)
     }
     throw error
   }
