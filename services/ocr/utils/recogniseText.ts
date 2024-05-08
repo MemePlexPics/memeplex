@@ -4,7 +4,6 @@ import { Logger } from 'winston'
 import { TAmqpImageFileChannelMessage } from '../../types'
 
 export const recogniseText = async (payload: TAmqpImageFileChannelMessage, logger: Logger) => {
-  // ocr using all the languages
   const texts: Record<string, string> = {}
 
   const rawText = await recogniseTextOcrSpace(payload.fileName, 'eng')
