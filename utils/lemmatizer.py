@@ -75,7 +75,7 @@ def process_message(ch, method, _properties, body):
     channel_2.basic_publish(
         exchange='',
         routing_key=AMQP_NLP_TO_PUBLISHER_CHANNEL,
-        body=str({
+        body=json.dumps({
             "memeId": message['memeId'],
             "memeData": memeData,
             "matchedKeywords": matched_keywords,
