@@ -21,10 +21,10 @@ import {
 } from '../../../../types'
 
 export const handleNlpQueue = async (logger: Logger) => {
-  let amqp: Connection,
-    receiveNlpMessageCh: Channel,
-    sendToPublisherDistributionCh: Channel,
-    receiveNlpMessageClearTimeout: () => void
+  let amqp: Connection | undefined,
+    receiveNlpMessageCh: Channel | undefined,
+    sendToPublisherDistributionCh: Channel | undefined,
+    receiveNlpMessageClearTimeout: (() => void) | undefined
 
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -33,13 +33,14 @@ export const handleNlpQueue = async (logger: Logger) => {
     ;[receiveNlpMessageCh, receiveNlpMessageTimeout, receiveNlpMessageClearTimeout] =
       await getAmqpQueue(amqp, AMQP_NLP_TO_PUBLISHER_CHANNEL)
     const db = await getDbConnection()
-    await db.close()
     const keywordGroups = await selectPublisherKeywordGroups(db)
+    await db.close()
     const groupsByKeyword = keywordGroups.reduce<Record<string, string[]>>(
       (obj, { name, keywords }) => {
+        if (!keywords) return obj
         keywords.split(', ').forEach(keyword => {
           if (!obj[keyword]) obj[keyword] = []
-          obj[keyword].push(name)
+          obj[keyword]!.push(name)
         })
         return obj
       },
@@ -126,7 +127,7 @@ export const handleNlpQueue = async (logger: Logger) => {
       }
     }
   } finally {
-    receiveNlpMessageClearTimeout()
+    receiveNlpMessageClearTimeout?.()
     if (receiveNlpMessageCh) await receiveNlpMessageCh.close()
     if (sendToPublisherDistributionCh) await sendToPublisherDistributionCh.close()
     if (amqp) await amqp.close()
