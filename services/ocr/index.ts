@@ -3,7 +3,7 @@ import fs from 'fs/promises'
 import amqplib, { Connection, Channel, GetMessage } from 'amqplib'
 import process from 'process'
 import { AMQP_IMAGE_FILE_CHANNEL, ELASTIC_INDEX, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
-import { getElasticClient, delay, logError } from '../../utils'
+import { getElasticClient, delay, logError, InfoMessage } from '../../utils'
 import { recogniseText, getNewDoc, blackListChecker } from './utils'
 import { Client } from '@elastic/elasticsearch'
 import { getAmqpQueue } from '../utils'
@@ -33,9 +33,19 @@ export const ocr = async (logger: Logger) => {
       }
       receiveImageFileTimeout(600_000, logger, msg)
       const payload: TAmqpImageFileChannelMessage = JSON.parse(msg.content.toString())
-      const texts = await recogniseText(payload, logger)
+      let texts: Record<'eng', string>
+      try {
+        texts = await recogniseText(payload, logger)
+      } catch (error) {
+        if (error instanceof InfoMessage && error.message.startsWith('E301')) {
+          receiveImageFileCh.ack(msg)
+          throw new InfoMessage(`${error.message} was caused by: ${JSON.stringify(payload)}`)
+        }
+        throw error
+      }
       if (!texts.eng) {
         receiveImageFileCh.ack(msg)
+        fs.unlink(payload.fileName)
         return
       }
       const didStopWordsCheckPassed = await blackListChecker(texts.eng)
