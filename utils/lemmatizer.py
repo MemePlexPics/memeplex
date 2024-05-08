@@ -70,7 +70,7 @@ def process_message(ch, method, _properties, body):
     connection_2 = pika.BlockingConnection(pika.URLParameters(AMQP_ENDPOINT))
     channel_2 = connection_2.channel()
 
-    channel_2.queue_declare(queue=AMQP_NLP_TO_PUBLISHER_CHANNEL)
+    channel_2.queue_declare(queue=AMQP_NLP_TO_PUBLISHER_CHANNEL, durable=True)
 
     channel_2.basic_publish(
         exchange='',
