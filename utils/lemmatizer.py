@@ -79,7 +79,8 @@ def process_message(ch, method, _properties, body):
             "memeId": message['memeId'],
             "memeData": memeData,
             "matchedKeywords": matched_keywords,
-        })
+        }),
+        properties=pika.BasicProperties(delivery_mode=pika.DeliveryMode.Persistent)
     )
 
     connection_2.close()
@@ -93,7 +94,7 @@ def main():
     connection = pika.BlockingConnection(pika.URLParameters(AMQP_ENDPOINT))
     channel = connection.channel()
 
-    channel.queue_declare(queue=AMQP_MEMES_TO_NLP_CHANNEL)
+    channel.queue_declare(queue=AMQP_MEMES_TO_NLP_CHANNEL, durable=True)
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue=AMQP_MEMES_TO_NLP_CHANNEL, on_message_callback=process_message, auto_ack=False)
 
