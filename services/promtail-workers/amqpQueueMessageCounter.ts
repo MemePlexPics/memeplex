@@ -12,7 +12,7 @@ export const amqpQueueMessageCounter = async (_logger: Logger) => {
   for (const queue in queues) {
     const queueName = queues[queue]
     const channel = await amqp.createChannel()
-    const { messageCount } = await channel.assertQueue(queue)
+    const { messageCount } = await channel.assertQueue(queueName)
     await channel.close()
     lokiMessage[queueName] = messageCount
   }
