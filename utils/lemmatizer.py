@@ -5,50 +5,73 @@ import pika
 import pymorphy2
 import nltk
 from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
 
 load_dotenv()
 nltk.download('punkt')
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 AMQP_ENDPOINT = os.getenv('AMQP_ENDPOINT')
 AMQP_MEMES_TO_NLP_CHANNEL = os.getenv('AMQP_MEMES_TO_NLP_CHANNEL')
 AMQP_NLP_TO_PUBLISHER_CHANNEL = os.getenv('AMQP_NLP_TO_PUBLISHER_CHANNEL')
 
 morph_analyzer_ru = pymorphy2.MorphAnalyzer()
+lemmatizer = WordNetLemmatizer()
+
+def get_wordnet_pos(nltk_tag):
+    if nltk_tag.startswith('J'):
+        return wordnet.ADJ
+    elif nltk_tag.startswith('V'):
+        return wordnet.VERB
+    elif nltk_tag.startswith('N'):
+        return wordnet.NOUN
+    elif nltk_tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return None
+
+def normalize_text(text, is_russian):
+    text_tokens = []
+    words = nltk.word_tokenize(text)
+    
+    if is_russian:
+        for word in words:
+            parsed_word = morph_analyzer_ru.parse(word)[0]
+            forms_set = {word}
+            forms_set.update(lexeme.word for lexeme in parsed_word.lexeme)
+            text_tokens.append(forms_set)
+    else:
+        tagged_words = nltk.pos_tag(words)
+        for word, tag in tagged_words:
+            pos = get_wordnet_pos(tag)
+            lemma = lemmatizer.lemmatize(word, pos) if pos else word
+            forms_set = {word, lemma}
+            text_tokens.append(forms_set)
+    
+    return text_tokens
 
 def match_text(text, keywords):
     matched_keywords = []
     is_russian = any('\u0400' <= char <= '\u04FF' for char in text)
-
-    text_tokens = []
-    for word in text.split():
-        if is_russian:
-            parsed_word = morph_analyzer_ru.parse(word)[0]
-            forms_set = {word}
-            forms_set.update(lexeme.word for lexeme in parsed_word.lexeme) # type: ignore
-        else:
-            forms_set = {word}
-            synonyms = wordnet.synsets(word)
-            for synonym in synonyms:
-                for lemma in synonym.lemmas(): # type: ignore
-                    forms_set.add(lemma.name().replace('_', ' '))
-        text_tokens.append(forms_set)
+    text_tokens = normalize_text(text, is_russian)
 
     for keyword in keywords:
         query_words = keyword.split()
         query_tokens = []
 
-        for word in query_words:
-            if is_russian:
+        if is_russian:
+            for word in query_words:
                 forms_set = {word}
-                forms_set.update(lexeme.word for parsed_form in morph_analyzer_ru.parse(word) for lexeme in parsed_form.lexeme) # type: ignore
-            else:
-                forms_set = {word}
-                synonyms = wordnet.synsets(word)
-                for synonym in synonyms:
-                    for lemma in synonym.lemmas(): # type: ignore
-                        forms_set.add(lemma.name().replace('_', ' '))
-            query_tokens.append(forms_set)
+                forms_set.update(lexeme.word for parsed_form in morph_analyzer_ru.parse(word) for lexeme in parsed_form.lexeme)
+                query_tokens.append(forms_set)
+        else:
+            tagged_query_words = nltk.pos_tag(query_words)
+            for word, tag in tagged_query_words:
+                pos = get_wordnet_pos(tag)
+                lemma = lemmatizer.lemmatize(word, pos) if pos else word
+                forms_set = {word, lemma}
+                query_tokens.append(forms_set)
 
         for start in range(len(text_tokens) - len(query_tokens) + 1):
             if all(text_tokens[start + i].intersection(query_tokens[i]) for i in range(len(query_tokens))):
