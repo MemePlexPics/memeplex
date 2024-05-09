@@ -32,7 +32,7 @@ export const handlePublisherDistribution = async (document: TMemeEntity, memeId:
       JSON.stringify({
         memeId,
         memeData: document,
-        keywords: allKeywords,
+        keywords: [...allKeywords],
       }),
     ),
     { persistent: true },
