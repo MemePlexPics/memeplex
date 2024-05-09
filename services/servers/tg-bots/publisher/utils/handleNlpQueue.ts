@@ -37,7 +37,6 @@ export const handleNlpQueue = async (logger: Logger) => {
     await db.close()
     const groupsByKeyword = keywordGroups.reduce<Record<string, string[]>>(
       (obj, { name, keywords }) => {
-        if (!keywords) return obj
         keywords.split(', ').forEach(keyword => {
           if (!obj[keyword]) obj[keyword] = []
           obj[keyword]!.push(name)
@@ -125,6 +124,7 @@ export const handleNlpQueue = async (logger: Logger) => {
           persistent: true,
         })
       }
+      receiveNlpMessageCh.ack(msg)
     }
   } finally {
     receiveNlpMessageClearTimeout?.()
