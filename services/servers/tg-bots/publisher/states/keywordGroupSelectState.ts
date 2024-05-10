@@ -1,7 +1,7 @@
 import { EKeywordGroupAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { addSubscription, deleteSubscription, enterToState, logUserAction } from '../utils'
-import { addKeywordsState, channelSettingState } from '.'
+import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   deletePublisherGroupSubscription,
@@ -62,10 +62,9 @@ ${
   },
   menu: async ctx => {
     const text = i18n['ru'].message.keywordGroupsMenu()
-    const previoisState = ctx.hasPremiumSubscription ? addKeywordsState : channelSettingState
     return {
       text,
-      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, previoisState)]]],
+      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, channelSettingState)]]],
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
