@@ -90,9 +90,9 @@ export const ru = {
     subscribeToPremium: () => '✨ Подключить премиум',
     extendPremium: () => '✨ Продлить премиум',
     channelSubscriptions: (name: string) => `📢 Подписки @${name}`,
-    butPremiumOneMonth: () => `⭐ Премиум на один месяц — ${PREMIUM_1M}`,
-    butPremiumThreeMonth: () => `✨ Премиум на три месяца — ${PREMIUM_3M}`,
-    butPremiumTwelveMonth: () => `🌟 Премиум на год — ${PREMIUM_12M}`,
+    butPremiumOneMonth: () => `⭐ Премиум на один месяц — ${PREMIUM_1M}$`,
+    butPremiumThreeMonth: () => `✨ Премиум на три месяца — ${PREMIUM_3M}$`,
+    butPremiumTwelveMonth: () => `🌟 Премиум на год — ${PREMIUM_12M}$`,
   },
   command: {
     callCurrentMenu: () => 'Вызвать текущее меню',
