@@ -41,7 +41,6 @@ export const channelSettingState: TState = {
           reply_markup: {
             inline_keyboard: [
               [Markup.button.callback(i18n['ru'].button.unlinkChannelConfirm(), 'unlink')],
-              [Markup.button.callback(i18n['ru'].button.back(), 'back')],
             ],
           },
         })
@@ -83,9 +82,8 @@ ${
     if (callback === 'unlink') {
       await onClickDeleteChannel(ctx)
       ctx.session.channel = undefined
+      await ctx.reply(i18n['ru'].message.youCanDemoteBotFromAdmin())
       await enterToState(ctx, mainState)
-    } else if (callback === 'back') {
-      await enterToState(ctx, channelSettingState)
     }
   },
 }
