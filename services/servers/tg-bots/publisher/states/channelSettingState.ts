@@ -70,8 +70,7 @@ export const channelSettingState: TState = {
     return {
       text: `
 ${i18n['ru'].message.thereTopicsAndKeywords()}
-${ctx.hasPremiumSubscription ? '' : i18n['ru'].message.topicAndKeywordsAccessByPlan()}
-
+${ctx.hasPremiumSubscription ? '' : i18n['ru'].message.topicAndKeywordsAccessByPlan() + '\n'}
 ${
   ctx.session.channel?.id === ctx.from.id
     ? i18n['ru'].message.youEditingSubscriptionsForUser()
