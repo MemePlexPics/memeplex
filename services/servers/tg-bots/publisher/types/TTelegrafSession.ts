@@ -9,6 +9,7 @@ export type TTelegrafSession = {
   }
   state: EState
   lastMenuId?: number
+  premiumUntil?: number
   pagination?: {
     page: number
   }

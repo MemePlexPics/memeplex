@@ -15,6 +15,9 @@ export const handleMemePost = async (
   chatId: number,
   memeId: string,
 ) => {
+  if (!ctx.from) {
+    throw new Error('There is no ctx.from')
+  }
   const meme = await getMeme(client, memeId)
   const replyToMeme = ctx.callbackQuery?.message
     ? {
