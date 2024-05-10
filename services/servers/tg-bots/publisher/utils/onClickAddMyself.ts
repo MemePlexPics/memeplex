@@ -1,11 +1,12 @@
-import { logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
-import { EState } from '../constants'
 import { TTelegrafContext } from '../types'
 
 export const onClickAddMyself = async (ctx: TTelegrafContext) => {
+  if (!ctx.from) {
+    throw new Error('There is no ctx.from')
+  }
   const username = getTelegramUser(ctx.from, '')
   ctx.session.channel = {
     name: username.user,
@@ -19,11 +20,8 @@ export const onClickAddMyself = async (ctx: TTelegrafContext) => {
     userId: ctx.from.id,
     username: username.user,
     subscribers: 0,
+    type: 'private',
     timestamp,
   })
   await db.close()
-  logUserAction(ctx.from, {
-    state: EState.MAIN,
-    info: `Added himself`,
-  })
 }

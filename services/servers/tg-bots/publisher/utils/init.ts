@@ -8,15 +8,15 @@ import { getLogger, getTelegramUser } from '../../utils'
 import { EState } from '../constants'
 import { TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
+  addChannel,
   enterToState,
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
   logUserAction,
 } from '../utils'
 import {
-  addChannelState,
   addKeywordsState,
-  channelSelectState,
+  buyPremiumState,
   channelSettingState,
   keywordGroupSelectState,
   keywordSettingsState,
@@ -30,13 +30,39 @@ import {
   logError,
   logInfo,
 } from '../../../../../utils'
-import { insertPublisherUser } from '../../../../../utils/mysql-queries'
+import { insertPublisherUser, selectPublisherPremiumUser } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
+import { Logger } from 'winston'
 
-export const init = async (token: string, options: Partial<Telegraf.Options<TTelegrafContext>>) => {
+export const init = async (
+  token: string,
+  options: Partial<Telegraf.Options<TTelegrafContext>>,
+  logger: Logger = getLogger('tg-publisher-bot'),
+) => {
   const bot = new Telegraf<TTelegrafContext>(token, options)
 
-  global.logger = getLogger('tg-publisher-bot')
+  bot.use(async (ctx, next) => {
+    ctx.logger = logger
+    Object.defineProperty(ctx, 'hasPremiumSubscription', {
+      async get() {
+        if (ctx.session.premiumUntil && ctx.session.premiumUntil > Date.now() / 1000) {
+          return true
+        }
+        if (!ctx.from) {
+          throw new Error('There is no ctx.from')
+        }
+        const db = await getDbConnection()
+        const userPremium = await selectPublisherPremiumUser(db, ctx.from?.id)
+        if (userPremium.length === 0) {
+          return false
+        }
+        ctx.session.premiumUntil = userPremium[0]?.untilTimestamp
+        return true
+      },
+    })
+    next()
+  })
+
   const elastic = await getElasticClient()
 
   bot.use(
@@ -61,6 +87,9 @@ export const init = async (token: string, options: Partial<Telegraf.Options<TTel
       window: 3_000,
       limit: 3,
       onLimitExceeded: async (ctx: TTelegrafContext) => {
+        if (!ctx.from) {
+          throw new Error('There is no ctx.from')
+        }
         logUserAction(ctx.from, { info: 'exceeded rate limit' })
         await ctx.reply(i18n['ru'].message.rateLimit())
       },
@@ -68,9 +97,8 @@ export const init = async (token: string, options: Partial<Telegraf.Options<TTel
   )
 
   const states: Record<EState, TState> = {
-    [EState.ADD_CHANNEL]: addChannelState,
     [EState.ADD_KEYWORDS]: addKeywordsState,
-    [EState.CHANNEL_SELECT]: channelSelectState,
+    [EState.BUY_PREMIUM]: buyPremiumState,
     [EState.CHANNEL_SETTINGS]: channelSettingState,
     [EState.KEYWORD_SETTINGS]: keywordSettingsState,
     [EState.KEYWORD_GROUP_SELECT]: keywordGroupSelectState,
@@ -108,11 +136,18 @@ export const init = async (token: string, options: Partial<Telegraf.Options<TTel
       await ctx.answerCbQuery()
     } catch (error) {
       if (error instanceof InfoMessage) {
-        await logInfo(global.logger, error)
-      } else {
-        await logError(global.logger, error, { update: ctx.update })
+        await logInfo(ctx.logger, error)
+      } else if (error instanceof Error) {
+        await logError(ctx.logger, error, { update: ctx.update })
       }
     }
+  })
+
+  bot.on(message('contact'), async ctx => {
+    if (!ctx.message.contact.user_id) {
+      throw new Error(`There is no ctx.message.contact.user_id in contact update event.`)
+    }
+    await addChannel(ctx, ctx.message.contact.user_id)
   })
 
   bot.on(message('text'), async ctx => {
@@ -136,7 +171,7 @@ export const init = async (token: string, options: Partial<Telegraf.Options<TTel
           name: 'Unknown error',
           message: JSON.stringify(err),
         }
-    await logError(global.logger, error, { ctx: JSON.stringify(ctx.update) })
+    await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })
   })
 
   return bot

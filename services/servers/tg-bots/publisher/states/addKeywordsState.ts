@@ -8,24 +8,23 @@ import { i18n } from '../i18n'
 export const addKeywordsState: TState = {
   stateName: EState.ADD_KEYWORDS,
   beforeInit: async ctx => {
-    const db = await getDbConnection()
-    return await handlePaywall(db, ctx, keywordGroupSelectState)
+    return await handlePaywall(ctx, keywordGroupSelectState)
   },
   menu: async () => {
     return {
-      text: i18n['ru'].message.addKeywords(),
-      buttons: [
-        [[i18n['ru'].button.addKyewordGroup(), ctx => enterToState(ctx, keywordGroupSelectState)]],
-        [[i18n['ru'].button.back(), ctx => enterToState(ctx, channelSettingState)]],
-      ],
+      text: i18n['ru'].message.mySubscriptions(),
+      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, channelSettingState)]]],
     }
   },
   onText: async (ctx, keywordsRaw) => {
+    if (!ctx.from) {
+      throw new Error('There is no ctx.from')
+    }
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
     }
     const logEntity = {
-      state: EState.ADD_CHANNEL,
+      state: EState.ADD_KEYWORDS,
     }
     const db = await getDbConnection()
     const keywords = keywordsRaw
