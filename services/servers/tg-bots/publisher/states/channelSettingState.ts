@@ -1,7 +1,7 @@
 import { EState } from '../constants'
 import { TMenuButton, TState } from '../types'
-import { enterToState, handlePaywall, onClickDeleteChannel } from '../utils'
-import { keywordGroupSelectState, keywordSettingsState, mainState } from '.'
+import { enterToState, onClickDeleteChannel } from '../utils'
+import { buyPremiumState, keywordGroupSelectState, keywordSettingsState, mainState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
 import { Markup } from 'telegraf'
@@ -29,7 +29,7 @@ export const channelSettingState: TState = {
       ctx.hasPremiumSubscription
         ? i18n['ru'].button.extendPremium()
         : i18n['ru'].button.subscribeToPremium(),
-      ctx => handlePaywall(ctx),
+      ctx => enterToState(ctx, buyPremiumState),
     ]
     const unlinkChannelButton: TMenuButton = [
       i18n['ru'].button.unlinkChannel(ctx.session.channel.name),
@@ -62,7 +62,7 @@ export const channelSettingState: TState = {
       buttons.push([editKeywordGroupsButton])
       buttons.push([editKeywordsButton])
     }
-    if (ctx.session.channel.id === ctx.from?.id) {
+    if (ctx.session.channel.id !== ctx.from?.id) {
       buttons.push([unlinkChannelButton])
     }
     buttons.push([buyPremiumButton])

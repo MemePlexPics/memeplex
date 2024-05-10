@@ -1,7 +1,7 @@
 import { EKeywordAction, EState } from '../constants'
 import { TMenuButton, TState, TTelegrafContext } from '../types'
-import { enterToState, handlePaywall, logUserAction } from '../utils'
-import { channelSettingState, keywordGroupSelectState } from '.'
+import { enterToState, logUserAction } from '../utils'
+import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
   countPublisherSubscriptionsByChannelId,
@@ -15,9 +15,6 @@ import { Markup } from 'telegraf'
 
 export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
-  beforeInit: async ctx => {
-    return await handlePaywall(ctx, keywordGroupSelectState)
-  },
   menu: async ctx => {
     const sendKeywordsButton: TMenuButton = [
       i18n['ru'].button.sendKeywords(),
