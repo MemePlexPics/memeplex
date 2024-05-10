@@ -1,7 +1,6 @@
-import { CallbackButton, MakeOptions } from 'telegram-keyboard'
+import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export type TInlineMenu = {
   text: string
-  buttons: CallbackButton[] | CallbackButton[][]
-  options?: MakeOptions
+  buttons: InlineKeyboardButton[][]
 }

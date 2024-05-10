@@ -1,12 +1,8 @@
-import { Keyboard } from 'telegram-keyboard'
 import { TState, TTelegrafContext } from '../types'
-import { EState } from '../constants'
 import { getMenuButtonsAndHandlers } from '.'
+import { Markup } from 'telegraf'
 
-export const enterToState = async <GStateName extends EState>(
-  ctx: TTelegrafContext,
-  state: TState<GStateName>,
-) => {
+export const enterToState = async (ctx: TTelegrafContext, state: TState) => {
   if (state.beforeInit) {
     const isInit = await state.beforeInit(ctx)
     if (!isInit) return
@@ -15,11 +11,11 @@ export const enterToState = async <GStateName extends EState>(
   // TODO: split message text by 4 KiB (4096)
   if (state.menu) {
     const { text: menuText, buttons } = await getMenuButtonsAndHandlers(ctx, state)
-    await ctx.reply(menuText, Keyboard.make(buttons).reply())
+    await ctx.reply(menuText, Markup.keyboard(buttons).resize())
   }
   if (state.inlineMenu) {
     const inlineMenu = await state.inlineMenu(ctx)
-    const menu = await ctx.reply(inlineMenu.text, Keyboard.make(inlineMenu.buttons).inline())
+    const menu = await ctx.reply(inlineMenu.text, Markup.inlineKeyboard(inlineMenu.buttons))
     ctx.session.lastMenuId = menu.message_id
   }
   if (state.message) {

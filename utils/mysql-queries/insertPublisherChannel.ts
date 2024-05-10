@@ -8,5 +8,10 @@ export const insertPublisherChannel = async (
   await db
     .insert(botPublisherChannels)
     .values(values)
-    .onDuplicateKeyUpdate({ set: { userId: values.userId } })
+    .onDuplicateKeyUpdate({
+      set: {
+        userId: values.userId,
+        username: values.username,
+      },
+    })
 }
