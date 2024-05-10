@@ -1,4 +1,3 @@
-import { Key } from 'telegram-keyboard'
 import { EKeywordGroupAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
 import { addSubscription, deleteSubscription, enterToState, logUserAction } from '../utils'
@@ -12,12 +11,17 @@ import {
   selectPublisherKeywordGroups,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
-import { getPublisherUserTariffPlan } from '../../../../utils'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
 
 export const keywordGroupSelectState: TState = {
   stateName: EState.KEYWORD_GROUP_SELECT,
   inlineMenu: async ctx => {
+    if (!ctx.from) {
+      throw new Error('There is no ctx.from')
+    }
+    if (!ctx.session.channel) {
+      throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
+    }
     const db = await getDbConnection()
     const keywordGroups = await selectPublisherKeywordGroups(db)
     const userKeywordGroupsRaw = await selectPublisherGroupSubscriptionsByUserId(db, ctx.from.id)
@@ -26,15 +30,6 @@ export const keywordGroupSelectState: TState = {
       return acc
     }, new Set<string>())
     await db.close()
-    const text = keywordGroups.reduce<string>((string, { name, keywords }) => {
-      return (
-        string +
-        `
-📂 ${name}:
-${keywords}
-    `
-      )
-    }, 'Выберите группу ключевых слов для подписки.\n')
     const buttons = keywordGroups.map(({ name }) => {
       const isSubscribed = userKeywordGroups.has(name)
       const buttonText = isSubscribed
@@ -43,26 +38,40 @@ ${keywords}
       const keyAction = isSubscribed
         ? EKeywordGroupAction.UNSUBSCRIBE
         : EKeywordGroupAction.SUBSCRIBE
-      return [Key.callback(buttonText, `${keyAction}|${name}`)]
+      return [
+        {
+          text: buttonText,
+          callback_data: `${keyAction}|${name}`,
+        },
+        {
+          text: 'ℹ️',
+          callback_data: `${EKeywordGroupAction.INFO}|${name}`,
+        },
+      ]
     })
     return {
-      text,
+      text: `
+${i18n['ru'].message.keywordGroupDescription()}
+${
+  ctx.session.channel.id === ctx.from.id
+    ? i18n['ru'].message.youEditingSubscriptionsForUser()
+    : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel.name)
+}`,
       buttons,
     }
   },
   menu: async ctx => {
-    const db = await getDbConnection()
-    const userTariff = await getPublisherUserTariffPlan(db, ctx.from.id)
-    db.close()
-    const isPremium = userTariff === 'premium'
     const text = i18n['ru'].message.keywordGroupsMenu()
-    const previoisState = isPremium ? addKeywordsState : channelSettingState
+    const previoisState = ctx.hasPremiumSubscription ? addKeywordsState : channelSettingState
     return {
       text,
       buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, previoisState)]]],
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
+    if (!ctx.from) {
+      throw new Error('There is no ctx.from')
+    }
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in keywordGroupSelectState`)
     }
@@ -77,6 +86,14 @@ ${keywords}
       operation,
       group: groupName,
     })
+    if (operation === EKeywordGroupAction.INFO) {
+      const [keywordGroup] = await selectPublisherKeywordGroupByName(db, groupName)
+      await ctx.reply(
+        i18n['ru'].message.topicContainKewords(keywordGroup.name, keywordGroup.keywords),
+      )
+      return
+    }
+
     const keywords = keywordGroup[0].keywords.split(', ')
 
     if (operation === EKeywordGroupAction.SUBSCRIBE) {
