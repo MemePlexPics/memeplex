@@ -39,7 +39,8 @@ export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger
         })
       } else if (payload.status === 'paid') {
         const db = await getDbConnection()
-        await insertPublisherPremiumUser(db, Number(payload.userId))
+        const untilTimestamp = Date.now() / 1000 + 60 * 60 * 24 * 31
+        await insertPublisherPremiumUser(db, Number(payload.userId), untilTimestamp)
         await db.close()
         await bot.telegram.sendMessage(payload.userId, '🎉 Оплата успешно произведена!')
       } else {
