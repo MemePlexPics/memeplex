@@ -16,9 +16,9 @@ export { AMQP_IMAGE_DATA_CHANNEL,
   AMQP_MEMES_TO_NLP_CHANNEL,
   AMQP_NLP_TO_PUBLISHER_CHANNEL,
 } from './amqpChannels'
+export { MAX_FREE_USER_CHANNEL_SUBS } from './publisher'
 
 // TODO: split into files?
-
 
 // how much time to sleep between fetching all data, ms
 export const CYCLE_SLEEP_TIMEOUT = (Number(process.env.CYCLE_SLEEP_TIMEOUT) * 1) || 30_000

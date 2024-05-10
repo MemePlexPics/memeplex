@@ -1,18 +1,22 @@
-import { Promisable } from '../../../../../types'
+import { Promisable, RequiredProperty } from '../../../../../types'
 import { TState, TTelegrafContext } from '../types'
 
-export const getMenuButtonsAndHandlers = async (ctx: TTelegrafContext, state: TState) => {
+export const getMenuButtonsAndHandlers = async (
+  ctx: TTelegrafContext,
+  state: RequiredProperty<TState, 'menu'>,
+) => {
   const onTextHandlers: Record<
   string,
-  (ctx?: TTelegrafContext, text?: string) => Promisable<unknown>
+  (ctx: TTelegrafContext, text: string) => Promisable<unknown>
   > = {}
-  const { text, buttons: buttonsRaw } = await state.menu(ctx)
-  const buttons = buttonsRaw.map(buttonRow =>
+  if (!state.menu) throw new Error()
+  const { text, buttons: buttonRaws } = await state.menu(ctx)
+  const buttons = buttonRaws.map(buttonRow =>
     buttonRow.map(button => {
       if (Array.isArray(button)) {
-        const [buttonText, callback] = button
-        onTextHandlers[buttonText] = callback
-        return buttonText
+        const [text, callback] = button
+        onTextHandlers[text] = callback
+        return text
       }
       return button
     }),
