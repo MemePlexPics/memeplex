@@ -42,7 +42,6 @@
     "socks-proxy-agent": "^8.0.2",
     "telegraf": "^4.16.3",
     "telegraf-ratelimit": "^2.0.0",
-    "telegram-keyboard": "^2.3.5",
     "tsx": "^4.7.1",
     "winston": "^3.11.0"
   },

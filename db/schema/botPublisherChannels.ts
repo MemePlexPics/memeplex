@@ -8,7 +8,10 @@ export const botPublisherChannels = mysqlTable(
     userId: bigint('user_id', { mode: 'number' }).notNull(),
     username: varchar('username', { length: 255 }).notNull(),
     subscribers: int('subscribers').notNull(),
-    type: varchar('type', { length: 32 }),
+    type: varchar('type', {
+      length: 32,
+      enum: ['channel', 'group', 'supergroup', 'private'],
+    }).notNull(),
     timestamp: int('timestamp').notNull(),
   },
   table => {
