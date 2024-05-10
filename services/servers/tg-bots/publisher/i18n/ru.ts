@@ -70,6 +70,7 @@ ${keywords}`,
     doYouWantToUnlinkChannel: (channel: string) => `
 Вы действительно хотите отвязать свой канал @${channel}?
 Все настройки подписок для канала будут сброшены.`,
+    youCanDemoteBotFromAdmin: () => `Теперь вы можете удалить бота из списка администраторов`,
   },
   button: {
     back: () => '⬅️ Назад',
