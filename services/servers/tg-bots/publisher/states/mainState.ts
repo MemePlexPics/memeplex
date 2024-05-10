@@ -18,7 +18,7 @@ export const mainState: TState = {
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
     await db.close()
 
-    const channelButtons: InlineKeyboardButton[][] = userChannels.map(({ id, username }) => [
+    const channelButtons: InlineKeyboardButton[][] = userChannels.filter(userChannel => userChannel.type === 'channel').map(({ id, username }) => [
       Markup.button.callback(i18n['ru'].button.channelSubscriptions(username), `${id}|${username}`),
     ])
     return {
@@ -48,5 +48,14 @@ export const mainState: TState = {
       text: i18n['ru'].message.mainMenu(),
       buttons: [[mySubscriptionsButton], [linkYourChannelButton], [buyPremium]],
     }
+  },
+  onCallback: async (ctx, callback) => {
+    const [id, name] = callback.split('|')
+    ctx.session.channel = {
+      id: Number(id),
+      name,
+      type: 'channel',
+    }
+    await enterToState(ctx, channelSettingState)
   },
 }
