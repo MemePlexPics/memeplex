@@ -13,6 +13,9 @@ export const handleKeywordGroupAction = async (
   command: EKeywordAction,
   keywordGroup: string,
 ) => {
+  if (!ctx.from) {
+    throw new Error('There is no ctx.from')
+  }
   if (command === EKeywordAction.DELETE) {
     const db = await getDbConnection()
     const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
