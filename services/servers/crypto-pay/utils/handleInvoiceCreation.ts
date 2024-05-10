@@ -36,7 +36,7 @@ export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger
       const invoice: TInvoiceCreated = await cryptoPay.createInvoice(undefined, undefined, {
         currency_type: 'fiat',
         fiat: 'USD',
-        amount: '1',
+        amount: `${payload.amount}`,
         description: `MemePush платный тариф для пользователя ${payload.user} (${payload.id})`,
         expires_in: CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS,
       })
