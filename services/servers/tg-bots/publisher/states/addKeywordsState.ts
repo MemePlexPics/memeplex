@@ -1,15 +1,12 @@
 import { EState } from '../constants'
 import { TState } from '../types'
-import { addSubscription, enterToState, handlePaywall, logUserAction } from '../utils'
-import { channelSettingState, keywordGroupSelectState } from '.'
+import { addSubscription, enterToState, logUserAction } from '../utils'
+import { channelSettingState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
 
 export const addKeywordsState: TState = {
   stateName: EState.ADD_KEYWORDS,
-  beforeInit: async ctx => {
-    return await handlePaywall(ctx, keywordGroupSelectState)
-  },
   menu: async () => {
     return {
       text: i18n['ru'].message.mySubscriptions(),
