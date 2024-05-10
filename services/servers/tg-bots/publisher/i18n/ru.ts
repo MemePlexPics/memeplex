@@ -55,12 +55,13 @@ export const ru = {
 - Настраивать уведомления о новых мемах на уровне отдельных ключевых фраз (интересующие вас темы, предметы или явления)
 - Привязывать телеграм-каналы, у которых больше ${MAX_FREE_USER_CHANNEL_SUBS} подписчиков, чтобы отправлять туда найденные мемы прямо из бота.`,
     keywordGroupDescription: () => `Топики позволяют подписаться на группы ключевых фраз.`,
-    youEditingSubscriptionsFor: (text: string) => `Вы редактируете ${text}`,
+    youEditingSubscriptionsFor: (text: string) => `Вы редактируете ${text}.`,
     youEditingSubscriptionsForUser: () => ru.message.youEditingSubscriptionsFor('ваши подписки'),
     youEditingSubscriptionsForChannel: (channelName: string) =>
       ru.message.youEditingSubscriptionsFor(`подписки канала @${channelName}`),
-    topicContainKewords: (topicName: string, keywords: string) =>
-      `Топик «${topicName}» содержит фразы: ${keywords}`,
+    topicContainKewords: (topicName: string, keywords: string) => `
+📂 Топик «${topicName}» содержит фразы:
+${keywords}`,
     thereTopicsAndKeywords: () =>
       'Подписки бывают двух видов: ключевые фразы и топики (заранее заготовленные группы ключевых фраз).',
     topicAndKeywordsAccessByPlan: () => `
