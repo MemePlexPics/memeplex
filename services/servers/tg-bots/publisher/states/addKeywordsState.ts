@@ -20,9 +20,6 @@ export const addKeywordsState: TState = {
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
     }
-    const logEntity = {
-      state: EState.ADD_KEYWORDS,
-    }
     const db = await getDbConnection()
     const keywords = keywordsRaw
       .split('\n')
@@ -44,8 +41,7 @@ export const addKeywordsState: TState = {
     await db.close()
 
     await ctx.reply(i18n['ru'].message.addedKeywords())
-    logUserAction(ctx.from, {
-      ...logEntity,
+    logUserAction(ctx, {
       info: `Added`,
       keywords: keywordValuesNotEmpty.map(keywordRow => keywordRow.keyword).join(', '),
     })
