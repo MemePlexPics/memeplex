@@ -143,7 +143,7 @@ export const init = async (
     }
   })
 
-  bot.on(message('contact'), async ctx => {
+  bot.on('contact', async ctx => {
     if (!ctx.message.contact.user_id) {
       throw new Error(`There is no ctx.message.contact.user_id in contact update event.`)
     }
