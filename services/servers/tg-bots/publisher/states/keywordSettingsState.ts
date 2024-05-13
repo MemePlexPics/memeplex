@@ -39,7 +39,6 @@ export const keywordSettingsState: TState = {
     const backButton: TMenuButton = [
       i18n['ru'].button.back(),
       async (ctx) => {
-        ctx.session.channel = undefined
         ctx.session.pagination = undefined
         await enterToState(ctx, channelSettingState)
       },
