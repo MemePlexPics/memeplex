@@ -5,7 +5,6 @@ import {
   deletePublisherGroupSubscriptionByChannelId,
   deletePublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
-import { EState } from '../constants'
 import { i18n } from '../i18n'
 import { TTelegrafContext } from '../types'
 
@@ -19,8 +18,7 @@ export const onClickDeleteChannel = async (ctx: TTelegrafContext) => {
   await deletePublisherChannelById(db, ctx.session.channel.id)
   await db.close()
   await ctx.reply(i18n['ru'].message.channelUnlinked())
-  logUserAction(ctx.from, {
-    state: EState.CHANNEL_SETTINGS,
+  logUserAction(ctx, {
     error: `Unlinked`,
     ...ctx.session.channel,
   })
