@@ -47,7 +47,7 @@ export const handleKeywordAction = async (
         }
         : undefined,
     )
-    logUserAction(ctx.from, {
+    logUserAction(ctx, {
       info: `Unsubscribe from a keyword`,
       keyword,
     })

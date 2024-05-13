@@ -110,8 +110,7 @@ export const keywordSettingsState: TState = {
       await deletePublisherSubscriptionsByKeyword(db, argument)
       await deletePublisherKeyword(db, argument)
       await db.close()
-      logUserAction(ctx.from, {
-        state: EState.KEYWORD_SETTINGS,
+      logUserAction(ctx, {
         error: `Deleted`,
         keyword: argument,
       })

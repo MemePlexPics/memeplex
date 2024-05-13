@@ -80,8 +80,7 @@ ${
     if (!keywordGroup.length || !keywordGroup[0].keywords)
       throw new InfoMessage(`Unknown menu state: ${callback}`)
 
-    logUserAction(ctx.from, {
-      state: EState.KEYWORD_GROUP_SELECT,
+    logUserAction(ctx, {
       operation,
       group: groupName,
     })
