@@ -90,7 +90,7 @@ export const init = async (
         if (!ctx.from) {
           throw new Error('There is no ctx.from')
         }
-        logUserAction(ctx.from, { info: 'exceeded rate limit' })
+        logUserAction(ctx, { info: 'exceeded rate limit' })
         await ctx.reply(i18n['ru'].message.rateLimit())
       },
     }),
@@ -117,7 +117,7 @@ export const init = async (
       timestamp: Date.now() / 1000,
     })
     await db.close()
-    logUserAction(ctx.from, {
+    logUserAction(ctx, {
       start: ctx.payload || 1,
     })
   })

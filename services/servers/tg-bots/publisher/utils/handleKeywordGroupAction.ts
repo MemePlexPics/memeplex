@@ -45,7 +45,7 @@ export const handleKeywordGroupAction = async (
         }
         : undefined,
     )
-    logUserAction(ctx.from, {
+    logUserAction(ctx, {
       info: `Unsubscribe from a keyword group`,
       keywordGroup,
     })

@@ -50,7 +50,7 @@ export const handleMemePost = async (
       })
     }
     await ctx.reply(i18n['ru'].message.memePostedSuccessfully(), replyToMeme)
-    logUserAction(ctx.from, {
+    logUserAction(ctx, {
       info: `Meme posted`,
       chatId,
       memeId,
