@@ -18,7 +18,7 @@ export const keywordSettingsState: TState = {
   menu: async ctx => {
     const sendKeywordsButton: TMenuButton = [
       i18n['ru'].button.sendKeywords(),
-      async () => {
+      async (ctx) => {
         if (!ctx.session.channel) {
           throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
         }
@@ -38,7 +38,7 @@ export const keywordSettingsState: TState = {
     ]
     const backButton: TMenuButton = [
       i18n['ru'].button.back(),
-      async () => {
+      async (ctx) => {
         ctx.session.channel = undefined
         ctx.session.pagination = undefined
         await enterToState(ctx, channelSettingState)
