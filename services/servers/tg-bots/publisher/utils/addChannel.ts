@@ -1,7 +1,6 @@
 import { Chat } from 'telegraf/typings/core/types/typegram'
 import { enterToState, logUserAction } from '.'
 import { getDbConnection, logInfo } from '../../../../../utils'
-import { EState } from '../constants'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { addKeywordsState } from '../states'
 import { i18n } from '../i18n'
@@ -10,9 +9,6 @@ import { TTelegrafContext } from '../types'
 export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
-  }
-  const logEntity = {
-    state: EState.MAIN,
   }
   // const channel = getTgChannelName(text)
   // if (!channel) {
@@ -73,8 +69,7 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
   }
   if (!isOurUserAnAdmin) {
     await ctx.reply(i18n['ru'].message.onlyAdminCanSubscribeChannel())
-    logUserAction(ctx.from, {
-      ...logEntity,
+    logUserAction(ctx, {
       error: `The user not an admin`,
       channel: chat?.username ?? channelId,
     })
@@ -82,8 +77,7 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
   }
   if (!isOurBotAnAdmin) {
     await ctx.reply(i18n['ru'].message.botMustHaveAdminRights(), readyButton)
-    logUserAction(ctx.from, {
-      ...logEntity,
+    logUserAction(ctx, {
       error: `Admin rights not granted`,
       channel: chat?.username ?? channelId,
     })
@@ -108,8 +102,7 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
       timestamp,
     })
     await db.close()
-    logUserAction(ctx.from, {
-      ...logEntity,
+    logUserAction(ctx, {
       info: `Added`,
       channel: chat.username ?? chat.id,
     })
