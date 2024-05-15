@@ -19,7 +19,7 @@ export const buyPremiumState: TState = {
       buttons: [
         ...PREMIUM_PLANS.map(plan => {
           const button: TMenuButton = [
-            i18n['ru'].button.butPremium(plan.months, plan.cost),
+            i18n['ru'].button.buyPremium(plan.emoji, plan.months, plan.cost),
             ctx => handleInvoiceCreation(ctx, plan.cost),
           ]
           return [button]
