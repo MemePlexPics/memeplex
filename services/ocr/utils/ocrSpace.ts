@@ -41,7 +41,7 @@ export async function ocrSpace(
     proxy?: {
       protocol: string
       host: string
-      port: string
+      port: number
     }
   } = {},
 ) {

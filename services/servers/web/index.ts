@@ -19,9 +19,9 @@ import {
   getChannels,
   getChannelsCount,
   insertChannelSuggestion,
-  getChannelSuggestions,
-  getChannelSuggestionsCount,
-  getFeaturedChannelList,
+  selectChannelSuggestions,
+  countChannelSuggestions,
+  selectActiveFeaturedChannels,
   selectBlackList,
 } from '../../../utils/mysql-queries'
 import { searchMemes, getLatestMemes, getMeme, downloadTelegramChannelAvatar } from '../utils'
@@ -136,9 +136,9 @@ app.get('/getMeme', async (req, res) => {
 })
 
 app.get('/getFeaturedChannelList', async (req, res) => {
-  const mysql = await getMysqlClient()
-  const channels = await getFeaturedChannelList(mysql)
-  await mysql.end()
+  const db = await getDbConnection()
+  const channels = await selectActiveFeaturedChannels(db)
+  await db.close()
   return res.send({
     result: shuffleArray(channels),
   })
@@ -147,20 +147,25 @@ app.get('/getFeaturedChannelList', async (req, res) => {
 app.post('/suggestChannel', async (req, res) => {
   const { channel } = req.body
   if (!channel) return res.status(500).send()
-  const mysql = await getMysqlClient()
-  const response = await insertChannelSuggestion(mysql, channel)
-  await mysql.end()
+  const db = await getDbConnection()
+  const response = await insertChannelSuggestion(db, channel)
+  await db.close()
   if (response) logger.info(`${req.ip} added @${channel} to suggested`)
   return res.send()
 })
 
 app.get('/getChannelSuggestionList', async (req, res) => {
   const { page, filter } = req.query
-  const mysql = await getMysqlClient()
-  const filters = { name: filter }
-  const channels = await getChannelSuggestions(mysql, page, CHANNEL_LIST_PAGE_SIZE, filters)
-  const count = await getChannelSuggestionsCount(mysql, filters)
-  await mysql.end()
+  if (!Number.isInteger(page)) {
+    throw new Error()
+  }
+  const db = await getDbConnection()
+  const filters = {
+    name: typeof filter === 'string' && /[0-9a-zA_Z_]+/.test(filter) ? filter : undefined,
+  }
+  const channels = await selectChannelSuggestions(db, Number(page), CHANNEL_LIST_PAGE_SIZE, filters)
+  const count = await countChannelSuggestions(db, filters)
+  await db.close()
   return res.send({
     result: channels,
     totalPages: Math.ceil(count / CHANNEL_LIST_PAGE_SIZE),

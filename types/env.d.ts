@@ -1,6 +1,7 @@
 declare global {
   namespace NodeJS {
     interface ProcessEnv {
+      ENVIRONMENT?: 'TESTING' | 'DEVELOPMENT' | 'PRODUCTION'
       TG_API_ENDPOINT: string
       TG_RSS_ENDPOINT: string
       OCR_SPACE_API_KEYS: string

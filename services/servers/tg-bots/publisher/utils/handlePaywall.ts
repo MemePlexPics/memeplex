@@ -4,7 +4,7 @@ import { i18n } from '../i18n'
 import { TState, TTelegrafContext } from '../types'
 
 export const handlePaywall = async (ctx: TTelegrafContext, fallbackState?: TState) => {
-  if (ctx.hasPremiumSubscription) {
+  if (await ctx.hasPremiumSubscription) {
     if (fallbackState) {
       await enterToState(ctx, fallbackState)
     }

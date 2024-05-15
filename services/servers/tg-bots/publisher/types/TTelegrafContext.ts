@@ -5,5 +5,5 @@ import { Logger } from 'winston'
 export type TTelegrafContext = Context & {
   session: TTelegrafSession
   logger: Logger
-  hasPremiumSubscription: boolean
+  hasPremiumSubscription: Promise<boolean>
 }
