@@ -1,6 +1,12 @@
 import { EKeywordGroupAction, EState } from '../constants'
 import { TState, TTelegrafContext } from '../types'
-import { addSubscription, deleteSubscription, enterToState, logUserAction } from '../utils'
+import {
+  addSubscription,
+  deleteSubscription,
+  enterToState,
+  logUserAction,
+  replaceInlineKeyboardButton,
+} from '../utils'
 import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
@@ -12,6 +18,7 @@ import {
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
+import { Markup } from 'telegraf'
 
 export const keywordGroupSelectState: TState = {
   stateName: EState.KEYWORD_GROUP_SELECT,
@@ -30,6 +37,14 @@ export const keywordGroupSelectState: TState = {
       return acc
     }, new Set<string>())
     await db.close()
+    const text = `
+${i18n['ru'].message.keywordGroupDescription()}
+${
+  ctx.session.channel.id === ctx.from.id
+    ? i18n['ru'].message.youEditingSubscriptionsForUser()
+    : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel.name)
+}`
+
     const buttons = keywordGroups.map(({ name }) => {
       const isSubscribed = userKeywordGroups.has(name)
       const buttonText = isSubscribed
@@ -38,32 +53,16 @@ export const keywordGroupSelectState: TState = {
       const keyAction = isSubscribed
         ? EKeywordGroupAction.UNSUBSCRIBE
         : EKeywordGroupAction.SUBSCRIBE
-      return [
-        {
-          text: buttonText,
-          callback_data: `${keyAction}|${name}`,
-        },
-        {
-          text: 'ℹ️',
-          callback_data: `${EKeywordGroupAction.INFO}|${name}`,
-        },
-      ]
+      return [Markup.button.callback(buttonText, `${keyAction}|${name}`)]
     })
     return {
-      text: `
-${i18n['ru'].message.keywordGroupDescription()}
-${
-  ctx.session.channel.id === ctx.from.id
-    ? i18n['ru'].message.youEditingSubscriptionsForUser()
-    : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel.name)
-}`,
+      text,
       buttons,
     }
   },
-  menu: async ctx => {
-    const text = i18n['ru'].message.keywordGroupsMenu()
+  menu: async () => {
     return {
-      text,
+      text: i18n['ru'].message.keywordGroupsMenu(),
       buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, channelSettingState)]]],
     }
   },
@@ -84,13 +83,13 @@ ${
       operation,
       group: groupName,
     })
-    if (operation === EKeywordGroupAction.INFO) {
-      const [keywordGroup] = await selectPublisherKeywordGroupByName(db, groupName)
-      await ctx.reply(
-        i18n['ru'].message.topicContainKewords(keywordGroup.name, keywordGroup.keywords),
-      )
-      return
-    }
+    // if (operation === EKeywordGroupAction.INFO) {
+    //   const [keywordGroup] = await selectPublisherKeywordGroupByName(db, groupName)
+    //   await ctx.reply(
+    //     i18n['ru'].message.topicContainKewords(keywordGroup.name, keywordGroup.keywords),
+    //   )
+    //   return
+    // }
 
     const keywords = keywordGroup[0].keywords.split(', ')
 
@@ -111,28 +110,20 @@ ${
     }
     await db.close()
 
-    if (isCommonMessage(ctx.callbackQuery?.message) && ctx.callbackQuery.message.reply_markup) {
-      const newOperation =
-        operation === EKeywordGroupAction.UNSUBSCRIBE
-          ? EKeywordGroupAction.SUBSCRIBE
-          : EKeywordGroupAction.UNSUBSCRIBE
-      await ctx.editMessageReplyMarkup({
-        inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
-          row.map(column => {
-            if (isCallbackButton(column) && column.callback_data === `${operation}|${groupName}`) {
-              return {
-                text:
-                  operation === EKeywordGroupAction.UNSUBSCRIBE
-                    ? i18n['ru'].button.subscribeKeyword(groupName)
-                    : i18n['ru'].button.unsubscribeKeyword(groupName),
-                callback_data: `${newOperation}|${groupName}`,
-              }
-            }
-            return column
-          }),
-        ),
-      })
-    }
+    const newText =
+      operation === EKeywordGroupAction.UNSUBSCRIBE
+        ? i18n['ru'].button.subscribeKeyword(groupName)
+        : i18n['ru'].button.unsubscribeKeyword(groupName)
+    const newOperation =
+      operation === EKeywordGroupAction.UNSUBSCRIBE
+        ? EKeywordGroupAction.SUBSCRIBE
+        : EKeywordGroupAction.UNSUBSCRIBE
+    await replaceInlineKeyboardButton(ctx, {
+      [`${operation}|${groupName}`]: Markup.button.callback(
+        newText,
+        `${newOperation}|${groupName}`,
+      ),
+    })
     return
   },
 }

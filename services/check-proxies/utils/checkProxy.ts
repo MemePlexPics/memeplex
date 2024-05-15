@@ -1,6 +1,11 @@
+import { Logger } from 'winston'
 import { getProxySpeed, checkProxyAnonimity, dateToYyyyMmDdHhMmSs } from '../../../utils'
 
-export const checkProxy = async (proxy, ownIp, logger) => {
+export const checkProxy = async (
+  proxy: { speed: number; ip: string; port: number; protocol: string },
+  ownIp: string,
+  logger: Logger,
+) => {
   const anonymityLevel = await checkProxyAnonimity(ownIp, proxy.protocol, proxy.ip, proxy.port)
   const isValid = anonymityLevel !== null
   const lastCheckDatetime = dateToYyyyMmDdHhMmSs(isValid ? new Date() : new Date(0))

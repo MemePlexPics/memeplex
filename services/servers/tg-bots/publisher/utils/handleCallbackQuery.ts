@@ -1,13 +1,14 @@
 import { Client } from '@elastic/elasticsearch'
 import {
-  handleInvoiceCreation,
+  handleGroupKeywordAction,
   handleKeywordAction,
   handleKeywordGroupAction,
   handleMemePost,
 } from '.'
 import { TState, TTelegrafContext } from '../types'
-import { ECallback, EKeywordAction } from '../constants'
+import { ECallback, EKeywordAction, callbackData } from '../constants'
 import { isCallbackQueryUpdate, isDataQuery } from '../typeguards'
+import { SplitString } from '../../../../../types'
 
 export const handleCallbackQuery = async (
   ctx: TTelegrafContext,
@@ -20,16 +21,53 @@ export const handleCallbackQuery = async (
   if (state === ECallback.IGNORE) {
     return
   }
-  if (state === ECallback.POST && typeof restCb[1] === 'string') {
-    await handleMemePost(elastic, ctx, Number(restCb[0]), restCb[1])
+  if (state === ECallback.POST) {
+    const restCbData = restCb as SplitString<
+    ReturnType<typeof callbackData.premoderationPostButton>,
+    '|'
+    > extends [infer _GFirst, ...infer GRest]
+      ? GRest
+      : never
+    await handleMemePost(elastic, ctx, Number(restCbData[0]), restCbData[1])
     return
   }
-  if (state === ECallback.KEY && typeof restCb[1] === 'string') {
-    await handleKeywordAction(ctx, restCb[0] as EKeywordAction, restCb[1])
+  if (state === ECallback.KEY) {
+    const restCbData = restCb as SplitString<
+    ReturnType<typeof callbackData.premoderationKeywordButton>,
+    '|'
+    > extends [infer _GFirst, ...infer GRest]
+      ? GRest
+      : never
+    const [action, channelId, keyword] = restCbData
+    await handleKeywordAction(ctx, action as EKeywordAction, Number(channelId), keyword)
     return
   }
-  if (state === ECallback.GROUP && typeof restCb[1] === 'string') {
-    await handleKeywordGroupAction(ctx, restCb[0] as EKeywordAction, restCb[1])
+  if (state === ECallback.GROUP) {
+    const restCbData = restCb as SplitString<
+    ReturnType<typeof callbackData.premoderationKeywordGroupButton>,
+    '|'
+    > extends [infer _GFirst, ...infer GRest]
+      ? GRest
+      : never
+    const [action, channelId, keywordGroup] = restCbData
+    await handleKeywordGroupAction(ctx, action as EKeywordAction, Number(channelId), keywordGroup)
+    return
+  }
+  if (state === ECallback.GROUP_KEYWORD) {
+    const restCbData = restCb as SplitString<
+    ReturnType<typeof callbackData.premoderationGroupKeywordsButton>,
+    '|'
+    > extends [infer _GFirst, ...infer GRest]
+      ? GRest
+      : never
+    const [action, channelId, keyword, keywordGroup] = restCbData
+    await handleGroupKeywordAction(
+      ctx,
+      action as EKeywordAction,
+      Number(channelId),
+      keyword,
+      keywordGroup,
+    )
     return
   }
   if (handler) await handler(ctx, callbackQuery)

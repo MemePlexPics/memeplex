@@ -22,11 +22,11 @@ export const channelSettingState: TState = {
       ctx => enterToState(ctx, keywordSettingsState),
     ]
     const editKeywordGroupsButton: TMenuButton = [
-      i18n['ru'].button.addKyewordGroup(ctx.hasPremiumSubscription ? '✏️' : '✨'),
+      i18n['ru'].button.addKyewordGroup((await ctx.hasPremiumSubscription) ? '✏️' : '✨'),
       ctx => enterToState(ctx, keywordGroupSelectState),
     ]
     const buyPremiumButton: TMenuButton = [
-      ctx.hasPremiumSubscription
+      (await ctx.hasPremiumSubscription)
         ? i18n['ru'].button.extendPremium()
         : i18n['ru'].button.subscribeToPremium(),
       ctx => enterToState(ctx, buyPremiumState),
@@ -54,7 +54,7 @@ export const channelSettingState: TState = {
       },
     ]
     const buttons: TMenuButton[][] = []
-    if (ctx.hasPremiumSubscription) {
+    if (await ctx.hasPremiumSubscription) {
       buttons.push([editKeywordsButton])
       buttons.push([editKeywordGroupsButton])
     } else {
@@ -66,21 +66,23 @@ export const channelSettingState: TState = {
     }
     buttons.push([buyPremiumButton])
     buttons.push([backButton])
-    return {
-      text: `
+    const text = `
 ${i18n['ru'].message.thereTopicsAndKeywords()}
-${ctx.hasPremiumSubscription ? '' : i18n['ru'].message.topicAndKeywordsAccessByPlan() + '\n'}
+${(await ctx.hasPremiumSubscription) ? '' : i18n['ru'].message.topicAndKeywordsAccessByPlan() + '\n'}
 ${
   ctx.session.channel?.id === ctx.from.id
     ? i18n['ru'].message.youEditingSubscriptionsForUser()
     : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
-}`,
+}`
+    return {
+      text,
       buttons,
     }
   },
   onCallback: async (ctx, callback) => {
     if (callback === 'unlink') {
       await onClickDeleteChannel(ctx)
+      await ctx.deleteMessage()
       ctx.session.channel = undefined
       await ctx.reply(i18n['ru'].message.youCanDemoteBotFromAdmin())
       await enterToState(ctx, mainState)
