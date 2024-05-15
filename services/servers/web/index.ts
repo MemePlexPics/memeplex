@@ -156,9 +156,6 @@ app.post('/suggestChannel', async (req, res) => {
 
 app.get('/getChannelSuggestionList', async (req, res) => {
   const { page, filter } = req.query
-  if (!Number.isInteger(page)) {
-    throw new Error()
-  }
   const db = await getDbConnection()
   const filters = {
     name: typeof filter === 'string' && /[0-9a-zA_Z_]+/.test(filter) ? filter : undefined,
