@@ -93,22 +93,22 @@ ${keywords}`,
     subscriptionSettings: () => '⚙️ Настройки подписок',
     postMeme: (channel: string) => `➡️ Отправить в @${channel}`,
     memePosted: (channel: string) => `✅ Отправлено в @${channel}`,
-    premoderationKeyword: (emoji: '🗑️' | '➕', keyword: string, action: string) =>
-      `${emoji} 🔠 «${keyword}» (${action})`,
-    premoderationKeywordGroup: (emoji: '🗑️' | '➕', keywordGroup: string, action: string) =>
+    premoderationKeyword: (emoji: '🔕' | '➕', keyword: string, action: string) =>
+      `${emoji}«${keyword}» (${action})`,
+    premoderationKeywordGroup: (emoji: '🔕' | '➕', keywordGroup: string, action: string) =>
       `${emoji} 📂 «${keywordGroup}» (${action})`,
     premoderationKeywordFromGroup: (
-      emoji: '🗑️' | '➕',
+      emoji: '🔕' | '➕',
       keyword: string,
       keywordGroup: string,
       action: string,
-    ) => `${emoji} 🔠 «${keyword}» из 📂 «${keywordGroup}» (${action})`,
+    ) => `${emoji}«${keyword}» из 📂 «${keywordGroup}» (${action})`,
     premoderationKeywordUnsubscribe: (keyword: string) =>
-      ru.button.premoderationKeyword('🗑️', keyword, 'отписаться'),
+      ru.button.premoderationKeyword('🔕', keyword, 'отписаться'),
     premoderationKeywordGroupUnsubscribe: (keywordGroup: string) =>
-      ru.button.premoderationKeywordGroup('🗑️', keywordGroup, 'отписаться'),
+      ru.button.premoderationKeywordGroup('🔕', keywordGroup, 'отписаться'),
     premoderationKeywordFromGroupUnsubscribe: (keyword: string, keywordGroup: string) =>
-      ru.button.premoderationKeywordFromGroup('🗑️', keyword, keywordGroup, 'отписаться'),
+      ru.button.premoderationKeywordFromGroup('🔕', keyword, keywordGroup, 'отписаться'),
     premoderationKeywordSubscribe: (keyword: string) =>
       ru.button.premoderationKeyword('➕', keyword, 'подписаться'),
     premoderationKeywordGroupSubscribe: (keywordGroup: string) =>
