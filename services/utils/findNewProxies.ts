@@ -1,8 +1,8 @@
 /* global Buffer */
 import process from 'process'
 import amqplib, { Channel, Connection } from 'amqplib'
-import { getMysqlClient } from '../../utils'
-import { findExistedProxy } from '../../utils/mysql-queries'
+import { getDbConnection } from '../../utils'
+import { selectExistedProxy } from '../../utils/mysql-queries'
 import { AMQP_CHECK_PROXY_CHANNEL } from '../../constants'
 import { getProxies } from '.'
 import { Logger } from 'winston'
@@ -16,7 +16,7 @@ export const findNewProxies = async (logger: Logger) => {
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     checkProxyCh = await amqp.createChannel()
-    const mysql = await getMysqlClient()
+    const db = await getDbConnection()
     let notCheckedProxiesCount = proxies.length
     if (proxies.length) {
       // TODO: get rid of the AMQP_CHECK_PROXY_CHANNEL?
@@ -24,8 +24,8 @@ export const findNewProxies = async (logger: Logger) => {
     }
     for (const proxy of proxies) {
       const proxyString = `${proxy.ip}:${proxy.port}`
-      const found = await findExistedProxy(mysql, proxyString, proxy.protocol)
-      if (found) {
+      const found = await selectExistedProxy(db, proxyString, proxy.protocol)
+      if (found.length !== 0) {
         notCheckedProxiesCount--
         continue
       }
@@ -35,7 +35,7 @@ export const findNewProxies = async (logger: Logger) => {
         persistent: true,
       })
     }
-    await mysql.end()
+    await db.close()
     logger.info(`💬 Looking completed: ${notCheckedProxiesCount} new proxies to check`)
   } finally {
     if (checkProxyCh) await checkProxyCh.close()

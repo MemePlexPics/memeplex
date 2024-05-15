@@ -1,13 +1,14 @@
 import process from 'process'
 import 'dotenv/config'
 import { handleDistributionQueue, handleInvoiceQueue, handleNlpQueue, init } from './utils'
-import { loopRetrying } from '../../../../utils'
+import { getElasticClient, loopRetrying } from '../../../../utils'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
 import { i18n } from './i18n'
 import { getLogger } from '../utils'
 
 const start = async () => {
   const logger = getLogger('tg-publisher-bot')
+  const elastic = await getElasticClient()
   const bot = await init(
     process.env.TELEGRAM_PUBLISHER_BOT_TOKEN,
     {
@@ -44,8 +45,14 @@ const start = async () => {
   `)
   logger.info({ info: 'Telegram bot started' })
 
-  process.once('SIGINT', () => bot.stop('SIGINT'))
-  process.once('SIGTERM', () => bot.stop('SIGTERM'))
+  process.once('SIGINT', async () => {
+    await elastic.close()
+    bot.stop('SIGINT')
+  })
+  process.once('SIGTERM', async () => {
+    await elastic.close()
+    bot.stop('SIGTERM')
+  })
 
   loopRetrying(() => handleNlpQueue(logger), {
     logger: logger,

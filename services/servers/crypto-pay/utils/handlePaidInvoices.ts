@@ -24,7 +24,7 @@ export const handlePaidInvoices = async (cryptoPay: CryptoPay) => {
     if (!userId) {
       throw new Error(`There is no userId in an invoice description: ${JSON.stringify(invoice)}`)
     }
-    await handlePaidInvoice(userId, invoice.invoice_id)
+    await handlePaidInvoice(userId, invoice.invoice_id, invoice.amount)
   })
   if (invoices.items.length !== activeInvoices.length) {
     const paidInvoiceIds = invoices.items.map(invoice => invoice.invoice_id)

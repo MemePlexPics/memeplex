@@ -50,7 +50,10 @@ module.exports = {
                   {
                     args: 'after-used',
                     ignoreRestSiblings: true,
-                    argsIgnorePattern: '^_'
+                    argsIgnorePattern: '^_',
+                    caughtErrorsIgnorePattern: '^_',
+                    destructuredArrayIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
                   }
                 ],
             }
