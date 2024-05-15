@@ -122,10 +122,11 @@ ${keywords}`,
     subscribeToPremium: () => '✨ Подключить премиум',
     extendPremium: () => '✨ Продлить премиум',
     channelSubscriptions: (name: string) => `📢 Подписки @${name}`,
-    butPremium: (
+    buyPremium: (
+      emoji: (typeof PREMIUM_PLANS)[number]['emoji'],
       months: (typeof PREMIUM_PLANS)[number]['months'],
       cost: (typeof PREMIUM_PLANS)[number]['cost'],
-    ) => `⭐ Премиум на ${ru.date.month[months]()} — ${cost}$`,
+    ) => `${emoji} Премиум на ${ru.date.month[months]()} — ${cost}$`,
   },
   date: {
     month: {
