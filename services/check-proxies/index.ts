@@ -2,13 +2,15 @@ import 'dotenv/config'
 import amqplib, { Channel, Connection, GetMessage } from 'amqplib'
 import process from 'process'
 import { AMQP_CHECK_PROXY_CHANNEL, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
-import { delay, getMysqlClient } from '../../utils'
+import { delay, getDbConnection, getMysqlClient } from '../../utils'
 import { handleAddingProxy, maintaneProxies } from './utils'
 import { Logger } from 'winston'
 import { getAmqpQueue } from '../utils'
 
 export const checkProxies = async (logger: Logger) => {
-  let amqp: Connection, checkProxyCh: Channel, checkProxyChClearTimeout: () => void
+  let amqp: Connection | undefined,
+    checkProxyCh: Channel | undefined,
+    checkProxyChClearTimeout: (() => void) | undefined
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     checkProxyCh = await amqp.createChannel()
@@ -36,14 +38,14 @@ export const checkProxies = async (logger: Logger) => {
 
       if (action === 'add') {
         const { proxy } = payload
-        const mysql = await getMysqlClient()
-        await handleAddingProxy(mysql, proxy, ipWithoutProxy, logger)
-        await mysql.end()
+        const db = await getDbConnection()
+        await handleAddingProxy(db, proxy, ipWithoutProxy, logger)
+        await db.close()
       }
       checkProxyCh.ack(msg)
     }
   } finally {
-    checkProxyChClearTimeout()
+    if (checkProxyChClearTimeout) checkProxyChClearTimeout()
     if (checkProxyCh) await checkProxyCh.close()
     if (amqp) await amqp.close()
   }

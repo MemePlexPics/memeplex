@@ -4,6 +4,7 @@ import 'dotenv/config'
 import { getTelegramUser } from '../../utils'
 import { TTelegrafContext } from '../types'
 import { AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL } from '../../../../../constants'
+import { i18n } from '../i18n'
 
 export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: number) => {
   try {
@@ -26,6 +27,6 @@ export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: numbe
       persistent: true,
     })
   } catch (error) {
-    await ctx.reply('Что-то пошло не так. Пожалуйста, повторите попытку позже.')
+    await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
   }
 }

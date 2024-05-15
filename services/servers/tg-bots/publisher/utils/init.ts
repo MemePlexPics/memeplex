@@ -8,20 +8,19 @@ import { getLogger, getTelegramUser } from '../../utils'
 import { EState } from '../constants'
 import { TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
-  addChannel,
   enterToState,
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
   logUserAction,
 } from '../utils'
 import {
+  addChannelState,
   addKeywordsState,
   buyPremiumState,
   channelSettingState,
   keywordGroupSelectState,
   keywordSettingsState,
   mainState,
-  publicationWithSettingsState,
 } from '../states'
 import {
   InfoMessage,
@@ -40,9 +39,12 @@ export const init = async (
   logger: Logger = getLogger('tg-publisher-bot'),
 ) => {
   const bot = new Telegraf<TTelegrafContext>(token, options)
+  const elastic = await getElasticClient()
 
   bot.use(async (ctx, next) => {
-    ctx.logger = logger
+    if (!ctx.logger) {
+      ctx.logger = logger
+    }
     Object.defineProperty(ctx, 'hasPremiumSubscription', {
       async get() {
         if (ctx.session.premiumUntil && ctx.session.premiumUntil > Date.now() / 1000) {
@@ -63,8 +65,6 @@ export const init = async (
     next()
   })
 
-  const elastic = await getElasticClient()
-
   bot.use(
     session({
       defaultSession: () => ({
@@ -82,27 +82,29 @@ export const init = async (
     }),
   )
 
-  bot.use(
-    rateLimit({
-      window: 3_000,
-      limit: 3,
-      onLimitExceeded: async (ctx: TTelegrafContext) => {
-        if (!ctx.from) {
-          throw new Error('There is no ctx.from')
-        }
-        logUserAction(ctx, { info: 'exceeded rate limit' })
-        await ctx.reply(i18n['ru'].message.rateLimit())
-      },
-    }),
-  )
+  if (process.env.ENVIRONMENT !== 'TESTING') {
+    bot.use(
+      rateLimit({
+        window: 3_000,
+        limit: 3,
+        onLimitExceeded: async (ctx: TTelegrafContext) => {
+          if (!ctx.from) {
+            throw new Error('There is no ctx.from')
+          }
+          logUserAction(ctx, { info: 'exceeded rate limit' })
+          await ctx.reply(i18n['ru'].message.rateLimit())
+        },
+      }),
+    )
+  }
 
   const states: Record<EState, TState> = {
+    [EState.ADD_CHANNEL]: addChannelState,
     [EState.ADD_KEYWORDS]: addKeywordsState,
     [EState.BUY_PREMIUM]: buyPremiumState,
     [EState.CHANNEL_SETTINGS]: channelSettingState,
     [EState.KEYWORD_SETTINGS]: keywordSettingsState,
     [EState.KEYWORD_GROUP_SELECT]: keywordGroupSelectState,
-    [EState.PUBLICATION_WITH_SETTINGS]: publicationWithSettingsState,
     [EState.MAIN]: mainState,
   }
 
@@ -143,13 +145,6 @@ export const init = async (
     }
   })
 
-  bot.on('contact', async ctx => {
-    if (!ctx.message.contact.user_id) {
-      throw new Error(`There is no ctx.message.contact.user_id in contact update event.`)
-    }
-    await addChannel(ctx, ctx.message.contact.user_id)
-  })
-
   bot.on(message('text'), async ctx => {
     const text = ctx.update.message.text
     if (states[ctx.session.state].menu) {
@@ -171,6 +166,7 @@ export const init = async (
           name: 'Unknown error',
           message: JSON.stringify(err),
         }
+    await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
     await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })
   })
 
