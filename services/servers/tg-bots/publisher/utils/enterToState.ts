@@ -8,6 +8,10 @@ export const enterToState = async (ctx: TTelegrafContext, state: TState) => {
     if (!isInit) return
   }
   ctx.session.state = state.stateName
+  if (state.message) {
+    const message = await state.message?.(ctx)
+    if (message) await ctx.reply(message)
+  }
   // TODO: split message text by 4 KiB (4096)
   if (state.menu) {
     const { text: menuText, buttons } = await getMenuButtonsAndHandlers(ctx, state)
@@ -15,11 +19,7 @@ export const enterToState = async (ctx: TTelegrafContext, state: TState) => {
   }
   if (state.inlineMenu) {
     const inlineMenu = await state.inlineMenu(ctx)
-    const menu = await ctx.reply(inlineMenu.text, Markup.inlineKeyboard(inlineMenu.buttons))
-    ctx.session.lastMenuId = menu.message_id
-  }
-  if (state.message) {
-    const message = await state.message?.(ctx)
-    if (message) await ctx.reply(message)
+    await ctx.deleteMessage()
+    await ctx.reply(inlineMenu.text, Markup.inlineKeyboard(inlineMenu.buttons))
   }
 }

@@ -4,7 +4,7 @@ import { getElasticClient, loopRetrying } from '.'
 
 export const connectToElastic = async (logger: Logger) => {
   const getElasticClientUntilSuccess = async () => {
-    let connect: Client
+    let connect: Client | undefined
     await loopRetrying(
       async () => {
         connect = await getElasticClient()
