@@ -2,7 +2,12 @@ import axios from 'axios'
 import { insertProxyToRequest } from '.'
 import { PROXY_TEST_TIMEOUT } from '../constants'
 
-export const checkProxyAnonimity = async (ownIp, protocol, ip, port) => {
+export const checkProxyAnonimity = async (
+  ownIp: string,
+  protocol: string,
+  ip: string,
+  port: number,
+) => {
   try {
     const request = {
       url: 'https://ifconfig.me/all.json',

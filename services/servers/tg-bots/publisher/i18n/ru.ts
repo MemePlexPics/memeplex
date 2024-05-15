@@ -1,5 +1,5 @@
 import { MAX_FREE_USER_CHANNEL_SUBS } from '../../../../../constants'
-import { PREMIUM_12M, PREMIUM_1M, PREMIUM_3M } from '../../../../../constants/publisher'
+import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 
 export const ru = {
   message: {
@@ -47,7 +47,9 @@ export const ru = {
 Здесь можно настроить интересующие вас ключевые слова.
 Отправьте новые фразы для подписки (через запятую или с новой строки), чтобы добавить их.
 Фразы могут состоять из одного или нескольких слов.`,
-    mainMenu: () => 'Настройте подписки на ключевые фразы для себя или для своего канала.',
+    mainMenu: () => '🏠 Главное меню',
+    subscriptionSettings: () =>
+      'Настройте подписки на ключевые фразы для себя или для своего канала.',
     keywordGroupsMenu: () => 'Меню добавления группы ключевых слов.',
     rateLimit: () => 'Подождите несколько секунд перед повторной попыткой',
     freeTariff: () => `
@@ -71,9 +73,13 @@ ${keywords}`,
 Вы действительно хотите отвязать свой канал @${channel}?
 Все настройки подписок для канала будут сброшены.`,
     youCanDemoteBotFromAdmin: () => `Теперь вы можете удалить бота из списка администраторов`,
+    enterChannelNameInFormat: () =>
+      'Введитие название канала в формате @name или https://t.me/name',
+    somethingWentWrongTryLater: () => 'Что-то пошло не так. Пожалуйста, повторите попытку позже.',
   },
   button: {
     back: () => '⬅️ Назад',
+    ready: () => '✅ Готово',
     forward: () => '➡️ Вперед',
     addKyewordGroup: (emoji: '✏️' | '✨' = '✏️') => `${emoji} Редактировать топики`,
     addChannel: () => '➕ Добавить канал',
@@ -85,16 +91,48 @@ ${keywords}`,
     sendKeywords: () => '📋 Вывести через запятую',
     linkYourChannel: () => '🔗 Привязать свой канал',
     subscriptionSettings: () => '⚙️ Настройки подписок',
-    scheduledPost: () => '⏰ Отложенная отправка',
-    postWithText: () => '📝 Добавить текстовое сообщение',
+    postMeme: (channel: string) => `➡️ Отправить в @${channel}`,
+    memePosted: (channel: string) => `✅ Отправлено в @${channel}`,
+    premoderationKeyword: (emoji: '🗑️' | '➕', keyword: string, action: string) =>
+      `${emoji} 🔠 «${keyword}» (${action})`,
+    premoderationKeywordGroup: (emoji: '🗑️' | '➕', keywordGroup: string, action: string) =>
+      `${emoji} 📂 «${keywordGroup}» (${action})`,
+    premoderationKeywordFromGroup: (
+      emoji: '🗑️' | '➕',
+      keyword: string,
+      action: string,
+      keywordGroup: string,
+    ) => `${emoji} 🔠 «${keyword}» из 📂 «${keywordGroup}» (${action})`,
+    premoderationKeywordUnsubscribe: (keyword: string) =>
+      ru.button.premoderationKeyword('🗑️', keyword, 'отписаться'),
+    premoderationKeywordGroupUnsubscribe: (keywordGroup: string) =>
+      ru.button.premoderationKeywordGroup('🗑️', keywordGroup, 'отписаться'),
+    premoderationKeywordFromGroupUnsubscribe: (keyword: string, keywordGroup: string) =>
+      ru.button.premoderationKeywordFromGroup('🗑️', keyword, keywordGroup, 'отписаться'),
+    premoderationKeywordSubscribe: (keyword: string) =>
+      ru.button.premoderationKeyword('➕', keyword, 'подписаться'),
+    premoderationKeywordGroupSubscribe: (keywordGroup: string) =>
+      ru.button.premoderationKeywordGroup('➕', keywordGroup, 'подписаться'),
+    premoderationKeywordFromGroupSubscribe: (keyword: string, keywordGroup: string) =>
+      ru.button.premoderationKeywordFromGroup('➕', keyword, keywordGroup, 'подписаться'),
+    // scheduledPost: () => '⏰ Отложенная отправка',
+    // postWithText: () => '📝 Добавить текстовое сообщение',
     subscribeKeyword: (keyword: string) => `➕ Подписаться на «${keyword}»`,
     unsubscribeKeyword: (keyword: string) => `➖ Отписаться от «${keyword}»`,
     subscribeToPremium: () => '✨ Подключить премиум',
     extendPremium: () => '✨ Продлить премиум',
     channelSubscriptions: (name: string) => `📢 Подписки @${name}`,
-    butPremiumOneMonth: () => `⭐ Премиум на один месяц — ${PREMIUM_1M}$`,
-    butPremiumThreeMonth: () => `✨ Премиум на три месяца — ${PREMIUM_3M}$`,
-    butPremiumTwelveMonth: () => `🌟 Премиум на год — ${PREMIUM_12M}$`,
+    butPremium: (
+      months: (typeof PREMIUM_PLANS)[number]['months'],
+      cost: (typeof PREMIUM_PLANS)[number]['cost'],
+    ) => `⭐ Премиум на ${ru.date.month[months]()} — ${cost}$`,
+  },
+  date: {
+    month: {
+      1: () => `один месяц`,
+      3: () => `три месяца`,
+      12: () => `один год`,
+    },
   },
   command: {
     callCurrentMenu: () => 'Вызвать текущее меню',

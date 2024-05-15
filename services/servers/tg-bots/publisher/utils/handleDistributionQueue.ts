@@ -12,9 +12,10 @@ import { delay, getDbConnection } from '../../../../../utils'
 import { Logger } from 'winston'
 import fs from 'fs/promises'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
-import { ECallback, EKeywordAction } from '../constants'
+import { EKeywordAction, callbackData } from '../constants'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { TPublisherDistributionQueueMsg } from '../../../../types'
+import { i18n } from '../i18n'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -42,31 +43,73 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         if (channel.id === Number(payload.userId)) return null
         buttons.push([
           {
-            text: `➡️ Отправить в @${channel.username}`,
-            callback_data: `${ECallback.POST}|${channel.id}|${payload.memeId}`,
+            text: i18n['ru'].button.postMeme(channel.username),
+            callback_data: callbackData.premoderationPostButton(channel.id, payload.memeId),
           },
         ])
       })
 
-      payload.keywords.forEach(keyword =>
+      payload.keywords.forEach(keyword => {
+        const channelId =
+          payload.channelIdsByKeyword[keyword].length !== 1
+            ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
+            : payload.channelIdsByKeyword[keyword][0]
         buttons.push([
           {
-            text: `🗑️ «${keyword}» (отписаться)`,
-            callback_data: `${ECallback.KEY}|${EKeywordAction.DELETE}|${keyword}`,
+            text: i18n['ru'].button.premoderationKeywordUnsubscribe(keyword),
+            callback_data: callbackData.premoderationKeywordButton(
+              EKeywordAction.DELETE,
+              channelId,
+              keyword,
+            ),
           },
-        ]),
-      )
+        ])
+      })
 
-      payload.keywordGroups.forEach(keywordGroup =>
+      payload.keywordGroups.forEach(keywordGroup => {
+        const channelId =
+          payload.channelIdsByKeywordGroup[keywordGroup].length !== 1
+            ? payload.channelIdsByKeywordGroup[keywordGroup].find(
+              channelId => channelId !== payload.userId,
+            )
+            : payload.channelIdsByKeywordGroup[keywordGroup][0]
         buttons.push([
           {
-            text: `🗑️ «${keywordGroup}» (отписаться)`,
-            callback_data: `${ECallback.GROUP}|${EKeywordAction.DELETE}|${keywordGroup}`,
+            text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(keywordGroup),
+            callback_data: callbackData.premoderationKeywordGroupButton(
+              EKeywordAction.DELETE,
+              channelId,
+              keywordGroup,
+            ),
           },
-        ]),
-      )
+        ])
+      })
+
+      Object.entries(payload.groupKeywords).forEach(([keyword, keywordGroup]) => {
+        const channelId =
+          payload.channelIdsByKeyword[keyword].length !== 1
+            ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
+            : payload.channelIdsByKeyword[keyword][0]
+        if (!channelId) {
+          throw new Error(`There is a message without a single channelId!`)
+        }
+        buttons.push([
+          {
+            text: i18n['ru'].button.premoderationKeywordFromGroupUnsubscribe(keyword, keywordGroup),
+            callback_data: callbackData.premoderationGroupKeywordsButton(
+              EKeywordAction.DELETE,
+              channelId,
+              keyword,
+              keywordGroup,
+            ),
+          },
+        ])
+      })
 
       try {
+        const sourceLink = `[источник](https://t.me/${payload.document.channelName}/${payload.document.messageId})`
+        const webLink = `[web](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId})`
+        const botLink = `[bot](https://t.me/MemePlexPublisherBot?start=fw)`
         await bot.telegram.sendPhoto(
           payload.userId,
           {
@@ -77,7 +120,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
             reply_markup: {
               inline_keyboard: buttons,
             },
-            caption: `[источник](https://t.me/${payload.document.channelName}/${payload.document.messageId}) / [web](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId})`,
+            caption: `${sourceLink} / ${webLink} / ${botLink}`,
           },
         )
         distributionCh.ack(msg)

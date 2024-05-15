@@ -21,7 +21,7 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string) 
       proxy: proxy
         ? {
           host,
-          port,
+          port: Number(port),
           protocol,
         }
         : undefined,
