@@ -1,4 +1,4 @@
-import { PREMIUM_12M, PREMIUM_1M, PREMIUM_3M } from '../../../../../constants/publisher'
+import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 import { EState } from '../constants'
 import { i18n } from '../i18n'
 import { TMenuButton, TState } from '../types'
@@ -17,14 +17,13 @@ export const buyPremiumState: TState = {
     return {
       text: i18n['ru'].message.freeTariff(),
       buttons: [
-        [[i18n['ru'].button.butPremiumOneMonth(), ctx => handleInvoiceCreation(ctx, PREMIUM_1M)]],
-        [[i18n['ru'].button.butPremiumThreeMonth(), ctx => handleInvoiceCreation(ctx, PREMIUM_3M)]],
-        [
-          [
-            i18n['ru'].button.butPremiumTwelveMonth(),
-            ctx => handleInvoiceCreation(ctx, PREMIUM_12M),
-          ],
-        ],
+        ...PREMIUM_PLANS.map(plan => {
+          const button: TMenuButton = [
+            i18n['ru'].button.butPremium(plan.months, plan.cost),
+            ctx => handleInvoiceCreation(ctx, plan.cost),
+          ]
+          return [button]
+        }),
         [backButton],
       ],
     }

@@ -1,32 +1,31 @@
 import { Chat } from 'telegraf/typings/core/types/typegram'
 import { enterToState, logUserAction } from '.'
-import { getDbConnection, logInfo } from '../../../../../utils'
+import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { addKeywordsState } from '../states'
 import { i18n } from '../i18n'
 import { TTelegrafContext } from '../types'
 
-export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
+export const addChannel = async (ctx: TTelegrafContext, text: string) => {
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
   }
-  // const channel = getTgChannelName(text)
-  // if (!channel) {
-  //   await ctx.reply(i18n['ru'].message.checkChannelNameFormat())
-  //   logUserAction(ctx.from, {
-  //     ...logEntity,
-  //     error: `Incorrect channel`,
-  //     channel: text,
-  //   })
-  //   return
-  // }
+  const channel = getTgChannelName(text)
+  if (!channel) {
+    await ctx.reply(i18n['ru'].message.checkChannelNameFormat())
+    logUserAction(ctx, {
+      error: `Incorrect channel link`,
+      channel: text,
+    })
+    return
+  }
   const readyButton = {
     reply_markup: {
       inline_keyboard: [
         [
           {
-            text: '✅ Готово',
-            callback_data: `${channelId}`,
+            text: i18n['ru'].button.ready(),
+            callback_data: channel,
           },
         ],
       ],
@@ -34,26 +33,26 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
   }
   let chat: Chat.ChannelGetChat | undefined
   try {
-    const result = await ctx.telegram.getChat(channelId)
-    if ('title' in result && 'accent_color_id' in result) chat = result
+    const result = await ctx.telegram.getChat(`@${channel}`)
+    if ('title' in result && 'accent_color_id' in result) {
+      chat = result
+    } else {
+      await ctx.reply(i18n['ru'].message.addedUserInsteadOfChannel())
+
+      logUserAction(ctx, {
+        error: `Adding a private channel`,
+        channel,
+      })
+      return
+    }
   } catch (error) {
     await ctx.reply(i18n['ru'].message.checkChannelName())
     return
   }
-  // if (chat?.type === 'private') {
-  //   await ctx.reply(i18n['ru'].message.addedUserInsteadOfChannel())
-
-  //   logUserAction(ctx.from, {
-  //     ...logEntity,
-  //     error: `Adding a private channel`,
-  //     channel: chat.username ?? chat.id,
-  //   })
-  //   return
-  // }
   let isOurUserAnAdmin: true | undefined
   let isOurBotAnAdmin: true | undefined
   try {
-    const administrators = await ctx.telegram.getChatAdministrators(channelId)
+    const administrators = await ctx.telegram.getChatAdministrators(`@${channel}`)
     administrators.some(admin => {
       if (!isOurUserAnAdmin && admin.user.id === ctx.from?.id) {
         isOurUserAnAdmin = true
@@ -71,7 +70,7 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
     await ctx.reply(i18n['ru'].message.onlyAdminCanSubscribeChannel())
     logUserAction(ctx, {
       error: `The user not an admin`,
-      channel: chat?.username ?? channelId,
+      channel,
     })
     return
   }
@@ -79,15 +78,15 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
     await ctx.reply(i18n['ru'].message.botMustHaveAdminRights(), readyButton)
     logUserAction(ctx, {
       error: `Admin rights not granted`,
-      channel: chat?.username ?? channelId,
+      channel,
     })
     return
   }
-  const subscribers = await ctx.telegram.getChatMembersCount(channelId)
+  const subscribers = await ctx.telegram.getChatMembersCount(`@${channel}`)
   if (chat) {
     ctx.session.channel = {
-      id: channelId,
-      name: chat.username ?? chat.title,
+      id: chat.id,
+      name: channel,
       type: chat.type,
     }
 
@@ -96,7 +95,7 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
     await insertPublisherChannel(db, {
       id: chat.id,
       userId: ctx.from.id,
-      username: chat.username ?? chat.title,
+      username: channel,
       subscribers,
       type: chat.type,
       timestamp,
@@ -104,7 +103,7 @@ export const addChannel = async (ctx: TTelegrafContext, channelId: number) => {
     await db.close()
     logUserAction(ctx, {
       info: `Added`,
-      channel: chat.username ?? chat.id,
+      channel,
     })
     await enterToState(ctx, addKeywordsState)
     return

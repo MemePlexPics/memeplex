@@ -71,6 +71,13 @@
       "when": 1715359506468,
       "tag": "0009_lying_doorman",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1715788275199,
+      "tag": "0010_classy_outlaw_kid",
+      "breakpoints": true
     }
   ]
 }

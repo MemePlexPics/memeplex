@@ -21,7 +21,7 @@
     "service:web": "node ./dist/web.js",
     "service:publisher": "node ./dist/tgPublisherBot.js",
     "service:pics": "node ./dist/tgPicsBot.js",
-    "test": "npx jest"
+    "test": "ENVIRONMENT=TESTING npx jest"
   },
   "author": "klntsky",
   "license": "ISC",

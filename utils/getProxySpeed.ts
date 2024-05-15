@@ -3,8 +3,15 @@ import axios from 'axios'
 import { insertProxyToRequest } from '../utils'
 
 import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from '../constants'
+import { Logger } from 'winston'
 
-export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => {
+export const getProxySpeed = async (
+  ip: string,
+  port: number,
+  protocol: string,
+  repeats = 1,
+  logger: Logger,
+) => {
   const proxy = `${ip}:${port}`
   const requestOptions = {
     timeout: PROXY_TEST_TIMEOUT,
@@ -30,7 +37,9 @@ export const getProxySpeed = async (ip, port, protocol, repeats = 1, logger) => 
 
     return roundedSpeed
   } catch (error) {
-    logger.verbose(`❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`)
+    if (error instanceof Error) {
+      logger.verbose(`❌ Proxy ${proxy} (${protocol}) is not working. Error: ${error.message}`)
+    }
     return
   }
 }
