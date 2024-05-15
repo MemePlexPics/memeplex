@@ -8,7 +8,7 @@ import {
   AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
   EMPTY_QUEUE_RETRY_DELAY,
 } from '../../../../../constants'
-import { delay, getDbConnection } from '../../../../../utils'
+import { delay, getDbConnection, logError } from '../../../../../utils'
 import { Logger } from 'winston'
 import fs from 'fs/promises'
 import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
@@ -51,9 +51,12 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
       payload.keywords.forEach(keyword => {
         const channelId =
-          payload.channelIdsByKeyword[keyword].length !== 1
+          payload.channelIdsByKeyword[keyword].length > 1
             ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
             : payload.channelIdsByKeyword[keyword][0]
+        if (!channelId) {
+          throw new Error(`There is a message without a single channelId!`)
+        }
         buttons.push([
           {
             text: i18n['ru'].button.premoderationKeywordUnsubscribe(keyword),
@@ -68,11 +71,14 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
       payload.keywordGroups.forEach(keywordGroup => {
         const channelId =
-          payload.channelIdsByKeywordGroup[keywordGroup].length !== 1
+          payload.channelIdsByKeywordGroup[keywordGroup].length > 1
             ? payload.channelIdsByKeywordGroup[keywordGroup].find(
               channelId => channelId !== payload.userId,
             )
             : payload.channelIdsByKeywordGroup[keywordGroup][0]
+        if (!channelId) {
+          throw new Error(`There is a message without a single channelId!`)
+        }
         buttons.push([
           {
             text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(keywordGroup),
@@ -87,7 +93,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
       Object.entries(payload.groupKeywords).forEach(([keyword, keywordGroup]) => {
         const channelId =
-          payload.channelIdsByKeyword[keyword].length !== 1
+          payload.channelIdsByKeyword[keyword].length > 1
             ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
             : payload.channelIdsByKeyword[keyword][0]
         if (!channelId) {
@@ -125,7 +131,9 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         )
         distributionCh.ack(msg)
       } catch (e) {
-        logger.error(e)
+        if (e instanceof Error) {
+          await logError(logger, e)
+        }
         distributionCh.nack(msg)
         await delay(1000)
       }
