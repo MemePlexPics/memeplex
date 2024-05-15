@@ -12,9 +12,11 @@ nltk.download('punkt')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 
+ENVIRONMENT = os.getenv('ENVIRONMENT')
+postfix = '_test' if ENVIRONMENT == 'TESTING' else ''
 AMQP_ENDPOINT = os.getenv('AMQP_ENDPOINT')
-AMQP_MEMES_TO_NLP_CHANNEL = os.getenv('AMQP_MEMES_TO_NLP_CHANNEL')
-AMQP_NLP_TO_PUBLISHER_CHANNEL = os.getenv('AMQP_NLP_TO_PUBLISHER_CHANNEL')
+AMQP_MEMES_TO_NLP_CHANNEL = os.getenv('AMQP_MEMES_TO_NLP_CHANNEL', '') + postfix
+AMQP_NLP_TO_PUBLISHER_CHANNEL = os.getenv('AMQP_NLP_TO_PUBLISHER_CHANNEL', '') + postfix
 
 morph_analyzer_ru = pymorphy2.MorphAnalyzer()
 lemmatizer = WordNetLemmatizer()
@@ -34,12 +36,12 @@ def get_wordnet_pos(nltk_tag):
 def normalize_text(text, is_russian):
     text_tokens = []
     words = nltk.word_tokenize(text)
-    
+
     if is_russian:
         for word in words:
             parsed_word = morph_analyzer_ru.parse(word)[0]
             forms_set = {word}
-            forms_set.update(lexeme.word for lexeme in parsed_word.lexeme)
+            forms_set.update(lexeme.word for lexeme in parsed_word.lexeme) # type: ignore
             text_tokens.append(forms_set)
     else:
         tagged_words = nltk.pos_tag(words)
@@ -63,7 +65,7 @@ def match_text(text, keywords):
         if is_russian:
             for word in query_words:
                 forms_set = {word}
-                forms_set.update(lexeme.word for parsed_form in morph_analyzer_ru.parse(word) for lexeme in parsed_form.lexeme)
+                forms_set.update(lexeme.word for parsed_form in morph_analyzer_ru.parse(word) for lexeme in parsed_form.lexeme) # type: ignore
                 query_tokens.append(forms_set)
         else:
             tagged_query_words = nltk.pos_tag(query_words)
@@ -73,6 +75,7 @@ def match_text(text, keywords):
                 forms_set = {word, lemma}
                 query_tokens.append(forms_set)
 
+        # TODO: handle articles between words (case: missed article)
         for start in range(len(text_tokens) - len(query_tokens) + 1):
             if all(text_tokens[start + i].intersection(query_tokens[i]) for i in range(len(query_tokens))):
                 matched_keywords.append(keyword)

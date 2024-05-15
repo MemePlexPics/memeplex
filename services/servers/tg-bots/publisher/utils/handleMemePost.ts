@@ -7,7 +7,8 @@ import { getDbConnection } from '../../../../../utils'
 import { updatePublisherChannelById } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
-import { ECallback } from '../constants'
+import { ECallback, callbackData } from '../constants'
+import { Markup } from 'telegraf'
 
 export const handleMemePost = async (
   client: Client,
@@ -27,7 +28,7 @@ export const handleMemePost = async (
     }
     : undefined
   try {
-    await ctx.telegram.sendPhoto(chatId, {
+    const postedMeme = await ctx.telegram.sendPhoto(chatId, {
       source: await fs.readFile(meme.fileName),
     })
     if (isCommonMessage(ctx.callbackQuery?.message) && ctx.callbackQuery.message.reply_markup) {
@@ -36,20 +37,23 @@ export const handleMemePost = async (
           row.map(column => {
             if (
               isCallbackButton(column) &&
-              column.callback_data === `${ECallback.POST}|${chatId}|${memeId}`
+              column.callback_data === callbackData.premoderationPostButton(chatId, memeId)
             ) {
               const [_, channel] = column.text.split('@')
-              return {
-                text: `✅ Отправлено в @${channel}`,
-                callback_data: ECallback.IGNORE,
-              }
+              return Markup.button.callback(i18n['ru'].button.memePosted(channel), ECallback.IGNORE)
             }
             return column
           }),
         ),
       })
     }
-    await ctx.reply(i18n['ru'].message.memePostedSuccessfully(), replyToMeme)
+    await ctx.reply(
+      `
+${i18n['ru'].message.memePostedSuccessfully()}
+${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${postedMeme.message_id}` : ''}
+`,
+      replyToMeme,
+    )
     logUserAction(ctx, {
       info: `Meme posted`,
       chatId,

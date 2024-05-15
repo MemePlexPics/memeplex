@@ -21,8 +21,8 @@ export async function loopRetrying(
       if (options.afterCallbackDelayMs) await delay(options.afterCallbackDelayMs)
       if (result) break
     } catch (e) {
-      if (e instanceof InfoMessage) await logInfo(options.logger, e)
-      else await logError(options.logger, e)
+      if (e instanceof InfoMessage && options.logger) await logInfo(options.logger, e)
+      else if (e instanceof Error && options.logger) await logError(options.logger, e)
       if (options.catchDelayMs) await delay(options.catchDelayMs)
       await options?.afterErrorCallback?.()
     }

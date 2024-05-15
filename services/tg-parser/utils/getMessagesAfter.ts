@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { TG_API_PAGE_LIMIT, TG_API_RATE_LIMIT } from '../../../constants'
-import { delay, getMysqlClient } from '../../../utils'
+import { delay, getDbConnection, getMysqlClient } from '../../../utils'
 import process from 'process'
 import { setChannelUnavailable } from '.'
 import { insertChannelSuggestion } from '../../../utils/mysql-queries'
@@ -61,9 +61,10 @@ export const getMessagesAfter = async function* (
       if (message.media.photo.id) {
         const forwardedFrom = chats[message?.fwd_from?.from_id]
         if (forwardedFrom) {
-          const mysql = await getMysqlClient()
-          const response = await insertChannelSuggestion(mysql, forwardedFrom)
-          await mysql.end()
+          const db = await getDbConnection()
+          // FIX: select at first
+          const response = await insertChannelSuggestion(db, forwardedFrom)
+          await db.close()
           if (response)
             logger.info(`Channel @${forwardedFrom} was automatically suggested (forward)`)
         }
