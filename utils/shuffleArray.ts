@@ -1,4 +1,4 @@
-export const shuffleArray = array => {
+export const shuffleArray = <GArrayType>(array: GArrayType[]) => {
   let currentIndex = array.length,
     randomIndex
 
