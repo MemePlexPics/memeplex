@@ -100,8 +100,8 @@ ${keywords}`,
     premoderationKeywordFromGroup: (
       emoji: '🗑️' | '➕',
       keyword: string,
-      action: string,
       keywordGroup: string,
+      action: string,
     ) => `${emoji} 🔠 «${keyword}» из 📂 «${keywordGroup}» (${action})`,
     premoderationKeywordUnsubscribe: (keyword: string) =>
       ru.button.premoderationKeyword('🗑️', keyword, 'отписаться'),
