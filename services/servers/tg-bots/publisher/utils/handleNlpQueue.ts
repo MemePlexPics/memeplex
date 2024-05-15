@@ -123,7 +123,10 @@ export const handleNlpQueue = async (logger: Logger) => {
             payload.memeId,
             payload.memeData,
           )
-          if (tariffPlanByUsers[userId] === 'free' || keyword in groupKeywordsByUser[userId])
+          if (
+            tariffPlanByUsers[userId] === 'free' ||
+            (groupKeywordsByUser[userId] && keyword in groupKeywordsByUser[userId])
+          )
             continue
 
           if (!channelIdsByKeyword[userId]) {
