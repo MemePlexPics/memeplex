@@ -120,7 +120,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
             reply_markup: {
               inline_keyboard: buttons,
             },
-            caption: `${sourceLink} / ${webLink} / ${botLink}`,
+            caption: [sourceLink, webLink, botLink].join('            /            '),
           },
         )
         distributionCh.ack(msg)
