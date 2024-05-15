@@ -1,16 +1,18 @@
-import { logUserAction } from '.'
+import { Markup } from 'telegraf'
+import { logUserAction, replaceInlineKeyboardButton } from '.'
 import { getDbConnection } from '../../../../../utils'
 import {
   deletePublisherSubscription,
-  selectPublisherChannelsByUserId,
+  insertPublisherSubscription,
 } from '../../../../../utils/mysql-queries'
-import { ECallback, EKeywordAction } from '../constants'
-import { isCallbackButton, isCommonMessage } from '../typeguards'
+import { EKeywordAction, callbackData } from '../constants'
 import { TTelegrafContext } from '../types'
+import { i18n } from '../i18n'
 
 export const handleKeywordAction = async (
   ctx: TTelegrafContext,
   command: EKeywordAction,
+  channelId: number,
   keyword: string,
 ) => {
   if (!ctx.from) {
@@ -18,38 +20,45 @@ export const handleKeywordAction = async (
   }
   if (command === EKeywordAction.DELETE) {
     const db = await getDbConnection()
-    const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
-    for (const channel of userChannels) {
-      await deletePublisherSubscription(db, channel.id, [keyword])
-    }
+    await deletePublisherSubscription(db, channelId, [keyword])
     await db.close()
-    if (
-      isCommonMessage(ctx.callbackQuery?.message) &&
-      ctx.callbackQuery.message.reply_markup?.inline_keyboard
-    ) {
-      await ctx.editMessageReplyMarkup({
-        inline_keyboard: ctx.callbackQuery.message.reply_markup.inline_keyboard.map(row =>
-          row.filter(
-            column =>
-              !isCallbackButton(column) ||
-              column.callback_data !== `${ECallback.KEY}|${EKeywordAction.DELETE}|${keyword}`,
-          ),
-        ),
-      })
-    }
-    await ctx.reply(
-      `Ключевое слово «${keyword}» успешно удалено.`,
-      ctx.callbackQuery?.message
-        ? {
-          reply_parameters: {
-            message_id: ctx.callbackQuery.message.message_id,
-          },
-        }
-        : undefined,
-    )
     logUserAction(ctx, {
       info: `Unsubscribe from a keyword`,
       keyword,
     })
+  } else if (command === EKeywordAction.SUBSCRIBE) {
+    const db = await getDbConnection()
+    await insertPublisherSubscription(db, [
+      {
+        keyword,
+        channelId,
+      },
+    ])
+    await db.close()
+  } else {
+    throw new Error(`Unknown keyword operation «${command}» for ${channelId}`)
   }
+
+  const callbackForUnsubscribe = callbackData.premoderationKeywordButton(
+    EKeywordAction.DELETE,
+    channelId,
+    keyword,
+  )
+  const callbackForSubscribe = callbackData.premoderationKeywordButton(
+    EKeywordAction.SUBSCRIBE,
+    channelId,
+    keyword,
+  )
+  const oldCallback =
+    command === EKeywordAction.DELETE ? callbackForUnsubscribe : callbackForSubscribe
+  const newCallback =
+    command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
+  const newText =
+    command === EKeywordAction.DELETE
+      ? i18n['ru'].button.premoderationKeywordSubscribe(keyword)
+      : i18n['ru'].button.premoderationKeywordUnsubscribe(keyword)
+
+  await replaceInlineKeyboardButton(ctx, {
+    [oldCallback]: Markup.button.callback(newText, newCallback),
+  })
 }

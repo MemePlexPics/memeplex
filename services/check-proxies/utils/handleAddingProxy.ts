@@ -1,19 +1,28 @@
-import { findExistedProxy, insertProxy } from '../../../utils/mysql-queries'
+import { selectExistedProxy, insertProxies } from '../../../utils/mysql-queries'
 import { checkProxy } from '.'
+import { TDbConnection } from '../../../utils/types'
+import { Logger } from 'winston'
 
-export const handleAddingProxy = async (mysql, proxy, ipWithoutProxy, logger) => {
+export const handleAddingProxy = async (
+  db: TDbConnection,
+  proxy: { speed: number; ip: string; port: number; protocol: string },
+  ipWithoutProxy: string,
+  logger: Logger,
+) => {
   const proxyString = `${proxy.ip}:${proxy.port}`
-  const found = await findExistedProxy(mysql, proxyString, proxy.protocol)
-  if (!found) {
+  const found = await selectExistedProxy(db, proxyString, proxy.protocol)
+  if (found.length === 0) {
     const result = await checkProxy(proxy, ipWithoutProxy, logger)
-    await insertProxy(
-      mysql,
-      `${proxy.ip}:${proxy.port}`,
-      proxy.protocol,
-      result.availability,
-      result.anonymity,
-      result.speed,
-      result.lastCheckDatetime,
-    )
+    await insertProxies(db, [
+      {
+        address: `${proxy.ip}:${proxy.port}`,
+        protocol: proxy.protocol,
+        availability: Number(result.availability),
+        anonymity: result.anonymity,
+        speed: result.speed,
+        lastActivityDatetime: result.lastCheckDatetime,
+        lastCheckDatetime: result.lastCheckDatetime,
+      },
+    ])
   }
 }
