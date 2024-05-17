@@ -1,6 +1,6 @@
 import { EKeywordAction, EState } from '../constants'
 import { TMenuButton, TState, TTelegrafContext } from '../types'
-import { enterToState, logUserAction } from '../utils'
+import { addSubscription, enterToState, logUserAction } from '../utils'
 import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
@@ -137,6 +137,41 @@ export const keywordSettingsState: TState = {
       const inlineMenu = await keywordSettingsState.inlineMenu(ctx)
       await ctx.editMessageReplyMarkup(Markup.inlineKeyboard(inlineMenu.buttons).reply_markup)
     }
+    return
+  },
+  onText: async (ctx, keywordsRaw) => {
+    if (!ctx.from) {
+      throw new Error('There is no ctx.from')
+    }
+    if (!ctx.session.channel) {
+      throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
+    }
+    const keywords = keywordsRaw
+      .split('\n')
+      .map(line => line.split(','))
+      .flat()
+    const keywordValues = keywords.map(keyword => {
+      const keywordTrimmed = keyword.replace('|', '').toLowerCase().trim().slice(0, 255)
+      return {
+        keyword: keywordTrimmed,
+      }
+    })
+    const keywordValuesNotEmpty = keywordValues.filter(keywordObj => keywordObj.keyword.length)
+    if (keywordValuesNotEmpty.length === 0) {
+      await ctx.reply(i18n['ru'].message.delimetersInsteadOfKeywords())
+      return
+    }
+
+    const db = await getDbConnection()
+    await addSubscription(db, ctx.session.channel.id, keywordValuesNotEmpty)
+    await db.close()
+
+    await ctx.reply(i18n['ru'].message.addedKeywords())
+    logUserAction(ctx, {
+      info: `Added`,
+      keywords: keywordValuesNotEmpty.map(keywordRow => keywordRow.keyword).join(', '),
+    })
+    await enterToState(ctx, channelSettingState)
     return
   },
 }
