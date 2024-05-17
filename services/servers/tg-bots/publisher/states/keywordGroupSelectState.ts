@@ -14,9 +14,9 @@ import {
   insertPublisherGroupSubscription,
   selectPublisherGroupIdSubscriptionsByUserId,
   selectPublisherKeywordByIds,
-  selectPublisherKeywordGroupByIds,
+  selectPublisherKeywordGroupByNames,
   selectPublisherKeywordGroupNameByIds,
-  selectPublisherKeywordGroups,
+  selectPublisherKeywordGroupNames,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { Markup } from 'telegraf'
@@ -32,7 +32,7 @@ export const keywordGroupSelectState: TState = {
       throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
     }
     const db = await getDbConnection()
-    const keywordGroups = await selectPublisherKeywordGroups(db)
+    const keywordGroups = await selectPublisherKeywordGroupNames(db)
     const userKeywordGroupsRaw = await selectPublisherGroupIdSubscriptionsByUserId(db, ctx.from.id)
     const userKeywordGroups = userKeywordGroupsRaw.reduce((acc, { groupId }) => {
       acc.add(groupId)
@@ -79,18 +79,18 @@ ${
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in keywordGroupSelectState`)
     }
-    const [operation, groupIdString] = callback.split('|')
-    const groupId = Number(groupIdString)
+    const [operation, groupNameIdString] = callback.split('|')
+    const groupNameId = Number(groupNameIdString)
     const db = await getDbConnection()
-    const keywordGroups = await selectPublisherKeywordGroupByIds(db, [groupId])
+    const [group] = await selectPublisherKeywordGroupNameByIds(db, [groupNameId])
+    const keywordGroups = await selectPublisherKeywordGroupByNames(db, [group.name])
     if (!keywordGroups.length) {
       throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
-    const [group] = await selectPublisherKeywordGroupNameByIds(db, [groupId])
 
     logUserAction(ctx, {
       operation,
-      groupId,
+      groupId: group.id,
     })
     // if (operation === EKeywordGroupAction.INFO) {
     //   const [keywordGroup] = await selectPublisherKeywordGroupByNames(db, [groupName])
@@ -105,14 +105,14 @@ ${
     if (operation === EKeywordGroupAction.SUBSCRIBE) {
       await insertPublisherGroupSubscription(db, [
         {
-          groupId: groupId,
+          groupId: group.id,
           channelId: ctx.session.channel.id,
         },
       ])
       const keywordsForInsert = keywords?.map(keyword => ({ keyword: keyword.keyword }))
       await addSubscription(db, ctx.session.channel.id, keywordsForInsert)
     } else if (operation === EKeywordGroupAction.UNSUBSCRIBE) {
-      await deletePublisherGroupSubscription(db, ctx.session.channel.id, groupId)
+      await deletePublisherGroupSubscription(db, ctx.session.channel.id, group.id)
       await deleteSubscription(db, ctx.session.channel.id, keywordIds)
     } else {
       throw new InfoMessage(`Unknown menu state: ${callback}`)
@@ -128,7 +128,7 @@ ${
         ? EKeywordGroupAction.SUBSCRIBE
         : EKeywordGroupAction.UNSUBSCRIBE
     await replaceInlineKeyboardButton(ctx, {
-      [`${operation}|${groupId}`]: Markup.button.callback(newText, `${newOperation}|${groupId}`),
+      [`${operation}|${group.id}`]: Markup.button.callback(newText, `${newOperation}|${group.id}`),
     })
     return
   },
