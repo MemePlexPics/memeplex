@@ -82,22 +82,22 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
           db,
           payload.keywordGroupIds,
         )
-        keywordGroups.forEach(({ id, name: keywordGroup }) => {
-          if (!keywordGroup || !id) {
+        keywordGroups.forEach(({ id, name: groupName }) => {
+          if (!groupName || !id) {
             return
           }
           const channelId =
-            payload.channelIdsByKeywordGroup[keywordGroup]?.length > 1
-              ? payload.channelIdsByKeywordGroup[keywordGroup].find(
+            payload.channelIdsByKeywordGroup[id]?.length > 1
+              ? payload.channelIdsByKeywordGroup[id].find(
                 channelId => channelId !== payload.userId,
               )
-              : payload.channelIdsByKeywordGroup[keywordGroup][0]
+              : payload.channelIdsByKeywordGroup[id][0]
           if (!channelId) {
             throw new Error(`There is a message without a single channelId!`)
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(keywordGroup),
+              text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(groupName),
               callback_data: callbackData.premoderationKeywordGroupButton(
                 EKeywordAction.DELETE,
                 channelId,
