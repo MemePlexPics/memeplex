@@ -4,6 +4,7 @@ import { getDbConnection } from '../../../../../utils'
 import {
   deletePublisherSubscription,
   insertPublisherSubscription,
+  selectPublisherKeywordByIds,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
 import { TTelegrafContext } from '../types'
@@ -13,41 +14,45 @@ export const handleKeywordAction = async (
   ctx: TTelegrafContext,
   command: EKeywordAction,
   channelId: number,
-  keyword: string,
+  keywordId: number,
 ) => {
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
   }
+  const db = await getDbConnection()
+  const [keyword] = await selectPublisherKeywordByIds(db, [keywordId])
   if (command === EKeywordAction.DELETE) {
-    const db = await getDbConnection()
-    await deletePublisherSubscription(db, channelId, [keyword])
-    await db.close()
+    await deletePublisherSubscription(db, channelId, [keywordId])
     logUserAction(ctx, {
       info: `Unsubscribe from a keyword`,
-      keyword,
+      keyword: keyword.keyword,
     })
   } else if (command === EKeywordAction.SUBSCRIBE) {
-    const db = await getDbConnection()
     await insertPublisherSubscription(db, [
       {
-        keyword,
+        keywordId,
         channelId,
       },
     ])
-    await db.close()
+    logUserAction(ctx, {
+      info: `Subscribe to a keyword`,
+      keyword: keyword.keyword,
+    })
   } else {
+    await db.close()
     throw new Error(`Unknown keyword operation «${command}» for ${channelId}`)
   }
+  await db.close()
 
   const callbackForUnsubscribe = callbackData.premoderationKeywordButton(
     EKeywordAction.DELETE,
     channelId,
-    keyword,
+    keywordId,
   )
   const callbackForSubscribe = callbackData.premoderationKeywordButton(
     EKeywordAction.SUBSCRIBE,
     channelId,
-    keyword,
+    keywordId,
   )
   const oldCallback =
     command === EKeywordAction.DELETE ? callbackForUnsubscribe : callbackForSubscribe
@@ -55,8 +60,8 @@ export const handleKeywordAction = async (
     command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
   const newText =
     command === EKeywordAction.DELETE
-      ? i18n['ru'].button.premoderationKeywordSubscribe(keyword)
-      : i18n['ru'].button.premoderationKeywordUnsubscribe(keyword)
+      ? i18n['ru'].button.premoderationKeywordSubscribe(keyword.keyword)
+      : i18n['ru'].button.premoderationKeywordUnsubscribe(keyword.keyword)
 
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),

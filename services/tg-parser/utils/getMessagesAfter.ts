@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { TG_API_PAGE_LIMIT, TG_API_RATE_LIMIT } from '../../../constants'
-import { delay, getDbConnection, getMysqlClient } from '../../../utils'
+import { delay, getDbConnection } from '../../../utils'
 import process from 'process'
 import { setChannelUnavailable } from '.'
 import { insertChannelSuggestion } from '../../../utils/mysql-queries'
@@ -46,7 +46,7 @@ export const getMessagesAfter = async function* (
       logger.error(`Channel @${channelName} is empty`)
       break loop
     }
-    const chats = {}
+    const chats: Record<string, string> = {}
     for (const chat of responseJson.response.chats) {
       if (!chat.broadcast) continue
       chats['-100' + chat.id] = chat.username
