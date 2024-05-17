@@ -14,7 +14,6 @@ import fs from 'fs/promises'
 import {
   selectPublisherChannelsById,
   selectPublisherKeywordGroupNameByIds,
-  selectPublisherKeywordGroupsByGroupIds,
   selectPublisherKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
@@ -78,7 +77,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       }
 
       if (payload.keywordGroupIds.length !== 0) {
-        const keywordGroups = await selectPublisherKeywordGroupsByGroupIds(
+        const keywordGroups = await selectPublisherKeywordGroupNameByIds(
           db,
           payload.keywordGroupIds,
         )
