@@ -80,3 +80,4 @@ export { selectPublisherKeywordGroupNameByIds } from './selectPublisherKeywordGr
 export { selectPublisherKeywordGroupWithKeywords } from './selectPublisherKeywordGroupWithKeywords'
 export { selectPublisherKeywordGroupsByGroupIds } from './selectPublisherKeywordGroupsByGroupIds'
 export { selectPublisherGroupKeywordUnsubscriptions } from './selectPublisherGroupKeywordUnsubscriptions'
+export { selectPublisherKeywordGroupNames } from './selectPublisherKeywordGroupNames'
