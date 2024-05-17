@@ -6,7 +6,7 @@ import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../
 import {
   countPublisherSubscriptionsByChannelId,
   deletePublisherKeyword,
-  deletePublisherSubscriptionsByKeyword,
+  deletePublisherSubscriptionsByKeywordId,
   selectPublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
@@ -15,7 +15,7 @@ import { Markup } from 'telegraf'
 
 export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
-  menu: async ctx => {
+  menu: async _ctx => {
     const sendKeywordsButton: TMenuButton = [
       i18n['ru'].button.sendKeywords(),
       async ctx => {
@@ -30,8 +30,11 @@ export const keywordSettingsState: TState = {
         await db.close()
         await ctx.reply(
           keywordRows.reduce((acc, keywordRow) => {
-            if (acc) return `${acc}, ${keywordRow.keyword}`
-            return keywordRow.keyword
+            if (acc) {
+              if (!keywordRow.keyword) return acc
+              return `${acc}, ${keywordRow.keyword}`
+            }
+            return keywordRow.keyword ?? acc
           }, ''),
         )
       },
@@ -67,7 +70,7 @@ export const keywordSettingsState: TState = {
       ctx.session.channel.id,
     )
     const paginationButtons = []
-    const pageSize = 98 // 100 is the maximum, 98 to don't mind pagination buttons
+    const pageSize = 20
     if (page > 1)
       paginationButtons.push({
         text: i18n['ru'].button.back(),
@@ -93,8 +96,8 @@ export const keywordSettingsState: TState = {
       buttons: keywordRows
         .map(keywordRow => [
           {
-            text: `🗑 ${keywordRow.keyword}`,
-            callback_data: `${EKeywordAction.DELETE}|${keywordRow.keyword}`,
+            text: `🔕 ${keywordRow.keyword}`,
+            callback_data: `${EKeywordAction.DELETE}|${keywordRow.id}`,
           },
         ])
         .concat([paginationButtons]),
@@ -107,7 +110,7 @@ export const keywordSettingsState: TState = {
         throw new Error('There is no ctx.from')
       }
       const db = await getDbConnection()
-      await deletePublisherSubscriptionsByKeyword(db, argument)
+      await deletePublisherSubscriptionsByKeywordId(db, Number(argument))
       await deletePublisherKeyword(db, argument)
       await db.close()
       logUserAction(ctx, {

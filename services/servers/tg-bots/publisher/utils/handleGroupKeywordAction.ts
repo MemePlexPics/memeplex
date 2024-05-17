@@ -6,9 +6,11 @@ import {
   deletePublisherSubscription,
   insertPublisherGroupKeywordUnsubscription,
   insertPublisherSubscription,
+  selectPublisherKeywordByIds,
+  selectPublisherKeywordGroupByIds,
+  selectPublisherKeywordGroupNameByIds,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
-import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { TTelegrafContext } from '../types'
 import { i18n } from '../i18n'
 
@@ -16,50 +18,58 @@ export const handleGroupKeywordAction = async (
   ctx: TTelegrafContext,
   command: EKeywordAction,
   channelId: number,
-  keyword: string,
-  keywordGroup: string,
+  keywordId: number,
+  keywordGroupId: number,
 ) => {
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
   }
+  const db = await getDbConnection()
+  const [keywordGroup] = await selectPublisherKeywordGroupByIds(db, [keywordGroupId])
   if (command === EKeywordAction.DELETE) {
-    const db = await getDbConnection()
-    await deletePublisherSubscription(db, channelId, [keyword])
-    await insertPublisherGroupKeywordUnsubscription(db, channelId, keyword)
-    await db.close()
+    await deletePublisherSubscription(db, channelId, [keywordId])
+    await insertPublisherGroupKeywordUnsubscription(db, [
+      {
+        channelId,
+        keywordId,
+      },
+    ])
     logUserAction(ctx, {
       info: `Unsubscribe from a group keyword`,
-      keyword,
+      keywordId,
     })
   } else if (command === EKeywordAction.SUBSCRIBE) {
     const db = await getDbConnection()
     await insertPublisherSubscription(db, [
       {
         channelId,
-        keyword,
+        keywordId,
       },
     ])
-    await deletePublisherGroupKeywordUnsubscription(db, channelId, keyword)
-    await db.close()
+    await deletePublisherGroupKeywordUnsubscription(db, channelId, [keywordId])
     logUserAction(ctx, {
       info: `Subscribe to a group keyword`,
-      keyword,
+      keywordId,
     })
   } else {
+    await db.close()
     throw new Error(`Unknown operation in keywordGroup button: «${command}» for ${channelId}`)
   }
+  const [group] = await selectPublisherKeywordGroupNameByIds(db, [keywordGroup.id])
+  const [keyword] = await selectPublisherKeywordByIds(db, [keywordId])
+  await db.close()
 
   const callbackForUnsubscribe = callbackData.premoderationGroupKeywordsButton(
     EKeywordAction.DELETE,
     channelId,
-    keyword,
-    keywordGroup,
+    keywordId,
+    keywordGroupId,
   )
   const callbackForSubscribe = callbackData.premoderationGroupKeywordsButton(
     EKeywordAction.SUBSCRIBE,
     channelId,
-    keyword,
-    keywordGroup,
+    keywordId,
+    keywordGroupId,
   )
   const oldCallback =
     command === EKeywordAction.DELETE ? callbackForUnsubscribe : callbackForSubscribe
@@ -67,8 +77,8 @@ export const handleGroupKeywordAction = async (
     command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
   const newText =
     command === EKeywordAction.DELETE
-      ? i18n['ru'].button.premoderationKeywordFromGroupSubscribe(keyword, keywordGroup)
-      : i18n['ru'].button.premoderationKeywordFromGroupSubscribe(keyword, keywordGroup)
+      ? i18n['ru'].button.premoderationKeywordFromGroupSubscribe(keyword.keyword, group.name)
+      : i18n['ru'].button.premoderationKeywordFromGroupSubscribe(keyword.keyword, group.name)
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),
   })

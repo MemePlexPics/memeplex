@@ -1,8 +1,11 @@
 import { getDbConnection } from '../../../../../../utils'
 import { updateBlackList } from '../../../../../../utils/mysql-queries'
+import { TRequestHandler } from '../types'
 import { setLogAction } from '../utils'
 
-export const blacklistPut = async (req, res) => {
+export const blacklistPut: TRequestHandler<{
+  words: string
+}> = async (req, res) => {
   const { words } = req.body
   if (!words) return res.status(500).send()
   const db = await getDbConnection()

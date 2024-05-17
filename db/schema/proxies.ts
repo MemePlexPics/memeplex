@@ -8,7 +8,7 @@ export const proxies = mysqlTable(
     protocol: varchar('protocol', { length: 10 }).notNull(),
     availability: tinyint('availability').notNull(),
     anonymity: varchar('anonymity', { length: 12 }),
-    ocrKey: varchar('ocr_key', { length: 255 }).default('NULL'),
+    ocrKey: varchar('ocr_key', { length: 255 }),
     speed: int('speed'),
     lastActivityDatetime: datetime('last_activity_datetime', {
       mode: 'string',

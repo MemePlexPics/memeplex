@@ -1,22 +1,31 @@
-import { selectPublisherGroupSubscriptionsByName } from '../../../../../utils/mysql-queries'
+import { botPublisherGroupSubscriptions } from '../../../../../db/schema'
+import { selectPublisherGroupSubscriptionsByGroupIds } from '../../../../../utils/mysql-queries'
 import { TDbConnection } from '../../../../../utils/types'
 
 export const getGroupSubscriptionsByKeywords = async (
   db: TDbConnection,
   keywords: string[],
-  groupsByKeyword: Record<string, string[]>,
+  groupIdsByKeyword: Record<string, number[]>,
 ) => {
-  const groupSubscriptionsByKeyword: Record<string, { groupName: string; channelId: number }[]> = {}
+  const groupSubscriptionsByKeyword: Record<
+  string,
+  (typeof botPublisherGroupSubscriptions.$inferSelect)[]
+  > = {}
+  const channelIds = new Set<number>()
 
   for (const keyword of keywords) {
-    if (groupsByKeyword[keyword]) {
-      const groupSubscriptions = await selectPublisherGroupSubscriptionsByName(
+    if (groupIdsByKeyword[keyword]) {
+      const groupSubscriptions = await selectPublisherGroupSubscriptionsByGroupIds(
         db,
-        groupsByKeyword[keyword],
+        groupIdsByKeyword[keyword],
       )
       groupSubscriptionsByKeyword[keyword] = groupSubscriptions
+      groupSubscriptions.forEach(groupSubscription => channelIds.add(groupSubscription.channelId))
     }
   }
 
-  return groupSubscriptionsByKeyword
+  return {
+    channelIds,
+    groupSubscriptionsByKeyword,
+  }
 }

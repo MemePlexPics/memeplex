@@ -12,7 +12,7 @@ export const botActions = mysqlTable(
         onUpdate: 'restrict',
       }),
     action: varchar('action', { length: 32 }).notNull(),
-    query: varchar('query', { length: 255 }).default('NULL'),
+    query: varchar('query', { length: 255 }),
     page: varchar('page', { length: 128 }).notNull(),
     timestamp: int('timestamp').notNull(),
   },
