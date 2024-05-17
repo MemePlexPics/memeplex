@@ -4,7 +4,7 @@ import { TRequestHandler } from '../types'
 
 export const memeStatePut: TRequestHandler<{
   id: string
-  state: number
+  state: 0 | 1
 }> = async (req, res) => {
   const client = req.app.get('elasticClient')
   const { id, state } = req.body

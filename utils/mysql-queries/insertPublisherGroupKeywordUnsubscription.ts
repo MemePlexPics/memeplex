@@ -3,13 +3,7 @@ import { TDbConnection } from '../types'
 
 export const insertPublisherGroupKeywordUnsubscription = async (
   db: TDbConnection,
-  channelId: number,
-  keyword: string,
+  values: (typeof botPublisherGroupKeywordUnsubscriptions.$inferInsert)[],
 ) => {
-  await db.insert(botPublisherGroupKeywordUnsubscriptions).values([
-    {
-      channelId,
-      keyword,
-    },
-  ])
+  await db.insert(botPublisherGroupKeywordUnsubscriptions).values(values)
 }

@@ -1,8 +1,21 @@
 import { ELASTIC_INDEX } from '../../../constants'
 import { getMemeResponseEntity } from '.'
+import { Client } from '@elastic/elasticsearch'
+import { TMemeEntity } from '../../types'
 
-export const getLatestMemes = async (client, from, to, size, filtersString?: string) => {
-  const filterObject = filtersString ? JSON.parse(filtersString) : null
+export const getLatestMemes = async (
+  client: Client,
+  from: number | undefined,
+  to: number | undefined,
+  size: number,
+  filtersString?: string,
+) => {
+  const filterObject: {
+    channel: string[]
+    not?: {
+      state?: null | 1
+    }
+  } | null = filtersString ? JSON.parse(filtersString) : null
   const additionalFilter: {
     must?: {
       terms: {
@@ -22,20 +35,20 @@ export const getLatestMemes = async (client, from, to, size, filtersString?: str
       },
     }
     filterObject.channel.forEach(channel => {
-      if (/[0-9a-zA-Z_]+/.test(channel)) {
+      if (additionalFilter.must && /[0-9a-zA-Z_]+/.test(channel)) {
         additionalFilter.must.terms.channelName.push(channel.toLowerCase())
       }
     })
   }
   if (filterObject?.not?.state !== null) {
-    const state = typeof filterObject?.state === 'number' ? filterObject.state : 1
+    const state = typeof filterObject?.not?.state === 'number' ? filterObject.not.state : 1
     additionalFilter.must_not = {
       term: {
         state,
       },
     }
   }
-  const elasticRes = await client.search({
+  const elasticRes = await client.search<TMemeEntity>({
     index: ELASTIC_INDEX,
     size,
     query: {
@@ -56,12 +69,13 @@ export const getLatestMemes = async (client, from, to, size, filtersString?: str
     },
   })
 
+  const total = typeof elasticRes.hits.total !== 'number' ? elasticRes.hits.total?.value : undefined
   const response = {
     result: [],
     from: undefined,
     to: undefined,
-    total: elasticRes.hits.total.value,
-    totalPages: Math.ceil(elasticRes.hits.total.value / size),
+    total,
+    totalPages: Math.ceil(total / size),
   }
   for (const hit of elasticRes.hits.hits) {
     const timestamp = hit._source.timestamp
