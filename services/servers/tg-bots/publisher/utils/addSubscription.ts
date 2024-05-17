@@ -1,7 +1,9 @@
 import { botPublisherKeywords } from '../../../../../db/schema'
 import {
+  deletePublisherGroupKeywordUnsubscription,
   insertPublisherKeywords,
   insertPublisherSubscription,
+  selectPublisherKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
 import { TDbConnection } from '../../../../../utils/types'
 
@@ -11,11 +13,20 @@ export const addSubscription = async (
   keywordValues: (typeof botPublisherKeywords.$inferInsert)[],
 ) => {
   await insertPublisherKeywords(db, keywordValues)
+  const keywords = await selectPublisherKeywordsByKeywords(
+    db,
+    keywordValues.map(value => value.keyword),
+  )
 
-  const subscriptions = keywordValues.map(({ keyword }) => ({
-    keyword,
-    channelId,
-  }))
+  const keywordIds: number[] = []
+  const subscriptions = keywords.map(({ id }) => {
+    keywordIds.push(id)
+    return {
+      keywordId: id,
+      channelId,
+    }
+  })
 
   await insertPublisherSubscription(db, subscriptions)
+  await deletePublisherGroupKeywordUnsubscription(db, channelId, keywordIds)
 }

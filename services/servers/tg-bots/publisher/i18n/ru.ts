@@ -94,7 +94,7 @@ ${keywords}`,
     postMeme: (channel: string) => `➡️ Отправить в @${channel}`,
     memePosted: (channel: string) => `✅ Отправлено в @${channel}`,
     premoderationKeyword: (emoji: '🔕' | '➕', keyword: string, action: string) =>
-      `${emoji}«${keyword}» (${action})`,
+      `${emoji} «${keyword}» (${action})`,
     premoderationKeywordGroup: (emoji: '🔕' | '➕', keywordGroup: string, action: string) =>
       `${emoji} 📂 «${keywordGroup}» (${action})`,
     premoderationKeywordFromGroup: (
@@ -102,7 +102,7 @@ ${keywords}`,
       keyword: string,
       keywordGroup: string,
       action: string,
-    ) => `${emoji}«${keyword}» из 📂 «${keywordGroup}» (${action})`,
+    ) => `${emoji} «${keyword}» из 📂 «${keywordGroup}» (${action})`,
     premoderationKeywordUnsubscribe: (keyword: string) =>
       ru.button.premoderationKeyword('🔕', keyword, 'отписаться'),
     premoderationKeywordGroupUnsubscribe: (keywordGroup: string) =>

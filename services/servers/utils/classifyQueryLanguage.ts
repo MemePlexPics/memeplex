@@ -1,4 +1,4 @@
-export const classifyQueryLanguage = query => {
+export const classifyQueryLanguage = (query: string) => {
   const russianCharacters = /[а-яА-Я]/
   const englishCharacters = /[a-zA-Z]/
 
