@@ -1,6 +1,5 @@
 export { mainState } from './mainState'
 export { addChannelState } from './addChannelState'
-export { addKeywordsState } from './addKeywordsState'
 export { channelSettingState } from './channelSettingState'
 export { keywordSettingsState } from './keywordSettingsState'
 export { keywordGroupSelectState } from './keywordGroupSelectState'
