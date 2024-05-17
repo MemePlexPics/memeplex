@@ -1,11 +1,18 @@
-import { botPublisherSubscriptions } from '../../db/schema'
+import { botPublisherKeywords, botPublisherSubscriptions } from '../../db/schema'
 import { eq } from 'drizzle-orm'
 import { TDbConnection } from '../types'
 
 export const selectPublisherSubscriptionsByChannelId = (db: TDbConnection, channelId: number) => {
   return db
-    .select({ keyword: botPublisherSubscriptions.keyword })
+    .select({
+      id: botPublisherKeywords.id,
+      keyword: botPublisherKeywords.keyword,
+    })
     .from(botPublisherSubscriptions)
+    .leftJoin(
+      botPublisherKeywords,
+      eq(botPublisherSubscriptions.keywordId, botPublisherKeywords.id),
+    )
     .where(eq(botPublisherSubscriptions.channelId, channelId))
-    .orderBy(botPublisherSubscriptions.keyword)
+    .orderBy(botPublisherSubscriptions.keywordId)
 }
