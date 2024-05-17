@@ -58,7 +58,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         const keywords = await selectPublisherKeywordsByKeywords(db, payload.keywords)
         keywords.forEach(({ id, keyword }) => {
           const channelId =
-            payload.channelIdsByKeyword[keyword].length > 1
+            payload.channelIdsByKeyword[keyword]?.length > 1
               ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
               : payload.channelIdsByKeyword[keyword][0]
           if (!channelId) {
@@ -87,7 +87,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
             return
           }
           const channelId =
-            payload.channelIdsByKeywordGroup[keywordGroup].length > 1
+            payload.channelIdsByKeywordGroup[keywordGroup]?.length > 1
               ? payload.channelIdsByKeywordGroup[keywordGroup].find(
                 channelId => channelId !== payload.userId,
               )
@@ -134,7 +134,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         )
         groupKeywords.forEach(async ([keyword, keywordGroupId]) => {
           const channelId =
-            payload.channelIdsByKeyword[keyword].length > 1
+            payload.channelIdsByKeyword[keyword]?.length > 1
               ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
               : payload.channelIdsByKeyword[keyword][0]
           if (!channelId) {
