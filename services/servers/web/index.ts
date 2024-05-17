@@ -5,7 +5,6 @@ import 'dotenv/config'
 import {
   connectToElastic,
   logError,
-  getMysqlClient,
   checkFileExists,
   shuffleArray,
   getDbConnection,
@@ -27,6 +26,7 @@ import {
 import { searchMemes, getLatestMemes, getMeme, downloadTelegramChannelAvatar } from '../utils'
 import winston from 'winston'
 import { adminRouter } from './routers'
+import { TRequestHandler } from './routers/admin/types'
 
 const app = express()
 
@@ -52,14 +52,14 @@ app.set('trust proxy', true)
 app.set('elasticClient', client)
 app.use('/admin', adminRouter)
 
-const handleMethodError = async error => {
+const handleMethodError = async (error: Error) => {
   await logError(logger, error)
   if (error.message === 'connect ECONNREFUSED ::1:9200') {
     await reconnect()
   }
 }
 
-const handle404 = async (req, res) => {
+const handle404: TRequestHandler = async (req, res) => {
   if (['/admin', '/channelList', '/memes', '/about'].some(path => req.originalUrl.includes(path)))
     return res.sendFile(
       join(
@@ -75,8 +75,8 @@ const handle404 = async (req, res) => {
   return res.status(404).send()
 }
 
-app.use(async (err, req, res, _next) => {
-  if (err.message === '404') return handle404(req, res)
+app.use(async (err, req, res, next) => {
+  if (err.message === '404') return handle404(req, res, next)
   await handleMethodError(err)
   return res.status(500).send()
 })
@@ -84,6 +84,9 @@ app.use(async (err, req, res, _next) => {
 app.get('/search', async (req, res) => {
   if (typeof req.query.query !== 'string' || typeof req.query.page !== 'string')
     throw new Error(`Wrong params: «${req.query}»`)
+  if (!client) {
+    throw new Error(`There is no working ElasticSearch instance!`)
+  }
   const query = req.query.query.slice(0, MAX_SEARCH_QUERY_LENGTH)
   const page = parseInt(req.query.page)
   const result = await searchMemes(client, query, page, SEARCH_PAGE_SIZE)
@@ -91,11 +94,14 @@ app.get('/search', async (req, res) => {
 })
 
 app.get('/getLatest', async (req, res) => {
+  if (!client) {
+    throw new Error(`There is no working ElasticSearch instance!`)
+  }
   const { from, to, filters } = req.query
   const response = await getLatestMemes(
     client,
-    from,
-    to,
+    from ? Number(from) : undefined,
+    to ? Number(to) : undefined,
     SEARCH_PAGE_SIZE,
     typeof filters === 'string' ? filters : undefined,
   )
@@ -119,6 +125,9 @@ app.get('/getChannelList', async (req, res) => {
 })
 
 app.get('/getMeme', async (req, res) => {
+  if (!client) {
+    throw new Error(`There is no working ElasticSearch instance!`)
+  }
   const { id } = req.query
   try {
     if (typeof id !== 'string') throw new Error(`Wrong id: «${id}»`)
@@ -126,9 +135,9 @@ app.get('/getMeme', async (req, res) => {
     return res.send(meme)
   } catch (e) {
     if (e.meta.statusCode === 404) {
-      await handleMethodError({
-        message: `Meme with id "${id}" not found`,
-      })
+      const error = new Error()
+      error.message = `Meme with id "${id}" not found`
+      await handleMethodError(error)
       return res.status(204).send()
     }
     throw e

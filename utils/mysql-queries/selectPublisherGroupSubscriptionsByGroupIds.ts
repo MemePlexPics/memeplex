@@ -2,12 +2,12 @@ import { botPublisherGroupSubscriptions } from '../../db/schema'
 import { inArray } from 'drizzle-orm'
 import { TDbConnection } from '../types'
 
-export const selectPublisherGroupSubscriptionsByName = async (
+export const selectPublisherGroupSubscriptionsByGroupIds = async (
   db: TDbConnection,
-  names: string[],
+  groupIds: number[],
 ) => {
   return await db
     .select()
     .from(botPublisherGroupSubscriptions)
-    .where(inArray(botPublisherGroupSubscriptions.groupName, names))
+    .where(inArray(botPublisherGroupSubscriptions.groupId, groupIds))
 }

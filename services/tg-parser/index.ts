@@ -9,7 +9,7 @@ import { getMessagesAfter } from './utils'
 import { Logger } from 'winston'
 
 export const tgParser = async (logger: Logger) => {
-  let amqp: Connection, sendImageDataCh: Channel
+  let amqp: Connection | undefined, sendImageDataCh: Channel | undefined
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     sendImageDataCh = await amqp.createChannel()

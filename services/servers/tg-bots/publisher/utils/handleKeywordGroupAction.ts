@@ -4,6 +4,7 @@ import { getDbConnection } from '../../../../../utils'
 import {
   deletePublisherGroupSubscription,
   insertPublisherGroupSubscription,
+  selectPublisherKeywordGroupNameByIds,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
 import { TTelegrafContext } from '../types'
@@ -13,45 +14,45 @@ export const handleKeywordGroupAction = async (
   ctx: TTelegrafContext,
   command: EKeywordAction,
   channelId: number,
-  keywordGroup: string,
+  keywordGroupId: number,
 ) => {
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
   }
+  const db = await getDbConnection()
+  const [group] = await selectPublisherKeywordGroupNameByIds(db, [keywordGroupId])
   if (command === EKeywordAction.DELETE) {
-    const db = await getDbConnection()
-    await deletePublisherGroupSubscription(db, channelId, keywordGroup)
-    await db.close()
+    await deletePublisherGroupSubscription(db, channelId, keywordGroupId)
     logUserAction(ctx, {
       info: `Unsubscribe from a keyword group`,
-      keywordGroup,
+      keywordGroup: group.name,
     })
   } else if (command === EKeywordAction.SUBSCRIBE) {
-    const db = await getDbConnection()
     await insertPublisherGroupSubscription(db, [
       {
         channelId,
-        groupName: keywordGroup,
+        groupId: keywordGroupId,
       },
     ])
-    await db.close()
     logUserAction(ctx, {
       info: `Subscribe to a keyword group`,
-      keywordGroup,
+      keywordGroup: group.name,
     })
   } else {
+    await db.close()
     throw new Error(`Unknown operation in keywordGroup button: «${command}» for ${channelId}`)
   }
+  await db.close()
 
   const callbackForUnsubscribe = callbackData.premoderationKeywordGroupButton(
     EKeywordAction.DELETE,
     channelId,
-    keywordGroup,
+    keywordGroupId,
   )
   const callbackForSubscribe = callbackData.premoderationKeywordGroupButton(
     EKeywordAction.SUBSCRIBE,
     channelId,
-    keywordGroup,
+    keywordGroupId,
   )
   const oldCallback =
     command === EKeywordAction.DELETE ? callbackForUnsubscribe : callbackForSubscribe
@@ -59,8 +60,8 @@ export const handleKeywordGroupAction = async (
     command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
   const newText =
     command === EKeywordAction.DELETE
-      ? i18n['ru'].button.premoderationKeywordGroupSubscribe(keywordGroup)
-      : i18n['ru'].button.premoderationKeywordGroupUnsubscribe(keywordGroup)
+      ? i18n['ru'].button.premoderationKeywordGroupSubscribe(group.name)
+      : i18n['ru'].button.premoderationKeywordGroupUnsubscribe(group.name)
 
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),

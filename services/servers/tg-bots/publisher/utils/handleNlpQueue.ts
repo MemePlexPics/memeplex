@@ -10,8 +10,9 @@ import {
 } from '../../../../../constants'
 import { delay, getDbConnection } from '../../../../../utils'
 import {
-  selectPublisherKeywordGroups,
-  selectPublisherSubscriptionsByKeyword,
+  selectPublisherGroupKeywordUnsubscriptions,
+  selectPublisherKeywordGroupWithKeywords,
+  selectPublisherSubscriptionsByKeywords,
 } from '../../../../../utils/mysql-queries'
 import {
   TMemeEntity,
@@ -33,14 +34,13 @@ export const handleNlpQueue = async (logger: Logger) => {
     ;[receiveNlpMessageCh, receiveNlpMessageTimeout, receiveNlpMessageClearTimeout] =
       await getAmqpQueue(amqp, AMQP_NLP_TO_PUBLISHER_CHANNEL)
     const db = await getDbConnection()
-    const keywordGroups = await selectPublisherKeywordGroups(db)
+    const keywordGroups = await selectPublisherKeywordGroupWithKeywords(db)
     await db.close()
-    const groupsByKeyword = keywordGroups.reduce<Record<string, string[]>>(
-      (obj, { name, keywords }) => {
-        keywords.split(', ').forEach(keyword => {
-          if (!obj[keyword]) obj[keyword] = []
-          obj[keyword]!.push(name)
-        })
+    const groupIdsByKeyword = keywordGroups.reduce<Record<string, number[]>>(
+      (obj, { groupId, keyword }) => {
+        if (!keyword) return obj
+        if (!obj[keyword]) obj[keyword] = []
+        obj[keyword]!.push(groupId)
         return obj
       },
       {},
@@ -61,23 +61,42 @@ export const handleNlpQueue = async (logger: Logger) => {
 
       const queue: TPrePublisherDistributionQueue = {}
 
+      // TODO: improve readability
       const keywordsByUser: Record<number, Set<string>> = {}
-      const keywordGroupsByUser: Record<number, Set<string>> = {}
-      const groupKeywordsByUser: Record<number, Record<string, string>> = {}
+      const keywordGroupIdsByUser: Record<number, Set<number>> = {}
+      const groupKeywordIdsByUser: Record<number, Record<string, number>> = {}
       const channelIdsByKeyword: Record<number, Record<string, Set<number>>> = {}
       const channelIdsByKeywordGroup: Record<number, Record<string, Set<number>>> = {}
       const tariffPlanByUsers: Record<number, 'free' | 'premium'> = {}
       const db = await getDbConnection()
-      const groupSubscriptionsByKeyword = await getGroupSubscriptionsByKeywords(
+      const { channelIds, groupSubscriptionsByKeyword } = await getGroupSubscriptionsByKeywords(
         db,
         payload.matchedKeywords,
-        groupsByKeyword,
+        groupIdsByKeyword,
+      )
+      const subscriptions = await selectPublisherSubscriptionsByKeywords(
+        db,
+        payload.matchedKeywords,
+      )
+      const unsubscriptions = await selectPublisherGroupKeywordUnsubscriptions(
+        db,
+        [...channelIds],
+        payload.matchedKeywords,
+      )
+      const unsubscriptionKeywordsByChannelId = unsubscriptions.reduce(
+        (obj, { channelId, keyword }) => {
+          if (!obj[keyword]) {
+            obj[keyword] = {}
+          }
+          obj[keyword][channelId] = true
+          return obj
+        },
+        {},
       )
       for (const keyword of payload.matchedKeywords) {
-        const subscriptions = await selectPublisherSubscriptionsByKeyword(db, keyword)
         const groupSubscriptions = groupSubscriptionsByKeyword[keyword] ?? []
 
-        for (const { groupName, channelId } of groupSubscriptions) {
+        for (const { groupId, channelId } of groupSubscriptions) {
           const userId = await getPublisherUserByChannelIdAndTariffPlan(
             db,
             queue,
@@ -86,18 +105,24 @@ export const handleNlpQueue = async (logger: Logger) => {
             payload.memeId,
             payload.memeData,
           )
-          if (!keywordGroupsByUser[userId]) {
-            keywordGroupsByUser[userId] = new Set<string>()
+          if (
+            tariffPlanByUsers[userId] === 'premium' &&
+            unsubscriptionKeywordsByChannelId[keyword][channelId]
+          ) {
+            continue
           }
-          keywordGroupsByUser[userId].add(groupName)
+          if (!keywordGroupIdsByUser[userId]) {
+            keywordGroupIdsByUser[userId] = new Set<number>()
+          }
+          keywordGroupIdsByUser[userId].add(groupId)
 
           if (!channelIdsByKeywordGroup[userId]) {
             channelIdsByKeywordGroup[userId] = {}
           }
-          if (!channelIdsByKeywordGroup[userId][groupName]) {
-            channelIdsByKeywordGroup[userId][groupName] = new Set<number>()
+          if (!channelIdsByKeywordGroup[userId][groupId]) {
+            channelIdsByKeywordGroup[userId][groupId] = new Set<number>()
           }
-          channelIdsByKeywordGroup[userId][groupName].add(channelId)
+          channelIdsByKeywordGroup[userId][groupId].add(channelId)
 
           if (!channelIdsByKeyword[userId]) {
             channelIdsByKeyword[userId] = {}
@@ -108,10 +133,10 @@ export const handleNlpQueue = async (logger: Logger) => {
           channelIdsByKeyword[userId][keyword].add(channelId)
 
           queue[userId].channelIds.push(channelId)
-          if (!groupKeywordsByUser[userId]) {
-            groupKeywordsByUser[userId] = {}
+          if (!groupKeywordIdsByUser[userId]) {
+            groupKeywordIdsByUser[userId] = {}
           }
-          groupKeywordsByUser[userId][keyword] = groupName
+          groupKeywordIdsByUser[userId][keyword] = groupId
         }
 
         for (const { channelId } of subscriptions) {
@@ -125,7 +150,7 @@ export const handleNlpQueue = async (logger: Logger) => {
           )
           if (
             tariffPlanByUsers[userId] === 'free' ||
-            (groupKeywordsByUser[userId] && keyword in groupKeywordsByUser[userId])
+            (groupKeywordIdsByUser[userId] && keyword in groupKeywordIdsByUser[userId])
           )
             continue
 
@@ -149,36 +174,36 @@ export const handleNlpQueue = async (logger: Logger) => {
       for (const userId in queue) {
         if (
           !queue[userId].channelIds.length ||
-          (keywordsByUser[userId]?.size === 0 && keywordGroupsByUser[userId]?.size === 0)
+          (keywordsByUser[userId]?.size === 0 && keywordGroupIdsByUser[userId]?.size === 0)
         )
           continue
-        const buffer = Buffer.from(
-          JSON.stringify({
-            userId: Number(userId),
-            ...queue[userId],
-            keywords: keywordsByUser[userId] ? [...keywordsByUser[userId]] : [],
-            keywordGroups: keywordGroupsByUser[userId] ? [...keywordGroupsByUser[userId]] : [],
-            groupKeywords: groupKeywordsByUser[userId] ?? {},
-            channelIdsByKeyword: channelIdsByKeyword[userId]
-              ? Object.entries(channelIdsByKeyword[userId]).reduce<Record<string, number[]>>(
-                (acc, [keyword, channelIds]) => {
-                  acc[keyword] = [...channelIds]
-                  return acc
-                },
-                {},
-              )
-              : {},
-            channelIdsByKeywordGroup: channelIdsByKeywordGroup[userId]
-              ? Object.entries(channelIdsByKeywordGroup[userId]).reduce<Record<string, number[]>>(
-                (acc, [keywordGroup, channelIds]) => {
-                  acc[keywordGroup] = [...channelIds]
-                  return acc
-                },
-                {},
-              )
-              : {},
-          } as TPublisherDistributionQueueMsg),
-        )
+
+        const content: TPublisherDistributionQueueMsg = {
+          userId: Number(userId),
+          ...queue[userId],
+          keywords: keywordsByUser[userId] ? [...keywordsByUser[userId]] : [],
+          keywordGroupIds: keywordGroupIdsByUser[userId] ? [...keywordGroupIdsByUser[userId]] : [],
+          groupKeywords: groupKeywordIdsByUser[userId] ?? {},
+          channelIdsByKeyword: channelIdsByKeyword[userId]
+            ? Object.entries(channelIdsByKeyword[userId]).reduce<Record<string, number[]>>(
+              (acc, [keyword, channelIds]) => {
+                acc[keyword] = [...channelIds]
+                return acc
+              },
+              {},
+            )
+            : {},
+          channelIdsByKeywordGroup: channelIdsByKeywordGroup[userId]
+            ? Object.entries(channelIdsByKeywordGroup[userId]).reduce<Record<string, number[]>>(
+              (acc, [keywordGroup, channelIds]) => {
+                acc[keywordGroup] = [...channelIds]
+                return acc
+              },
+              {},
+            )
+            : {},
+        }
+        const buffer = Buffer.from(JSON.stringify(content))
         sendToPublisherDistributionCh.sendToQueue(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL, buffer, {
           persistent: true,
         })
