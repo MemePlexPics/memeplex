@@ -19,3 +19,4 @@ export { botPublisherGroupSubscriptions } from './botPublisherGroupSubscriptions
 export { botPublisherUserPremiums } from './botPublisherUserPremiums'
 export { botPublisherInvoices } from './botPublisherInvoices'
 export { botPublisherGroupKeywordUnsubscriptions } from './botPublisherGroupKeywordUnsubscriptions'
+export { botPublisherKeywordGroupNames } from './botPublisherKeywordGroupNames'

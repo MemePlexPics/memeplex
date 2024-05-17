@@ -5,14 +5,14 @@ import { TDbConnection } from '../types'
 export const deletePublisherGroupSubscription = async (
   db: TDbConnection,
   channelId: number,
-  groupName: string,
+  groupId: number,
 ) => {
   await db
     .delete(botPublisherGroupSubscriptions)
     .where(
       and(
         eq(botPublisherGroupSubscriptions.channelId, channelId),
-        eq(botPublisherGroupSubscriptions.groupName, groupName),
+        eq(botPublisherGroupSubscriptions.groupId, groupId),
       ),
     )
 }
