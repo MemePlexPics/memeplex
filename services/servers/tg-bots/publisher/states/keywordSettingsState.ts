@@ -76,7 +76,7 @@ export const keywordSettingsState: TState = {
         text: i18n['ru'].button.back(),
         callback_data: `page|back`,
       })
-    if ((totalSubscriptions - (page - 1) * pageSize) / 100 > 1)
+    if ((totalSubscriptions - (page - 1) * pageSize) / pageSize > 1)
       paginationButtons.push({
         text: i18n['ru'].button.forward(),
         callback_data: `page|next`,
