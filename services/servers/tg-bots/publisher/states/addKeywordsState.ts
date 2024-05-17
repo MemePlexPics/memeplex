@@ -20,7 +20,6 @@ export const addKeywordsState: TState = {
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
     }
-    const db = await getDbConnection()
     const keywords = keywordsRaw
       .split('\n')
       .map(line => line.split(','))
@@ -37,6 +36,7 @@ export const addKeywordsState: TState = {
       return
     }
 
+    const db = await getDbConnection()
     await addSubscription(db, ctx.session.channel.id, keywordValuesNotEmpty)
     await db.close()
 

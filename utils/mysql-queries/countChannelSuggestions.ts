@@ -2,7 +2,7 @@ import { and, count, eq, like } from 'drizzle-orm'
 import { TDbConnection } from '../types'
 import { channelSuggestions } from '../../db/schema'
 
-export const countChannelSuggestions = async (db: TDbConnection, { name }: { name: string }) => {
+export const countChannelSuggestions = async (db: TDbConnection, { name }: { name?: string }) => {
   const [response] = await db
     .select({ values: count() })
     .from(channelSuggestions)

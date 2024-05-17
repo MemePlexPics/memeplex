@@ -4,7 +4,6 @@ import 'dotenv/config'
 export { PROXY_LIST_API_URLS } from './PROXY_LIST_API_URLS'
 export { OCR_SPACE_PRO_API_USA } from './OCR_SPACE_PRO_API'
 export { OCR_SPACE_PRO_API_EU } from './OCR_SPACE_PRO_API'
-export { fuseOptions } from './fuseOptions'
 export { wordsForElasticEntititesCounter } from './wordsForElasticEntititesCounter'
 export { CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS } from './delays'
 export { AMQP_IMAGE_DATA_CHANNEL,
