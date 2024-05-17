@@ -15,7 +15,6 @@ import {
 } from '../utils'
 import {
   addChannelState,
-  addKeywordsState,
   buyPremiumState,
   channelSettingState,
   keywordGroupSelectState,
@@ -100,7 +99,6 @@ export const init = async (
 
   const states: Record<EState, TState> = {
     [EState.ADD_CHANNEL]: addChannelState,
-    [EState.ADD_KEYWORDS]: addKeywordsState,
     [EState.BUY_PREMIUM]: buyPremiumState,
     [EState.CHANNEL_SETTINGS]: channelSettingState,
     [EState.KEYWORD_SETTINGS]: keywordSettingsState,
