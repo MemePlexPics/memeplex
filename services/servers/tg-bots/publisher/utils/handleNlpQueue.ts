@@ -78,11 +78,13 @@ export const handleNlpQueue = async (logger: Logger) => {
         db,
         payload.matchedKeywords,
       )
-      const unsubscriptions = await selectPublisherGroupKeywordUnsubscriptions(
-        db,
-        [...channelIds],
-        payload.matchedKeywords,
-      )
+      const unsubscriptions = channelIds.size !== 0 && payload.matchedKeywords.length !== 0
+        ? await selectPublisherGroupKeywordUnsubscriptions(
+          db,
+          [...channelIds],
+          payload.matchedKeywords,
+        )
+        : []
       const unsubscriptionKeywordsByChannelId = unsubscriptions.reduce(
         (obj, { channelId, keyword }) => {
           if (!obj[keyword]) {
