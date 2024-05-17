@@ -25,7 +25,7 @@ export const addKeywordsState: TState = {
       .map(line => line.split(','))
       .flat()
     const keywordValues = keywords.map(keyword => {
-      const keywordTrimmed = keyword.replace('|', '').toLowerCase().trim()
+      const keywordTrimmed = keyword.replace('|', '').toLowerCase().trim().slice(0, 255)
       return {
         keyword: keywordTrimmed,
       }
