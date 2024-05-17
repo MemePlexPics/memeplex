@@ -54,7 +54,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       })
 
       // TODO: maybe it is worth refactoring
-      if (payload.keywords) {
+      if (payload.keywords.length !== 0) {
         const keywords = await selectPublisherKeywordsByKeywords(db, payload.keywords)
         keywords.forEach(({ id, keyword }) => {
           const channelId =
