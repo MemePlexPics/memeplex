@@ -1,6 +1,6 @@
 import { getTelegramChatInfo, getTelegramFileInfo, downloadTelegramFile } from '.'
 
-export const downloadTelegramChannelAvatar = async channelName => {
+export const downloadTelegramChannelAvatar = async (channelName: string) => {
   const chatInfo = await getTelegramChatInfo(channelName)
   const photo_id = chatInfo?.result?.photo?.small_file_id
   if (photo_id) {

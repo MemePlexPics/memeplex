@@ -11,7 +11,12 @@ import {
 import { delay, getDbConnection, logError } from '../../../../../utils'
 import { Logger } from 'winston'
 import fs from 'fs/promises'
-import { selectPublisherChannelsById } from '../../../../../utils/mysql-queries'
+import {
+  selectPublisherChannelsById,
+  selectPublisherKeywordGroupNameByIds,
+  selectPublisherKeywordGroupsByGroupIds,
+  selectPublisherKeywordsByKeywords,
+} from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { TPublisherDistributionQueueMsg } from '../../../../types'
@@ -37,7 +42,6 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
       const buttons: InlineKeyboardButton.CallbackButton[][] = []
       const db = await getDbConnection()
       const channels = await selectPublisherChannelsById(db, payload.channelIds)
-      await db.close()
 
       channels.forEach(channel => {
         if (channel.id === Number(payload.userId)) return null
@@ -49,68 +53,110 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         ])
       })
 
-      payload.keywords.forEach(keyword => {
-        const channelId =
-          payload.channelIdsByKeyword[keyword].length > 1
-            ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
-            : payload.channelIdsByKeyword[keyword][0]
-        if (!channelId) {
-          throw new Error(`There is a message without a single channelId!`)
-        }
-        buttons.push([
-          {
-            text: i18n['ru'].button.premoderationKeywordUnsubscribe(keyword),
-            callback_data: callbackData.premoderationKeywordButton(
-              EKeywordAction.DELETE,
-              channelId,
-              keyword,
-            ),
-          },
-        ])
-      })
+      // TODO: maybe it is worth refactoring
+      if (payload.keywords) {
+        const keywords = await selectPublisherKeywordsByKeywords(db, payload.keywords)
+        keywords.forEach(({ id, keyword }) => {
+          const channelId =
+            payload.channelIdsByKeyword[keyword].length > 1
+              ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
+              : payload.channelIdsByKeyword[keyword][0]
+          if (!channelId) {
+            throw new Error(`There is a message without a single channelId!`)
+          }
+          buttons.push([
+            {
+              text: i18n['ru'].button.premoderationKeywordUnsubscribe(keyword),
+              callback_data: callbackData.premoderationKeywordButton(
+                EKeywordAction.DELETE,
+                channelId,
+                id,
+              ),
+            },
+          ])
+        })
+      }
 
-      payload.keywordGroups.forEach(keywordGroup => {
-        const channelId =
-          payload.channelIdsByKeywordGroup[keywordGroup].length > 1
-            ? payload.channelIdsByKeywordGroup[keywordGroup].find(
-              channelId => channelId !== payload.userId,
-            )
-            : payload.channelIdsByKeywordGroup[keywordGroup][0]
-        if (!channelId) {
-          throw new Error(`There is a message without a single channelId!`)
-        }
-        buttons.push([
-          {
-            text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(keywordGroup),
-            callback_data: callbackData.premoderationKeywordGroupButton(
-              EKeywordAction.DELETE,
-              channelId,
-              keywordGroup,
-            ),
-          },
-        ])
-      })
+      if (payload.keywordGroupIds.length !== 0) {
+        const keywordGroups = await selectPublisherKeywordGroupsByGroupIds(
+          db,
+          payload.keywordGroupIds,
+        )
+        keywordGroups.forEach(({ id, name: keywordGroup }) => {
+          if (!keywordGroup || !id) {
+            return
+          }
+          const channelId =
+            payload.channelIdsByKeywordGroup[keywordGroup].length > 1
+              ? payload.channelIdsByKeywordGroup[keywordGroup].find(
+                channelId => channelId !== payload.userId,
+              )
+              : payload.channelIdsByKeywordGroup[keywordGroup][0]
+          if (!channelId) {
+            throw new Error(`There is a message without a single channelId!`)
+          }
+          buttons.push([
+            {
+              text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(keywordGroup),
+              callback_data: callbackData.premoderationKeywordGroupButton(
+                EKeywordAction.DELETE,
+                channelId,
+                id,
+              ),
+            },
+          ])
+        })
+      }
 
-      Object.entries(payload.groupKeywords).forEach(([keyword, keywordGroup]) => {
-        const channelId =
-          payload.channelIdsByKeyword[keyword].length > 1
-            ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
-            : payload.channelIdsByKeyword[keyword][0]
-        if (!channelId) {
-          throw new Error(`There is a message without a single channelId!`)
-        }
-        buttons.push([
-          {
-            text: i18n['ru'].button.premoderationKeywordFromGroupUnsubscribe(keyword, keywordGroup),
-            callback_data: callbackData.premoderationGroupKeywordsButton(
-              EKeywordAction.DELETE,
-              channelId,
-              keyword,
-              keywordGroup,
-            ),
+      const groupKeywords = Object.entries(payload.groupKeywords)
+      if (groupKeywords.length !== 0) {
+        const [keywordList, keywordGroupIdList] = groupKeywords.reduce<[string[], number[]]>(
+          (acc, [keyword, keywordGroup]) => {
+            acc[0].push(keyword)
+            acc[1].push(keywordGroup)
+            return acc
           },
-        ])
-      })
+          [[], []],
+        )
+        const keywords = await selectPublisherKeywordsByKeywords(db, keywordList)
+        const keywordGroups = await selectPublisherKeywordGroupNameByIds(db, keywordGroupIdList)
+        const keywordIdsObject = keywords.reduce<Record<string, number>>((acc, { id, keyword }) => {
+          acc[keyword] = id
+          return acc
+        }, {})
+        const keywordGroupNameById = keywordGroups.reduce<Record<number, string>>(
+          (acc, { id, name }) => {
+            if (!name || !id) return acc
+            acc[id] = name
+            return acc
+          },
+          {},
+        )
+        groupKeywords.forEach(async ([keyword, keywordGroupId]) => {
+          const channelId =
+            payload.channelIdsByKeyword[keyword].length > 1
+              ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
+              : payload.channelIdsByKeyword[keyword][0]
+          if (!channelId) {
+            throw new Error(`There is a message without a single channelId!`)
+          }
+          buttons.push([
+            {
+              text: i18n['ru'].button.premoderationKeywordFromGroupUnsubscribe(
+                keyword,
+                keywordGroupNameById[keywordGroupId],
+              ),
+              callback_data: callbackData.premoderationGroupKeywordsButton(
+                EKeywordAction.DELETE,
+                channelId,
+                keywordIdsObject[keyword],
+                keywordGroupId,
+              ),
+            },
+          ])
+        })
+      }
+      await db.close()
 
       try {
         const sourceLink = `[источник](https://t.me/${payload.document.channelName}/${payload.document.messageId})`

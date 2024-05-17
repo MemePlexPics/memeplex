@@ -1,19 +1,19 @@
-import { mysqlTable, int, unique, foreignKey, bigint, varchar } from 'drizzle-orm/mysql-core'
+import { mysqlTable, int, unique, foreignKey, bigint } from 'drizzle-orm/mysql-core'
 import { botPublisherChannels, botPublisherKeywords } from '.'
 
 export const botPublisherSubscriptions = mysqlTable(
   'bot_publisher_subscriptions',
   {
     id: int('id').autoincrement().primaryKey(),
-    keyword: varchar('keyword', { length: 255 }).notNull(),
+    keywordId: int('keyword_id').notNull(),
     channelId: bigint('channel_id', { mode: 'number' }).notNull(),
   },
   table => ({
-    unique: unique('keyword_id-channel_id').on(table.keyword, table.channelId),
+    unique: unique('subscription_keyword_id-channel_id').on(table.keywordId, table.channelId),
     keywordReference: foreignKey({
-      columns: [table.keyword],
-      foreignColumns: [botPublisherKeywords.keyword],
-      name: 'bot_publisher_subscriptions_keyword_fk',
+      columns: [table.keywordId],
+      foreignColumns: [botPublisherKeywords.id],
+      name: 'bot_publisher_subscriptions_keyword_id_fk',
     }),
     channelReference: foreignKey({
       columns: [table.channelId],
