@@ -110,6 +110,7 @@ export const handleNlpQueue = async (logger: Logger) => {
           )
           if (
             tariffPlanByUsers[userId] === 'premium' &&
+            unsubscriptionKeywordsByChannelId[keyword] &&
             unsubscriptionKeywordsByChannelId[keyword][channelId]
           ) {
             continue
