@@ -28,7 +28,8 @@ export const handleCallbackQuery = async (
     > extends [infer _GFirst, ...infer GRest]
       ? GRest
       : never
-    await handleMemePost(elastic, ctx, Number(restCbData[0]), restCbData[1])
+    const [channelId, memeId] = restCbData
+    await handleMemePost(elastic, ctx, Number(channelId), memeId)
     return
   }
   if (state === ECallback.KEY) {
@@ -38,8 +39,8 @@ export const handleCallbackQuery = async (
     > extends [infer _GFirst, ...infer GRest]
       ? GRest
       : never
-    const [action, channelId, keyword] = restCbData
-    await handleKeywordAction(ctx, action as EKeywordAction, Number(channelId), keyword)
+    const [action, channelId, keywordId] = restCbData
+    await handleKeywordAction(ctx, action as EKeywordAction, Number(channelId), Number(keywordId))
     return
   }
   if (state === ECallback.GROUP) {
@@ -49,8 +50,13 @@ export const handleCallbackQuery = async (
     > extends [infer _GFirst, ...infer GRest]
       ? GRest
       : never
-    const [action, channelId, keywordGroup] = restCbData
-    await handleKeywordGroupAction(ctx, action as EKeywordAction, Number(channelId), keywordGroup)
+    const [action, channelId, keywordGroupId] = restCbData
+    await handleKeywordGroupAction(
+      ctx,
+      action as EKeywordAction,
+      Number(channelId),
+      Number(keywordGroupId),
+    )
     return
   }
   if (state === ECallback.GROUP_KEYWORD) {
@@ -60,13 +66,13 @@ export const handleCallbackQuery = async (
     > extends [infer _GFirst, ...infer GRest]
       ? GRest
       : never
-    const [action, channelId, keyword, keywordGroup] = restCbData
+    const [action, channelId, keywordId, keywordGroupId] = restCbData
     await handleGroupKeywordAction(
       ctx,
       action as EKeywordAction,
       Number(channelId),
-      keyword,
-      keywordGroup,
+      Number(keywordId),
+      Number(keywordGroupId),
     )
     return
   }

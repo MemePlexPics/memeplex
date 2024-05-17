@@ -2,13 +2,13 @@ import { botPublisherChannels, botPublisherGroupSubscriptions } from '../../db/s
 import { eq } from 'drizzle-orm'
 import { TDbConnection } from '../types'
 
-export const selectPublisherGroupSubscriptionsByUserId = async (
+export const selectPublisherGroupIdSubscriptionsByUserId = async (
   db: TDbConnection,
   userId: number,
 ) => {
   return await db
     .selectDistinct({
-      groupName: botPublisherGroupSubscriptions.groupName,
+      groupId: botPublisherGroupSubscriptions.groupId,
     })
     .from(botPublisherGroupSubscriptions)
     .leftJoin(

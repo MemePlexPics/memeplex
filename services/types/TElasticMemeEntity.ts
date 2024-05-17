@@ -1,6 +1,6 @@
 export type TElasticMemeEntity = {
   fileName: string
   channelName: string
-  messageId: string
+  messageId: number
   eng: string
 }
