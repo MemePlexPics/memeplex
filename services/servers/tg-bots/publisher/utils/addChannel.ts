@@ -2,7 +2,7 @@ import { Chat } from 'telegraf/typings/core/types/typegram'
 import { enterToState, logUserAction } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
-import { addKeywordsState } from '../states'
+import { channelSettingState } from '../states'
 import { i18n } from '../i18n'
 import { TTelegrafContext } from '../types'
 
@@ -105,7 +105,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       info: `Added`,
       channel,
     })
-    await enterToState(ctx, addKeywordsState)
+    await enterToState(ctx, channelSettingState)
     return
   }
 }
