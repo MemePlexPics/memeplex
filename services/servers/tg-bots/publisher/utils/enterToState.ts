@@ -19,7 +19,9 @@ export const enterToState = async (ctx: TTelegrafContext, state: TState) => {
   }
   if (state.inlineMenu) {
     const inlineMenu = await state.inlineMenu(ctx)
-    await ctx.deleteMessage()
-    await ctx.reply(inlineMenu.text, Markup.inlineKeyboard(inlineMenu.buttons))
+    // await ctx.deleteMessage()
+    if (inlineMenu) {
+      await ctx.reply(inlineMenu.text, Markup.inlineKeyboard(inlineMenu.buttons))
+    }
   }
 }

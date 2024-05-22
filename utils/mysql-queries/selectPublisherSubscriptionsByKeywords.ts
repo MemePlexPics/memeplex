@@ -9,6 +9,7 @@ export const selectPublisherSubscriptionsByKeywords = async (
   return await db
     .select({
       channelId: botPublisherSubscriptions.channelId,
+      keyword: botPublisherKeywords.keyword,
     })
     .from(botPublisherSubscriptions)
     .leftJoin(

@@ -16,12 +16,14 @@ import {
   selectPublisherKeywordGroupNameByIds,
   selectPublisherKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
-import { EKeywordAction, callbackData } from '../constants'
+import { EKeywordAction, EKeywordGroupAction, callbackData } from '../constants'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { TPublisherDistributionQueueMsg } from '../../../../types'
 import { i18n } from '../i18n'
+import { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
 
 export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
+  const isTesting = process.env.ENVIRONMENT === 'TESTING'
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [distributionCh, distributionTimeout, distributionTimeotClear] = await getAmqpQueue(
     amqp,
@@ -87,9 +89,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
           }
           const channelId =
             payload.channelIdsByKeywordGroup[id]?.length > 1
-              ? payload.channelIdsByKeywordGroup[id].find(
-                channelId => channelId !== payload.userId,
-              )
+              ? payload.channelIdsByKeywordGroup[id].find(channelId => channelId !== payload.userId)
               : payload.channelIdsByKeywordGroup[id][0]
           if (!channelId) {
             throw new Error(`There is a message without a single channelId!`)
@@ -98,7 +98,7 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
             {
               text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(groupName),
               callback_data: callbackData.premoderationKeywordGroupButton(
-                EKeywordAction.DELETE,
+                EKeywordGroupAction.UNSUBSCRIBE,
                 channelId,
                 id,
               ),
@@ -161,19 +161,28 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
         const sourceLink = `[источник](https://t.me/${payload.document.channelName}/${payload.document.messageId})`
         const webLink = `[web](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId})`
         const botLink = `[bot](https://t.me/MemePlexPublisherBot?start=fw)`
-        await bot.telegram.sendPhoto(
-          payload.userId,
-          {
-            source: await fs.readFile(payload.document.fileName),
+        const text = [sourceLink, webLink, botLink].join('            /            ')
+        const messageParams: ExtraReplyMessage = {
+          parse_mode: 'Markdown',
+          reply_markup: {
+            inline_keyboard: buttons,
           },
-          {
-            parse_mode: 'Markdown',
-            reply_markup: {
-              inline_keyboard: buttons,
+        }
+        // TelegramTestApi return http.status == 500 on sendPhoto()
+        if (isTesting) {
+          await bot.telegram.sendMessage(payload.userId, text, messageParams)
+        } else {
+          await bot.telegram.sendPhoto(
+            payload.userId,
+            {
+              source: await fs.readFile(payload.document.fileName),
             },
-            caption: [sourceLink, webLink, botLink].join('            /            '),
-          },
-        )
+            {
+              ...messageParams,
+              caption: text,
+            },
+          )
+        }
         distributionCh.ack(msg)
       } catch (e) {
         if (e instanceof Error) {
