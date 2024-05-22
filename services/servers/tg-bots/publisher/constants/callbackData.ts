@@ -1,4 +1,4 @@
-import { ECallback, EKeywordAction } from '../constants'
+import { ECallback, EKeywordAction, EKeywordGroupAction } from '../constants'
 
 export const callbackData = {
   premoderationPostButton: (channelId: number, memeId: string) =>
@@ -6,7 +6,7 @@ export const callbackData = {
   premoderationKeywordButton: (action: EKeywordAction, channelId: number, keywordId: number) =>
     `${ECallback.KEY}|${action}|${channelId}|${keywordId}` as const,
   premoderationKeywordGroupButton: (
-    action: EKeywordAction,
+    action: EKeywordGroupAction,
     channelId: number,
     keywordGroupId: number,
   ) => `${ECallback.GROUP}|${action}|${channelId}|${keywordGroupId}` as const,

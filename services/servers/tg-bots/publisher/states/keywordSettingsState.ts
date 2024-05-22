@@ -28,6 +28,10 @@ export const keywordSettingsState: TState = {
           ctx.session.channel.id,
         )
         await db.close()
+        if (keywordRows.length === 0) {
+          await ctx.reply(i18n['ru'].message.thereAreNoKeywords())
+          return
+        }
         await ctx.reply(
           keywordRows.reduce((acc, keywordRow) => {
             if (acc) {
@@ -87,10 +91,13 @@ export const keywordSettingsState: TState = {
       pageSize,
     )
     await db.close()
+    if (keywordRows.length === 0) {
+      return false
+    }
     return {
       text: `${
         ctx.session.channel?.id === ctx.from.id
-          ? i18n['ru'].message.youEditingSubscriptionsForUser()
+          ? i18n['ru'].message.unsubscribeFromKeywords()
           : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
       }`,
       buttons: keywordRows
@@ -135,7 +142,9 @@ export const keywordSettingsState: TState = {
       isCommonMessage(ctx.callbackQuery.message)
     ) {
       const inlineMenu = await keywordSettingsState.inlineMenu(ctx)
-      await ctx.editMessageReplyMarkup(Markup.inlineKeyboard(inlineMenu.buttons).reply_markup)
+      if (inlineMenu) {
+        await ctx.editMessageReplyMarkup(Markup.inlineKeyboard(inlineMenu.buttons).reply_markup)
+      }
     }
     return
   },

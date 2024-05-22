@@ -12,6 +12,7 @@ import {
   selectPublisherPremiumUser,
 } from '../../../../../utils/mysql-queries'
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
+import { i18n } from '../i18n'
 
 export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -31,12 +32,12 @@ export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger
         | { status: 'paid'; amount: string }
       ) = JSON.parse(msg.content.toString())
       if ('bot_invoice_url' in payload) {
-        await bot.telegram.sendMessage(payload.userId, 'Ссылка для оплаты', {
+        await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentLink(), {
           reply_markup: {
             inline_keyboard: [
               [
                 {
-                  text: 'Ссылка на оплату',
+                  text: i18n['ru'].button.goToPremiumPayment(),
                   url: payload.bot_invoice_url,
                 },
               ],
@@ -50,14 +51,17 @@ export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger
         }
         const db = await getDbConnection()
         const userPremium = await selectPublisherPremiumUser(db, payload.userId)
-        const paidTime = 60 * 60 * 24 * 31 * paidPlan.months
-        const untilTimestamp =
+        const oldTimestamp =
           userPremium.length !== 0 && userPremium[0].untilTimestamp > Date.now() / 1000
-            ? userPremium[0].untilTimestamp + paidTime
-            : Date.now() / 1000 + paidTime
-        await insertPublisherPremiumUser(db, Number(payload.userId), untilTimestamp)
+            ? userPremium[0].untilTimestamp * 1000
+            : Date.now()
+        const date = new Date(oldTimestamp)
+        const newDate = Math.floor(
+          new Date(date.setMonth(date.getMonth() + paidPlan.months)).getTime() / 1000,
+        )
+        await insertPublisherPremiumUser(db, Number(payload.userId), newDate)
         await db.close()
-        await bot.telegram.sendMessage(payload.userId, '🎉 Оплата успешно произведена!')
+        await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentSuccessful())
       } else {
         cryptoPayToPublisherCh.nack(msg)
         continue
