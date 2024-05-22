@@ -5,6 +5,7 @@ import { getTelegramUser } from '../../utils'
 import { TTelegrafContext } from '../types'
 import { AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL } from '../../../../../constants'
 import { i18n } from '../i18n'
+import { TAmqpPublisherToCryptoPayChannelMessage } from '../../../../types'
 
 export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: number) => {
   try {
@@ -15,15 +16,13 @@ export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: numbe
     const { id, user } = getTelegramUser(ctx.from)
     const publisherToCryptoPayCh = await amqp.createChannel()
 
-    // TODO: type
-    const content = Buffer.from(
-      JSON.stringify({
-        id,
-        user,
-        amount,
-      }),
-    )
-    publisherToCryptoPayCh.sendToQueue(AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL, content, {
+    const content: TAmqpPublisherToCryptoPayChannelMessage = {
+      id,
+      user,
+      amount,
+    }
+    const buffer = Buffer.from(JSON.stringify(content))
+    publisherToCryptoPayCh.sendToQueue(AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL, buffer, {
       persistent: true,
     })
   } catch (error) {

@@ -8,7 +8,7 @@ export const handlePaywall = async (ctx: TTelegrafContext, fallbackState?: TStat
     if (fallbackState) {
       await enterToState(ctx, fallbackState)
     }
-    await ctx.reply(i18n['ru'].message.freeTariff(), {
+    await ctx.reply(i18n['ru'].message.premiumPlanFeatures(), {
       reply_markup: {
         inline_keyboard: [
           [
