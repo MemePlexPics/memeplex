@@ -15,7 +15,7 @@ export const buyPremiumState: TState = {
       },
     ]
     return {
-      text: i18n['ru'].message.freeTariff(),
+      text: i18n['ru'].message.premiumPlanFeatures(),
       buttons: [
         ...PREMIUM_PLANS.map(plan => {
           const button: TMenuButton = [
