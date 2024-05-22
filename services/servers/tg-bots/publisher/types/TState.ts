@@ -6,7 +6,7 @@ export type TState = {
   stateName: EState
   beforeInit?: (ctx: TTelegrafContext) => Promisable<boolean>
   menu?: (ctx: TTelegrafContext) => Promisable<TMenu>
-  inlineMenu?: (ctx: TTelegrafContext) => Promisable<TInlineMenu>
+  inlineMenu?: (ctx: TTelegrafContext) => Promisable<TInlineMenu | false>
   message?: (ctx: TTelegrafContext) => Promisable<string>
   onCallback?: (ctx: TTelegrafContext, callback: string) => Promisable<unknown>
   onText?: (ctx: TTelegrafContext, text: string) => Promisable<unknown>

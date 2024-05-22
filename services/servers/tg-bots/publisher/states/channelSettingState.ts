@@ -26,9 +26,7 @@ export const channelSettingState: TState = {
       ctx => enterToState(ctx, keywordGroupSelectState),
     ]
     const buyPremiumButton: TMenuButton = [
-      (await ctx.hasPremiumSubscription)
-        ? i18n['ru'].button.extendPremium()
-        : i18n['ru'].button.subscribeToPremium(),
+      i18n['ru'].button.premium(),
       ctx => enterToState(ctx, buyPremiumState),
     ]
     const unlinkChannelButton: TMenuButton = [
@@ -64,8 +62,7 @@ export const channelSettingState: TState = {
     if (ctx.session.channel.id !== ctx.from?.id) {
       buttons.push([unlinkChannelButton])
     }
-    buttons.push([buyPremiumButton])
-    buttons.push([backButton])
+    buttons.push([backButton, buyPremiumButton])
     const text = `
 ${i18n['ru'].message.thereTopicsAndKeywords()}
 ${(await ctx.hasPremiumSubscription) ? '' : i18n['ru'].message.topicAndKeywordsAccessByPlan() + '\n'}

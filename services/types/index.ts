@@ -5,3 +5,5 @@ export { TAmqpCryptoPayToPublisherChannelMessage } from './TAmqpCryptoPayToPubli
 export { TMemeEntity } from './TMemeEntity'
 export { TPublisherDistributionQueueMsg } from './TPublisherDistributionQueueMsg'
 export { TPrePublisherDistributionQueue } from './TPrePublisherDistributionQueue'
+export { TAmqpNLPToPublisherChannelMessage } from './TAmqpNLPToPublisherChannelMessage'
+export { TAmqpPublisherToCryptoPayChannelMessage } from './TAmqpPublisherToCryptoPayChannelMessage'

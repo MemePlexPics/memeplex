@@ -38,6 +38,7 @@ export const ru = {
     delimetersInsteadOfKeywords: () =>
       'В отправленном сообщении не обнаружено слов, только запятые и/или переносы строк',
     addedKeywords: () => '✅ Ключевые слова добавлены!',
+    thereAreNoKeywords: () => `Ключевые фразы не обнаружены`,
     keywordSettings: () => `
 Здесь можно настроить интересующие вас ключевые слова.
 
@@ -48,7 +49,7 @@ export const ru = {
       'Настройте подписки на ключевые фразы для себя или для своего канала.',
     keywordGroupsMenu: () => '📂 Меню добавления группы ключевых слов.',
     rateLimit: () => '❗️ Подождите несколько секунд перед повторной попыткой',
-    freeTariff: () => `
+    premiumPlanFeatures: () => `
 ✨ Премиум-подписка позволяет:
 
 - Настраивать уведомления о новых мемах на уровне отдельных ключевых фраз (интересующие вас темы, предметы или явления)
@@ -58,6 +59,7 @@ export const ru = {
     youEditingSubscriptionsForUser: () => ru.message.youEditingSubscriptionsFor('ваши подписки'),
     youEditingSubscriptionsForChannel: (channelName: string) =>
       ru.message.youEditingSubscriptionsFor(`подписки канала @${channelName}`),
+    unsubscribeFromKeywords: () => `Отписаться от ключевых фраз`,
     topicContainKewords: (topicName: string, keywords: string) => `
 📂 Топик «${topicName}» содержит фразы:
 ${keywords}`,
@@ -73,6 +75,8 @@ ${keywords}`,
     enterChannelNameInFormat: () =>
       'Введитие название канала в формате @name или https://t.me/name',
     somethingWentWrongTryLater: () => 'Что-то пошло не так. Пожалуйста, повторите попытку позже.',
+    paymentSuccessful: () => '🎉 Оплата успешно произведена!',
+    paymentLink: () => `Ссылка для оплаты`,
   },
   button: {
     back: () => '⬅️ Назад',
@@ -118,12 +122,14 @@ ${keywords}`,
     unsubscribeKeyword: (keyword: string) => `➖ Отписаться от «${keyword}»`,
     subscribeToPremium: () => '✨ Подключить премиум',
     extendPremium: () => '✨ Продлить премиум',
+    premium: () => '✨ Премиум',
     channelSubscriptions: (name: string) => `📢 Подписки @${name}`,
     buyPremium: (
       emoji: (typeof PREMIUM_PLANS)[number]['emoji'],
       months: (typeof PREMIUM_PLANS)[number]['months'],
       cost: (typeof PREMIUM_PLANS)[number]['cost'],
     ) => `${emoji} Премиум на ${ru.date.month[months]()} — ${cost}$`,
+    goToPremiumPayment: () => `✨ Перейти для оплаты премиума`,
   },
   date: {
     month: {
