@@ -8,7 +8,7 @@ import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../../constants'
 import { getAmqpQueue } from '../../../../utils'
 import { delay, getDbConnection } from '../../../../../utils'
 import {
-  insertPublisherPremiumUser,
+  upsertPublisherPremiumUser,
   selectPublisherPremiumUser,
 } from '../../../../../utils/mysql-queries'
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
@@ -59,7 +59,10 @@ export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger
         const newDate = Math.floor(
           new Date(date.setMonth(date.getMonth() + paidPlan.months)).getTime() / 1000,
         )
-        await insertPublisherPremiumUser(db, Number(payload.userId), newDate)
+        await upsertPublisherPremiumUser(db, {
+          userId: Number(payload.userId),
+          untilTimestamp: newDate,
+        })
         await db.close()
         await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentSuccessful())
       } else {
