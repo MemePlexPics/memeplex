@@ -1,5 +1,5 @@
 import { getDbConnection } from '../../../../../utils'
-import { insertPublisherChannel } from '../../../../../utils/mysql-queries'
+import { upsertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
 import { TTelegrafContext } from '../types'
 
@@ -15,7 +15,7 @@ export const onClickAddMyself = async (ctx: TTelegrafContext) => {
   }
   const db = await getDbConnection()
   const timestamp = Date.now() / 1000
-  await insertPublisherChannel(db, {
+  await upsertPublisherChannel(db, {
     id: ctx.from.id,
     userId: ctx.from.id,
     username: username.user,
