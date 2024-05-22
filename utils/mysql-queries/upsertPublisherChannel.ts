@@ -1,7 +1,7 @@
 import { botPublisherChannels } from '../../db/schema'
 import { TDbConnection } from '../types'
 
-export const insertPublisherChannel = async (
+export const upsertPublisherChannel = async (
   db: TDbConnection,
   values: typeof botPublisherChannels.$inferInsert,
 ) => {

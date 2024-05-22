@@ -86,7 +86,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -186,7 +187,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -271,7 +273,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -296,7 +299,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "alias": "",
@@ -342,7 +345,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -369,7 +373,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -485,7 +489,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -512,7 +517,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -619,7 +624,8 @@
                 "value": null
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": []
       },
@@ -645,7 +651,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -710,7 +716,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -795,7 +802,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "datasource": "Loki",
@@ -889,7 +896,8 @@
                 "value": 80
               }
             ]
-          }
+          },
+          "unitScale": true
         },
         "overrides": [
           {
@@ -951,7 +959,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.4.2",
+      "pluginVersion": "10.3.3",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -989,6 +997,150 @@
       ],
       "title": "OCR keys",
       "type": "table"
+    },
+    {
+      "datasource": "MySQL",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 5,
+        "x": 19,
+        "y": 19
+      },
+      "id": 39,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.3",
+      "targets": [
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as Paid FROM MadelineProto.bot_publisher_invoices WHERE status = 'paid'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "id",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "bot_users"
+        },
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as Active FROM MadelineProto.bot_publisher_invoices WHERE status = 'active'",
+          "refId": "B",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "MadelineProto",
+          "datasource": "MySQL",
+          "editorMode": "code",
+          "format": "table",
+          "hide": false,
+          "rawQuery": true,
+          "rawSql": "SELECT COUNT(*) as Expired FROM MadelineProto.bot_publisher_invoices WHERE status = 'expired'",
+          "refId": "C",
+          "sql": {
+            "columns": [
+              {
+                "name": "COUNT",
+                "parameters": [
+                  {
+                    "name": "*",
+                    "type": "functionParameter"
+                  }
+                ],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          },
+          "table": "bot_publisher_users"
+        }
+      ],
+      "title": "Invoices",
+      "type": "stat"
     },
     {
       "collapsed": true,
@@ -1044,7 +1196,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -1249,7 +1402,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   }
                 ]
               },
@@ -1429,7 +1583,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1675,7 +1830,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -1935,7 +2091,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2106,7 +2263,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2269,7 +2427,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2432,7 +2591,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2576,7 +2736,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2740,7 +2901,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -2946,7 +3108,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -3135,7 +3298,8 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -3340,7 +3504,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 105
+            "y": 129
           },
           "id": 1,
           "options": {
@@ -3431,7 +3595,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 105
+            "y": 129
           },
           "id": 2,
           "options": {
@@ -3506,7 +3670,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 113
+            "y": 137
           },
           "id": 3,
           "options": {
@@ -3581,7 +3745,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 113
+            "y": 137
           },
           "id": 4,
           "options": {
@@ -3656,7 +3820,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 121
+            "y": 145
           },
           "id": 19,
           "options": {
@@ -3735,7 +3899,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 121
+            "y": 145
           },
           "id": 21,
           "options": {
@@ -3901,7 +4065,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 129
+            "y": 153
           },
           "id": 20,
           "options": {
@@ -3980,7 +4144,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 129
+            "y": 153
           },
           "id": 22,
           "options": {
@@ -4075,6 +4239,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 66,
+  "version": 41,
   "weekStart": ""
 }
