@@ -46,7 +46,7 @@ export const CHANNEL_LIST_PAGE_SIZE = 100
 // Delay time for the loopRetrying() after an error is catched
 export const LOOP_RETRYING_DELAY = 5_000
 // AMQP queue delay time for recheck after empty queue
-export const EMPTY_QUEUE_RETRY_DELAY = 10_000
+export const EMPTY_QUEUE_RETRY_DELAY = process.env.ENVIRONMENT === 'TESTING' ? 100 : 10_000
 // Max proxy speed test wait time
 export const PROXY_TEST_TIMEOUT = 5_000
 // Must be http (because many proxies don't support SSL)

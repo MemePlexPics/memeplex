@@ -11,6 +11,9 @@ import {
   enterToState,
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
+  handleDistributionQueue,
+  handleInvoiceQueue,
+  handleNlpQueue,
   logUserAction,
 } from '../utils'
 import {
@@ -27,10 +30,12 @@ import {
   getElasticClient,
   logError,
   logInfo,
+  loopRetrying,
 } from '../../../../../utils'
 import { insertPublisherUser, selectPublisherPremiumUser } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { Logger } from 'winston'
+import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
 
 export const init = async (
   token: string,
@@ -166,6 +171,22 @@ export const init = async (
         }
     await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
     await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })
+  })
+
+  loopRetrying(() => handleNlpQueue(logger), {
+    logger: logger,
+    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
+    catchDelayMs: LOOP_RETRYING_DELAY,
+  })
+  loopRetrying(() => handleDistributionQueue(bot, logger), {
+    logger: logger,
+    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
+    catchDelayMs: LOOP_RETRYING_DELAY,
+  })
+  loopRetrying(() => handleInvoiceQueue(bot, logger), {
+    logger: logger,
+    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
+    catchDelayMs: LOOP_RETRYING_DELAY,
   })
 
   return bot

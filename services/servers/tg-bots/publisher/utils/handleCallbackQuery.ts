@@ -1,5 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import {
+  enterToState,
   handleGroupKeywordAction,
   handleKeywordAction,
   handleKeywordGroupAction,
@@ -9,6 +10,7 @@ import { TState, TTelegrafContext } from '../types'
 import { ECallback, EKeywordAction, callbackData } from '../constants'
 import { isCallbackQueryUpdate, isDataQuery } from '../typeguards'
 import { SplitString } from '../../../../../types'
+import { buyPremiumState } from '../states'
 
 export const handleCallbackQuery = async (
   ctx: TTelegrafContext,
@@ -17,7 +19,8 @@ export const handleCallbackQuery = async (
 ) => {
   if (!isCallbackQueryUpdate(ctx.update) || !isDataQuery(ctx.update.callback_query)) return
   const callbackQuery = ctx.update.callback_query.data
-  const [state, ...restCb] = callbackQuery.split('|')
+  const [firstPartCb, ...restCb] = callbackQuery.split('|')
+  const state = firstPartCb as ECallback
   if (state === ECallback.IGNORE) {
     return
   }
@@ -76,5 +79,10 @@ export const handleCallbackQuery = async (
     )
     return
   }
+  if (state === ECallback.PAY) {
+    await enterToState(ctx, buyPremiumState)
+    return
+  }
+  state satisfies never
   if (handler) await handler(ctx, callbackQuery)
 }

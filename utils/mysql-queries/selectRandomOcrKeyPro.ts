@@ -1,5 +1,5 @@
 import { ocrKeysPro } from '../../db/schema'
-import { eq, or, sql } from 'drizzle-orm'
+import { isNull, or, sql } from 'drizzle-orm'
 import { TDbConnection } from '../types'
 import { OCR_SPACE_403_DELAY } from '../../constants'
 
@@ -9,7 +9,7 @@ export const selectRandomOcrKeyPro = async (db: TDbConnection) => {
     .from(ocrKeysPro)
     .where(
       or(
-        eq(ocrKeysPro.timeout, null),
+        isNull(ocrKeysPro.timeout),
         sql`'${ocrKeysPro.timeout}' < DATE_ADD(NOW(), INTERVAL ${OCR_SPACE_403_DELAY}000 MICROSECOND)`,
       ),
     )
