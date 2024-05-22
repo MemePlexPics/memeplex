@@ -150,7 +150,8 @@ export const init = async (
 
   bot.on(message('text'), async ctx => {
     const text = ctx.update.message.text
-    if (states[ctx.session.state].menu) {
+    const state = states[ctx.session.state]
+    if (state.menu) {
       const { onTextHandlers } = await getMenuButtonsAndHandlers(ctx, states[ctx.session.state])
       const handler = onTextHandlers[text]
       if (handler) {
@@ -158,7 +159,11 @@ export const init = async (
         return
       }
     }
-    await states[ctx.session.state].onText?.(ctx, text)
+    if (state.onText) {
+      await state.onText(ctx, text)
+      return
+    }
+    await ctx.reply(i18n['ru'].message.unexpectedMessage())
   })
 
   bot.catch(async (err, ctx) => {
@@ -169,8 +174,12 @@ export const init = async (
           name: 'Unknown error',
           message: JSON.stringify(err),
         }
-    await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
-    await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })
+    try {
+      // In case we catch errors when sending messages
+      await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
+    } finally {
+      await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })
+    }
   })
 
   loopRetrying(() => handleNlpQueue(logger), {

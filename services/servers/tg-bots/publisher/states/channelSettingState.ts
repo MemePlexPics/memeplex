@@ -15,14 +15,15 @@ export const channelSettingState: TState = {
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in channelSettingState`)
     }
+    const isChannel = ctx.session.channel.id !== ctx.from.id
     const db = await getDbConnection()
     await db.close()
     const editKeywordsButton: TMenuButton = [
-      i18n['ru'].button.editKeywords(),
+      `${i18n['ru'].button.editKeywords()} ${isChannel ? `(@${ctx.session.channel.name})` : ''}`,
       ctx => enterToState(ctx, keywordSettingsState),
     ]
     const editKeywordGroupsButton: TMenuButton = [
-      i18n['ru'].button.addKyewordGroup((await ctx.hasPremiumSubscription) ? '✏️' : '✨'),
+      `${i18n['ru'].button.addKyewordGroup((await ctx.hasPremiumSubscription) ? '✏️' : '✨')} ${isChannel ? `(@${ctx.session.channel.name})` : ''}`,
       ctx => enterToState(ctx, keywordGroupSelectState),
     ]
     const buyPremiumButton: TMenuButton = [
@@ -63,16 +64,8 @@ export const channelSettingState: TState = {
       buttons.push([unlinkChannelButton])
     }
     buttons.push([backButton, buyPremiumButton])
-    const text = `
-${i18n['ru'].message.thereTopicsAndKeywords()}
-${(await ctx.hasPremiumSubscription) ? '' : i18n['ru'].message.topicAndKeywordsAccessByPlan() + '\n'}
-${
-  ctx.session.channel?.id === ctx.from.id
-    ? i18n['ru'].message.youEditingSubscriptionsForUser()
-    : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
-}`
     return {
-      text,
+      text: i18n['ru'].message.thereTopicsAndKeywords(),
       buttons,
     }
   },
