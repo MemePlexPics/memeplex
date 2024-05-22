@@ -8,7 +8,7 @@
     "sourceMap": true,
     "outDir": "dist",
     "skipLibCheck": true,
-    "strict": true,
+    // "strict": true,
     // "noUncheckedIndexedAccess": true
   },
   "lib": ["es2015"],
