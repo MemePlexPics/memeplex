@@ -1,4 +1,4 @@
-type TPayUrl = `https://t.me/${'CryptoBot' | 'CryptoTestnetBot'}?start=${TInvoice['hash']}`
+type TPayUrl = `https://t.me/${'CryptoBot' | 'CryptoTestnetBot'}?start=${TBaseInvoice['hash']}`
 
 /** Such as 'USDT', 'TON', 'BTC', 'ETH' */
 type TAsset = string
