@@ -6,7 +6,7 @@ import {
   insertPublisherGroupSubscription,
   selectPublisherKeywordGroupNameByIds,
 } from '../../../../../utils/mysql-queries'
-import { EKeywordAction, callbackData } from '../constants'
+import { EKeywordAction, EKeywordGroupAction, callbackData } from '../constants'
 import { TTelegrafContext } from '../types'
 import { i18n } from '../i18n'
 
@@ -45,12 +45,12 @@ export const handleKeywordGroupAction = async (
   await db.close()
 
   const callbackForUnsubscribe = callbackData.premoderationKeywordGroupButton(
-    EKeywordAction.DELETE,
+    EKeywordGroupAction.UNSUBSCRIBE,
     channelId,
     keywordGroupId,
   )
   const callbackForSubscribe = callbackData.premoderationKeywordGroupButton(
-    EKeywordAction.SUBSCRIBE,
+    EKeywordGroupAction.SUBSCRIBE,
     channelId,
     keywordGroupId,
   )

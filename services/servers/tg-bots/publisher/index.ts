@@ -1,8 +1,7 @@
 import process from 'process'
 import 'dotenv/config'
-import { handleDistributionQueue, handleInvoiceQueue, handleNlpQueue, init } from './utils'
-import { getElasticClient, loopRetrying } from '../../../../utils'
-import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../constants'
+import { init } from './utils'
+import { getElasticClient } from '../../../../utils'
 import { i18n } from './i18n'
 import { getLogger } from '../utils'
 
@@ -52,22 +51,6 @@ const start = async () => {
   process.once('SIGTERM', async () => {
     await elastic.close()
     bot.stop('SIGTERM')
-  })
-
-  loopRetrying(() => handleNlpQueue(logger), {
-    logger: logger,
-    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
-    catchDelayMs: LOOP_RETRYING_DELAY,
-  })
-  loopRetrying(() => handleDistributionQueue(bot, logger), {
-    logger: logger,
-    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
-    catchDelayMs: LOOP_RETRYING_DELAY,
-  })
-  loopRetrying(() => handleInvoiceQueue(bot, logger), {
-    logger: logger,
-    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
-    catchDelayMs: LOOP_RETRYING_DELAY,
   })
 }
 

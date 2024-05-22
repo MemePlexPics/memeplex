@@ -1,5 +1,5 @@
 import { proxies } from '../../db/schema'
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray, isNull } from 'drizzle-orm'
 import { TDbConnection } from '../types'
 
 export const selectFastestAvailableProxyWithoutKey = async (db: TDbConnection) => {
@@ -10,7 +10,7 @@ export const selectFastestAvailableProxyWithoutKey = async (db: TDbConnection) =
       and(
         inArray(proxies.anonymity, ['anonymous', 'elite']),
         eq(proxies.availability, 1),
-        eq(proxies.ocrKey, null),
+        isNull(proxies.ocrKey),
       ),
     )
     .orderBy(proxies.speed)
