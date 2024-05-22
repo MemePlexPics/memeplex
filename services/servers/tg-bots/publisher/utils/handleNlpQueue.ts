@@ -15,7 +15,7 @@ import {
   selectPublisherSubscriptionsByKeywords,
 } from '../../../../../utils/mysql-queries'
 import {
-  TMemeEntity,
+  TAmqpNLPToPublisherChannelMessage,
   TPrePublisherDistributionQueue,
   TPublisherDistributionQueueMsg,
 } from '../../../../types'
@@ -49,15 +49,11 @@ export const handleNlpQueue = async (logger: Logger) => {
     for (;;) {
       const msg = await receiveNlpMessageCh.get(AMQP_NLP_TO_PUBLISHER_CHANNEL)
       if (!msg) {
-        await delay(EMPTY_QUEUE_RETRY_DELAY)
+        await delay(process.env.ENVIRONMENT === 'TESTING' ? 100 : EMPTY_QUEUE_RETRY_DELAY)
         continue
       }
       receiveNlpMessageTimeout(600_000, logger, msg)
-      const payload: {
-        memeId: string
-        memeData: TMemeEntity
-        matchedKeywords: string[]
-      } = JSON.parse(msg.content.toString())
+      const payload: TAmqpNLPToPublisherChannelMessage = JSON.parse(msg.content.toString())
 
       const queue: TPrePublisherDistributionQueue = {}
 
@@ -86,16 +82,18 @@ export const handleNlpQueue = async (logger: Logger) => {
             payload.matchedKeywords,
           )
           : []
-      const unsubscriptionKeywordsByChannelId = unsubscriptions.reduce(
-        (obj, { channelId, keyword }) => {
-          if (!obj[keyword]) {
-            obj[keyword] = {}
-          }
-          obj[keyword][channelId] = true
+      const unsubscriptionKeywordsByChannelId = unsubscriptions.reduce<
+      Record<string, Record<number, true>>
+      >((obj, { channelId, keyword }) => {
+        if (!keyword) {
           return obj
-        },
-        {},
-      )
+        }
+        if (!obj[keyword]) {
+          obj[keyword] = {}
+        }
+        obj[keyword][channelId] = true
+        return obj
+      }, {})
       for (const keyword of payload.matchedKeywords) {
         const groupSubscriptions = groupSubscriptionsByKeyword[keyword] ?? []
 
@@ -142,36 +140,39 @@ export const handleNlpQueue = async (logger: Logger) => {
           }
           groupKeywordIdsByUser[userId][keyword] = groupId
         }
+      }
 
-        for (const { channelId } of subscriptions) {
-          const userId = await getPublisherUserByChannelIdAndTariffPlan(
-            db,
-            queue,
-            tariffPlanByUsers,
-            channelId,
-            payload.memeId,
-            payload.memeData,
-          )
-          if (
-            tariffPlanByUsers[userId] === 'free' ||
-            (groupKeywordIdsByUser[userId] && keyword in groupKeywordIdsByUser[userId])
-          )
-            continue
-
-          if (!channelIdsByKeyword[userId]) {
-            channelIdsByKeyword[userId] = {}
-          }
-          if (!channelIdsByKeyword[userId][keyword]) {
-            channelIdsByKeyword[userId][keyword] = new Set<number>()
-          }
-          channelIdsByKeyword[userId][keyword].add(channelId)
-
-          if (!keywordsByUser[userId]) {
-            keywordsByUser[userId] = new Set<string>()
-          }
-          queue[userId].channelIds.push(channelId)
-          keywordsByUser[userId].add(keyword)
+      for (const { channelId, keyword } of subscriptions) {
+        if (!keyword) {
+          continue
         }
+        const userId = await getPublisherUserByChannelIdAndTariffPlan(
+          db,
+          queue,
+          tariffPlanByUsers,
+          channelId,
+          payload.memeId,
+          payload.memeData,
+        )
+        if (
+          tariffPlanByUsers[userId] === 'free' ||
+          (groupKeywordIdsByUser[userId] && keyword in groupKeywordIdsByUser[userId])
+        )
+          continue
+
+        if (!channelIdsByKeyword[userId]) {
+          channelIdsByKeyword[userId] = {}
+        }
+        if (!channelIdsByKeyword[userId][keyword]) {
+          channelIdsByKeyword[userId][keyword] = new Set<number>()
+        }
+        channelIdsByKeyword[userId][keyword].add(channelId)
+
+        if (!keywordsByUser[userId]) {
+          keywordsByUser[userId] = new Set<string>()
+        }
+        queue[userId].channelIds.push(channelId)
+        keywordsByUser[userId].add(keyword)
       }
       await db.close()
 

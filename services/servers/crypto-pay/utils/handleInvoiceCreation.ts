@@ -12,7 +12,10 @@ import {
 } from '../../../../constants'
 import { Logger } from 'winston'
 import { TInvoiceCreated } from '../types'
-import { TAmqpCryptoPayToPublisherChannelMessage } from '../../../types'
+import {
+  TAmqpCryptoPayToPublisherChannelMessage,
+  TAmqpPublisherToCryptoPayChannelMessage,
+} from '../../../types'
 import { insertPublisherInvoice } from '../../../../utils/mysql-queries'
 
 export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger) => {
@@ -31,8 +34,7 @@ export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger
         continue
       }
       distributionTimeout(600_000, logger, msg)
-      // TODO: type
-      const payload = JSON.parse(msg.content.toString())
+      const payload: TAmqpPublisherToCryptoPayChannelMessage = JSON.parse(msg.content.toString())
       const invoice: TInvoiceCreated = await cryptoPay.createInvoice(undefined, undefined, {
         currency_type: 'fiat',
         fiat: 'USD',
