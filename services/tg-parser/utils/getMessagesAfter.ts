@@ -62,11 +62,8 @@ export const getMessagesAfter = async function* (
         const forwardedFrom = chats[message?.fwd_from?.from_id]
         if (forwardedFrom) {
           const db = await getDbConnection()
-          // FIX: select at first
-          const response = await insertChannelSuggestion(db, forwardedFrom)
+          await insertChannelSuggestion(db, forwardedFrom)
           await db.close()
-          if (response)
-            logger.info(`Channel @${forwardedFrom} was automatically suggested (forward)`)
         }
         yield {
           channelName,
