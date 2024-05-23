@@ -13,10 +13,10 @@ import { TAmqpImageFileChannelMessage } from '../types'
 
 // Listens for messages containing images, outputs messages containing OCR'd text
 export const ocr = async (logger: Logger) => {
-  let elastic: Client,
-    amqp: Connection,
-    receiveImageFileCh: Channel,
-    receiveImageFileClearTimeout: () => void
+  let elastic: Client | undefined,
+    amqp: Connection | undefined,
+    receiveImageFileCh: Channel | undefined,
+    receiveImageFileClearTimeout: (() => void) | undefined
 
   try {
     elastic = await getElasticClient()
@@ -58,7 +58,9 @@ export const ocr = async (logger: Logger) => {
         try {
           await handlePublisherDistribution(document, meme._id)
         } catch (error) {
-          await logError(logger, error)
+          if (error instanceof Error) {
+            await logError(logger, error)
+          }
         }
       } else {
         fs.unlink(payload.fileName)
@@ -67,7 +69,7 @@ export const ocr = async (logger: Logger) => {
       receiveImageFileCh.ack(msg)
     }
   } finally {
-    receiveImageFileClearTimeout()
+    if (receiveImageFileClearTimeout) receiveImageFileClearTimeout()
     if (receiveImageFileCh) await receiveImageFileCh.close()
     if (amqp) await amqp.close()
     if (elastic) await elastic.close()
