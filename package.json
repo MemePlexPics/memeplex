@@ -71,6 +71,7 @@
       "**/tests/**/*.test.ts"
     ],
     "preset": "ts-jest",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "maxWorkers": "1"
   }
 }

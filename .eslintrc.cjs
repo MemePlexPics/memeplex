@@ -65,7 +65,7 @@ module.exports = {
             }
         }
     ],
-    ignorePatterns: ['webpack.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],
+    ignorePatterns: ['*.config.ts', 'node_modules', 'dist', '.eslintrc.cjs'],
     rules: {
         indent: [
             'warn',

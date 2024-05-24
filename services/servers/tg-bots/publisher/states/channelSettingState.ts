@@ -19,11 +19,11 @@ export const channelSettingState: TState = {
     const db = await getDbConnection()
     await db.close()
     const editKeywordsButton: TMenuButton = [
-      `${i18n['ru'].button.editKeywords()} ${isChannel ? `(@${ctx.session.channel.name})` : ''}`,
+      `${i18n['ru'].button.editKeywords()}${isChannel ? ` (@${ctx.session.channel.name})` : ''}`,
       ctx => enterToState(ctx, keywordSettingsState),
     ]
     const editKeywordGroupsButton: TMenuButton = [
-      `${i18n['ru'].button.addKyewordGroup((await ctx.hasPremiumSubscription) ? '✏️' : '✨')} ${isChannel ? `(@${ctx.session.channel.name})` : ''}`,
+      `${i18n['ru'].button.editTopics((await ctx.hasPremiumSubscription) ? '✏️' : '✨')}${isChannel ? ` (@${ctx.session.channel.name})` : ''}`,
       ctx => enterToState(ctx, keywordGroupSelectState),
     ]
     const buyPremiumButton: TMenuButton = [
