@@ -26,4 +26,7 @@ export const handlePaidInvoice = async (
   })
   const db = await getDbConnection()
   await updatePublisherInvoiceStatus(db, invoiceId, 'paid')
+  await db.close()
+  await cryptoPayToPublisherCh.close()
+  await amqp.close()
 }
