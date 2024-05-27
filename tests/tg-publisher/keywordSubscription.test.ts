@@ -1,4 +1,4 @@
-import TelegramServer from 'telegram-test-api'
+import TelegramServer from '@vishtar/telegram-test-api'
 import { init } from '../../services/servers/tg-bots/publisher/utils'
 import { getTestLogger } from '../utils'
 import {
@@ -56,18 +56,16 @@ describe('Keyword subscribtion', () => {
     await tgServer.start()
     bot.launch()
     tgClient = new TelegramClientWrapper(tgServer.config.apiURL, token, { timeout: 5000 })
-    tgClientSecond = new TelegramClientWrapper(tgServer.config.apiURL, token, {
-      userId: 2,
-      timeout: 5000,
-    })
+    // tgClientSecond = new TelegramClientWrapper(tgServer.config.apiURL, token, {
+    //   userId: 2,
+    //   timeout: 5000,
+    // })
     const db = await getDbConnection()
     await cleanUpPublisherPremium(db, cryptoPay)
     await db.close()
   })
 
   afterAll(async () => {
-    bot.stop()
-    await tgServer.stop()
     const db = await getDbConnection()
     await cleanUpPublisherPremium(db, cryptoPay)
     await cleanUpPublisherPremium(db, cryptoPay, 2)
@@ -132,6 +130,7 @@ describe('Keyword subscribtion', () => {
       persistent: true,
     })
     try {
+      // TODO: fix... something after this empty getUpdates()
       const updates = await tgClient.getUpdates()
       throw new Error(`There are unexpected udates for «${keywordSecondUser}»: ${JSON.stringify(updates, null ,2)}`)
     } catch (error) {
@@ -154,10 +153,10 @@ describe('Keyword subscribtion', () => {
 
     await tgClient.sendCallback(
       // TODO: get callback_data by a template
-      tgClient.makeCallbackQuery(`${EKeywordAction.DELETE}|1`, {
+      tgClient.makeCallbackQuery(`${EKeywordAction.DELETE}|${keywordFirstUserId}`, {
         message: {
           // @ts-expect-error number to DeepPartial<any>
-          message_id: topicsMenu.messageId,
+          message_id: keywordSettingsMenu.messageId,
           reply_markup: {
             inline_keyboard: keywordSettingsMenu.message.reply_markup.inline_keyboard,
           },

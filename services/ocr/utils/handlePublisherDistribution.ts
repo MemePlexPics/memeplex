@@ -11,6 +11,7 @@ export const handlePublisherDistribution = async (document: TMemeEntity, memeId:
   const sendMemeDataToNlpCh = await amqp.createChannel()
   const db = await getDbConnection()
   const keywords = await getPublisherKeywords(db)
+  await db.close()
   const allKeywords = new Set<string>()
   keywords.forEach(({ keyword }) => allKeywords.add(keyword))
 
@@ -25,5 +26,6 @@ export const handlePublisherDistribution = async (document: TMemeEntity, memeId:
     ),
     { persistent: true },
   )
-  await db.close()
+  await sendMemeDataToNlpCh.close()
+  await amqp.close()
 }

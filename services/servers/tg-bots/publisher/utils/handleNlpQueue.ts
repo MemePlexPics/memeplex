@@ -53,6 +53,7 @@ export const handleNlpQueue = async (logger: Logger) => {
         continue
       }
       receiveNlpMessageTimeout(600_000, logger, msg)
+      const db = await getDbConnection()
       const payload: TAmqpNLPToPublisherChannelMessage = JSON.parse(msg.content.toString())
 
       const queue: TPrePublisherDistributionQueue = {}
@@ -64,7 +65,6 @@ export const handleNlpQueue = async (logger: Logger) => {
       const channelIdsByKeyword: Record<number, Record<string, Set<number>>> = {}
       const channelIdsByKeywordGroup: Record<number, Record<string, Set<number>>> = {}
       const tariffPlanByUsers: Record<number, 'free' | 'premium'> = {}
-      const db = await getDbConnection()
       const { channelIds, groupSubscriptionsByKeyword } = await getGroupSubscriptionsByKeywords(
         db,
         payload.matchedKeywords,

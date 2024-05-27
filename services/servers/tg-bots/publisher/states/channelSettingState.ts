@@ -15,15 +15,16 @@ export const channelSettingState: TState = {
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in channelSettingState`)
     }
+    const hasPremiumSubscription = await ctx.hasPremiumSubscription
     const isChannel = ctx.session.channel.id !== ctx.from.id
     const db = await getDbConnection()
     await db.close()
     const editKeywordsButton: TMenuButton = [
-      `${i18n['ru'].button.editKeywords()}${isChannel ? ` (@${ctx.session.channel.name})` : ''}`,
+      i18n['ru'].button.editKeywords(isChannel ? ctx.session.channel.name : undefined),
       ctx => enterToState(ctx, keywordSettingsState),
     ]
     const editKeywordGroupsButton: TMenuButton = [
-      `${i18n['ru'].button.editTopics((await ctx.hasPremiumSubscription) ? '✏️' : '✨')}${isChannel ? ` (@${ctx.session.channel.name})` : ''}`,
+      i18n['ru'].button.editTopics(hasPremiumSubscription ? '✏️' : '✨', isChannel ? ctx.session.channel.name : undefined),
       ctx => enterToState(ctx, keywordGroupSelectState),
     ]
     const buyPremiumButton: TMenuButton = [
@@ -53,7 +54,7 @@ export const channelSettingState: TState = {
       },
     ]
     const buttons: TMenuButton[][] = []
-    if (await ctx.hasPremiumSubscription) {
+    if (hasPremiumSubscription) {
       buttons.push([editKeywordsButton])
       buttons.push([editKeywordGroupsButton])
     } else {
@@ -72,7 +73,7 @@ export const channelSettingState: TState = {
   onCallback: async (ctx, callback) => {
     if (callback === 'unlink') {
       await onClickDeleteChannel(ctx)
-      await ctx.deleteMessage()
+      // await ctx.deleteMessage()
       ctx.session.channel = undefined
       await ctx.reply(i18n['ru'].message.youCanDemoteBotFromAdmin())
       await enterToState(ctx, mainState)
