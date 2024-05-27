@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { featuredChannels } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const selectActiveFeaturedChannels = async (db: TDbConnection) => {
   return await db

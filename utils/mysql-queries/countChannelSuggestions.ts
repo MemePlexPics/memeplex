@@ -1,5 +1,5 @@
 import { and, count, eq, like } from 'drizzle-orm'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 import { channelSuggestions } from '../../db/schema'
 
 export const countChannelSuggestions = async (db: TDbConnection, { name }: { name?: string }) => {

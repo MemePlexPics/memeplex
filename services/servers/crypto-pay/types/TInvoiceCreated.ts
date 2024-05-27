@@ -1,4 +1,4 @@
-import { TInvoice } from '.'
+import type { TInvoice } from '.'
 
 export type TInvoiceCreated = Pick<
 TInvoice,

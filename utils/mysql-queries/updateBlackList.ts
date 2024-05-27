@@ -1,5 +1,5 @@
 import { wordsBlacklist } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const updateBlackList = async (
   db: TDbConnection,

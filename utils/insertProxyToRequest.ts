@@ -1,4 +1,4 @@
-import { CreateAxiosDefaults } from 'axios'
+import type { CreateAxiosDefaults } from 'axios'
 import { SocksProxyAgent } from 'socks-proxy-agent'
 
 export const insertProxyToRequest = (

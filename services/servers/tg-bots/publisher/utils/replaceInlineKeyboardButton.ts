@@ -1,6 +1,6 @@
 import { isCommonMessage, isCallbackButton } from '../typeguards'
-import { TTelegrafContext } from '../types'
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { TTelegrafContext } from '../types'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export const replaceInlineKeyboardButton = async (
   ctx: TTelegrafContext,

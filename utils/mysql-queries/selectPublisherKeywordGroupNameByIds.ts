@@ -1,6 +1,6 @@
 import { inArray } from 'drizzle-orm'
 import { botPublisherKeywordGroupNames } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const selectPublisherKeywordGroupNameByIds = async (
   db: TDbConnection,

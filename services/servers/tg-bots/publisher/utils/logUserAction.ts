@@ -1,5 +1,5 @@
 import { getTelegramUser } from '../../utils'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 
 export const logUserAction = async (
   ctx: TTelegrafContext,

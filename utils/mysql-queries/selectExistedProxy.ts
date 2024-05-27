@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { proxies } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export async function selectExistedProxy(db: TDbConnection, proxy: string, protocol: string) {
   const result = await db

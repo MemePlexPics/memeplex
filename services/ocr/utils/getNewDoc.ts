@@ -1,4 +1,4 @@
-import { TAmqpImageFileChannelMessage, TMemeEntity } from '../../types'
+import type { TAmqpImageFileChannelMessage, TMemeEntity } from '../../types'
 
 export const getNewDoc = (
   payload: TAmqpImageFileChannelMessage,

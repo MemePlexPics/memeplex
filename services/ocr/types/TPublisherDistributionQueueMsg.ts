@@ -1,4 +1,4 @@
-import { TMemeEntity } from '../../types'
+import type { TMemeEntity } from '../../types'
 
 export type TPublisherDistributionQueueMsg = {
   userId: number

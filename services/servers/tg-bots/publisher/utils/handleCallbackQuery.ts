@@ -1,4 +1,4 @@
-import { Client } from '@elastic/elasticsearch'
+import type { Client } from '@elastic/elasticsearch'
 import {
   enterToState,
   handleGroupKeywordAction,
@@ -6,10 +6,11 @@ import {
   handleKeywordGroupAction,
   handleMemePost,
 } from '.'
-import { TState, TTelegrafContext } from '../types'
-import { ECallback, EKeywordAction, callbackData } from '../constants'
+import type { TState, TTelegrafContext } from '../types'
+import type { EKeywordAction, callbackData } from '../constants'
+import { ECallback } from '../constants'
 import { isCallbackQueryUpdate, isDataQuery } from '../typeguards'
-import { SplitString } from '../../../../../types'
+import type { SplitString } from '../../../../../types'
 import { buyPremiumState } from '../states'
 
 export const handleCallbackQuery = async (

@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios'
+import type { AxiosError } from 'axios'
 import { OCR_SPACE_403_DELAY } from '../../../constants'
 import { InfoMessage, dateToYyyyMmDdHhMmSs, getDbConnection } from '../../../utils'
 import { updateKeyTimeout } from '../../../utils/mysql-queries'

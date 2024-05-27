@@ -4,7 +4,7 @@ import 'dotenv/config'
 
 import * as queues from '../../constants/amqpChannels'
 import { sendToLoki } from '../../utils'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export const amqpQueueMessageCounter = async (_logger: Logger) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)

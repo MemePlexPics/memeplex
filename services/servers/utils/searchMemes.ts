@@ -1,7 +1,7 @@
 import { ELASTIC_INDEX, ELASTIC_FUZZINESS } from '../../../constants'
 import { getMemeResponseEntity } from '.'
-import { Client } from '@elastic/elasticsearch'
-import { TElasticMemeEntity } from '../../types'
+import type { Client } from '@elastic/elasticsearch'
+import type { TElasticMemeEntity } from '../../types'
 
 export const searchMemes = async (
   client: Client,

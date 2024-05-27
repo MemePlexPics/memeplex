@@ -1,7 +1,7 @@
 import { getDbConnection } from '../../../../../utils'
 import { upsertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 
 export const onClickAddMyself = async (ctx: TTelegrafContext) => {
   if (!ctx.from) {

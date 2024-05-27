@@ -3,7 +3,7 @@ import process from 'process'
 
 import { getElasticClient } from '../utils/index'
 import { ELASTIC_INDEX } from '../constants/index'
-import { Client } from '@elastic/elasticsearch'
+import type { Client } from '@elastic/elasticsearch'
 
 const PUBLIC_PATH = './frontend/src/public'
 

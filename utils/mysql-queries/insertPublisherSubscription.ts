@@ -1,6 +1,6 @@
 import { botPublisherSubscriptions } from '../../db/schema'
 import { sql } from 'drizzle-orm'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const insertPublisherSubscription = async (
   db: TDbConnection,

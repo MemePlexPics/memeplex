@@ -1,4 +1,5 @@
-import { Context, Telegraf } from "telegraf"
+import type { Context } from 'telegraf'
+import { Telegraf } from 'telegraf'
 
 export class TelegrafWrapper<GContext extends Context = Context> extends Telegraf<GContext> {
   public abortController: Readonly<AbortController>

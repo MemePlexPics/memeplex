@@ -1,10 +1,10 @@
-import { CryptoPay } from '@foile/crypto-pay-api'
+import type { CryptoPay } from '@foile/crypto-pay-api'
 import {
   selectPublisherActiveInvoices,
   updatePublisherInvoiceStatus,
 } from '../../../../utils/mysql-queries'
 import { getDbConnection } from '../../../../utils'
-import { TInvoice } from '../types'
+import type { TInvoice } from '../types'
 import { handlePaidInvoice } from '.'
 import { CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS } from '../../../../constants'
 
