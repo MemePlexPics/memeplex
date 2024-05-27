@@ -43,8 +43,8 @@ describe('NLP Matching', () => {
     responseChannel = await connection.createChannel()
     await responseChannel.assertQueue(AMQP_NLP_TO_PUBLISHER_CHANNEL, { durable: true })
 
-    pythonProcess = spawn('./.venv/bin/python', ['./utils/lemmatizer.py'])
-    // Give lemmatizer.py some time to wake up
+    pythonProcess = spawn('./.venv/bin/python', ['./services/nlp.py'])
+    // Give nlp.py some time to wake up
     await delay(5_000)
   }, 10_000)
 
