@@ -1,5 +1,4 @@
 import TelegramServer from '@vishtar/telegram-test-api'
-import why from 'why-is-node-running'
 import { init } from '../../services/servers/tg-bots/publisher/utils'
 import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
 import { TelegramClientWrapper, cleanUpPublisherUser } from './utils'
