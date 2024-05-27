@@ -4,7 +4,11 @@ import { TDbConnection } from '../../../utils/types'
 import { selectPublisherActiveInvoices } from '../../../utils/mysql-queries'
 import { CryptoPay } from '@foile/crypto-pay-api'
 
-export const cleanUpPublisherPremium = async (db: TDbConnection, cryptoPay: CryptoPay, userId: number = 1) => {
+export const cleanUpPublisherPremium = async (
+  db: TDbConnection,
+  cryptoPay: CryptoPay,
+  userId: number = 1,
+) => {
   await db.delete(botPublisherUserPremiums).where(eq(botPublisherUserPremiums.userId, userId))
   const activeInvoices = await selectPublisherActiveInvoices(db)
   const testUserInvoices = activeInvoices.filter(invoice => invoice.userId === userId)

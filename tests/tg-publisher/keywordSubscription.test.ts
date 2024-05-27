@@ -19,10 +19,13 @@ import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { EKeywordAction, callbackData } from '../../services/servers/tg-bots/publisher/constants'
-import { deletePublisherKeyword, deletePublisherSubscriptionsByChannelId } from '../../utils/mysql-queries'
+import {
+  deletePublisherKeyword,
+  deletePublisherSubscriptionsByChannelId,
+} from '../../utils/mysql-queries'
 
 describe('Keyword subscribtion', () => {
-  const serverConfig = { port: 9001 }
+  const serverConfig = { port: 0 }
   const token = '123456'
   let tgServer: TelegramServer
   let bot: Awaited<ReturnType<typeof init>>
@@ -97,10 +100,12 @@ describe('Keyword subscribtion', () => {
   })
 
   test('Subscription works', async () => {
-    const buffer = Buffer.from(JSON.stringify({
-      ...mockAmqpNLPToPublisherChannelMessage,
-      matchedKeywords: [keywordFirstUser],
-    }))
+    const buffer = Buffer.from(
+      JSON.stringify({
+        ...mockAmqpNLPToPublisherChannelMessage,
+        matchedKeywords: [keywordFirstUser],
+      }),
+    )
     sendToPublisherDistributionCh.sendToQueue(AMQP_NLP_TO_PUBLISHER_CHANNEL, buffer, {
       persistent: true,
     })
@@ -113,26 +118,36 @@ describe('Keyword subscribtion', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationKeywordButton(EKeywordAction.DELETE, 1, keywordFirstUserId),
+                callbackData.premoderationKeywordButton(
+                  EKeywordAction.DELETE,
+                  1,
+                  keywordFirstUserId,
+                ),
           ),
       )
     if (!keywordUnsubscribeButton) {
-      throw new Error(`There is no unsubscription button for «${keywordFirstUser}»: ${JSON.stringify(preModerationMemeMessage, null ,2)}`)
+      throw new Error(
+        `There is no unsubscription button for «${keywordFirstUser}»: ${JSON.stringify(preModerationMemeMessage, null, 2)}`,
+      )
     }
   })
 
   test('Not added keywords shall not pass', async () => {
-    const buffer = Buffer.from(JSON.stringify({
-      ...mockAmqpNLPToPublisherChannelMessage,
-      matchedKeywords: [keywordSecondUser],
-    }))
+    const buffer = Buffer.from(
+      JSON.stringify({
+        ...mockAmqpNLPToPublisherChannelMessage,
+        matchedKeywords: [keywordSecondUser],
+      }),
+    )
     sendToPublisherDistributionCh.sendToQueue(AMQP_NLP_TO_PUBLISHER_CHANNEL, buffer, {
       persistent: true,
     })
     try {
       // TODO: fix... something after this empty getUpdates()
       const updates = await tgClient.getUpdates()
-      throw new Error(`There are unexpected udates for «${keywordSecondUser}»: ${JSON.stringify(updates, null ,2)}`)
+      throw new Error(
+        `There are unexpected udates for «${keywordSecondUser}»: ${JSON.stringify(updates, null, 2)}`,
+      )
     } catch (error) {
       if (error instanceof Error) {
         expect(error.name).toBe('TimeoutError')
@@ -143,13 +158,21 @@ describe('Keyword subscribtion', () => {
   }, 10_000)
 
   test('Tested keyword deleted', async () => {
-    const commaSeparatedKeywordUpdates = await tgClient.executeMessage(i18n['ru'].button.sendKeywords())
-    const messageWithKeyword = commaSeparatedKeywordUpdates.result.find(update => update.message.text.includes(keywordFirstUser))
+    const commaSeparatedKeywordUpdates = await tgClient.executeMessage(
+      i18n['ru'].button.sendKeywords(),
+    )
+    const messageWithKeyword = commaSeparatedKeywordUpdates!.result.find(update =>
+      update.message.text.includes(keywordFirstUser),
+    )
     if (!messageWithKeyword) {
-      throw new Error(`There is no update with «${keywordFirstUser}» keyword: ${JSON.stringify(commaSeparatedKeywordUpdates, null, 2)}`)
+      throw new Error(
+        `There is no update with «${keywordFirstUser}» keyword: ${JSON.stringify(commaSeparatedKeywordUpdates, null, 2)}`,
+      )
     }
     const keywordSettingsUpdates = await tgClient.executeMessage(i18n['ru'].button.editKeywords())
-    const keywordSettingsMenu = keywordSettingsUpdates.result.find(update => update.message.text === i18n['ru'].message.unsubscribeFromKeywords())
+    const keywordSettingsMenu = keywordSettingsUpdates!.result.find(
+      update => update.message.text === i18n['ru'].message.unsubscribeFromKeywords(),
+    )
 
     await tgClient.sendCallback(
       // TODO: get callback_data by a template
@@ -158,15 +181,21 @@ describe('Keyword subscribtion', () => {
           // @ts-expect-error number to DeepPartial<any>
           message_id: keywordSettingsMenu.messageId,
           reply_markup: {
-            inline_keyboard: keywordSettingsMenu.message.reply_markup.inline_keyboard,
+            inline_keyboard: keywordSettingsMenu!.message.reply_markup.inline_keyboard,
           },
         },
       }),
     )
-    const updatedCommaSeparatedKeywordUpdates = await tgClient.executeMessage(i18n['ru'].button.sendKeywords())
-    const messageWithDeletedKeyword = updatedCommaSeparatedKeywordUpdates.result.find(update => update.message.text.includes(keywordFirstUser))
+    const updatedCommaSeparatedKeywordUpdates = await tgClient.executeMessage(
+      i18n['ru'].button.sendKeywords(),
+    )
+    const messageWithDeletedKeyword = updatedCommaSeparatedKeywordUpdates!.result.find(update =>
+      update.message.text.includes(keywordFirstUser),
+    )
     if (messageWithDeletedKeyword) {
-      throw new Error(`The keyword still in the comma separated list: ${JSON.stringify(updatedCommaSeparatedKeywordUpdates, null, 2)}`)
+      throw new Error(
+        `The keyword still in the comma separated list: ${JSON.stringify(updatedCommaSeparatedKeywordUpdates, null, 2)}`,
+      )
     }
   }, 10_000)
 })
