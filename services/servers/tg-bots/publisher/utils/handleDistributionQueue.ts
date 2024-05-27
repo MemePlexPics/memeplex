@@ -22,7 +22,7 @@ import { TPublisherDistributionQueueMsg } from '../../../../types'
 import { i18n } from '../i18n'
 import { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
 
-export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
+export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger, abortSignal: AbortSignal) => {
   const isTesting = process.env.ENVIRONMENT === 'TESTING'
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [distributionCh, distributionTimeout, distributionTimeotClear] = await getAmqpQueue(
@@ -32,6 +32,10 @@ export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, l
 
   try {
     for (;;) {
+      if (abortSignal.aborted) {
+        logger.info('Loop aborted')
+        break
+      }
       const msg = await distributionCh.get(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL)
       if (!msg) {
         await delay(EMPTY_QUEUE_RETRY_DELAY)

@@ -1,3 +1,4 @@
+import { CryptoPay } from '@foile/crypto-pay-api'
 import { init } from '../../services/servers/tg-bots/publisher/utils'
 import { getTestLogger } from '../utils'
 import {
@@ -8,7 +9,6 @@ import {
   cleanUpPublisherUser,
   cleanUpTestAmqpQueues,
 } from './utils'
-import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
 import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
@@ -18,17 +18,19 @@ import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
 import { InlineKeyboardButton, KeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { callbackData } from '../../services/servers/tg-bots/publisher/constants'
-import { deletePublisherKeyword, deletePublisherSubscriptionsByChannelId, selectPublisherKeywordsByKeywords } from '../../utils/mysql-queries'
+import {
+  deletePublisherKeyword,
+  deletePublisherSubscriptionsByChannelId,
+} from '../../utils/mysql-queries'
 
 describe('Keyword subscribtion', () => {
-  const serverConfig = { port: 9001 }
+  const serverConfig = { port: 0 }
   const token = '123456'
   let tgServer: TelegramServerWrapper
   let bot: Awaited<ReturnType<typeof init>>
   let tgClient: TelegramClientWrapper
   let amqp: Connection
   let sendToPublisherDistributionCh: Channel
-  let keywordFirstId: number
 
   const keywordFirst = 'donuts'
   const testChannel = 'testChannel'
@@ -79,72 +81,81 @@ describe('Keyword subscribtion', () => {
 
   test('Not added a channel without admin rights for bot', async () => {
     await tgClient.executeMessage(i18n['ru'].button.linkYourChannel())
-    // @ts-expect-error object
-    tgServer.mockApi.getChat = {
+    tgServer.storage.mockApi.getChat = {
       [testChannel]: {
         title: 'TestChannel',
         id: 111,
         type: 'channel',
-        accent_color_id: 'idk',
+        accent_color_id: 123,
       },
     }
-    // @ts-expect-error object
-    tgServer.mockApi.getChatAdministrators = {
+    tgServer.storage.mockApi.getChatAdministrators = {
       [testChannel]: [
         {
           user: {
-            id: 1,
-          }
-        }
+            id: tgClient.userId,
+            is_bot: false,
+            first_name: tgClient.firstName,
+          },
+        },
       ],
     }
     const addingChannelUpdates = await tgClient.executeMessage(`https://t.me/${testChannel}`)
-    const needAdminRightsMessage = addingChannelUpdates!.result.find(update => update.message.text === i18n['ru'].message.botMustHaveAdminRights())
+    const needAdminRightsMessage = addingChannelUpdates!.result.find(
+      update => update.message.text === i18n['ru'].message.botMustHaveAdminRights(),
+    )
     if (!needAdminRightsMessage) {
-      throw new Error(`There is no message about lack of admin rights: ${JSON.stringify(addingChannelUpdates, null, 2)}`)
+      throw new Error(
+        `There is no message about lack of admin rights: ${JSON.stringify(addingChannelUpdates, null, 2)}`,
+      )
     }
   }, 60_000)
 
   test('Added channel with admin rights for the bot', async () => {
-    // @ts-expect-error object
-    tgServer.mockApi.getChatAdministrators = {
+    tgServer.storage.mockApi.getChatAdministrators = {
       [testChannel]: [
         {
           user: {
             id: 1,
-          }
+            is_bot: false,
+            first_name: tgClient.firstName,
+          },
         },
         {
           user: {
             id: 666,
-          }
+            is_bot: true,
+            first_name: 'TestNameBot',
+          },
         },
       ],
     }
-    // @ts-expect-error object
-    tgServer.mockApi.getChatMembersCount = {
-      [testChannel]: 999
+    tgServer.storage.mockApi.getChatMembersCount = {
+      [testChannel]: 999,
     }
     const addingChannelUpdates = await tgClient.executeMessage(`https://t.me/${testChannel}`)
-    const channelSettingMenuMessage = addingChannelUpdates!.result.find(update => update.message.text === i18n['ru'].message.thereTopicsAndKeywords())
-    const channelButton = channelSettingMenuMessage!.message.reply_markup.keyboard.find((row: KeyboardButton[]) => row.find(button => button === i18n['ru'].button.unlinkChannel(testChannel)))
+    const channelSettingMenuMessage = addingChannelUpdates!.result.find(
+      update => update.message.text === i18n['ru'].message.thereTopicsAndKeywords(),
+    )
+    const channelButton = channelSettingMenuMessage!.message.reply_markup.keyboard.find(
+      (row: KeyboardButton[]) =>
+        row.find(button => button === i18n['ru'].button.unlinkChannel(testChannel)),
+    )
     expect(channelButton).not.toBe(undefined)
   })
 
   test('Keyword subscription for the channel works', async () => {
     await tgClient.executeMessage(i18n['ru'].button.editKeywords(testChannel))
     await tgClient.executeMessage(keywordFirst)
-    const buffer = Buffer.from(JSON.stringify({
-      ...mockAmqpNLPToPublisherChannelMessage,
-      matchedKeywords: [keywordFirst],
-    }))
+    const buffer = Buffer.from(
+      JSON.stringify({
+        ...mockAmqpNLPToPublisherChannelMessage,
+        matchedKeywords: [keywordFirst],
+      }),
+    )
     sendToPublisherDistributionCh.sendToQueue(AMQP_NLP_TO_PUBLISHER_CHANNEL, buffer, {
       persistent: true,
     })
-    const db = await getDbConnection()
-    const [keyword] = await selectPublisherKeywordsByKeywords(db, [keywordFirst])
-    await db.close()
-    keywordFirstId = keyword.id
     const updates = await tgClient.getUpdates()
     const preModerationMemeMessage = updates.result[0]
     const keywordUnsubscribeButton =
@@ -154,41 +165,52 @@ describe('Keyword subscribtion', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
+                callbackData.premoderationPostButton(
+                  111,
+                  mockAmqpNLPToPublisherChannelMessage.memeId,
+                ),
           ),
       )
     if (!keywordUnsubscribeButton) {
-      throw new Error(`There is no post meme button for «TestChannel»: ${JSON.stringify(preModerationMemeMessage, null ,2)}`)
+      throw new Error(
+        `There is no post meme button for «TestChannel»: ${JSON.stringify(preModerationMemeMessage, null, 2)}`,
+      )
     }
     // TODO: investigate way to recieve channel messages
     await tgClient.sendCallback(
-      tgClient.makeCallbackQuery(callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId), {
-        message: {
-          // @ts-expect-error number to DeepPartial<any>
-          message_id: preModerationMemeMessage.messageId,
-          reply_markup: {
-            inline_keyboard: preModerationMemeMessage.message.reply_markup.inline_keyboard,
+      tgClient.makeCallbackQuery(
+        callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
+        {
+          message: {
+            // @ts-expect-error number to DeepPartial<any>
+            message_id: preModerationMemeMessage.messageId,
+            reply_markup: {
+              inline_keyboard: preModerationMemeMessage.message.reply_markup.inline_keyboard,
+            },
           },
         },
-      }),
+      ),
     )
   }, 10_000)
 
   test(`Meme wasn't posted if there are no admin rights for bot`, async () => {
-    // @ts-expect-error object
-    tgServer.mockApi.getChatAdministrators = {
+    tgServer.storage.mockApi.getChatAdministrators = {
       [testChannel]: [
         {
           user: {
             id: 1,
-          }
+            is_bot: false,
+            first_name: tgClient.firstName,
+          },
         },
       ],
     }
-    const buffer = Buffer.from(JSON.stringify({
-      ...mockAmqpNLPToPublisherChannelMessage,
-      matchedKeywords: [keywordFirst],
-    }))
+    const buffer = Buffer.from(
+      JSON.stringify({
+        ...mockAmqpNLPToPublisherChannelMessage,
+        matchedKeywords: [keywordFirst],
+      }),
+    )
     sendToPublisherDistributionCh.sendToQueue(AMQP_NLP_TO_PUBLISHER_CHANNEL, buffer, {
       persistent: true,
     })
@@ -202,30 +224,42 @@ describe('Keyword subscribtion', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
+                callbackData.premoderationPostButton(
+                  111,
+                  mockAmqpNLPToPublisherChannelMessage.memeId,
+                ),
           ),
       )
     if (!keywordUnsubscribeButton) {
-      throw new Error(`There is no post meme button for «TestChannel»: ${JSON.stringify(preModerationMemeMessage, null ,2)}`)
+      throw new Error(
+        `There is no post meme button for «TestChannel»: ${JSON.stringify(preModerationMemeMessage, null, 2)}`,
+      )
     }
     // TODO: investigate way to recieve channel messages
     await tgClient.sendCallback(
-      tgClient.makeCallbackQuery(callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId), {
-        message: {
-          // @ts-expect-error number to DeepPartial<any>
-          message_id: preModerationMemeMessage.messageId,
-          reply_markup: {
-            inline_keyboard: preModerationMemeMessage.message.reply_markup.inline_keyboard,
+      tgClient.makeCallbackQuery(
+        callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
+        {
+          message: {
+            // @ts-expect-error number to DeepPartial<any>
+            message_id: preModerationMemeMessage.messageId,
+            reply_markup: {
+              inline_keyboard: preModerationMemeMessage.message.reply_markup.inline_keyboard,
+            },
           },
         },
-      }),
+      ),
     )
   })
 
   test('Unlink channel', async () => {
     await tgClient.executeMessage(i18n['ru'].button.back())
-    const unlinkChannelUpdates = await tgClient.executeMessage(i18n['ru'].button.unlinkChannel(testChannel))
-    const confirmationMessage = unlinkChannelUpdates.result.find(update => update.message.text === i18n['ru'].message.doYouWantToUnlinkChannel(testChannel))
+    const unlinkChannelUpdates = await tgClient.executeMessage(
+      i18n['ru'].button.unlinkChannel(testChannel),
+    )
+    const confirmationMessage = unlinkChannelUpdates!.result.find(
+      update => update.message.text === i18n['ru'].message.doYouWantToUnlinkChannel(testChannel),
+    )
     expect(confirmationMessage).not.toBe(undefined)
     // TODO: unlink into variable
     await tgClient.executeCallback('unlink')
@@ -234,27 +268,40 @@ describe('Keyword subscribtion', () => {
   test(`Relinked channel doesn't have keywords`, async () => {
     await tgClient.executeCommand('/menu')
     await tgClient.executeMessage(i18n['ru'].button.linkYourChannel())
-    // @ts-expect-error object
-    tgServer.mockApi.getChatAdministrators = {
+    tgServer.storage.mockApi.getChatAdministrators = {
       [testChannel]: [
         {
           user: {
             id: 1,
-          }
+            is_bot: false,
+            first_name: tgClient.firstName,
+          },
         },
         {
           user: {
             id: 666,
-          }
+            is_bot: true,
+            first_name: 'TestNameBot',
+          },
         },
       ],
     }
     const addingChannelUpdates = await tgClient.executeMessage(`https://t.me/${testChannel}`)
-    const channelSettingMenuMessage = addingChannelUpdates!.result.find(update => update.message.text === i18n['ru'].message.thereTopicsAndKeywords())
-    const channelButton = channelSettingMenuMessage!.message.reply_markup.keyboard.find((row: KeyboardButton[]) => row.find(button => button === i18n['ru'].button.unlinkChannel(testChannel)))
+    const channelSettingMenuMessage = addingChannelUpdates!.result.find(
+      update => update.message.text === i18n['ru'].message.thereTopicsAndKeywords(),
+    )
+    const channelButton = channelSettingMenuMessage!.message.reply_markup.keyboard.find(
+      (row: KeyboardButton[]) =>
+        row.find(button => button === i18n['ru'].button.unlinkChannel(testChannel)),
+    )
     expect(channelButton).not.toBe(undefined)
-    const keywordSettingsMenuUpdates = await tgClient.executeMessage(i18n['ru'].button.editKeywords(testChannel))
-    const keywordListMenuMessage = keywordSettingsMenuUpdates.result.find(update => update.message.text === i18n['ru'].message.youEditingSubscriptionsForChannel(testChannel))
+    const keywordSettingsMenuUpdates = await tgClient.executeMessage(
+      i18n['ru'].button.editKeywords(testChannel),
+    )
+    const keywordListMenuMessage = keywordSettingsMenuUpdates!.result.find(
+      update =>
+        update.message.text === i18n['ru'].message.youEditingSubscriptionsForChannel(testChannel),
+    )
     expect(keywordListMenuMessage).toBe(undefined)
   })
 })

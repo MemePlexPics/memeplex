@@ -15,7 +15,7 @@ import { StoredBotUpdate } from '@vishtar/telegram-test-api/lib/telegramServer'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
 
 describe('Topic subscription works', () => {
-  const serverConfig = { port: 9002 }
+  const serverConfig = { port: 0 }
   const token = '123456'
   let tgServer: TelegramServer
   let bot: Awaited<ReturnType<typeof init>>
@@ -96,10 +96,12 @@ describe('Topic subscription works', () => {
   })
 
   test('Meme with the topic keyword has come for pre-moderation', async () => {
-    const buffer = Buffer.from(JSON.stringify({
-      ...mockAmqpNLPToPublisherChannelMessage,
-      matchedKeywords: ['btc'],
-    }))
+    const buffer = Buffer.from(
+      JSON.stringify({
+        ...mockAmqpNLPToPublisherChannelMessage,
+        matchedKeywords: ['btc'],
+      }),
+    )
     sendToPublisherDistributionCh.sendToQueue(AMQP_NLP_TO_PUBLISHER_CHANNEL, buffer, {
       persistent: true,
     })
