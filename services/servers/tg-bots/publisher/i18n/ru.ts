@@ -85,13 +85,15 @@ ${keywords}`,
     back: () => '⬅️ Назад',
     ready: () => '✅ Готово',
     forward: () => '➡️ Вперед',
-    addKyewordGroup: (emoji: '✏️' | '✨' = '✏️') => `${emoji} Редактировать топики`,
+    editTopics: (emoji: '✏️' | '✨' = '✏️', channel?: string) =>
+      `${emoji} Редактировать топики${channel ? ` (@${channel})` : ''}`,
     addChannel: () => '➕ Добавить канал',
     mySubscriptions: () => '📩 Мои подписки',
     unlinkChannel: (channel: string) => `🗑 Отвязать @${channel}`,
     unlinkChannelConfirm: () => `⛔ Отвязать`,
     toMainMenu: () => '🏠 В главное меню',
-    editKeywords: () => '✏️ Редактировать ключевые фразы',
+    editKeywords: (channel?: string) =>
+      `✏️ Редактировать ключевые фразы${channel ? ` (@${channel})` : ''}`,
     sendKeywords: () => '📋 Вывести через запятую',
     linkYourChannel: () => '🔗 Привязать свой канал',
     subscriptionSettings: () => '⚙️ Настройки подписок',
@@ -145,4 +147,4 @@ ${keywords}`,
     callCurrentMenu: () => 'Вызвать текущее меню',
     help: () => 'Вывести справку',
   },
-}
+} as const

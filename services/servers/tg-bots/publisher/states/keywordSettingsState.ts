@@ -32,15 +32,14 @@ export const keywordSettingsState: TState = {
           await ctx.reply(i18n['ru'].message.thereAreNoKeywords())
           return
         }
-        await ctx.reply(
-          keywordRows.reduce((acc, keywordRow) => {
-            if (acc) {
-              if (!keywordRow.keyword) return acc
-              return `${acc}, ${keywordRow.keyword}`
-            }
-            return keywordRow.keyword ?? acc
-          }, ''),
-        )
+        const keywords = keywordRows.reduce((acc, keywordRow) => {
+          if (acc) {
+            if (!keywordRow.keyword) return acc
+            return `${acc}, ${keywordRow.keyword}`
+          }
+          return keywordRow.keyword ?? acc
+        }, '')
+        await ctx.reply(keywords)
       },
     ]
     const backButton: TMenuButton = [
@@ -180,7 +179,7 @@ export const keywordSettingsState: TState = {
       info: `Added`,
       keywords: keywordValuesNotEmpty.map(keywordRow => keywordRow.keyword).join(', '),
     })
-    await enterToState(ctx, channelSettingState)
+    await enterToState(ctx, keywordSettingsState)
     return
   },
 }

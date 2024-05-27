@@ -8,6 +8,7 @@ export async function loopRetrying(
     catchDelayMs?: number
     afterCallbackDelayMs?: number
     afterErrorCallback?: () => Promise<unknown>
+    abortSignal?: AbortSignal
   } = {
     logger: undefined,
     catchDelayMs: 0,
@@ -16,6 +17,11 @@ export async function loopRetrying(
   },
 ) {
   for (;;) {
+    if (options.abortSignal?.aborted) {
+      if (options.logger) options.logger.info('Loop aborted')
+      break
+    }
+
     try {
       const result = await callback()
       if (options.afterCallbackDelayMs) await delay(options.afterCallbackDelayMs)

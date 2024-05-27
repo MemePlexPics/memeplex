@@ -21,7 +21,7 @@ import {
 } from '../../../../types'
 import { getGroupSubscriptionsByKeywords } from '.'
 
-export const handleNlpQueue = async (logger: Logger) => {
+export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) => {
   let amqp: Connection | undefined,
     receiveNlpMessageCh: Channel | undefined,
     sendToPublisherDistributionCh: Channel | undefined,
@@ -47,12 +47,17 @@ export const handleNlpQueue = async (logger: Logger) => {
     )
 
     for (;;) {
+      if (abortSignal.aborted) {
+        logger.info('Loop aborted')
+        break
+      }
       const msg = await receiveNlpMessageCh.get(AMQP_NLP_TO_PUBLISHER_CHANNEL)
       if (!msg) {
         await delay(process.env.ENVIRONMENT === 'TESTING' ? 100 : EMPTY_QUEUE_RETRY_DELAY)
         continue
       }
       receiveNlpMessageTimeout(600_000, logger, msg)
+      const db = await getDbConnection()
       const payload: TAmqpNLPToPublisherChannelMessage = JSON.parse(msg.content.toString())
 
       const queue: TPrePublisherDistributionQueue = {}
@@ -64,7 +69,6 @@ export const handleNlpQueue = async (logger: Logger) => {
       const channelIdsByKeyword: Record<number, Record<string, Set<number>>> = {}
       const channelIdsByKeywordGroup: Record<number, Record<string, Set<number>>> = {}
       const tariffPlanByUsers: Record<number, 'free' | 'premium'> = {}
-      const db = await getDbConnection()
       const { channelIds, groupSubscriptionsByKeyword } = await getGroupSubscriptionsByKeywords(
         db,
         payload.matchedKeywords,
