@@ -1,4 +1,4 @@
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import { getProxySpeed, checkProxyAnonimity, dateToYyyyMmDdHhMmSs } from '../../../utils'
 
 export const checkProxy = async (

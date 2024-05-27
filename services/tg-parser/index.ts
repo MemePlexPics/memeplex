@@ -1,12 +1,13 @@
 /* global Buffer */
 import 'dotenv/config'
-import amqplib, { Channel, Connection } from 'amqplib'
+import type { Channel, Connection } from 'amqplib'
+import amqplib from 'amqplib'
 import { AMQP_IMAGE_DATA_CHANNEL } from '../../constants'
 import { getDbConnection, getMysqlClient } from '../../utils'
 import { selectAvailableChannels, updateChannelTimestamp } from '../../utils/mysql-queries'
 import process from 'process'
 import { getMessagesAfter } from './utils'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export const tgParser = async (logger: Logger) => {
   let amqp: Connection | undefined, sendImageDataCh: Channel | undefined

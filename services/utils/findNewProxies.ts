@@ -1,11 +1,12 @@
 /* global Buffer */
 import process from 'process'
-import amqplib, { Channel, Connection } from 'amqplib'
+import type { Channel, Connection } from 'amqplib'
+import amqplib from 'amqplib'
 import { getDbConnection } from '../../utils'
 import { selectExistedProxy } from '../../utils/mysql-queries'
 import { AMQP_CHECK_PROXY_CHANNEL } from '../../constants'
 import { getProxies } from '.'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export const findNewProxies = async (logger: Logger) => {
   let amqp: Connection | undefined, checkProxyCh: Channel | undefined

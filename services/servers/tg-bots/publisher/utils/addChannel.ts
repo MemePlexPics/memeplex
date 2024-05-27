@@ -1,10 +1,10 @@
-import { Chat } from 'telegraf/typings/core/types/typegram'
+import type { Chat } from 'telegraf/typings/core/types/typegram'
 import { enterToState, logUserAction } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { upsertPublisherChannel } from '../../../../../utils/mysql-queries'
 import { channelSettingState } from '../states'
 import { i18n } from '../i18n'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 
 export const addChannel = async (ctx: TTelegrafContext, text: string) => {
   if (!ctx.from) {

@@ -1,4 +1,4 @@
-import { TElasticMemeEntity } from '../../types'
+import type { TElasticMemeEntity } from '../../types'
 
 export const getMemeResponseEntity = (id: string, source: TElasticMemeEntity) => {
   return {

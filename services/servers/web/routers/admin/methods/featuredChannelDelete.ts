@@ -1,7 +1,7 @@
 import { getMysqlClient } from '../../../../../../utils'
 import { removeFeaturedChannel } from '../../../../../../utils/mysql-queries'
 import { setLogAction } from '../utils'
-import { TRequestHandler } from '../types'
+import type { TRequestHandler } from '../types'
 
 export const featuredChannelDelete: TRequestHandler<{
   username: string

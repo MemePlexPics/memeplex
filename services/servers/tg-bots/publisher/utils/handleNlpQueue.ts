@@ -1,7 +1,8 @@
-import amqplib, { Channel, Connection, GetMessage } from 'amqplib'
+import type { Channel, Connection, GetMessage } from 'amqplib'
+import amqplib from 'amqplib'
 import process from 'process'
 import 'dotenv/config'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import { getAmqpQueue, getPublisherUserByChannelIdAndTariffPlan } from '../../../../utils'
 import {
   AMQP_NLP_TO_PUBLISHER_CHANNEL,
@@ -14,7 +15,7 @@ import {
   selectPublisherKeywordGroupWithKeywords,
   selectPublisherSubscriptionsByKeywords,
 } from '../../../../../utils/mysql-queries'
-import {
+import type {
   TAmqpNLPToPublisherChannelMessage,
   TPrePublisherDistributionQueue,
   TPublisherDistributionQueueMsg,

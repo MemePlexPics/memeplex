@@ -1,5 +1,5 @@
 import { botPublisherGroupKeywordUnsubscriptions } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const insertPublisherGroupKeywordUnsubscription = async (
   db: TDbConnection,

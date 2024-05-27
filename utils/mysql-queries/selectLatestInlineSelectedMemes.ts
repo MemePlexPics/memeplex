@@ -1,6 +1,6 @@
 import { botInlineActions } from '../../db/schema'
 import { desc, eq } from 'drizzle-orm'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const selectLatestInlineSelectedMemes = async (db: TDbConnection, limit: number) => {
   return await db

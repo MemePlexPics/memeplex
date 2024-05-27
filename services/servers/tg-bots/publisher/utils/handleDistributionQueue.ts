@@ -1,6 +1,6 @@
 import amqplib from 'amqplib'
-import { Telegraf } from 'telegraf'
-import { TTelegrafContext } from '../types'
+import type { Telegraf } from 'telegraf'
+import type { TTelegrafContext } from '../types'
 import process from 'process'
 import 'dotenv/config'
 import { getAmqpQueue } from '../../../../utils'
@@ -9,7 +9,7 @@ import {
   EMPTY_QUEUE_RETRY_DELAY,
 } from '../../../../../constants'
 import { delay, getDbConnection, logError } from '../../../../../utils'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import fs from 'fs/promises'
 import {
   selectPublisherChannelsById,
@@ -17,12 +17,16 @@ import {
   selectPublisherKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, EKeywordGroupAction, callbackData } from '../constants'
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { TPublisherDistributionQueueMsg } from '../../../../types'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { TPublisherDistributionQueueMsg } from '../../../../types'
 import { i18n } from '../i18n'
-import { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
+import type { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
 
-export const handleDistributionQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger, abortSignal: AbortSignal) => {
+export const handleDistributionQueue = async (
+  bot: Telegraf<TTelegrafContext>,
+  logger: Logger,
+  abortSignal: AbortSignal,
+) => {
   const isTesting = process.env.ENVIRONMENT === 'TESTING'
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [distributionCh, distributionTimeout, distributionTimeotClear] = await getAmqpQueue(

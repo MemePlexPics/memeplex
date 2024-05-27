@@ -5,9 +5,9 @@ import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
 import { logUserAction } from '../utils'
 import { i18n } from '../i18n'
-import { TSessionInMemory, TTelegrafContext } from '../types'
-import { Client } from '@elastic/elasticsearch'
-import { Logger } from 'winston'
+import type { TSessionInMemory, TTelegrafContext } from '../types'
+import type { Client } from '@elastic/elasticsearch'
+import type { Logger } from 'winston'
 
 export const onInlineQuery = async (
   ctx: TTelegrafContext,

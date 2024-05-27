@@ -1,4 +1,4 @@
-import { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 import { InfoMessage, getMysqlClient } from '../../../utils'
 import { updateProxyAvailability } from '../../../utils/mysql-queries'
 
