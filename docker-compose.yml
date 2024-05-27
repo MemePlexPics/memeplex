@@ -101,11 +101,15 @@ services:
       - ./.env
     environment:
       AMQP_ENDPOINT: 'amqp://rabbitmq:5672'
+      PYTHONUNBUFFERED: 1
+      NLTK_DATA: /app/nltk_data
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - ./data/nlp/nltk_data:/root/nltk_data
+      - ./services/nlp.py:/app/services/nlp.py
+      - ./data/nlp:/app
+    command: ["python", "/app/services/nlp.py"]
     depends_on:
       - rabbitmq
 

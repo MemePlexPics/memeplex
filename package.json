@@ -6,7 +6,7 @@
   "main": "services/memesearch.js",
   "scripts": {
     "eslint": "eslint services/ scripts/ utils/ constants/ --fix",
-    "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq,nlp/nltk_data} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
+    "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq,nlp} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "build:back": "npx webpack --progress",
     "build:front": "npm --prefix ./frontend run build",
     "build:all": "npm run build:back && npm run build:front",
