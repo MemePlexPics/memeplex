@@ -1,5 +1,5 @@
 import amqplib, { Channel, Connection } from 'amqplib'
-import TelegramServer from 'telegram-test-api'
+import TelegramServer from '@vishtar/telegram-test-api'
 import { init } from '../../services/servers/tg-bots/publisher/utils'
 import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
 import { TelegramClientWrapper, cleanUpPublisherUser } from './utils'
@@ -11,7 +11,7 @@ import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { getDbConnection } from '../../utils'
 import { deletePublisherGroupSubscriptionByChannelId } from '../../utils/mysql-queries'
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { StoredBotUpdate } from 'telegram-test-api/lib/telegramServer'
+import { StoredBotUpdate } from '@vishtar/telegram-test-api/lib/telegramServer'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
 
 describe('Topic subscription works', () => {

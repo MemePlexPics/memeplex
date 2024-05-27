@@ -5,8 +5,8 @@ import {
   DeepPartial,
   MessageOptions,
   TelegramClient,
-} from 'telegram-test-api/lib/modules/telegramClient'
-import { GetUpdatesResponse } from 'telegram-test-api/lib/routes/client/getUpdates'
+} from '@vishtar/telegram-test-api/lib/modules/telegramClient'
+import { GetUpdatesResponse } from '@vishtar/telegram-test-api/lib/routes/client/getUpdates'
 
 export class TelegramClientWrapper extends TelegramClient {
   public latestUpdates?: GetUpdatesResponse
