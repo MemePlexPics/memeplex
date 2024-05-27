@@ -1,0 +1,4 @@
+nltk
+pymorphy2
+pika
+python-dotenv
