@@ -1,4 +1,10 @@
-import { TelegramClientWrapper, awaitPremiumActivation, backToMainMenuAfterBoughtPremium, createInvoiceByButtons, goToOneMonthPremiumButton } from "."
+import {
+  TelegramClientWrapper,
+  awaitPremiumActivation,
+  backToMainMenuAfterBoughtPremium,
+  createInvoiceByButtons,
+  goToOneMonthPremiumButton,
+} from '.'
 
 export const buyPremium = async (tgClient: TelegramClientWrapper) => {
   await goToOneMonthPremiumButton(tgClient)

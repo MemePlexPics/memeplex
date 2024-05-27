@@ -20,7 +20,6 @@ export class TelegramClientWrapper extends TelegramClient {
     options?: MessageOptions,
     requestUpdates?: boolean,
   ) {
-    // @ts-expect-error private attribute
     console.log(this.userId, messageText)
     const command = this.makeMessage(messageText, options)
     const response = await this.sendMessage(command)
@@ -42,7 +41,6 @@ export class TelegramClientWrapper extends TelegramClient {
     options?: CommandOptions,
     requestUpdates?: boolean,
   ) {
-    // @ts-expect-error private attribute
     console.log(this.userId, messageText)
     const command = this.makeCommand(messageText, options)
     const response = await this.sendCommand(command)
@@ -64,7 +62,6 @@ export class TelegramClientWrapper extends TelegramClient {
     options?: DeepPartial<CallbackQueryRequest>,
     requestUpdates?: boolean,
   ) {
-    // @ts-expect-error private attribute
     console.log(this.userId, data)
     const command = this.makeCallbackQuery(data, options)
     const response = await this.sendCallback(command)

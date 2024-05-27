@@ -14,13 +14,17 @@ import {
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 import { i18n } from '../i18n'
 
-export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger) => {
+export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger, abortSignal: AbortSignal) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [cryptoPayToPublisherCh, cryptoPayToPublisherTimeout, cryptoPayToPublisherTimeotClear] =
     await getAmqpQueue(amqp, AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL)
 
   try {
     for (;;) {
+      if (abortSignal.aborted) {
+        logger.info('Loop aborted')
+        break
+      }
       const msg = await cryptoPayToPublisherCh.get(AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL)
       if (!msg) {
         await delay(1_000)

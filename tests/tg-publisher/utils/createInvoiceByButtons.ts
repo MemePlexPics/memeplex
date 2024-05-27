@@ -5,9 +5,7 @@ import { selectPublisherActiveInvoices } from '../../../utils/mysql-queries'
 import { TelegramClientWrapper } from '.'
 import { PREMIUM_PLANS } from '../../../constants/publisher'
 
-export const createInvoiceByButtons = async (
-  tgClient: TelegramClientWrapper,
-) => {
+export const createInvoiceByButtons = async (tgClient: TelegramClientWrapper) => {
   // TODO: DRY...
   const oneMonthPremium = PREMIUM_PLANS.find(plan => plan.months === 1)
   if (!oneMonthPremium) {

@@ -20,9 +20,10 @@ import { botPublisherInvoices } from '../../db/schema'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
 import { upsertPublisherPremiumUser } from '../../utils/mysql-queries'
 import { sql } from 'drizzle-orm'
+import { KeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 describe('Subscribed to premium', () => {
-  const serverConfig = { port: 9001 }
+  const serverConfig = { port: 0 }
   const token = '123456'
   let tgServer: TelegramServer
   let bot: Awaited<ReturnType<typeof init>>
@@ -90,11 +91,15 @@ describe('Subscribed to premium', () => {
     await db.execute(sql`DELETE FROM telegraf_publisher_sessions WHERE \`key\` = '1:1'`)
     await upsertPublisherPremiumUser(db, {
       userId: 1,
-      untilTimestamp: 0
+      untilTimestamp: 0,
     })
     const updates = await tgClient.executeCommand('/start')
-    const mainMenuMessage = updates.result.find(update => update.message.text === i18n['ru'].message.mainMenu())
-    const connectPremiumButton = mainMenuMessage.message.reply_markup.keyboard.find(row => row.find(button => button === i18n['ru'].button.subscribeToPremium()))
+    const mainMenuMessage = updates!.result.find(
+      update => update.message.text === i18n['ru'].message.mainMenu(),
+    )
+    const connectPremiumButton = mainMenuMessage!.message.reply_markup.keyboard.find((row: KeyboardButton[]) =>
+      row.find(button => button === i18n['ru'].button.subscribeToPremium()),
+    )
     if (!connectPremiumButton) {
       throw new Error(`Subscription didn't expired: ${JSON.stringify(mainMenuMessage, null, 2)}`)
     }

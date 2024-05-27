@@ -8,6 +8,7 @@ import { getLogger, getTelegramUser } from '../../utils'
 import { EState } from '../constants'
 import { TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
+  TelegrafWrapper,
   enterToState,
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
@@ -42,7 +43,7 @@ export const init = async (
   options: Partial<Telegraf.Options<TTelegrafContext>>,
   logger: Logger = getLogger('tg-publisher-bot'),
 ) => {
-  const bot = new Telegraf<TTelegrafContext>(token, options)
+  const bot = new TelegrafWrapper<TTelegrafContext>(token, options)
   const elastic = await getElasticClient()
 
   bot.use(async (ctx, next) => {
@@ -182,20 +183,23 @@ export const init = async (
     }
   })
 
-  loopRetrying(() => handleNlpQueue(logger), {
+  loopRetrying(() => handleNlpQueue(logger, bot.abortController.signal), {
     logger: logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
     catchDelayMs: LOOP_RETRYING_DELAY,
+    abortSignal: bot.abortController.signal,
   })
-  loopRetrying(() => handleDistributionQueue(bot, logger), {
+  loopRetrying(() => handleDistributionQueue(bot, logger, bot.abortController.signal), {
     logger: logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
     catchDelayMs: LOOP_RETRYING_DELAY,
+    abortSignal: bot.abortController.signal,
   })
-  loopRetrying(() => handleInvoiceQueue(bot, logger), {
+  loopRetrying(() => handleInvoiceQueue(bot, logger, bot.abortController.signal), {
     logger: logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
     catchDelayMs: LOOP_RETRYING_DELAY,
+    abortSignal: bot.abortController.signal,
   })
 
   return bot

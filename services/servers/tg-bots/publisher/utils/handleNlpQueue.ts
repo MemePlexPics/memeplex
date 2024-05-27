@@ -21,7 +21,7 @@ import {
 } from '../../../../types'
 import { getGroupSubscriptionsByKeywords } from '.'
 
-export const handleNlpQueue = async (logger: Logger) => {
+export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) => {
   let amqp: Connection | undefined,
     receiveNlpMessageCh: Channel | undefined,
     sendToPublisherDistributionCh: Channel | undefined,
@@ -47,6 +47,10 @@ export const handleNlpQueue = async (logger: Logger) => {
     )
 
     for (;;) {
+      if (abortSignal.aborted) {
+        logger.info('Loop aborted')
+        break
+      }
       const msg = await receiveNlpMessageCh.get(AMQP_NLP_TO_PUBLISHER_CHANNEL)
       if (!msg) {
         await delay(process.env.ENVIRONMENT === 'TESTING' ? 100 : EMPTY_QUEUE_RETRY_DELAY)
