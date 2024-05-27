@@ -1,9 +1,9 @@
 import amqplib from 'amqplib'
 import process from 'process'
 import 'dotenv/config'
-import { Telegraf } from 'telegraf'
-import { TTelegrafContext } from '../types'
-import { Logger } from 'winston'
+import type { Telegraf } from 'telegraf'
+import type { TTelegrafContext } from '../types'
+import type { Logger } from 'winston'
 import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../../constants'
 import { getAmqpQueue } from '../../../../utils'
 import { delay, getDbConnection } from '../../../../../utils'
@@ -14,7 +14,11 @@ import {
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 import { i18n } from '../i18n'
 
-export const handleInvoiceQueue = async (bot: Telegraf<TTelegrafContext>, logger: Logger, abortSignal: AbortSignal) => {
+export const handleInvoiceQueue = async (
+  bot: Telegraf<TTelegrafContext>,
+  logger: Logger,
+  abortSignal: AbortSignal,
+) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
   const [cryptoPayToPublisherCh, cryptoPayToPublisherTimeout, cryptoPayToPublisherTimeotClear] =
     await getAmqpQueue(amqp, AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL)

@@ -1,11 +1,11 @@
-import { botPublisherKeywords } from '../../../../../db/schema'
+import type { botPublisherKeywords } from '../../../../../db/schema'
 import {
   deletePublisherGroupKeywordUnsubscription,
   insertPublisherKeywords,
   insertPublisherSubscription,
   selectPublisherKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
-import { TDbConnection } from '../../../../../utils/types'
+import type { TDbConnection } from '../../../../../utils/types'
 
 export const addSubscription = async (
   db: TDbConnection,

@@ -1,7 +1,7 @@
 import { initPublisherDistributionQueueMsg } from '../ocr/utils'
 import { getPublisherUserTariffPlan } from '.'
-import { TDbConnection } from '../../utils/types'
-import { TMemeEntity, TPrePublisherDistributionQueue } from '../types'
+import type { TDbConnection } from '../../utils/types'
+import type { TMemeEntity, TPrePublisherDistributionQueue } from '../types'
 import { selectPublisherChannelById } from '../../utils/mysql-queries'
 
 export const getPublisherUserByChannelIdAndTariffPlan = async (

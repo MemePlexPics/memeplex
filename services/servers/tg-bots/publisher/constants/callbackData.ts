@@ -1,4 +1,5 @@
-import { ECallback, EKeywordAction, EKeywordGroupAction } from '../constants'
+import type { EKeywordAction, EKeywordGroupAction } from '../constants'
+import { ECallback } from '../constants'
 
 export const callbackData = {
   premoderationPostButton: (channelId: number, memeId: string) =>

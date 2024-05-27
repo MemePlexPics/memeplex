@@ -1,5 +1,5 @@
-import { Client } from '@elastic/elasticsearch'
-import { Logger } from 'winston'
+import type { Client } from '@elastic/elasticsearch'
+import type { Logger } from 'winston'
 import { getElasticClient, loopRetrying } from '.'
 
 export const connectToElastic = async (logger: Logger) => {

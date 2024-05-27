@@ -1,7 +1,7 @@
 import { selectExistedProxy, insertProxies } from '../../../utils/mysql-queries'
 import { checkProxy } from '.'
-import { TDbConnection } from '../../../utils/types'
-import { Logger } from 'winston'
+import type { TDbConnection } from '../../../utils/types'
+import type { Logger } from 'winston'
 
 export const handleAddingProxy = async (
   db: TDbConnection,

@@ -1,6 +1,7 @@
 /* global Buffer */
 import 'dotenv/config'
-import amqplib, { Channel, Connection, GetMessage } from 'amqplib'
+import type { Channel, Connection, GetMessage } from 'amqplib'
+import amqplib from 'amqplib'
 import process from 'process'
 import {
   AMQP_IMAGE_DATA_CHANNEL,
@@ -11,8 +12,8 @@ import { delay } from '../../utils'
 import { getAmqpQueue } from '../utils'
 import { buildImagePath } from './utils'
 import { isFileIgnored } from './utils'
-import { Logger } from 'winston'
-import { TAmqpImageDataChannelMessage } from '../types'
+import type { Logger } from 'winston'
+import type { TAmqpImageDataChannelMessage } from '../types'
 
 export const downloader = async (logger: Logger) => {
   let amqp: Connection,

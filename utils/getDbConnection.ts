@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/mysql2'
 import { getMysqlClient } from '.'
-import { TDbConnection } from './types'
+import type { TDbConnection } from './types'
 
 export const getDbConnection = async (): Promise<TDbConnection> => {
   const mysql = await getMysqlClient()

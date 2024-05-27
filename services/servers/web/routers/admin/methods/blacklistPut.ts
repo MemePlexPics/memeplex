@@ -1,6 +1,6 @@
 import { getDbConnection } from '../../../../../../utils'
 import { updateBlackList } from '../../../../../../utils/mysql-queries'
-import { TRequestHandler } from '../types'
+import type { TRequestHandler } from '../types'
 import { setLogAction } from '../utils'
 
 export const blacklistPut: TRequestHandler<{

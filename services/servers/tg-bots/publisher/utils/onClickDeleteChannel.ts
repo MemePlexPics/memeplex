@@ -6,7 +6,7 @@ import {
   deletePublisherSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 
 export const onClickDeleteChannel = async (ctx: TTelegrafContext) => {
   if (!ctx.session.channel) {

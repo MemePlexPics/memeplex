@@ -1,4 +1,4 @@
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import { InfoMessage, delay, logError, logInfo } from '.'
 
 export async function loopRetrying(

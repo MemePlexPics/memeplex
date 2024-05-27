@@ -4,8 +4,8 @@ import { delay, getDbConnection } from '../../../utils'
 import process from 'process'
 import { setChannelUnavailable } from '.'
 import { insertChannelSuggestion } from '../../../utils/mysql-queries'
-import { Logger } from 'winston'
-import { TAmqpImageDataChannelMessage } from '../../types'
+import type { Logger } from 'winston'
+import type { TAmqpImageDataChannelMessage } from '../../types'
 
 export const getMessagesAfter = async function* (
   channelName: string,

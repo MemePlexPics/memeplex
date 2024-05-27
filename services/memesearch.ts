@@ -2,7 +2,8 @@ import { loopRetrying } from '../utils'
 import { LOOP_RETRYING_DELAY } from '../constants'
 import { serviceSettings } from './constants'
 import { getLogger, insertOcrKeysIntoDb } from './utils'
-import winston, { Logger } from 'winston'
+import type { Logger } from 'winston'
+import winston from 'winston'
 
 const loggers = winston.loggers
 

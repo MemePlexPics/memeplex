@@ -1,7 +1,7 @@
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 import { EState } from '../constants'
 import { i18n } from '../i18n'
-import { TMenuButton, TState } from '../types'
+import type { TMenuButton, TState } from '../types'
 import { enterToState, handleInvoiceCreation } from '../utils'
 import { mainState } from './mainState'
 

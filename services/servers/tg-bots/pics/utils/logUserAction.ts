@@ -1,4 +1,4 @@
-import { User } from '@telegraf/types'
+import type { User } from '@telegraf/types'
 import { getMysqlClient } from '../../../../../utils'
 import {
   insertBotAction,
@@ -9,7 +9,7 @@ import {
   selectBotUser,
 } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 // TODO: refactoring
 export const logUserAction = async (

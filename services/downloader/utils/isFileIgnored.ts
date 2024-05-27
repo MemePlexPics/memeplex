@@ -4,7 +4,7 @@ import * as imghash from 'imghash'
 import { selectPHash, insertPHash } from '../../../utils/mysql-queries'
 import { checkFileExists, getMysqlClient, downloadFile } from '../../../utils'
 import { buildImageUrl } from '.'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export const isFileIgnored = async (logger: Logger, destination: string, payload) => {
   const doesImageExist = await checkFileExists(destination)

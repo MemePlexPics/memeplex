@@ -45,6 +45,8 @@ module.exports = {
                     'warn',
                     'never'
                 ],
+                'no-multiple-empty-lines': ['warn'],
+                'no-trailing-spaces': ['warn'],
                 '@typescript-eslint/no-unused-vars': [
                   'warn',
                   {
@@ -55,6 +57,13 @@ module.exports = {
                     destructuredArrayIgnorePattern: '^_',
                     varsIgnorePattern: '^_',
                   }
+                ],
+                '@typescript-eslint/consistent-type-imports': [
+                    'warn',
+                    {
+                      prefer: 'type-imports',
+                      fixStyle: 'separate-type-imports',
+                    }
                 ],
             }
         },

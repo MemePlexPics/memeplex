@@ -1,5 +1,5 @@
-import { ChatFromGetChat } from 'telegraf/typings/core/types/typegram'
-import { EState } from '../constants'
+import type { ChatFromGetChat } from 'telegraf/typings/core/types/typegram'
+import type { EState } from '../constants'
 
 export type TTelegrafSession = {
   channel?: {

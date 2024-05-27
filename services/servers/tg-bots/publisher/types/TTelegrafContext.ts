@@ -1,6 +1,6 @@
-import { Context } from 'telegraf'
-import { TTelegrafSession } from '.'
-import { Logger } from 'winston'
+import type { Context } from 'telegraf'
+import type { TTelegrafSession } from '.'
+import type { Logger } from 'winston'
 
 export type TTelegrafContext = Context & {
   session: TTelegrafSession

@@ -1,6 +1,6 @@
-import { TInlineMenu, TMenu, TTelegrafContext } from '.'
-import { Promisable } from '../../../../../types'
-import { EState } from '../constants'
+import type { TInlineMenu, TMenu, TTelegrafContext } from '.'
+import type { Promisable } from '../../../../../types'
+import type { EState } from '../constants'
 
 export type TState = {
   stateName: EState
