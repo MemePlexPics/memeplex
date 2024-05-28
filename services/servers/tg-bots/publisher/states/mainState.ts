@@ -1,7 +1,7 @@
 import { EState } from '../constants'
 import type { TMenuButton, TState } from '../types'
 import { enterToState, onClickAddMyself } from '../utils'
-import { addChannelState, buyPremiumState, channelSettingState } from '.'
+import { addChannelState, buyPremiumState, channelSettingState, memeSearchState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
 import { selectPublisherChannelsByUserId } from '../../../../../utils/mysql-queries'
@@ -49,9 +49,15 @@ export const mainState: TState = {
         await enterToState(ctx, channelSettingState)
       },
     ]
+    const memeSearchButton: TMenuButton = [
+      i18n['ru'].button.searchMemes(),
+      async ctx => {
+        await enterToState(ctx, memeSearchState)
+      },
+    ]
     return {
       text: i18n['ru'].message.mainMenu(),
-      buttons: [[mySubscriptionsButton], [linkYourChannelButton], [buyPremium]],
+      buttons: [[mySubscriptionsButton], [linkYourChannelButton], [memeSearchButton, buyPremium]],
     }
   },
   onCallback: async (ctx, callback) => {

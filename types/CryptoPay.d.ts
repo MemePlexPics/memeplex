@@ -1,17 +1,17 @@
 declare module '@foile/crypto-pay-api' {
   import { EventEmitter } from 'events'
-  
+
     type Asset = 'BTC' | 'TON' | 'ETH' | 'USDT' | 'USDC' | 'BUSD'
     type PaidButtonName = 'viewItem' | 'openChannel' | 'openBot' | 'callback'
     type UpdateType = 'invoice_paid'
-  
+
     interface WebhookOptions {
       serverHostname: string
       serverPort?: number
       path: string
       tls?: object
     }
-  
+
     interface CreateInvoiceOptions {
       description?: string
       hidden_message?: string
@@ -25,12 +25,12 @@ declare module '@foile/crypto-pay-api' {
       fiat: string
       amount: string
     }
-  
+
     interface TransferOptions {
       comment?: string
       disable_send_notification?: boolean
     }
-  
+
     interface GetInvoicesOptions {
       asset?: string
       invoice_ids?: number[]
@@ -38,7 +38,7 @@ declare module '@foile/crypto-pay-api' {
       offset?: number
       count?: number
     }
-  
+
     export class CryptoPay extends EventEmitter {
       constructor(token: string, options?: {
         protocol?: string
@@ -46,7 +46,7 @@ declare module '@foile/crypto-pay-api' {
         updateVerification?: boolean
         webhook?: WebhookOptions
       })
-  
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       getMe(): Promise<any>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,7 +68,7 @@ declare module '@foile/crypto-pay-api' {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       private handleUpdate(update: any): void
     }
-  
+
     export const Assets: {
       BTC: 'BTC'
       TON: 'TON'
@@ -77,13 +77,13 @@ declare module '@foile/crypto-pay-api' {
       USDC: 'USDC'
       BUSD: 'BUSD'
     }
-  
+
     export const PaidButtonNames: {
       VIEW_ITEM: 'viewItem'
       OPEN_CHANNEL: 'openChannel'
       OPEN_BOT: 'openBot'
       CALLBACK: 'callback'
     }
-  
+
     export default CryptoPay
 }

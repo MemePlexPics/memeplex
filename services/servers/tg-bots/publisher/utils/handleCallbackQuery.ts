@@ -1,4 +1,3 @@
-import type { Client } from '@elastic/elasticsearch'
 import {
   enterToState,
   handleGroupKeywordAction,
@@ -15,7 +14,6 @@ import { buyPremiumState } from '../states'
 
 export const handleCallbackQuery = async (
   ctx: TTelegrafContext,
-  elastic: Client,
   handler?: TState['onCallback'],
 ) => {
   if (!isCallbackQueryUpdate(ctx.update) || !isDataQuery(ctx.update.callback_query)) return
@@ -33,7 +31,7 @@ export const handleCallbackQuery = async (
       ? GRest
       : never
     const [channelId, memeId] = restCbData
-    await handleMemePost(elastic, ctx, Number(channelId), memeId)
+    await handleMemePost(ctx, Number(channelId), memeId)
     return
   }
   if (state === ECallback.KEY) {

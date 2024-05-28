@@ -1,5 +1,5 @@
 import { EKeywordGroupAction, EState } from '../constants'
-import type { TState, TTelegrafContext } from '../types'
+import type { TMenuButton, TState, TTelegrafContext } from '../types'
 import {
   addSubscription,
   deleteSubscription,
@@ -7,7 +7,7 @@ import {
   logUserAction,
   replaceInlineKeyboardButton,
 } from '../utils'
-import { channelSettingState } from '.'
+import { channelSettingState, memeSearchState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   deletePublisherGroupSubscription,
@@ -67,9 +67,19 @@ ${
     }
   },
   menu: async () => {
+    const memeSearchButton: TMenuButton = [
+      i18n['ru'].button.search(),
+      async ctx => {
+        await enterToState(ctx, memeSearchState)
+      },
+    ]
+    const backButton: TMenuButton = [
+      i18n['ru'].button.back(),
+      ctx => enterToState(ctx, channelSettingState),
+    ]
     return {
       text: i18n['ru'].message.keywordGroupsMenu(),
-      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, channelSettingState)]]],
+      buttons: [[memeSearchButton, backButton]],
     }
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
