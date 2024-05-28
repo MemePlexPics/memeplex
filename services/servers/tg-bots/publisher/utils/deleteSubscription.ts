@@ -1,5 +1,5 @@
 import { deletePublisherSubscription } from '../../../../../utils/mysql-queries'
-import { TDbConnection } from '../../../../../utils/types'
+import type { TDbConnection } from '../../../../../utils/types'
 
 export const deleteSubscription = async (
   db: TDbConnection,

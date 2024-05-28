@@ -1,6 +1,6 @@
 import { ocrKeys } from '../../db/schema'
 import { isNull, or, sql } from 'drizzle-orm'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 import { OCR_SPACE_403_DELAY } from '../../constants'
 
 export const selectRandomOcrKey = async (db: TDbConnection) => {

@@ -1,4 +1,4 @@
-import { TMemeEntity, TPrePublisherDistributionQueue } from '../../types'
+import type { TMemeEntity, TPrePublisherDistributionQueue } from '../../types'
 
 export const initPublisherDistributionQueueMsg = (
   queue: TPrePublisherDistributionQueue,

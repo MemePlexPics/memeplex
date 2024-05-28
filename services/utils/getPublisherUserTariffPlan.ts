@@ -1,5 +1,5 @@
 import { selectPublisherPremiumUser } from '../../utils/mysql-queries'
-import { TDbConnection } from '../../utils/types'
+import type { TDbConnection } from '../../utils/types'
 
 export const getPublisherUserTariffPlan = async (db: TDbConnection, userId: number) => {
   const isPremium = await selectPublisherPremiumUser(db, userId)

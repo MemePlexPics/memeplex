@@ -1,4 +1,4 @@
-import { Context } from 'telegraf'
+import type { Context } from 'telegraf'
 
 export const resetSearchSession = (ctx: Context) => {
   // @ts-expect-error TODO: type for ctx.session

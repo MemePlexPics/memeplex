@@ -1,4 +1,4 @@
-import { TAmqpImageFileChannelMessage } from '../../types'
+import type { TAmqpImageFileChannelMessage } from '../../types'
 
 export type TBuildImageTextPath = (
   params: TAmqpImageFileChannelMessage,

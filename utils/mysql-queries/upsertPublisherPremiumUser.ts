@@ -1,5 +1,5 @@
 import { botPublisherUserPremiums } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const upsertPublisherPremiumUser = async (
   db: TDbConnection,

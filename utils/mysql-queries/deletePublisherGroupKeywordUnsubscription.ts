@@ -1,6 +1,6 @@
 import { and, eq, inArray } from 'drizzle-orm'
 import { botPublisherGroupKeywordUnsubscriptions } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const deletePublisherGroupKeywordUnsubscription = async (
   db: TDbConnection,

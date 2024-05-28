@@ -1,5 +1,5 @@
 import { botPublisherInvoices } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const insertPublisherInvoice = async (
   db: TDbConnection,

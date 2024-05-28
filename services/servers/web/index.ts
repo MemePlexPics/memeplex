@@ -26,7 +26,7 @@ import {
 import { searchMemes, getLatestMemes, getMeme, downloadTelegramChannelAvatar } from '../utils'
 import winston from 'winston'
 import { adminRouter } from './routers'
-import { TRequestHandler } from './routers/admin/types'
+import type { TRequestHandler } from './routers/admin/types'
 
 const app = express()
 

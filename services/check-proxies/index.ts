@@ -1,10 +1,11 @@
 import 'dotenv/config'
-import amqplib, { Channel, Connection, GetMessage } from 'amqplib'
+import type { Channel, Connection, GetMessage } from 'amqplib'
+import amqplib from 'amqplib'
 import process from 'process'
 import { AMQP_CHECK_PROXY_CHANNEL, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
 import { delay, getDbConnection, getMysqlClient } from '../../utils'
 import { handleAddingProxy, maintaneProxies } from './utils'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import { getAmqpQueue } from '../utils'
 
 export const checkProxies = async (logger: Logger) => {

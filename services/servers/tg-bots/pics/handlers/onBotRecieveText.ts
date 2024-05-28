@@ -8,9 +8,9 @@ import { searchMemes } from '../../../utils/searchMemes'
 import { logUserAction, resetSearchSession } from '../utils'
 import { getBotAnswerString } from '../../utils'
 import { i18n } from '../i18n'
-import { TTelegrafContext } from '../types'
-import { Client } from '@elastic/elasticsearch'
-import { Logger } from 'winston'
+import type { TTelegrafContext } from '../types'
+import type { Client } from '@elastic/elasticsearch'
+import type { Logger } from 'winston'
 
 export const onBotRecieveText = async (ctx: TTelegrafContext, client: Client, logger: Logger) => {
   try {

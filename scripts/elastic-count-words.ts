@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { getElasticClient } from '../utils'
 import { ELASTIC_INDEX, wordsForElasticEntititesCounter } from '../constants'
-import { Client } from '@elastic/elasticsearch'
+import type { Client } from '@elastic/elasticsearch'
 
 const countEntities = async (client: Client, words: string[]) => {
   const query = {

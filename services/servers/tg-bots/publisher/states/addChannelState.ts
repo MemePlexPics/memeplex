@@ -1,7 +1,7 @@
 import { mainState } from '.'
 import { EState } from '../constants'
 import { i18n } from '../i18n'
-import { TState } from '../types'
+import type { TState } from '../types'
 import { addChannel, enterToState } from '../utils'
 
 export const addChannelState: TState = {

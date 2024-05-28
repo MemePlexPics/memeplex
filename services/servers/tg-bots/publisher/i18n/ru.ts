@@ -1,5 +1,5 @@
 import { MAX_FREE_USER_CHANNEL_SUBS } from '../../../../../constants'
-import { PREMIUM_PLANS } from '../../../../../constants/publisher'
+import type { PREMIUM_PLANS } from '../../../../../constants/publisher'
 
 export const ru = {
   message: {

@@ -1,5 +1,5 @@
 import { EState } from '../constants'
-import { TMenuButton, TState } from '../types'
+import type { TMenuButton, TState } from '../types'
 import { enterToState, onClickDeleteChannel } from '../utils'
 import { buyPremiumState, keywordGroupSelectState, keywordSettingsState, mainState } from '.'
 import { getDbConnection } from '../../../../../utils'

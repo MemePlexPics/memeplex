@@ -15,7 +15,7 @@ import {
 import { defaultSession } from './constants'
 import { getLogger } from '../utils'
 import { i18n } from './i18n'
-import { TSessionInMemory, TTelegrafContext, TTelegrafSession } from './types'
+import type { TSessionInMemory, TTelegrafContext, TTelegrafSession } from './types'
 
 const bot = new Telegraf<TTelegrafContext>(process.env.TELEGRAM_BOT_TOKEN)
 const logger = getLogger('tg-bot')

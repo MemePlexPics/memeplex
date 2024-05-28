@@ -1,7 +1,7 @@
 import { getDbConnection } from '../../../../../../utils'
 import { selectFeaturedChannelByUsername } from '../../../../../../utils/mysql-queries'
 import { setLogAction } from '../utils'
-import { TRequestHandler } from '../types'
+import type { TRequestHandler } from '../types'
 
 export const featuredChannelGet: TRequestHandler<{
   username: string

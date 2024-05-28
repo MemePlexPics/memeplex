@@ -1,12 +1,12 @@
 import { EState } from '../constants'
-import { TMenuButton, TState } from '../types'
+import type { TMenuButton, TState } from '../types'
 import { enterToState, onClickAddMyself } from '../utils'
 import { addChannelState, buyPremiumState, channelSettingState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
 import { selectPublisherChannelsByUserId } from '../../../../../utils/mysql-queries'
 import { Markup } from 'telegraf'
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export const mainState: TState = {
   stateName: EState.MAIN,

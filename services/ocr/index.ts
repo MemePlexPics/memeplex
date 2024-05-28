@@ -1,15 +1,16 @@
 import 'dotenv/config'
 import fs from 'fs/promises'
-import amqplib, { Connection, Channel, GetMessage } from 'amqplib'
+import type { Connection, Channel, GetMessage } from 'amqplib'
+import amqplib from 'amqplib'
 import process from 'process'
 import { AMQP_IMAGE_FILE_CHANNEL, ELASTIC_INDEX, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
 import { getElasticClient, delay, logError, InfoMessage } from '../../utils'
 import { recogniseText, getNewDoc, blackListChecker } from './utils'
-import { Client } from '@elastic/elasticsearch'
+import type { Client } from '@elastic/elasticsearch'
 import { getAmqpQueue } from '../utils'
 import { handlePublisherDistribution } from './utils'
-import { Logger } from 'winston'
-import { TAmqpImageFileChannelMessage } from '../types'
+import type { Logger } from 'winston'
+import type { TAmqpImageFileChannelMessage } from '../types'
 
 // Listens for messages containing images, outputs messages containing OCR'd text
 export const ocr = async (logger: Logger) => {

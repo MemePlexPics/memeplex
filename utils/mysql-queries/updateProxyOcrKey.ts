@@ -1,6 +1,6 @@
 import { and, eq } from 'drizzle-orm'
 import { proxies } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const updateProxyOcrKey = async (
   db: TDbConnection,

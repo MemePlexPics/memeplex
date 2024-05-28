@@ -2,10 +2,10 @@ import amqplib from 'amqplib'
 import process from 'process'
 import 'dotenv/config'
 import { getTelegramUser } from '../../utils'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 import { AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL } from '../../../../../constants'
 import { i18n } from '../i18n'
-import { TAmqpPublisherToCryptoPayChannelMessage } from '../../../../types'
+import type { TAmqpPublisherToCryptoPayChannelMessage } from '../../../../types'
 
 export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: number) => {
   try {

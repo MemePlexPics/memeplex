@@ -1,4 +1,4 @@
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export async function logInfo(logger: Logger, e: Error, additionalInfo?: object) {
   if (logger) {

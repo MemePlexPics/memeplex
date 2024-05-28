@@ -1,5 +1,5 @@
-import { Promisable, RequiredProperty } from '../../../../../types'
-import { TState, TTelegrafContext } from '../types'
+import type { Promisable, RequiredProperty } from '../../../../../types'
+import type { TState, TTelegrafContext } from '../types'
 
 export const getMenuButtonsAndHandlers = async (
   ctx: TTelegrafContext,

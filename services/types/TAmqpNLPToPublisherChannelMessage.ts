@@ -1,4 +1,4 @@
-import { TMemeEntity } from '.'
+import type { TMemeEntity } from '.'
 
 export type TAmqpNLPToPublisherChannelMessage = {
   memeId: string

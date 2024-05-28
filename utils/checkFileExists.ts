@@ -1,4 +1,5 @@
-import { PathLike, promises as fs } from 'fs'
+import type { PathLike } from 'fs'
+import { promises as fs } from 'fs'
 
 export async function checkFileExists(file: PathLike) {
   try {

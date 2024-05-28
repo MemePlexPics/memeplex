@@ -1,4 +1,4 @@
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export type TInlineMenu = {
   text: string

@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { channels } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 type TChannel = Pick<typeof channels.$inferInsert, 'name' | 'availability'> &
 Partial<Pick<typeof channels.$inferInsert, 'withText'>>

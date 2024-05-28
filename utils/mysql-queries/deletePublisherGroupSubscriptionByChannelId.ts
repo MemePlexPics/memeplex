@@ -1,6 +1,6 @@
 import { botPublisherGroupSubscriptions } from '../../db/schema'
 import { eq } from 'drizzle-orm'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const deletePublisherGroupSubscriptionByChannelId = async (
   db: TDbConnection,

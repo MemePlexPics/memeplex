@@ -1,6 +1,6 @@
 import { setChannelMemesState } from '../../../../utils'
 import { setLogAction } from '../utils'
-import { TRequestHandler } from '../types'
+import type { TRequestHandler } from '../types'
 
 export const channelMemesStatePut: TRequestHandler<{
   channel: string

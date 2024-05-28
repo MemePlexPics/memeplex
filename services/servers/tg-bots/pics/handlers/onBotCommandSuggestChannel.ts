@@ -1,8 +1,8 @@
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import { getDbConnection, getTgChannelName, logError } from '../../../../../utils'
 import { insertChannelSuggestion } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 import { logUserAction } from '../utils'
 
 export const onBotCommandSuggestChannel = async (ctx: TTelegrafContext, logger: Logger) => {

@@ -1,6 +1,6 @@
-import { Channel, Connection, GetMessage } from 'amqplib'
+import type { Channel, Connection, GetMessage } from 'amqplib'
 import { handleNackByTimeout } from '.'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export const getAmqpQueue = async (
   amqp: Connection,

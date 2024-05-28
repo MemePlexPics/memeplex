@@ -1,4 +1,4 @@
-import { TPublisherDistributionQueueMsg } from '.'
+import type { TPublisherDistributionQueueMsg } from '.'
 
 export type TPrePublisherDistributionQueue = Record<
 number,

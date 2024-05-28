@@ -1,4 +1,4 @@
-import { TState, TTelegrafContext } from '../types'
+import type { TState, TTelegrafContext } from '../types'
 import { getMenuButtonsAndHandlers } from '.'
 import { Markup } from 'telegraf'
 

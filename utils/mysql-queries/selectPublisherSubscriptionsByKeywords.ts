@@ -1,6 +1,6 @@
 import { botPublisherKeywords, botPublisherSubscriptions } from '../../db/schema'
 import { eq, inArray } from 'drizzle-orm'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const selectPublisherSubscriptionsByKeywords = async (
   db: TDbConnection,

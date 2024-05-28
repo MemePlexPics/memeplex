@@ -1,6 +1,6 @@
-import { botPublisherGroupSubscriptions } from '../../../../../db/schema'
+import type { botPublisherGroupSubscriptions } from '../../../../../db/schema'
 import { selectPublisherGroupSubscriptionsByGroupIds } from '../../../../../utils/mysql-queries'
-import { TDbConnection } from '../../../../../utils/types'
+import type { TDbConnection } from '../../../../../utils/types'
 
 export const getGroupSubscriptionsByKeywords = async (
   db: TDbConnection,

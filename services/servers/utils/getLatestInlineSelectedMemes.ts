@@ -1,4 +1,4 @@
-import { Client } from '@elastic/elasticsearch'
+import type { Client } from '@elastic/elasticsearch'
 import { getDbConnection } from '../../../utils'
 import { selectLatestInlineSelectedMemes } from '../../../utils/mysql-queries'
 import { getMemesById } from './getMemesById'

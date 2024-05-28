@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { botPublisherChannels } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const updatePublisherChannelById = async (
   db: TDbConnection,

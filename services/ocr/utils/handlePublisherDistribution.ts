@@ -4,7 +4,7 @@ import 'dotenv/config'
 import { getDbConnection } from '../../../utils'
 import { AMQP_MEMES_TO_NLP_CHANNEL } from '../../../constants'
 import { getPublisherKeywords } from '../../../utils/mysql-queries'
-import { TMemeEntity } from '../../types'
+import type { TMemeEntity } from '../../types'
 
 export const handlePublisherDistribution = async (document: TMemeEntity, memeId: string) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)

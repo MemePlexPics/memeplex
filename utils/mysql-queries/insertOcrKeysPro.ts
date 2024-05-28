@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
 import { ocrKeysPro } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const insertOcrKeysPro = async (
   db: TDbConnection,

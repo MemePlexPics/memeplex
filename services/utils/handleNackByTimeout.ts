@@ -1,5 +1,5 @@
-import { Channel, GetMessage } from 'amqplib'
-import { Logger } from 'winston'
+import type { Channel, GetMessage } from 'amqplib'
+import type { Logger } from 'winston'
 
 export const handleNackByTimeout = (logger: Logger, msg: GetMessage, channel: Channel) => {
   if (channel && msg) {

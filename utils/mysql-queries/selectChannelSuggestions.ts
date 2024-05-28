@@ -1,6 +1,6 @@
 import { and, eq, like } from 'drizzle-orm'
 import { channelSuggestions } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const selectChannelSuggestions = async (
   db: TDbConnection,

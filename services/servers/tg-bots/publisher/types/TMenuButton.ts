@@ -1,5 +1,5 @@
-import { KeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { TTelegrafContext } from './TTelegrafContext'
+import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { TTelegrafContext } from './TTelegrafContext'
 
 export type TMenuButton =
   | KeyboardButton

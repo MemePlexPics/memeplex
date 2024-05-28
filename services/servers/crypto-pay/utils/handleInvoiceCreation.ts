@@ -1,7 +1,7 @@
 import amqplib from 'amqplib'
 import process from 'process'
 import 'dotenv/config'
-import { CryptoPay } from '@foile/crypto-pay-api'
+import type { CryptoPay } from '@foile/crypto-pay-api'
 import { getAmqpQueue } from '../../../utils'
 import { delay, getDbConnection } from '../../../../utils'
 import {
@@ -10,9 +10,9 @@ import {
   CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS,
   EMPTY_QUEUE_RETRY_DELAY,
 } from '../../../../constants'
-import { Logger } from 'winston'
-import { TInvoiceCreated } from '../types'
-import {
+import type { Logger } from 'winston'
+import type { TInvoiceCreated } from '../types'
+import type {
   TAmqpCryptoPayToPublisherChannelMessage,
   TAmqpPublisherToCryptoPayChannelMessage,
 } from '../../../types'

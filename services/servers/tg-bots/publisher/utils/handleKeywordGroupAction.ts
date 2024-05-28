@@ -7,7 +7,7 @@ import {
   selectPublisherKeywordGroupNameByIds,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, EKeywordGroupAction, callbackData } from '../constants'
-import { TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 import { i18n } from '../i18n'
 
 export const handleKeywordGroupAction = async (

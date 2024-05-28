@@ -1,4 +1,4 @@
-import { MySqlSelect } from 'drizzle-orm/mysql-core'
+import type { MySqlSelect } from 'drizzle-orm/mysql-core'
 
 /** @param queryBuilder must have .orderBy() setted */
 export const sqlWithPagination = <TQueryBuilder extends MySqlSelect>(

@@ -3,7 +3,7 @@ import {
   selectFastestAvailableProxyWithoutKey,
   updateProxyOcrKey,
 } from '../../../utils/mysql-queries'
-import { TDbConnection } from '../../../utils/types'
+import type { TDbConnection } from '../../../utils/types'
 
 export async function getProxyForKey(db: TDbConnection, key: string) {
   const [oldProxies] = await selectFastestAvailableProxyWithExactKey(db, key)

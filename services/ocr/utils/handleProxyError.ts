@@ -1,4 +1,4 @@
-import { AxiosError } from 'axios'
+import type { AxiosError } from 'axios'
 import { InfoMessage, getMysqlClient } from '../../../utils'
 import { updateProxyAvailability } from '../../../utils/mysql-queries'
 

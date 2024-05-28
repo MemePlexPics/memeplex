@@ -1,6 +1,10 @@
-import winston, { Container } from 'winston'
+import type { Container } from 'winston'
+import winston from 'winston'
 import process from 'process'
-import { ConsoleTransportInstance, FileTransportInstance } from 'winston/lib/winston/transports'
+import type {
+  ConsoleTransportInstance,
+  FileTransportInstance,
+} from 'winston/lib/winston/transports'
 
 const { combine, timestamp, json, simple } = winston.format
 

@@ -97,8 +97,9 @@ describe('Subscribed to premium', () => {
     const mainMenuMessage = updates!.result.find(
       update => update.message.text === i18n['ru'].message.mainMenu(),
     )
-    const connectPremiumButton = mainMenuMessage!.message.reply_markup.keyboard.find((row: KeyboardButton[]) =>
-      row.find(button => button === i18n['ru'].button.subscribeToPremium()),
+    const connectPremiumButton = mainMenuMessage!.message.reply_markup.keyboard.find(
+      (row: KeyboardButton[]) =>
+        row.find(button => button === i18n['ru'].button.subscribeToPremium()),
     )
     if (!connectPremiumButton) {
       throw new Error(`Subscription didn't expired: ${JSON.stringify(mainMenuMessage, null, 2)}`)

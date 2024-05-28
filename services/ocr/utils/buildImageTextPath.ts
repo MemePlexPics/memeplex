@@ -1,5 +1,5 @@
 import { mkdir } from 'fs/promises'
-import { TBuildImageTextPath } from '../types'
+import type { TBuildImageTextPath } from '../types'
 
 export const buildImageTextPath: TBuildImageTextPath = async (
   { channelName, messageId, photoId },

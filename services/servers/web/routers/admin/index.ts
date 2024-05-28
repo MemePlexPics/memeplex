@@ -1,4 +1,5 @@
-import express, { RequestHandler } from 'express'
+import type { RequestHandler } from 'express'
+import express from 'express'
 import process from 'process'
 import 'dotenv/config'
 import winston from 'winston'

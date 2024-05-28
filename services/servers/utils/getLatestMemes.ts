@@ -1,7 +1,7 @@
 import { ELASTIC_INDEX } from '../../../constants'
 import { getMemeResponseEntity } from '.'
-import { Client } from '@elastic/elasticsearch'
-import { TMemeEntity } from '../../types'
+import type { Client } from '@elastic/elasticsearch'
+import type { TMemeEntity } from '../../types'
 
 export const getLatestMemes = async (
   client: Client,

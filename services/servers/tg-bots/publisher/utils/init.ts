@@ -1,12 +1,13 @@
 import process from 'process'
 import 'dotenv/config'
-import { Telegraf, session } from 'telegraf'
+import type { Telegraf } from 'telegraf'
+import { session } from 'telegraf'
 import rateLimit from 'telegraf-ratelimit'
 import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../../utils'
 import { EState } from '../constants'
-import { TState, TTelegrafContext, TTelegrafSession } from '../types'
+import type { TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
   TelegrafWrapper,
   enterToState,
@@ -35,7 +36,7 @@ import {
 } from '../../../../../utils'
 import { insertPublisherUser, selectPublisherPremiumUser } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
 
 export const init = async (

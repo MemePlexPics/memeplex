@@ -94,6 +94,25 @@ services:
      - --innodb-buffer-pool-size=128M
      - --wait_timeout=65
 
+  nlp:
+    container_name: nlp
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      AMQP_ENDPOINT: 'amqp://rabbitmq:5672'
+      PYTHONUNBUFFERED: 1
+      NLTK_DATA: /app/nltk_data
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./services/nlp.py:/app/services/nlp.py
+      - ./data/nlp:/app
+    command: ["python", "/app/services/nlp.py"]
+    depends_on:
+      - rabbitmq
+
   # Extended containers
 
   telegram-api-server:

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { insertProxyToRequest } from '../utils'
 
 import { PROXY_TEST_TIMEOUT, PROXY_TESTING_FILE } from '../constants'
-import { Logger } from 'winston'
+import type { Logger } from 'winston'
 
 export const getProxySpeed = async (
   ip: string,

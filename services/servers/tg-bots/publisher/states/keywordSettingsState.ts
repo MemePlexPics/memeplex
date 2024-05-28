@@ -1,5 +1,5 @@
 import { EKeywordAction, EState } from '../constants'
-import { TMenuButton, TState, TTelegrafContext } from '../types'
+import type { TMenuButton, TState, TTelegrafContext } from '../types'
 import { addSubscription, enterToState, logUserAction } from '../utils'
 import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'

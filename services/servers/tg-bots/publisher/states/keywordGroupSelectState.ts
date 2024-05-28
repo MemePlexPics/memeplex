@@ -1,5 +1,5 @@
 import { EKeywordGroupAction, EState } from '../constants'
-import { TState, TTelegrafContext } from '../types'
+import type { TState, TTelegrafContext } from '../types'
 import {
   addSubscription,
   deleteSubscription,
@@ -20,7 +20,7 @@ import {
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { Markup } from 'telegraf'
-import { InlineKeyboardButton } from '@telegraf/types'
+import type { InlineKeyboardButton } from '@telegraf/types'
 
 export const keywordGroupSelectState: TState = {
   stateName: EState.KEYWORD_GROUP_SELECT,

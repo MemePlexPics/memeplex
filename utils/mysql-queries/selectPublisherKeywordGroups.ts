@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm'
 import { botPublisherKeywordGroupNames, botPublisherKeywordGroups } from '../../db/schema'
-import { TDbConnection } from '../types'
+import type { TDbConnection } from '../types'
 
 export const selectPublisherKeywordGroups = async (db: TDbConnection) => {
   return await db
