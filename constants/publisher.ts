@@ -19,3 +19,14 @@ export const PREMIUM_PLANS = [
     emoji: '🌟',
   },
 ] as const
+
+export const QUERY_REDUNDANT_WORDS = [
+  'мем',
+  'видео',
+  'фото',
+  'картинка',
+  'где',
+  'из',
+  'reels',
+  'рилс',
+]

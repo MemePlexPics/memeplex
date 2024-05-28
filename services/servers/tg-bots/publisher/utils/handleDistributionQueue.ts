@@ -12,11 +12,11 @@ import { delay, getDbConnection, logError } from '../../../../../utils'
 import type { Logger } from 'winston'
 import fs from 'fs/promises'
 import {
-  selectPublisherChannelsById,
-  selectPublisherKeywordGroupNameByIds,
-  selectPublisherKeywordsByKeywords,
+  selectBotChannelsById,
+  selectBotTopicNameByIds,
+  selectBotKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
-import { EKeywordAction, EKeywordGroupAction, callbackData } from '../constants'
+import { EKeywordAction, ETopicAction, callbackData } from '../constants'
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 import type { TPublisherDistributionQueueMsg } from '../../../../types'
 import { i18n } from '../i18n'
@@ -50,21 +50,21 @@ export const handleDistributionQueue = async (
 
       const buttons: InlineKeyboardButton.CallbackButton[][] = []
       const db = await getDbConnection()
-      const channels = await selectPublisherChannelsById(db, payload.channelIds)
+      const channels = await selectBotChannelsById(db, payload.channelIds)
 
       channels.forEach(channel => {
         if (channel.id === Number(payload.userId)) return null
         buttons.push([
           {
             text: i18n['ru'].button.postMeme(channel.username),
-            callback_data: callbackData.premoderationPostButton(channel.id, payload.memeId),
+            callback_data: callbackData.premoderation.postButton(channel.id, payload.memeId),
           },
         ])
       })
 
       // TODO: maybe it is worth refactoring
       if (payload.keywords.length !== 0) {
-        const keywords = await selectPublisherKeywordsByKeywords(db, payload.keywords)
+        const keywords = await selectBotKeywordsByKeywords(db, payload.keywords)
         keywords.forEach(({ id, keyword }) => {
           const channelId =
             payload.channelIdsByKeyword[keyword]?.length > 1
@@ -76,7 +76,7 @@ export const handleDistributionQueue = async (
           buttons.push([
             {
               text: i18n['ru'].button.premoderationKeywordUnsubscribe(keyword),
-              callback_data: callbackData.premoderationKeywordButton(
+              callback_data: callbackData.premoderation.keywordButton(
                 EKeywordAction.DELETE,
                 channelId,
                 id,
@@ -86,27 +86,24 @@ export const handleDistributionQueue = async (
         })
       }
 
-      if (payload.keywordGroupIds.length !== 0) {
-        const keywordGroups = await selectPublisherKeywordGroupNameByIds(
-          db,
-          payload.keywordGroupIds,
-        )
-        keywordGroups.forEach(({ id, name: groupName }) => {
-          if (!groupName || !id) {
+      if (payload.topicIds.length !== 0) {
+        const topics = await selectBotTopicNameByIds(db, payload.topicIds)
+        topics.forEach(({ id, name: topicName }) => {
+          if (!topicName || !id) {
             return
           }
           const channelId =
-            payload.channelIdsByKeywordGroup[id]?.length > 1
-              ? payload.channelIdsByKeywordGroup[id].find(channelId => channelId !== payload.userId)
-              : payload.channelIdsByKeywordGroup[id][0]
+            payload.channelIdsByTopic[id]?.length > 1
+              ? payload.channelIdsByTopic[id].find(channelId => channelId !== payload.userId)
+              : payload.channelIdsByTopic[id][0]
           if (!channelId) {
             throw new Error(`There is a message without a single channelId!`)
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderationKeywordGroupUnsubscribe(groupName),
-              callback_data: callbackData.premoderationKeywordGroupButton(
-                EKeywordGroupAction.UNSUBSCRIBE,
+              text: i18n['ru'].button.premoderationTopicUnsubscribe(topicName),
+              callback_data: callbackData.premoderation.topicButton(
+                ETopicAction.UNSUBSCRIBE,
                 channelId,
                 id,
               ),
@@ -115,31 +112,28 @@ export const handleDistributionQueue = async (
         })
       }
 
-      const groupKeywords = Object.entries(payload.groupKeywords)
-      if (groupKeywords.length !== 0) {
-        const [keywordList, keywordGroupIdList] = groupKeywords.reduce<[string[], number[]]>(
-          (acc, [keyword, keywordGroup]) => {
+      const topicKeywords = Object.entries(payload.topicKeywords)
+      if (topicKeywords.length !== 0) {
+        const [keywordList, topicIdList] = topicKeywords.reduce<[string[], number[]]>(
+          (acc, [keyword, topic]) => {
             acc[0].push(keyword)
-            acc[1].push(keywordGroup)
+            acc[1].push(topic)
             return acc
           },
           [[], []],
         )
-        const keywords = await selectPublisherKeywordsByKeywords(db, keywordList)
-        const keywordGroups = await selectPublisherKeywordGroupNameByIds(db, keywordGroupIdList)
+        const keywords = await selectBotKeywordsByKeywords(db, keywordList)
+        const topics = await selectBotTopicNameByIds(db, topicIdList)
         const keywordIdsObject = keywords.reduce<Record<string, number>>((acc, { id, keyword }) => {
           acc[keyword] = id
           return acc
         }, {})
-        const keywordGroupNameById = keywordGroups.reduce<Record<number, string>>(
-          (acc, { id, name }) => {
-            if (!name || !id) return acc
-            acc[id] = name
-            return acc
-          },
-          {},
-        )
-        groupKeywords.forEach(async ([keyword, keywordGroupId]) => {
+        const topicNameById = topics.reduce<Record<number, string>>((acc, { id, name }) => {
+          if (!name || !id) return acc
+          acc[id] = name
+          return acc
+        }, {})
+        topicKeywords.forEach(async ([keyword, topicId]) => {
           const channelId =
             payload.channelIdsByKeyword[keyword]?.length > 1
               ? payload.channelIdsByKeyword[keyword].find(channelId => channelId !== payload.userId)
@@ -149,15 +143,15 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderationKeywordFromGroupUnsubscribe(
+              text: i18n['ru'].button.premoderationKeywordFromTopicUnsubscribe(
                 keyword,
-                keywordGroupNameById[keywordGroupId],
+                topicNameById[topicId],
               ),
-              callback_data: callbackData.premoderationGroupKeywordsButton(
+              callback_data: callbackData.premoderation.topicKeywordsButton(
                 EKeywordAction.DELETE,
                 channelId,
                 keywordIdsObject[keyword],
-                keywordGroupId,
+                topicId,
               ),
             },
           ])

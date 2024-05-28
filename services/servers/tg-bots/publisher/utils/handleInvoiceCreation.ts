@@ -9,9 +9,6 @@ import type { TAmqpPublisherToCryptoPayChannelMessage } from '../../../../types'
 
 export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: number) => {
   try {
-    if (!ctx.from) {
-      throw new Error('There is no ctx.from')
-    }
     const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     const { id, user } = getTelegramUser(ctx.from)
     const publisherToCryptoPayCh = await amqp.createChannel()

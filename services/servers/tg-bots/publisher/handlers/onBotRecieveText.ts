@@ -2,26 +2,16 @@ import process from 'process'
 import 'dotenv/config'
 import { Markup } from 'telegraf'
 
-import { MAX_SEARCH_QUERY_LENGTH, TG_BOT_PAGE_SIZE } from '../../../../../constants'
+import { TG_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getDbConnection } from '../../../../../utils'
 import { searchMemes } from '../../../utils/searchMemes'
 import { getBotAnswerString, getTelegramUser } from '../../utils'
 import { i18n } from '../i18n'
 import type { TTelegrafContext } from '../types'
 import { insertBotAction, upsertBotUser } from '../../../../../utils/mysql-queries'
+import { ECallback } from '../constants'
 
-export const onBotRecieveText = async (ctx: TTelegrafContext) => {
-  if (!ctx.from) {
-    throw new Error('There is no ctx.from')
-  }
-  const query =
-    ctx.session.search.query ||
-    ('message' in ctx.update && 'text' in ctx.update.message
-      ? ctx.update.message.text.slice(0, MAX_SEARCH_QUERY_LENGTH).replace(/[@]?MemePlexBot/i, '')
-      : undefined)
-  if (query === undefined) {
-    throw new Error(`There is no query!`)
-  }
+export const onBotRecieveText = async (ctx: TTelegrafContext, query: string) => {
   const page = ctx.session.search.nextPage || 1
   const db = await getDbConnection()
   const { id, user } = getTelegramUser(ctx.from)
@@ -53,9 +43,9 @@ export const onBotRecieveText = async (ctx: TTelegrafContext) => {
   }
   if (page < response.totalPages) {
     await ctx.reply(
-      `Page ${page} of ${response.totalPages}`,
+      i18n['ru'].message.memeSearch.pageXOfN(page, response.totalPages),
       Markup.inlineKeyboard([
-        Markup.button.callback(i18n['ru'].button.load.more(), 'button_search_more'),
+        Markup.button.callback(i18n['ru'].button.load.more(), ECallback.SEARCH_NEXT_PAGE),
       ]),
     )
     ctx.session.search = {

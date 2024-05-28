@@ -1,6 +1,7 @@
 import amqplib from 'amqplib'
 import process from 'process'
-import { spawn, ChildProcess } from 'child_process'
+import type { ChildProcess } from 'child_process'
+import { spawn } from 'child_process'
 import { AMQP_MEMES_TO_NLP_CHANNEL, AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../constants'
 import { delay } from '../utils'
 
