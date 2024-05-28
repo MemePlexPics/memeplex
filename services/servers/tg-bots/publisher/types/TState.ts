@@ -1,3 +1,4 @@
+import type { Message, Update } from 'telegraf/typings/core/types/typegram'
 import type { TInlineMenu, TMenu, TTelegrafContext } from '.'
 import type { Promisable } from '../../../../../types'
 import type { EState } from '../constants'
@@ -9,5 +10,8 @@ export type TState = {
   inlineMenu?: (ctx: TTelegrafContext) => Promisable<TInlineMenu | false>
   message?: (ctx: TTelegrafContext) => Promisable<string>
   onCallback?: (ctx: TTelegrafContext, callback: string) => Promisable<unknown>
-  onText?: (ctx: TTelegrafContext, text: string) => Promisable<unknown>
+  onText?: (
+    ctx: TTelegrafContext<Update.MessageUpdate<Message.TextMessage>>,
+    text: string,
+  ) => Promisable<unknown>
 }

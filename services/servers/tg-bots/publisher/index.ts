@@ -32,6 +32,14 @@ const start = async () => {
       description: i18n['ru'].command.callCurrentMenu(),
     },
     {
+      command: 'get_latest',
+      description: i18n['ru'].command.getLatest(),
+    },
+    {
+      command: 'suggest_channel',
+      description: i18n['ru'].command.suggestChannel(),
+    },
+    {
       command: 'help',
       description: i18n['ru'].command.help(),
     },

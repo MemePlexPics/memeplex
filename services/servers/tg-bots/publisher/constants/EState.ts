@@ -5,4 +5,5 @@ export enum EState {
   KEYWORD_GROUP_SELECT = 'keyword_group_select',
   KEYWORD_SETTINGS = 'keyword_settings',
   MAIN = 'main',
+  MEME_SEARCH = 'meme_search',
 }

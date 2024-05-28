@@ -106,5 +106,5 @@ bash ./scripts/backup/elastic-restore.sh
 ### Mysql:
 
 ```bash
-ssh user@host "bash ./path_to_project/scripts/backup/mysql.sh" | gzip > memeplex_$(date +%Y%m%d-%H%M%S).sql.gz
+ssh user@host "cd ./path_to_project && bash ./scripts/backup/mysql.sh" | gzip > memeplex_$(date +%Y%m%d-%H%M%S).sql.gz
 ```
