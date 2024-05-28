@@ -14,6 +14,12 @@ export const onBotCommandGetLatest = async (ctx: TTelegrafContext, isUpdate: boo
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
   }
+  if (!ctx.session.latest) {
+    ctx.session.latest = {
+      from: undefined,
+      to: undefined,
+    }
+  }
   const { from: sessionFrom, to: sessionTo } = ctx.session.latest
   const from = isUpdate ? sessionTo : undefined
   const to = isUpdate ? undefined : sessionFrom
