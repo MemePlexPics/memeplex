@@ -434,40 +434,6 @@
             ],
             "limit": 50
           }
-        },
-        {
-          "dataset": "MadelineProto",
-          "datasource": "MySQL",
-          "editorMode": "code",
-          "format": "table",
-          "hide": false,
-          "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) as Publisher FROM MadelineProto.bot_users LIMIT 50 ",
-          "refId": "C",
-          "sql": {
-            "columns": [
-              {
-                "name": "COUNT",
-                "parameters": [
-                  {
-                    "name": "*",
-                    "type": "functionParameter"
-                  }
-                ],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          },
-          "table": "bot_users"
         }
       ],
       "title": "Bot users",
@@ -2091,8 +2057,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2157,7 +2122,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 33
+            "y": 41
           },
           "id": 12,
           "options": {
@@ -2263,8 +2228,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2329,7 +2293,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 33
+            "y": 41
           },
           "id": 11,
           "options": {
@@ -2427,8 +2391,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2493,7 +2456,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 41
+            "y": 49
           },
           "id": 5,
           "options": {
@@ -2591,8 +2554,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2657,7 +2619,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 41
+            "y": 49
           },
           "id": 13,
           "options": {
@@ -2736,8 +2698,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2802,7 +2763,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 49
+            "y": 57
           },
           "id": 18,
           "options": {
@@ -2901,8 +2862,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3015,7 +2975,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 49
+            "y": 57
           },
           "id": 34,
           "options": {
@@ -3108,8 +3068,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3174,7 +3133,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 57
+            "y": 65
           },
           "id": 17,
           "options": {
@@ -3298,8 +3257,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3315,7 +3273,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 57
+            "y": 65
           },
           "id": 14,
           "options": {
@@ -3504,7 +3462,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 129
+            "y": 137
           },
           "id": 1,
           "options": {
@@ -3595,7 +3553,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 129
+            "y": 137
           },
           "id": 2,
           "options": {
@@ -3670,7 +3628,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 137
+            "y": 145
           },
           "id": 3,
           "options": {
@@ -3745,7 +3703,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 137
+            "y": 145
           },
           "id": 4,
           "options": {
@@ -3820,7 +3778,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 145
+            "y": 153
           },
           "id": 19,
           "options": {
@@ -3899,7 +3857,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 145
+            "y": 153
           },
           "id": 21,
           "options": {
@@ -4065,7 +4023,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 153
+            "y": 161
           },
           "id": 20,
           "options": {
@@ -4144,7 +4102,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 153
+            "y": 161
           },
           "id": 22,
           "options": {
@@ -4239,6 +4197,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 41,
+  "version": 43,
   "weekStart": ""
 }
