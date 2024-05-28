@@ -3,7 +3,7 @@ import process from 'process'
 import 'dotenv/config'
 import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../constants'
 import { getDbConnection } from '../../../../utils'
-import { updatePublisherInvoiceStatus } from '../../../../utils/mysql-queries'
+import { updateBotInvoiceStatus } from '../../../../utils/mysql-queries'
 
 export const handlePaidInvoice = async (
   userId: number | string,
@@ -25,7 +25,7 @@ export const handlePaidInvoice = async (
     persistent: true,
   })
   const db = await getDbConnection()
-  await updatePublisherInvoiceStatus(db, invoiceId, 'paid')
+  await updateBotInvoiceStatus(db, invoiceId, 'paid')
   await db.close()
   await cryptoPayToPublisherCh.close()
   await amqp.close()

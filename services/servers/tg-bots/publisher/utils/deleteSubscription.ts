@@ -1,4 +1,4 @@
-import { deletePublisherSubscription } from '../../../../../utils/mysql-queries'
+import { deleteBotSubscription } from '../../../../../utils/mysql-queries'
 import type { TDbConnection } from '../../../../../utils/types'
 
 export const deleteSubscription = async (
@@ -6,5 +6,5 @@ export const deleteSubscription = async (
   channelId: number,
   keywordIds: number[],
 ) => {
-  await deletePublisherSubscription(db, channelId, keywordIds)
+  await deleteBotSubscription(db, channelId, keywordIds)
 }

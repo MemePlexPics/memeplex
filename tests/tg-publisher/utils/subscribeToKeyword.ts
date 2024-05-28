@@ -1,6 +1,6 @@
 import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
 import { getDbConnection } from '../../../utils'
-import { selectPublisherKeywordsByKeywords } from '../../../utils/mysql-queries'
+import { selectBotKeywordsByKeywords } from '../../../utils/mysql-queries'
 import { TelegramClientWrapper } from './TelegramClientWrapper'
 
 export const subscribeToKeyword = async (tgClient: TelegramClientWrapper, testKeyword: string) => {
@@ -21,7 +21,7 @@ export const subscribeToKeyword = async (tgClient: TelegramClientWrapper, testKe
   await tgClient.executeMessage(i18n['ru'].button.editKeywords())
   await tgClient.executeMessage(testKeyword)
   const db = await getDbConnection()
-  const [keyword] = await selectPublisherKeywordsByKeywords(db, [testKeyword])
+  const [keyword] = await selectBotKeywordsByKeywords(db, [testKeyword])
   await db.close()
   return keyword
 }

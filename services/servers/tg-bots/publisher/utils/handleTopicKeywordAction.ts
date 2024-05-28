@@ -1,0 +1,83 @@
+import { Markup } from 'telegraf'
+import { logUserAction, replaceInlineKeyboardButton } from '.'
+import { getDbConnection } from '../../../../../utils'
+import {
+  deleteBotTopicKeywordUnsubscription,
+  deleteBotSubscription,
+  insertBotTopicKeywordUnsubscription,
+  insertBotSubscription,
+  selectBotKeywordByIds,
+  selectBotTopicByIds,
+  selectBotTopicNameByIds,
+} from '../../../../../utils/mysql-queries'
+import { EKeywordAction, callbackData } from '../constants'
+import type { TTelegrafContext } from '../types'
+import { i18n } from '../i18n'
+import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
+
+export const handleTopicKeywordAction = async (
+  ctx: TTelegrafContext<Update.CallbackQueryUpdate<CallbackQuery>>,
+  command: EKeywordAction,
+  channelId: number,
+  keywordId: number,
+  topicId: number,
+) => {
+  const db = await getDbConnection()
+  const [topic] = await selectBotTopicByIds(db, [topicId])
+  if (command === EKeywordAction.DELETE) {
+    await deleteBotSubscription(db, channelId, [keywordId])
+    await insertBotTopicKeywordUnsubscription(db, [
+      {
+        channelId,
+        keywordId,
+      },
+    ])
+    await logUserAction(ctx, {
+      info: `Unsubscribe from a topic keyword`,
+      keywordId,
+    })
+  } else if (command === EKeywordAction.SUBSCRIBE) {
+    const db = await getDbConnection()
+    await insertBotSubscription(db, [
+      {
+        channelId,
+        keywordId,
+      },
+    ])
+    await deleteBotTopicKeywordUnsubscription(db, channelId, [keywordId])
+    await logUserAction(ctx, {
+      info: `Subscribe to a topic keyword`,
+      keywordId,
+    })
+  } else {
+    await db.close()
+    throw new Error(`Unknown operation in topic button: «${command}» for ${channelId}`)
+  }
+  const [topicName] = await selectBotTopicNameByIds(db, [topic.id])
+  const [keyword] = await selectBotKeywordByIds(db, [keywordId])
+  await db.close()
+
+  const callbackForUnsubscribe = callbackData.premoderation.topicKeywordsButton(
+    EKeywordAction.DELETE,
+    channelId,
+    keywordId,
+    topicId,
+  )
+  const callbackForSubscribe = callbackData.premoderation.topicKeywordsButton(
+    EKeywordAction.SUBSCRIBE,
+    channelId,
+    keywordId,
+    topicId,
+  )
+  const oldCallback =
+    command === EKeywordAction.DELETE ? callbackForUnsubscribe : callbackForSubscribe
+  const newCallback =
+    command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
+  const newText =
+    command === EKeywordAction.DELETE
+      ? i18n['ru'].button.premoderationKeywordFromTopicSubscribe(keyword.keyword, topicName.name)
+      : i18n['ru'].button.premoderationKeywordFromTopicSubscribe(keyword.keyword, topicName.name)
+  await replaceInlineKeyboardButton(ctx, {
+    [oldCallback]: Markup.button.callback(newText, newCallback),
+  })
+}

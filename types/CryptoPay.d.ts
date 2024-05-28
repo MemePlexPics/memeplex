@@ -50,7 +50,7 @@ declare module '@foile/crypto-pay-api' {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       getMe(): Promise<any>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createInvoice(asset: Asset, amount: string, options?: CreateInvoiceOptions): Promise<any>
+      createInvoice(asset?: Asset, amount?: string, options?: CreateInvoiceOptions): Promise<any>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       transfer(user_id: number, asset: Asset, amount: string, spend_id: string, options?: TransferOptions): Promise<any>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any

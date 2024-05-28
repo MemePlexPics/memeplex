@@ -1,17 +1,19 @@
-import amqplib, { Channel, Connection } from 'amqplib'
+import type { Channel, Connection } from 'amqplib'
+import amqplib from 'amqplib'
 import TelegramServer from '@vishtar/telegram-test-api'
 import { init } from '../../services/servers/tg-bots/publisher/utils'
 import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
 import { TelegramClientWrapper, cleanUpPublisherUser } from './utils'
-import {
-  EKeywordGroupAction,
-  callbackData,
-} from '../../services/servers/tg-bots/publisher/constants'
+import { ETopicAction, callbackData } from '../../services/servers/tg-bots/publisher/constants'
 import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { getDbConnection } from '../../utils'
-import { deletePublisherGroupSubscriptionByChannelId } from '../../utils/mysql-queries'
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { StoredBotUpdate } from '@vishtar/telegram-test-api/lib/telegramServer'
+import {
+  deleteBotChannelById,
+  deleteBotTopicSubscriptionByChannelId,
+  selectBotChannelsByUserId,
+} from '../../utils/mysql-queries'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { StoredBotUpdate } from '@vishtar/telegram-test-api/lib/telegramServer'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
 
 describe('Topic subscription works', () => {
@@ -44,7 +46,11 @@ describe('Topic subscription works', () => {
     bot.stop()
     await tgServer.stop()
     const db = await getDbConnection()
-    await deletePublisherGroupSubscriptionByChannelId(db, 1)
+    await deleteBotTopicSubscriptionByChannelId(db, 1)
+    const channels = await selectBotChannelsByUserId(db, 1)
+    for (const channel of channels) {
+      await deleteBotChannelById(db, channel.id)
+    }
     await cleanUpPublisherUser(db)
     await db.close()
   })
@@ -66,9 +72,7 @@ describe('Topic subscription works', () => {
     }
     const firstTopicSubscriptionButton =
       topicsMenuButtons[0][0] as InlineKeyboardButton.CallbackButton
-    expect(
-      firstTopicSubscriptionButton.callback_data.startsWith(EKeywordGroupAction.SUBSCRIBE),
-    ).toBe(true)
+    expect(firstTopicSubscriptionButton.callback_data.startsWith(ETopicAction.SUBSCRIBE)).toBe(true)
 
     await tgClient.sendCallback(
       tgClient.makeCallbackQuery(firstTopicSubscriptionButton.callback_data, {
@@ -114,7 +118,7 @@ describe('Topic subscription works', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationKeywordGroupButton(EKeywordGroupAction.UNSUBSCRIBE, 1, 1),
+                callbackData.premoderation.topicButton(ETopicAction.UNSUBSCRIBE, 1, 1),
           ),
       )
     expect(topicUnsubscribeButton).not.toBe(undefined)
@@ -123,7 +127,7 @@ describe('Topic subscription works', () => {
   test('Unsubscribed from topic successfully', async () => {
     await tgClient.sendCallback(
       // TODO: get callback_data by a template
-      tgClient.makeCallbackQuery(`${EKeywordGroupAction.UNSUBSCRIBE}|1`, {
+      tgClient.makeCallbackQuery(`${ETopicAction.UNSUBSCRIBE}|1`, {
         message: {
           // @ts-expect-error number to DeepPartial<any>
           message_id: topicsMenu.messageId,
@@ -138,7 +142,7 @@ describe('Topic subscription works', () => {
       throw new Error(`There is no updated topic menu`)
     }
     const updatedTopicButtons = editedTopicUpdates.result[1].message.reply_markup.inline_keyboard
-    expect(updatedTopicButtons[0][0].callback_data).toBe(`${EKeywordGroupAction.SUBSCRIBE}|1`)
+    expect(updatedTopicButtons[0][0].callback_data).toBe(`${ETopicAction.SUBSCRIBE}|1`)
   }, 10_000)
 
   test("Meme with a random keywort hasn't come for pre-moderation", async () => {

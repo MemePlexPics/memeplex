@@ -3,7 +3,7 @@ import type { TMenuButton, TState } from '../types'
 import { enterToState, onClickDeleteChannel } from '../utils'
 import {
   buyPremiumState,
-  keywordGroupSelectState,
+  topicSelectState,
   keywordSettingsState,
   mainState,
   memeSearchState,
@@ -15,9 +15,6 @@ import { Markup } from 'telegraf'
 export const channelSettingState: TState = {
   stateName: EState.CHANNEL_SETTINGS,
   menu: async ctx => {
-    if (!ctx.from) {
-      throw new Error('There is no ctx.from')
-    }
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in channelSettingState`)
     }
@@ -29,12 +26,12 @@ export const channelSettingState: TState = {
       i18n['ru'].button.editKeywords(isChannel ? ctx.session.channel.name : undefined),
       ctx => enterToState(ctx, keywordSettingsState),
     ]
-    const editKeywordGroupsButton: TMenuButton = [
+    const editTopicsButton: TMenuButton = [
       i18n['ru'].button.editTopics(
         hasPremiumSubscription ? '✏️' : '✨',
         isChannel ? ctx.session.channel.name : undefined,
       ),
-      ctx => enterToState(ctx, keywordGroupSelectState),
+      ctx => enterToState(ctx, topicSelectState),
     ]
     const buyPremiumButton: TMenuButton = [
       i18n['ru'].button.premium(),
@@ -71,9 +68,9 @@ export const channelSettingState: TState = {
     const buttons: TMenuButton[][] = []
     if (hasPremiumSubscription) {
       buttons.push([editKeywordsButton])
-      buttons.push([editKeywordGroupsButton])
+      buttons.push([editTopicsButton])
     } else {
-      buttons.push([editKeywordGroupsButton])
+      buttons.push([editTopicsButton])
       buttons.push([editKeywordsButton])
     }
     if (ctx.session.channel.id !== ctx.from?.id) {

@@ -8,7 +8,7 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
 
 const client = getElasticClient()
 
-async function deleteIndex(indexName) {
+async function deleteIndex(indexName: string) {
   await (await client).indices.delete({ index: indexName })
 }
 
