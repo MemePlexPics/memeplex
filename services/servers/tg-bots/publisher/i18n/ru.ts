@@ -133,28 +133,32 @@ ${keywords}`,
     subscriptionSettings: () => '⚙️ Настройки подписок',
     postMeme: (channel: string) => `➡️ Отправить в @${channel}`,
     memePosted: (channel: string) => `✅ Отправлено в @${channel}`,
-    premoderationKeyword: (emoji: '🔕' | '➕', keyword: string, action: string) =>
-      `${emoji} «${keyword}» (${action})`,
-    premoderationTopic: (emoji: '🔕' | '➕', topic: string, action: string) =>
-      `${emoji} 📂 «${topic}» (${action})`,
-    premoderationKeywordFromTopic: (
-      emoji: '🔕' | '➕',
-      keyword: string,
-      topic: string,
-      action: string,
-    ) => `${emoji} «${keyword}» из 📂 «${topic}» (${action})`,
-    premoderationKeywordUnsubscribe: (keyword: string) =>
-      ru.button.premoderationKeyword('🔕', keyword, 'отписаться'),
-    premoderationTopicUnsubscribe: (topic: string) =>
-      ru.button.premoderationTopic('🔕', topic, 'отписаться'),
-    premoderationKeywordFromTopicUnsubscribe: (keyword: string, topic: string) =>
-      ru.button.premoderationKeywordFromTopic('🔕', keyword, topic, 'отписаться'),
-    premoderationKeywordSubscribe: (keyword: string) =>
-      ru.button.premoderationKeyword('➕', keyword, 'подписаться'),
-    premoderationTopicSubscribe: (topic: string) =>
-      ru.button.premoderationTopic('➕', topic, 'подписаться'),
-    premoderationKeywordFromTopicSubscribe: (keyword: string, topic: string) =>
-      ru.button.premoderationKeywordFromTopic('➕', keyword, topic, 'подписаться'),
+    premoderation: {
+      keyword: {
+        base: (emoji: '🔕' | '➕', keyword: string, action: string) =>
+          `${emoji} «${keyword}» (${action})`,
+        unsubscribe: (keyword: string) =>
+          ru.button.premoderation.keyword.base('🔕', keyword, 'отписаться'),
+        subscribe: (keyword: string) =>
+          ru.button.premoderation.keyword.base('➕', keyword, 'подписаться'),
+      },
+      topic: {
+        base: (emoji: '🔕' | '➕', topic: string, action: string) =>
+          `${emoji} 📂 «${topic}» (${action})`,
+        unsubscribe: (topic: string) =>
+          ru.button.premoderation.topic.base('🔕', topic, 'отписаться'),
+        subscribe: (topic: string) =>
+          ru.button.premoderation.topic.base('➕', topic, 'подписаться'),
+      },
+      keywordFromTopic: {
+        base: (emoji: '🔕' | '➕', keyword: string, topic: string, action: string) =>
+          `${emoji} «${keyword}» из 📂 «${topic}» (${action})`,
+        unsubscribe: (keyword: string, topic: string) =>
+          ru.button.premoderation.keywordFromTopic.base('🔕', keyword, topic, 'отписаться'),
+        subscribe: (keyword: string, topic: string) =>
+          ru.button.premoderation.keywordFromTopic.base('➕', keyword, topic, 'подписаться'),
+      },
+    },
     // scheduledPost: () => '⏰ Отложенная отправка',
     // postWithText: () => '📝 Добавить текстовое сообщение',
     subscribeKeyword: (keyword: string) => `➕ Подписаться на «${keyword}»`,
