@@ -442,7 +442,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) as Publisher FROM MadelineProto.bot_publisher_users LIMIT 50 ",
+          "rawSql": "SELECT COUNT(*) as Publisher FROM MadelineProto.bot_users LIMIT 50 ",
           "refId": "C",
           "sql": {
             "columns": [
@@ -467,7 +467,7 @@
             ],
             "limit": 50
           },
-          "table": "bot_publisher_users"
+          "table": "bot_users"
         }
       ],
       "title": "Bot users",
@@ -1050,7 +1050,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) as Paid FROM MadelineProto.bot_publisher_invoices WHERE status = 'paid'",
+          "rawSql": "SELECT COUNT(*) as Paid FROM MadelineProto.bot_invoices WHERE status = 'paid'",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1084,7 +1084,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) as Active FROM MadelineProto.bot_publisher_invoices WHERE status = 'active'",
+          "rawSql": "SELECT COUNT(*) as Active FROM MadelineProto.bot_invoices WHERE status = 'active'",
           "refId": "B",
           "sql": {
             "columns": [
@@ -1111,7 +1111,7 @@
           "format": "table",
           "hide": false,
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) as Expired FROM MadelineProto.bot_publisher_invoices WHERE status = 'expired'",
+          "rawSql": "SELECT COUNT(*) as Expired FROM MadelineProto.bot_invoices WHERE status = 'expired'",
           "refId": "C",
           "sql": {
             "columns": [
@@ -1136,7 +1136,7 @@
             ],
             "limit": 50
           },
-          "table": "bot_publisher_users"
+          "table": "bot_users"
         }
       ],
       "title": "Invoices",

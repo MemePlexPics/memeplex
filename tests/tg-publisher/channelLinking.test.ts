@@ -13,15 +13,20 @@ import { getDbConnection } from '../../utils'
 import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
 import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
-import amqplib, { Channel, Connection } from 'amqplib'
+import type { Channel, Connection } from 'amqplib'
+import amqplib from 'amqplib'
 import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
-import { InlineKeyboardButton, KeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { InlineKeyboardButton, KeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { callbackData } from '../../services/servers/tg-bots/publisher/constants'
 import {
-  deletePublisherKeyword,
-  deletePublisherSubscriptionsByChannelId,
+  deleteBotChannelById,
+  deleteBotKeyword,
+  deleteBotSubscriptionsByChannelId,
+  selectBotChannelsByUserId,
 } from '../../utils/mysql-queries'
+import { botActions } from '../../db/schema'
+import { eq } from 'drizzle-orm'
 
 describe('Keyword subscribtion', () => {
   const serverConfig = { port: 0 }
@@ -66,9 +71,14 @@ describe('Keyword subscribtion', () => {
     const db = await getDbConnection()
     await cleanUpPublisherPremium(db, cryptoPay)
 
-    await deletePublisherSubscriptionsByChannelId(db, 1)
-    await deletePublisherSubscriptionsByChannelId(db, 111)
-    await deletePublisherKeyword(db, keywordFirst)
+    await deleteBotSubscriptionsByChannelId(db, 1)
+    await deleteBotSubscriptionsByChannelId(db, 111)
+    await deleteBotKeyword(db, keywordFirst)
+    await db.delete(botActions).where(eq(botActions.userId, 1))
+    const channels = await selectBotChannelsByUserId(db, 1)
+    for (const channel of channels) {
+      await deleteBotChannelById(db, channel.id)
+    }
     await cleanUpPublisherUser(db)
     await db.close()
 
@@ -165,7 +175,7 @@ describe('Keyword subscribtion', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationPostButton(
+                callbackData.premoderation.postButton(
                   111,
                   mockAmqpNLPToPublisherChannelMessage.memeId,
                 ),
@@ -179,7 +189,7 @@ describe('Keyword subscribtion', () => {
     // TODO: investigate way to recieve channel messages
     await tgClient.sendCallback(
       tgClient.makeCallbackQuery(
-        callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
+        callbackData.premoderation.postButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
         {
           message: {
             // @ts-expect-error number to DeepPartial<any>
@@ -224,7 +234,7 @@ describe('Keyword subscribtion', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationPostButton(
+                callbackData.premoderation.postButton(
                   111,
                   mockAmqpNLPToPublisherChannelMessage.memeId,
                 ),
@@ -238,7 +248,7 @@ describe('Keyword subscribtion', () => {
     // TODO: investigate way to recieve channel messages
     await tgClient.sendCallback(
       tgClient.makeCallbackQuery(
-        callbackData.premoderationPostButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
+        callbackData.premoderation.postButton(111, mockAmqpNLPToPublisherChannelMessage.memeId),
         {
           message: {
             // @ts-expect-error number to DeepPartial<any>

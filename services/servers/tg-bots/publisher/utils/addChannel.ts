@@ -1,19 +1,16 @@
 import type { Chat } from 'telegraf/typings/core/types/typegram'
 import { enterToState, logUserAction } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
-import { upsertPublisherChannel } from '../../../../../utils/mysql-queries'
+import { upsertBotChannel } from '../../../../../utils/mysql-queries'
 import { channelSettingState } from '../states'
 import { i18n } from '../i18n'
 import type { TTelegrafContext } from '../types'
 
 export const addChannel = async (ctx: TTelegrafContext, text: string) => {
-  if (!ctx.from) {
-    throw new Error('There is no ctx.from')
-  }
   const channel = getTgChannelName(text)
   if (!channel) {
     await ctx.reply(i18n['ru'].message.checkChannelNameFormat())
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       error: `Incorrect channel link`,
       channel: text,
     })
@@ -39,7 +36,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
     } else {
       await ctx.reply(i18n['ru'].message.addedUserInsteadOfChannel())
 
-      logUserAction(ctx, {
+      await logUserAction(ctx, {
         error: `Adding a private channel`,
         channel,
       })
@@ -68,7 +65,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
   }
   if (!isOurUserAnAdmin) {
     await ctx.reply(i18n['ru'].message.onlyAdminCanSubscribeChannel())
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       error: `The user not an admin`,
       channel,
     })
@@ -76,7 +73,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
   }
   if (!isOurBotAnAdmin) {
     await ctx.reply(i18n['ru'].message.botMustHaveAdminRights(), readyButton)
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       error: `Admin rights not granted`,
       channel,
     })
@@ -92,7 +89,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
 
     const db = await getDbConnection()
     const timestamp = Date.now() / 1000
-    await upsertPublisherChannel(db, {
+    await upsertBotChannel(db, {
       id: chat.id,
       userId: ctx.from.id,
       username: channel,
@@ -101,7 +98,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       timestamp,
     })
     await db.close()
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       info: `Added`,
       channel,
     })

@@ -2,39 +2,37 @@ import { Markup } from 'telegraf'
 import { logUserAction, replaceInlineKeyboardButton } from '.'
 import { getDbConnection } from '../../../../../utils'
 import {
-  deletePublisherSubscription,
-  insertPublisherSubscription,
-  selectPublisherKeywordByIds,
+  deleteBotSubscription,
+  insertBotSubscription,
+  selectBotKeywordByIds,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
 import type { TTelegrafContext } from '../types'
 import { i18n } from '../i18n'
+import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
 
 export const handleKeywordAction = async (
-  ctx: TTelegrafContext,
+  ctx: TTelegrafContext<Update.CallbackQueryUpdate<CallbackQuery>>,
   command: EKeywordAction,
   channelId: number,
   keywordId: number,
 ) => {
-  if (!ctx.from) {
-    throw new Error('There is no ctx.from')
-  }
   const db = await getDbConnection()
-  const [keyword] = await selectPublisherKeywordByIds(db, [keywordId])
+  const [keyword] = await selectBotKeywordByIds(db, [keywordId])
   if (command === EKeywordAction.DELETE) {
-    await deletePublisherSubscription(db, channelId, [keywordId])
-    logUserAction(ctx, {
+    await deleteBotSubscription(db, channelId, [keywordId])
+    await logUserAction(ctx, {
       info: `Unsubscribe from a keyword`,
       keyword: keyword.keyword,
     })
   } else if (command === EKeywordAction.SUBSCRIBE) {
-    await insertPublisherSubscription(db, [
+    await insertBotSubscription(db, [
       {
         keywordId,
         channelId,
       },
     ])
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       info: `Subscribe to a keyword`,
       keyword: keyword.keyword,
     })
@@ -44,12 +42,12 @@ export const handleKeywordAction = async (
   }
   await db.close()
 
-  const callbackForUnsubscribe = callbackData.premoderationKeywordButton(
+  const callbackForUnsubscribe = callbackData.premoderation.keywordButton(
     EKeywordAction.DELETE,
     channelId,
     keywordId,
   )
-  const callbackForSubscribe = callbackData.premoderationKeywordButton(
+  const callbackForSubscribe = callbackData.premoderation.keywordButton(
     EKeywordAction.SUBSCRIBE,
     channelId,
     keywordId,

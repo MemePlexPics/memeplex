@@ -25,7 +25,6 @@ describe('/start', () => {
     const db = await getDbConnection()
     await cleanUpPublisherUser(db)
     await db.close()
-    // why()
   })
 
   test('Recieved /start message', async () => {
