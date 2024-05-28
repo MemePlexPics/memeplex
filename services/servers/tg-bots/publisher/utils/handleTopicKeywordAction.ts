@@ -75,8 +75,8 @@ export const handleTopicKeywordAction = async (
     command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
   const newText =
     command === EKeywordAction.DELETE
-      ? i18n['ru'].button.premoderationKeywordFromTopicSubscribe(keyword.keyword, topicName.name)
-      : i18n['ru'].button.premoderationKeywordFromTopicSubscribe(keyword.keyword, topicName.name)
+      ? i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topicName.name)
+      : i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topicName.name)
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),
   })

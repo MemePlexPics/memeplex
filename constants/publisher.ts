@@ -1,7 +1,7 @@
 import process from 'process'
 import 'dotenv/config'
 
-export const MAX_FREE_USER_CHANNEL_SUBS = 1000
+export const MAX_FREE_USER_CHANNEL_SUBS = Number(process.env.MAX_FREE_USER_CHANNEL_SUBS)
 export const PREMIUM_PLANS = [
   {
     months: 1,
