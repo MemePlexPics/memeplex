@@ -75,7 +75,7 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderationKeywordUnsubscribe(keyword),
+              text: i18n['ru'].button.premoderation.keyword.unsubscribe(keyword),
               callback_data: callbackData.premoderation.keywordButton(
                 EKeywordAction.DELETE,
                 channelId,
@@ -101,7 +101,7 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderationTopicUnsubscribe(topicName),
+              text: i18n['ru'].button.premoderation.topic.unsubscribe(topicName),
               callback_data: callbackData.premoderation.topicButton(
                 ETopicAction.UNSUBSCRIBE,
                 channelId,
@@ -143,7 +143,7 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderationKeywordFromTopicUnsubscribe(
+              text: i18n['ru'].button.premoderation.keywordFromTopic.unsubscribe(
                 keyword,
                 topicNameById[topicId],
               ),
