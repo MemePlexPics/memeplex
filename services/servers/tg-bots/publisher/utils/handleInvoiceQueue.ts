@@ -7,10 +7,7 @@ import type { Logger } from 'winston'
 import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../../constants'
 import { getAmqpQueue } from '../../../../utils'
 import { delay, getDbConnection } from '../../../../../utils'
-import {
-  upsertPublisherPremiumUser,
-  selectPublisherPremiumUser,
-} from '../../../../../utils/mysql-queries'
+import { upsertBotPremiumUser, selectBotPremiumUser } from '../../../../../utils/mysql-queries'
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 import { i18n } from '../i18n'
 
@@ -58,7 +55,7 @@ export const handleInvoiceQueue = async (
           throw new Error(`Unknown premium plan was paid by ${payload.userId}: ${payload.amount}!`)
         }
         const db = await getDbConnection()
-        const userPremium = await selectPublisherPremiumUser(db, payload.userId)
+        const userPremium = await selectBotPremiumUser(db, payload.userId)
         const oldTimestamp =
           userPremium.length !== 0 && userPremium[0].untilTimestamp > Date.now() / 1000
             ? userPremium[0].untilTimestamp * 1000
@@ -67,7 +64,7 @@ export const handleInvoiceQueue = async (
         const newDate = Math.floor(
           new Date(date.setMonth(date.getMonth() + paidPlan.months)).getTime() / 1000,
         )
-        await upsertPublisherPremiumUser(db, {
+        await upsertBotPremiumUser(db, {
           userId: Number(payload.userId),
           untilTimestamp: newDate,
         })

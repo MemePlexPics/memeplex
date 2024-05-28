@@ -22,7 +22,7 @@ import {
   addChannelState,
   buyPremiumState,
   channelSettingState,
-  keywordGroupSelectState,
+  topicSelectState,
   keywordSettingsState,
   mainState,
   memeSearchState,
@@ -35,7 +35,7 @@ import {
   logInfo,
   loopRetrying,
 } from '../../../../../utils'
-import { insertPublisherUser, selectPublisherPremiumUser } from '../../../../../utils/mysql-queries'
+import { insertBotUser, selectBotPremiumUser } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
@@ -43,7 +43,6 @@ import {
   handleMemeSearchRequest,
   onBotCommandGetLatest,
   onBotCommandSuggestChannel,
-  onBotRecieveText,
   onInlineQuery,
 } from '../handlers'
 
@@ -70,15 +69,13 @@ export const init = async (
         if (ctx.session.premiumUntil && ctx.session.premiumUntil > Date.now() / 1000) {
           return true
         }
-        if (!ctx.from) {
-          throw new Error('There is no ctx.from')
-        }
         const db = await getDbConnection()
-        const userPremium = await selectPublisherPremiumUser(db, ctx.from?.id)
+        const userPremium = await selectBotPremiumUser(db, ctx.from?.id)
+        await db.close()
         if (userPremium.length === 0) {
           return false
         }
-        ctx.session.premiumUntil = userPremium[0]?.untilTimestamp
+        ctx.session.premiumUntil = userPremium[0].untilTimestamp
         return true
       },
     })
@@ -106,7 +103,7 @@ export const init = async (
         database: process.env.DB_DATABASE,
         user: process.env.DB_USER,
         password: process.env.DB_PASSWORD,
-        table: 'telegraf_publisher_sessions',
+        table: 'telegraf_sessions',
       }),
     }),
   )
@@ -117,10 +114,7 @@ export const init = async (
         window: 3_000,
         limit: 3,
         onLimitExceeded: async (ctx: TTelegrafContext) => {
-          if (!ctx.from) {
-            throw new Error('There is no ctx.from')
-          }
-          logUserAction(ctx, { info: 'exceeded rate limit' })
+          await logUserAction(ctx, { info: 'exceeded rate limit' })
           await ctx.reply(i18n['ru'].message.rateLimit())
         },
       }),
@@ -132,7 +126,7 @@ export const init = async (
     [EState.BUY_PREMIUM]: buyPremiumState,
     [EState.CHANNEL_SETTINGS]: channelSettingState,
     [EState.KEYWORD_SETTINGS]: keywordSettingsState,
-    [EState.KEYWORD_GROUP_SELECT]: keywordGroupSelectState,
+    [EState.TOPIC_SELECT]: topicSelectState,
     [EState.MAIN]: mainState,
     [EState.MEME_SEARCH]: memeSearchState,
   }
@@ -142,13 +136,13 @@ export const init = async (
     await enterToState(ctx, mainState)
 
     const db = await getDbConnection()
-    await insertPublisherUser(db, {
+    await insertBotUser(db, {
       id: ctx.from.id,
       user: getTelegramUser(ctx.from).user,
       timestamp: Date.now() / 1000,
     })
     await db.close()
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       start: ctx.payload || 1,
     })
   })
@@ -166,14 +160,6 @@ export const init = async (
   bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true))
 
   bot.command('suggest_channel', ctx => onBotCommandSuggestChannel(ctx))
-
-  // TODO: enum for callback_data, refactoring
-  // TODO: pass query from session/update
-  bot.action('button_search_more', ctx => onBotRecieveText(ctx))
-
-  bot.action('button_latest_older', ctx => onBotCommandGetLatest(ctx, false))
-
-  bot.action('button_latest_newer', ctx => onBotCommandGetLatest(ctx, true))
 
   bot.on('callback_query', async ctx => {
     try {
@@ -230,8 +216,8 @@ export const init = async (
           name: 'Unknown error',
           message: JSON.stringify(err),
         }
+    // In case we catch errors when sending messages
     try {
-      // In case we catch errors when sending messages
       await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
     } finally {
       await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })

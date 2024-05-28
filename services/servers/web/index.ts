@@ -181,6 +181,7 @@ app.get('/getChannelSuggestionList', async (req, res) => {
 app.get('/blacklist', async (req, res) => {
   const db = await getDbConnection()
   const blacklist = await selectBlackList(db)
+  await db.close()
   if (!blacklist.length) {
     logger.error('There is no blacklist words')
     return res.status(204).send()

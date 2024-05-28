@@ -1,15 +1,19 @@
 import 'dotenv/config'
 import process from 'process'
 
-export const buildImageUrl = ({ channelName, messageId, photoId }) => {
+export const buildImageUrl = (meme: {
+  channelName: string
+  messageId: number
+  photoId: number
+}) => {
   return (
     process.env.TG_RSS_ENDPOINT +
     '/media/' +
-    channelName +
+    meme.channelName +
     '/' +
-    messageId +
+    meme.messageId +
     '/' +
-    photoId +
+    meme.photoId +
     '_x_0.jpg'
   )
 }

@@ -4,18 +4,15 @@ import { enterToState, onClickAddMyself } from '../utils'
 import { addChannelState, buyPremiumState, channelSettingState, memeSearchState } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
-import { selectPublisherChannelsByUserId } from '../../../../../utils/mysql-queries'
+import { selectBotChannelsByUserId } from '../../../../../utils/mysql-queries'
 import { Markup } from 'telegraf'
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export const mainState: TState = {
   stateName: EState.MAIN,
   inlineMenu: async ctx => {
-    if (!ctx.from) {
-      throw new Error('There is no ctx.from')
-    }
     const db = await getDbConnection()
-    const userChannels = await selectPublisherChannelsByUserId(db, ctx.from.id)
+    const userChannels = await selectBotChannelsByUserId(db, ctx.from.id)
     await db.close()
 
     const channelButtons: InlineKeyboardButton[][] = userChannels

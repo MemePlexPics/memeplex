@@ -1,8 +1,8 @@
-import { selectPublisherChannelById, selectPublisherUserById } from '../../utils/mysql-queries'
+import { selectBotChannelById, selectBotUserById } from '../../utils/mysql-queries'
 import type { TDbConnection } from '../../utils/types'
 
 export const getPublisherUserByChannelId = async (db: TDbConnection, channelId: number) => {
-  const [channel] = await selectPublisherChannelById(db, channelId)
-  const [user] = await selectPublisherUserById(db, channel.userId)
+  const [channel] = await selectBotChannelById(db, channelId)
+  const [user] = await selectBotUserById(db, channel.userId)
   return user.id
 }

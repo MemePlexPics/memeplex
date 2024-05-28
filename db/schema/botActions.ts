@@ -11,7 +11,10 @@ export const botActions = mysqlTable(
         onDelete: 'restrict',
         onUpdate: 'restrict',
       }),
-    action: varchar('action', { length: 32 }).notNull(),
+    action: varchar('action', {
+      length: 32,
+      enum: ['search', 'latest', 'inline_search', 'inline_select', 'meme_post'],
+    }).notNull(),
     query: varchar('query', { length: 255 }),
     page: varchar('page', { length: 128 }).notNull(),
     timestamp: int('timestamp').notNull(),

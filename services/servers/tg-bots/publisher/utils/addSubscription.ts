@@ -1,19 +1,19 @@
-import type { botPublisherKeywords } from '../../../../../db/schema'
+import type { botKeywords } from '../../../../../db/schema'
 import {
-  deletePublisherGroupKeywordUnsubscription,
-  insertPublisherKeywords,
-  insertPublisherSubscription,
-  selectPublisherKeywordsByKeywords,
+  deleteBotTopicKeywordUnsubscription,
+  insertBotKeywords,
+  insertBotSubscription,
+  selectBotKeywordsByKeywords,
 } from '../../../../../utils/mysql-queries'
 import type { TDbConnection } from '../../../../../utils/types'
 
 export const addSubscription = async (
   db: TDbConnection,
   channelId: number,
-  keywordValues: (typeof botPublisherKeywords.$inferInsert)[],
+  keywordValues: (typeof botKeywords.$inferInsert)[],
 ) => {
-  await insertPublisherKeywords(db, keywordValues)
-  const keywords = await selectPublisherKeywordsByKeywords(
+  await insertBotKeywords(db, keywordValues)
+  const keywords = await selectBotKeywordsByKeywords(
     db,
     keywordValues.map(value => value.keyword),
   )
@@ -27,6 +27,6 @@ export const addSubscription = async (
     }
   })
 
-  await insertPublisherSubscription(db, subscriptions)
-  await deletePublisherGroupKeywordUnsubscription(db, channelId, keywordIds)
+  await insertBotSubscription(db, subscriptions)
+  await deleteBotTopicKeywordUnsubscription(db, channelId, keywordIds)
 }

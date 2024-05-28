@@ -4,10 +4,10 @@ import { addSubscription, enterToState, logUserAction } from '../utils'
 import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
-  countPublisherSubscriptionsByChannelId,
-  deletePublisherKeyword,
-  deletePublisherSubscriptionsByKeywordId,
-  selectPublisherSubscriptionsByChannelId,
+  countBotSubscriptionsByChannelId,
+  deleteBotKeyword,
+  deleteBotSubscriptionsByKeywordId,
+  selectBotSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCommonMessage } from '../typeguards'
@@ -23,10 +23,7 @@ export const keywordSettingsState: TState = {
           throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
         }
         const db = await getDbConnection()
-        const keywordRows = await selectPublisherSubscriptionsByChannelId(
-          db,
-          ctx.session.channel.id,
-        )
+        const keywordRows = await selectBotSubscriptionsByChannelId(db, ctx.session.channel.id)
         await db.close()
         if (keywordRows.length === 0) {
           await ctx.reply(i18n['ru'].message.thereAreNoKeywords())
@@ -55,9 +52,6 @@ export const keywordSettingsState: TState = {
     }
   },
   inlineMenu: async ctx => {
-    if (!ctx.from) {
-      throw new Error('There is no ctx.from')
-    }
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
     }
@@ -68,10 +62,7 @@ export const keywordSettingsState: TState = {
     }
     const page = ctx.session.pagination.page
     const db = await getDbConnection()
-    const totalSubscriptions = await countPublisherSubscriptionsByChannelId(
-      db,
-      ctx.session.channel.id,
-    )
+    const totalSubscriptions = await countBotSubscriptionsByChannelId(db, ctx.session.channel.id)
     const paginationButtons = []
     const pageSize = 20
     if (page > 1)
@@ -85,7 +76,7 @@ export const keywordSettingsState: TState = {
         callback_data: `page|next`,
       })
     const keywordRows = await sqlWithPagination(
-      selectPublisherSubscriptionsByChannelId(db, ctx.session.channel.id).$dynamic(),
+      selectBotSubscriptionsByChannelId(db, ctx.session.channel.id).$dynamic(),
       page,
       pageSize,
     )
@@ -112,14 +103,11 @@ export const keywordSettingsState: TState = {
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
     const [command, argument] = callback.split('|')
     if (command === 'del' && argument) {
-      if (!ctx.from) {
-        throw new Error('There is no ctx.from')
-      }
       const db = await getDbConnection()
-      await deletePublisherSubscriptionsByKeywordId(db, Number(argument))
-      await deletePublisherKeyword(db, argument)
+      await deleteBotSubscriptionsByKeywordId(db, Number(argument))
+      await deleteBotKeyword(db, argument)
       await db.close()
-      logUserAction(ctx, {
+      await logUserAction(ctx, {
         error: `Deleted`,
         keyword: argument,
       })
@@ -148,9 +136,6 @@ export const keywordSettingsState: TState = {
     return
   },
   onText: async (ctx, keywordsRaw) => {
-    if (!ctx.from) {
-      throw new Error('There is no ctx.from')
-    }
     if (!ctx.session.channel) {
       throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
     }
@@ -175,7 +160,7 @@ export const keywordSettingsState: TState = {
     await db.close()
 
     await ctx.reply(i18n['ru'].message.addedKeywords())
-    logUserAction(ctx, {
+    await logUserAction(ctx, {
       info: `Added`,
       keywords: keywordValuesNotEmpty.map(keywordRow => keywordRow.keyword).join(', '),
     })

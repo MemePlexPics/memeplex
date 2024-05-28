@@ -17,4 +17,5 @@ export const insertOcrKeysIntoDb = async () => {
     const keysProTrimmed = keysPro.split(',').map(key => ({ ocrKey: key.trim() }))
     await insertOcrKeysPro(db, keysProTrimmed)
   }
+  await db.close()
 }

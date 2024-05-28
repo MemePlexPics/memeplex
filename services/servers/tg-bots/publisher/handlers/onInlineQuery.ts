@@ -8,19 +8,14 @@ import type { TSessionInMemory, TTelegrafContext } from '../types'
 import { getDbConnection } from '../../../../../utils'
 import { insertBotInlineAction, upsertBotInlineUser } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
+import type { Update } from 'telegraf/typings/core/types/typegram'
 
 // TODO: -> handleInlineQuery
 export const onInlineQuery = async (
-  ctx: TTelegrafContext,
+  ctx: TTelegrafContext<Update.InlineQueryUpdate>,
   page: number,
   sessionInMemory: TSessionInMemory,
 ) => {
-  if (!ctx.from) {
-    throw new Error('There is no ctx.from')
-  }
-  if (!ctx.inlineQuery) {
-    throw new Error(`There is no ctx.inlineQuery`)
-  }
   const query = ctx.inlineQuery.query
 
   const db = await getDbConnection()
