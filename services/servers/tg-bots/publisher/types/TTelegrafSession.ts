@@ -12,4 +12,13 @@ export type TTelegrafSession = {
   pagination?: {
     page: number
   }
+  search: {
+    nextPage: number | null
+    query: string | null
+  }
+  latest: {
+    pagesLeft?: number
+    from?: number
+    to?: number
+  }
 }

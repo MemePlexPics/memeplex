@@ -1,17 +1,16 @@
 import type { User } from '@telegraf/types'
-import { getMysqlClient } from '../../../../../utils'
+import { getDbConnection } from '../../../../../utils'
 import {
   insertBotAction,
   insertBotInlineAction,
-  insertBotInlineUser,
-  insertBotUser,
+  upsertBotInlineUser,
+  upsertBotUser,
   selectBotInlineUser,
   selectBotUser,
 } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
 import type { Logger } from 'winston'
 
-// TODO: refactoring
 export const logUserAction = async (
   from: User,
   action: {
@@ -39,78 +38,85 @@ export const logUserAction = async (
 ) => {
   const { id, user } = getTelegramUser(from)
   let logEntity = {}
+  const db = await getDbConnection()
   if (action.search) {
-    const mysql = await getMysqlClient()
-    const [existedUser] = await selectBotUser(mysql, id)
-    if (!existedUser?.id) await insertBotUser(mysql, id, user)
-    await insertBotAction(mysql, id, 'search', action.search.query, action.search.page)
-    await mysql.end()
-    // TODO: remove it after 2024-03-21 (two weeks)?
+    const existedUser = await selectBotUser(db, id)
+    if (!existedUser?.id)
+      await upsertBotUser(db, {
+        id,
+        user,
+      })
+    await insertBotAction(db, {
+      userId: id,
+      action: 'search',
+      query: action.search.query,
+      page: action.search.page + '',
+    })
     logEntity = {
       action: 'search',
       ...action.search,
     }
   } else if (action.latest) {
-    const mysql = await getMysqlClient()
-    const [existedUser] = await selectBotUser(mysql, id)
-    if (!existedUser?.id) await insertBotUser(mysql, id, user)
-    await insertBotAction(
-      mysql,
-      id,
-      'latest',
-      null,
-      [action.latest.from, action.latest.to].join(','),
-    )
-    await mysql.end()
-    // TODO: remove it after 2024-03-21 (two weeks)?
+    const existedUser = await selectBotUser(db, id)
+    if (!existedUser?.id)
+      await upsertBotUser(db, {
+        id,
+        user,
+      })
+    await insertBotAction(db, {
+      userId: id,
+      action: 'latest',
+      query: null,
+      page: [action.latest.from, action.latest.to].join(','),
+    })
     logEntity = {
       action: 'latest',
       ...action.latest,
     }
   } else if (action.inline_search) {
-    const mysql = await getMysqlClient()
-    const [existedUser] = await selectBotInlineUser(mysql, id)
-    if (!existedUser?.id) await insertBotInlineUser(mysql, id, user)
-    await insertBotInlineAction(
-      mysql,
-      id,
-      'search',
-      action.inline_search.query,
-      null,
-      action.inline_search.page,
-      action.inline_search.chat_type,
-    )
-    await mysql.end()
-    // TODO: remove it after 2024-03-21 (two weeks)?
+    const existedUser = await selectBotInlineUser(db, id)
+    if (!existedUser?.id)
+      await upsertBotInlineUser(db, {
+        id,
+        user,
+      })
+    await insertBotInlineAction(db, {
+      userId: id,
+      action: 'search',
+      query: action.inline_search.query,
+      selectedId: null,
+      page: action.inline_search.page + '',
+      chatType: action.inline_search.chat_type,
+    })
     logEntity = {
       action: 'inline_search',
       ...action.inline_search,
     }
   } else if (action.inline_select) {
-    const mysql = await getMysqlClient()
-    const [existedUser] = await selectBotInlineUser(mysql, id)
-    if (!existedUser?.id) await insertBotInlineUser(mysql, id, user)
-    await insertBotInlineAction(
-      mysql,
-      id,
-      'select',
-      action.inline_select.query,
-      action.inline_select.id,
-      null,
-      null,
-    )
-    await mysql.end()
-    // TODO: remove it after 2024-03-21 (two weeks)?
+    const existedUser = await selectBotInlineUser(db, id)
+    if (!existedUser?.id)
+      await upsertBotInlineUser(db, {
+        id,
+        user,
+      })
+    await insertBotInlineAction(db, {
+      userId: id,
+      action: 'select',
+      query: action.inline_select.query,
+      selectedId: action.inline_select.id,
+      page: null,
+      chatType: null,
+    })
     logEntity = {
       action: 'inline_select',
       selected_id: action.inline_select.id,
       ...action.inline_select,
     }
   } else if (action.start) {
-    const mysql = await getMysqlClient()
-    await insertBotUser(mysql, id, user)
-    await mysql.end()
-    // TODO: remove it after 2024-03-21 (two weeks)?
+    await upsertBotUser(db, {
+      id,
+      user,
+    })
     logEntity = {
       start: action.start,
     }
@@ -120,5 +126,6 @@ export const logUserAction = async (
       text: action.info,
     }
   }
+  await db.close()
   logger.info({ id, user, ...logEntity })
 }

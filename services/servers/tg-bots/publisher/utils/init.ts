@@ -7,7 +7,7 @@ import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../../utils'
 import { EState } from '../constants'
-import type { TState, TTelegrafContext, TTelegrafSession } from '../types'
+import type { TSessionInMemory, TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
   TelegrafWrapper,
   enterToState,
@@ -25,6 +25,7 @@ import {
   keywordGroupSelectState,
   keywordSettingsState,
   mainState,
+  memeSearchState,
 } from '../states'
 import {
   InfoMessage,
@@ -38,6 +39,13 @@ import { insertPublisherUser, selectPublisherPremiumUser } from '../../../../../
 import { i18n } from '../i18n'
 import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
+import {
+  handleMemeSearchRequest,
+  onBotCommandGetLatest,
+  onBotCommandSuggestChannel,
+  onBotRecieveText,
+  onInlineQuery,
+} from '../handlers'
 
 export const init = async (
   token: string,
@@ -47,9 +55,15 @@ export const init = async (
   const bot = new TelegrafWrapper<TTelegrafContext>(token, options)
   const elastic = await getElasticClient()
 
+  // TODO: move into ctx
+  const sessionInMemory: TSessionInMemory = {}
+
   bot.use(async (ctx, next) => {
     if (!ctx.logger) {
       ctx.logger = logger
+    }
+    if (!ctx.elastic) {
+      ctx.elastic = elastic
     }
     Object.defineProperty(ctx, 'hasPremiumSubscription', {
       async get() {
@@ -76,6 +90,15 @@ export const init = async (
       defaultSession: () => ({
         channel: undefined,
         state: EState.MAIN,
+        search: {
+          nextPage: null,
+          query: null,
+        },
+        latest: {
+          pagesLeft: undefined,
+          from: undefined,
+          to: undefined,
+        },
       }),
       store: MySQL<TTelegrafSession>({
         host: process.env.DB_HOST,
@@ -90,7 +113,7 @@ export const init = async (
 
   if (process.env.ENVIRONMENT !== 'TESTING') {
     bot.use(
-      rateLimit({
+      rateLimit<TTelegrafContext>({
         window: 3_000,
         limit: 3,
         onLimitExceeded: async (ctx: TTelegrafContext) => {
@@ -111,6 +134,7 @@ export const init = async (
     [EState.KEYWORD_SETTINGS]: keywordSettingsState,
     [EState.KEYWORD_GROUP_SELECT]: keywordGroupSelectState,
     [EState.MAIN]: mainState,
+    [EState.MEME_SEARCH]: memeSearchState,
   }
 
   bot.start(async ctx => {
@@ -134,12 +158,26 @@ export const init = async (
   })
 
   bot.command('help', async ctx => {
-    await ctx.reply(i18n['ru'].message.start())
+    await ctx.reply(i18n['ru'].message.help(), {
+      parse_mode: 'Markdown',
+    })
   })
+
+  bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true))
+
+  bot.command('suggest_channel', ctx => onBotCommandSuggestChannel(ctx))
+
+  // TODO: enum for callback_data, refactoring
+  // TODO: pass query from session/update
+  bot.action('button_search_more', ctx => onBotRecieveText(ctx))
+
+  bot.action('button_latest_older', ctx => onBotCommandGetLatest(ctx, false))
+
+  bot.action('button_latest_newer', ctx => onBotCommandGetLatest(ctx, true))
 
   bot.on('callback_query', async ctx => {
     try {
-      await handleCallbackQuery(ctx, elastic, states[ctx.session.state].onCallback)
+      await handleCallbackQuery(ctx, states[ctx.session.state].onCallback)
       await ctx.answerCbQuery()
     } catch (error) {
       if (error instanceof InfoMessage) {
@@ -148,6 +186,22 @@ export const init = async (
         await logError(ctx.logger, error, { update: ctx.update })
       }
     }
+  })
+
+  bot.on('inline_query', async ctx => {
+    if (!sessionInMemory[ctx.inlineQuery.from.id]) {
+      sessionInMemory[ctx.inlineQuery.from.id] = {}
+    }
+    const page = Number(ctx.inlineQuery.offset) || 1
+    if (sessionInMemory[ctx.inlineQuery.from.id]?.debounce) {
+      clearTimeout(sessionInMemory[ctx.inlineQuery.from.id].debounce)
+    }
+    if (page === 1) {
+      sessionInMemory[ctx.inlineQuery.from.id].debounce = setTimeout(
+        () => onInlineQuery(ctx, page, sessionInMemory),
+        500,
+      )
+    } else await onInlineQuery(ctx, page, sessionInMemory)
   })
 
   bot.on(message('text'), async ctx => {
@@ -165,7 +219,7 @@ export const init = async (
       await state.onText(ctx, text)
       return
     }
-    await ctx.reply(i18n['ru'].message.unexpectedMessage())
+    await handleMemeSearchRequest(ctx)
   })
 
   bot.catch(async (err, ctx) => {

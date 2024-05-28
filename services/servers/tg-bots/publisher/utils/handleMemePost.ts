@@ -1,7 +1,6 @@
 import fs from 'fs/promises'
 import type { TTelegrafContext } from '../types'
 import { getMeme } from '../../../utils'
-import type { Client } from '@elastic/elasticsearch'
 import { logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
 import { updatePublisherChannelById } from '../../../../../utils/mysql-queries'
@@ -10,16 +9,11 @@ import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { ECallback, callbackData } from '../constants'
 import { Markup } from 'telegraf'
 
-export const handleMemePost = async (
-  client: Client,
-  ctx: TTelegrafContext,
-  chatId: number,
-  memeId: string,
-) => {
+export const handleMemePost = async (ctx: TTelegrafContext, chatId: number, memeId: string) => {
   if (!ctx.from) {
     throw new Error('There is no ctx.from')
   }
-  const meme = await getMeme(client, memeId)
+  const meme = await getMeme(ctx.elastic, memeId)
   const replyToMeme = ctx.callbackQuery?.message
     ? {
       reply_parameters: {

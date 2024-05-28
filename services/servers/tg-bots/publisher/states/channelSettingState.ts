@@ -1,7 +1,13 @@
 import { EState } from '../constants'
 import type { TMenuButton, TState } from '../types'
 import { enterToState, onClickDeleteChannel } from '../utils'
-import { buyPremiumState, keywordGroupSelectState, keywordSettingsState, mainState } from '.'
+import {
+  buyPremiumState,
+  keywordGroupSelectState,
+  keywordSettingsState,
+  mainState,
+  memeSearchState,
+} from '.'
 import { getDbConnection } from '../../../../../utils'
 import { i18n } from '../i18n'
 import { Markup } from 'telegraf'
@@ -49,6 +55,12 @@ export const channelSettingState: TState = {
         })
       },
     ]
+    const memeSearchButton: TMenuButton = [
+      i18n['ru'].button.search(),
+      async ctx => {
+        await enterToState(ctx, memeSearchState)
+      },
+    ]
     const backButton: TMenuButton = [
       i18n['ru'].button.back(),
       async ctx => {
@@ -65,9 +77,11 @@ export const channelSettingState: TState = {
       buttons.push([editKeywordsButton])
     }
     if (ctx.session.channel.id !== ctx.from?.id) {
-      buttons.push([unlinkChannelButton])
+      buttons.push([buyPremiumButton, unlinkChannelButton])
+    } else {
+      buttons.push([buyPremiumButton])
     }
-    buttons.push([backButton, buyPremiumButton])
+    buttons.push([memeSearchButton, backButton])
     return {
       text: i18n['ru'].message.thereTopicsAndKeywords(),
       buttons,

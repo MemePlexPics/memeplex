@@ -5,7 +5,7 @@ export const getMemeResponseEntity = (id: string, source: TElasticMemeEntity) =>
     id,
     fileName: source.fileName,
     channel: source.channelName,
-    message: source.messageId,
+    messageId: source.messageId,
     text: {
       eng: source.eng,
     },
