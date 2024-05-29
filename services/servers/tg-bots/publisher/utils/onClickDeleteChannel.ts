@@ -4,6 +4,7 @@ import {
   deleteBotChannelById,
   deleteBotTopicSubscriptionByChannelId,
   deleteBotSubscriptionsByChannelId,
+  deleteBotTopicKeywordUnsubscriptionByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import type { TTelegrafContext } from '../types'
@@ -15,6 +16,7 @@ export const onClickDeleteChannel = async (ctx: TTelegrafContext) => {
   const db = await getDbConnection()
   await deleteBotSubscriptionsByChannelId(db, ctx.session.channel.id)
   await deleteBotTopicSubscriptionByChannelId(db, ctx.session.channel.id)
+  await deleteBotTopicKeywordUnsubscriptionByChannelId(db, ctx.session.channel.id)
   await deleteBotChannelById(db, ctx.session.channel.id)
   await db.close()
   await ctx.reply(i18n['ru'].message.channelUnlinked())
