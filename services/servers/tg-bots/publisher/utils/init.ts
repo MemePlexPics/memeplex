@@ -148,7 +148,9 @@ export const init = async (
   })
 
   bot.command('menu', async ctx => {
-    await enterToState(ctx, states[ctx.session.state])
+    const reappliableState =
+      ctx.session.state === EState.MEME_SEARCH ? states[EState.MAIN] : states[ctx.session.state]
+    await enterToState(ctx, reappliableState)
   })
 
   bot.command('help', async ctx => {
