@@ -1,5 +1,5 @@
-import { mysqlTable, index, int, varchar, bigint, foreignKey } from 'drizzle-orm/mysql-core'
-import { botChannels, botUsers } from '.'
+import { mysqlTable, index, int, varchar, bigint } from 'drizzle-orm/mysql-core'
+import { botUsers } from '.'
 
 export const botActions = mysqlTable(
   'bot_actions',
@@ -23,11 +23,6 @@ export const botActions = mysqlTable(
   table => {
     return {
       userId: index('user_id').on(table.userId),
-      chatIdReference: foreignKey({
-        columns: [table.chatId],
-        foreignColumns: [botChannels.id],
-        name: 'bot_actions__chat_id_fk',
-      }),
     }
   },
 )
