@@ -3,7 +3,11 @@ import type { TTelegrafContext } from '../types'
 import { getMeme } from '../../../utils'
 import { handlePaywall, logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
-import { selectBotChannelById, updateBotChannelById } from '../../../../../utils/mysql-queries'
+import {
+  insertBotAction,
+  selectBotChannelById,
+  updateBotChannelById,
+} from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { ECallback, callbackData } from '../constants'
@@ -20,11 +24,10 @@ export const handleMemePost = async (
   const db = await getDbConnection()
   await updateBotChannelById(db, { subscribers }, chatId)
   const [channel] = await selectBotChannelById(db, chatId)
-  await db.close()
   if (subscribers > MAX_FREE_USER_CHANNEL_SUBS) {
     const paywalText = i18n['ru'].message.channelSubscribersLimitForFreePlan(channel.username)
-    const doPassPaywall = await handlePaywall(ctx, paywalText)
-    if (!doPassPaywall) {
+    const doesPassedPaywall = await handlePaywall(ctx, paywalText)
+    if (!doesPassedPaywall) {
       return
     }
   }
@@ -63,6 +66,14 @@ ${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${po
 `,
       replyToMeme,
     )
+    await insertBotAction(db, {
+      userId: ctx.from.id,
+      action: 'meme_post',
+      query: memeId,
+      page: '',
+      chatId,
+    })
+    await db.close()
     await logUserAction(ctx, {
       info: `Meme posted`,
       chatId,
