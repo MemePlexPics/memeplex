@@ -1,5 +1,5 @@
 import { Markup } from 'telegraf'
-import { logUserAction, replaceInlineKeyboardButton } from '.'
+import { enterToState, logUserAction, replaceInlineKeyboardButton } from '.'
 import { getDbConnection } from '../../../../../utils'
 import {
   deleteBotTopicKeywordUnsubscription,
@@ -14,6 +14,7 @@ import { EKeywordAction, callbackData } from '../constants'
 import type { TTelegrafContext } from '../types'
 import { i18n } from '../i18n'
 import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
+import { buyPremiumState } from '../states'
 
 export const handleTopicKeywordAction = async (
   ctx: TTelegrafContext<Update.CallbackQueryUpdate<CallbackQuery>>,
@@ -25,6 +26,10 @@ export const handleTopicKeywordAction = async (
   const hasPremiumSubscription = await ctx.hasPremiumSubscription
   const db = await getDbConnection()
   const [topic] = await selectBotTopicByIds(db, [topicId])
+  if (!hasPremiumSubscription && command === EKeywordAction.DELETE) {
+    await enterToState(ctx, buyPremiumState)
+    return
+  }
   if (command === EKeywordAction.DELETE) {
     await deleteBotSubscription(db, channelId, [keywordId])
     await insertBotTopicKeywordUnsubscription(db, [
