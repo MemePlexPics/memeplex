@@ -98,6 +98,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       timestamp,
     })
     await db.close()
+    await ctx.reply(i18n['ru'].message.addedChannel(channel))
     await logUserAction(ctx, {
       info: `Added`,
       channel,
