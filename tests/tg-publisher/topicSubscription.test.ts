@@ -58,7 +58,7 @@ describe('Topic subscription works', () => {
   test('There is a working button to subscribe to a topic', async () => {
     await tgClient.executeCommand('/start')
     await tgClient.executeMessage(i18n['ru'].button.mySubscriptions())
-    const topicUpdates = await tgClient.executeMessage(i18n['ru'].button.editTopics('✨'))
+    const topicUpdates = await tgClient.executeMessage(i18n['ru'].button.editTopics())
     if (!topicUpdates) {
       throw new Error(`There is no topic menu updates`)
     }

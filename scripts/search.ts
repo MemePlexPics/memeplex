@@ -14,7 +14,7 @@ const rl = readline.createInterface({
   terminal: false,
 })
 
-rl.on('line', async (line) => {
+rl.on('line', async line => {
   const res = await searchMemes(client, line, 1, ELASTIC_PAGE_SIZE)
   console.log(res)
 })

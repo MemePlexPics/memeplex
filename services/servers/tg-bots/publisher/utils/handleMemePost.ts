@@ -1,20 +1,33 @@
 import fs from 'fs/promises'
 import type { TTelegrafContext } from '../types'
 import { getMeme } from '../../../utils'
-import { logUserAction } from '.'
+import { handlePaywall, logUserAction } from '.'
 import { getDbConnection } from '../../../../../utils'
-import { updateBotChannelById } from '../../../../../utils/mysql-queries'
+import { selectBotChannelById, updateBotChannelById } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { ECallback, callbackData } from '../constants'
 import { Markup } from 'telegraf'
 import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
+import { MAX_FREE_USER_CHANNEL_SUBS } from '../../../../../constants'
 
 export const handleMemePost = async (
   ctx: TTelegrafContext<Update.CallbackQueryUpdate<CallbackQuery>>,
   chatId: number,
   memeId: string,
 ) => {
+  const subscribers = await ctx.telegram.getChatMembersCount(chatId)
+  const db = await getDbConnection()
+  await updateBotChannelById(db, { subscribers }, chatId)
+  const [channel] = await selectBotChannelById(db, chatId)
+  await db.close()
+  if (subscribers > MAX_FREE_USER_CHANNEL_SUBS) {
+    const paywalText = i18n['ru'].message.channelSubscribersLimitForFreePlan(channel.username)
+    const doPassPaywall = await handlePaywall(ctx, paywalText)
+    if (!doPassPaywall) {
+      return
+    }
+  }
   const meme = await getMeme(ctx.elastic, memeId)
   const replyToMeme = ctx.callbackQuery?.message
     ? {
@@ -55,10 +68,6 @@ ${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${po
       chatId,
       memeId,
     })
-    const subscribers = await ctx.telegram.getChatMembersCount(chatId)
-    const db = await getDbConnection()
-    await updateBotChannelById(db, { subscribers }, chatId)
-    await db.close()
   } catch (error) {
     if (
       error instanceof Error &&
