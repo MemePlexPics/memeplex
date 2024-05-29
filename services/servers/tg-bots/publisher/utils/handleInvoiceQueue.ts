@@ -6,7 +6,7 @@ import type { TTelegrafContext } from '../types'
 import type { Logger } from 'winston'
 import { AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL } from '../../../../../constants'
 import { getAmqpQueue } from '../../../../utils'
-import { delay, getDbConnection } from '../../../../../utils'
+import { delay, getDbConnection, timestampToYyyyMmDd } from '../../../../../utils'
 import { upsertBotPremiumUser, selectBotPremiumUser } from '../../../../../utils/mysql-queries'
 import { PREMIUM_PLANS } from '../../../../../constants/publisher'
 import { i18n } from '../i18n'
@@ -71,7 +71,8 @@ export const handleInvoiceQueue = async (
           untilTimestamp: newDate,
         })
         await db.close()
-        await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentSuccessful())
+        const dateString = timestampToYyyyMmDd(newDate)
+        await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentSuccessful(dateString))
       } else {
         cryptoPayToPublisherCh.nack(msg)
         continue
