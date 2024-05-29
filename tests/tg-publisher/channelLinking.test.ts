@@ -155,7 +155,7 @@ describe('Keyword subscribtion', () => {
   })
 
   test('Keyword subscription for the channel works', async () => {
-    await tgClient.executeMessage(i18n['ru'].button.editKeywords(testChannel))
+    await tgClient.executeMessage(i18n['ru'].button.editKeywords('✏️', testChannel))
     await tgClient.executeMessage(keywordFirst)
     const buffer = Buffer.from(
       JSON.stringify({
@@ -306,7 +306,7 @@ describe('Keyword subscribtion', () => {
     )
     expect(channelButton).not.toBe(undefined)
     const keywordSettingsMenuUpdates = await tgClient.executeMessage(
-      i18n['ru'].button.editKeywords(testChannel),
+      i18n['ru'].button.editKeywords('✏️', testChannel),
     )
     const keywordListMenuMessage = keywordSettingsMenuUpdates!.result.find(
       update =>
