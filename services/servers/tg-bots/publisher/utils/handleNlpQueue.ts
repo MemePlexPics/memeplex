@@ -49,7 +49,7 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
 
     for (;;) {
       if (abortSignal.aborted) {
-        logger.info('Loop aborted')
+        logger.info({ info: 'Loop aborted' })
         break
       }
       const msg = await receiveNlpMessageCh.get(AMQP_NLP_TO_PUBLISHER_CHANNEL)
