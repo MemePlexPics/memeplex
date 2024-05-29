@@ -1,12 +1,6 @@
 import { ETopicAction, EState } from '../constants'
 import type { TMenuButton, TState, TTelegrafContext } from '../types'
-import {
-  addSubscription,
-  deleteSubscription,
-  enterToState,
-  logUserAction,
-  replaceInlineKeyboardButton,
-} from '../utils'
+import { addSubscription, enterToState, logUserAction, replaceInlineKeyboardButton } from '../utils'
 import { channelSettingState, memeSearchState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
@@ -17,6 +11,7 @@ import {
   selectBotTopicByNames,
   selectBotTopicNameByIds,
   selectBotTopicNames,
+  deleteBotSubscription,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { Markup } from 'telegraf'
@@ -108,7 +103,7 @@ ${
       await addSubscription(db, ctx.session.channel.id, keywordsForInsert)
     } else if (operation === ETopicAction.UNSUBSCRIBE) {
       await deleteBotTopicSubscription(db, ctx.session.channel.id, topic.id)
-      await deleteSubscription(db, ctx.session.channel.id, keywordIds)
+      await deleteBotSubscription(db, ctx.session.channel.id, keywordIds)
     } else {
       throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
