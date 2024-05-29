@@ -180,7 +180,9 @@ describe('Keyword subscribtion', () => {
         `There is no update with «${keywordFirstUser}» keyword: ${JSON.stringify(commaSeparatedKeywordUpdates, null, 2)}`,
       )
     }
-    const keywordSettingsUpdates = await tgClient.executeMessage(i18n['ru'].button.editKeywords())
+    const keywordSettingsUpdates = await tgClient.executeMessage(
+      i18n['ru'].button.editKeywords('✏️'),
+    )
     const keywordSettingsMenu = keywordSettingsUpdates!.result.find(
       update => update.message.text === i18n['ru'].message.unsubscribeFromKeywords(),
     )
