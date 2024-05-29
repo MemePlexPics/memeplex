@@ -38,13 +38,13 @@ export const onInlineQuery = async (
   if (oldAbortController) {
     oldAbortController.abort()
   }
-  const newAbortController = new AbortController()
-  sessionInMemory[ctx.inlineQuery.from.id].abortController = newAbortController
+  const abortController = new AbortController()
+  sessionInMemory[ctx.inlineQuery.from.id].abortController = abortController
 
   const response = query
-    ? await searchMemes(ctx.elastic, query, page, TG_INLINE_BOT_PAGE_SIZE, newAbortController)
+    ? await searchMemes(ctx.elastic, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
     : {
-      result: await getLatestInlineSelectedMemes(ctx.elastic, newAbortController),
+      result: await getLatestInlineSelectedMemes(ctx.elastic, abortController),
       totalPages: 1,
     }
 
@@ -63,7 +63,7 @@ export const onInlineQuery = async (
   })
 
   // If they are not equal, then there is at least one more new request from the same user
-  if (newAbortController === oldAbortController) {
+  if (abortController === sessionInMemory[ctx.inlineQuery.from.id].abortController) {
     if (results.length) {
       await ctx.answerInlineQuery(results, {
         next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
