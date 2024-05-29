@@ -1,7 +1,7 @@
 import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
 import { getDbConnection } from '../../../utils'
 import { selectBotKeywordsByKeywords } from '../../../utils/mysql-queries'
-import { TelegramClientWrapper } from './TelegramClientWrapper'
+import type { TelegramClientWrapper } from './TelegramClientWrapper'
 
 export const subscribeToKeyword = async (tgClient: TelegramClientWrapper, testKeyword: string) => {
   const mySubscriptionMenuUpdates = await tgClient.executeMessage(

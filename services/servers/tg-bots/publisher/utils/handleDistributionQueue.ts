@@ -15,6 +15,7 @@ import {
   selectBotChannelsById,
   selectBotTopicNameByIds,
   selectBotKeywordsByKeywords,
+  selectBotPremiumUser,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, ETopicAction, callbackData } from '../constants'
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
@@ -51,6 +52,7 @@ export const handleDistributionQueue = async (
       const buttons: InlineKeyboardButton.CallbackButton[][] = []
       const db = await getDbConnection()
       const channels = await selectBotChannelsById(db, payload.channelIds)
+      const [userPremium] = await selectBotPremiumUser(db, payload.userId)
 
       channels.forEach(channel => {
         if (channel.id === Number(payload.userId)) return null
@@ -144,6 +146,7 @@ export const handleDistributionQueue = async (
           buttons.push([
             {
               text: i18n['ru'].button.premoderation.keywordFromTopic.unsubscribe(
+                userPremium !== undefined,
                 keyword,
                 topicNameById[topicId],
               ),

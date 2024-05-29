@@ -113,21 +113,23 @@ ${keywords}`,
 - Не нужно описывать картинку - в индекс попадает только сам текст с неё, а не описание.`,
     doNotAddToQuery: () => `- В частности, не нужно добавлять в запрос "мем", "картинка" и т.п.`,
     shortQueriesWorkBetter: () => `- Короткие запросы работают лучше`,
+    channelSubscribersLimitForFreePlan: (channel: string) => `
+Ваш канал @${channel} достиг ${MAX_FREE_USER_CHANNEL_SUBS} подписчиков.
+Получите премиум, чтобы использовать бота в больших каналах.`,
     nothingFound: () => 'Ничего не найдено',
   },
   button: {
     back: () => '⬅️ Назад',
     ready: () => '✅ Готово',
     forward: () => '➡️ Вперед',
-    editTopics: (emoji: '✏️' | '✨' = '✏️', channel?: string) =>
-      `${emoji} Редактировать топики${channel ? ` (@${channel})` : ''}`,
+    editTopics: (channel?: string) => `✏️ Редактировать топики${channel ? ` (@${channel})` : ''}`,
     addChannel: () => '➕ Добавить канал',
     mySubscriptions: () => '📩 Мои подписки',
     unlinkChannel: (channel: string) => `🗑 Отвязать @${channel}`,
     unlinkChannelConfirm: () => `⛔ Отвязать`,
     toMainMenu: () => '🏠 В главное меню',
-    editKeywords: (channel?: string) =>
-      `✏️ Редактировать ключевые фразы${channel ? ` (@${channel})` : ''}`,
+    editKeywords: (emoji: '✏️' | '✨' = '✏️', channel?: string) =>
+      `${emoji} Редактировать ключевые фразы${channel ? ` (@${channel})` : ''}`,
     sendKeywords: () => '📋 Вывести через запятую',
     linkYourChannel: () => '🔗 Привязать свой канал',
     subscriptionSettings: () => '⚙️ Настройки подписок',
@@ -153,8 +155,8 @@ ${keywords}`,
       keywordFromTopic: {
         base: (emoji: '🔕' | '➕', keyword: string, topic: string, action: string) =>
           `${emoji} «${keyword}» из 📂 «${topic}» (${action})`,
-        unsubscribe: (keyword: string, topic: string) =>
-          ru.button.premoderation.keywordFromTopic.base('🔕', keyword, topic, 'отписаться'),
+        unsubscribe: (isPremium: boolean, keyword: string, topic: string) =>
+          `${isPremium ? '' : '✨ '}${ru.button.premoderation.keywordFromTopic.base('🔕', keyword, topic, 'отписаться')}`,
         subscribe: (keyword: string, topic: string) =>
           ru.button.premoderation.keywordFromTopic.base('➕', keyword, topic, 'подписаться'),
       },

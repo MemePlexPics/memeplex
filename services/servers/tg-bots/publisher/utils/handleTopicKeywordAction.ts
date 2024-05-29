@@ -22,6 +22,7 @@ export const handleTopicKeywordAction = async (
   keywordId: number,
   topicId: number,
 ) => {
+  const hasPremiumSubscription = await ctx.hasPremiumSubscription
   const db = await getDbConnection()
   const [topic] = await selectBotTopicByIds(db, [topicId])
   if (command === EKeywordAction.DELETE) {
@@ -76,7 +77,11 @@ export const handleTopicKeywordAction = async (
   const newText =
     command === EKeywordAction.DELETE
       ? i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topicName.name)
-      : i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topicName.name)
+      : i18n['ru'].button.premoderation.keywordFromTopic.unsubscribe(
+        hasPremiumSubscription,
+        keyword.keyword,
+        topicName.name,
+      )
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),
   })
