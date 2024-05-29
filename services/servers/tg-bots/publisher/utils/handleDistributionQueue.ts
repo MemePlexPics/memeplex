@@ -38,7 +38,7 @@ export const handleDistributionQueue = async (
   try {
     for (;;) {
       if (abortSignal.aborted) {
-        logger.info('Loop aborted')
+        logger.info({ info: 'Loop aborted' })
         break
       }
       const msg = await distributionCh.get(AMQP_PUBLISHER_DISTRIBUTION_CHANNEL)
