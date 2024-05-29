@@ -27,7 +27,13 @@ export const channelSettingState: TState = {
         hasPremiumSubscription ? '✏️' : '✨',
         isChannel ? ctx.session.channel.name : undefined,
       ),
-      ctx => enterToState(ctx, keywordSettingsState),
+      async ctx => {
+        if (!hasPremiumSubscription) {
+          await enterToState(ctx, buyPremiumState)
+          return
+        }
+        await enterToState(ctx, keywordSettingsState)
+      },
     ]
     const editTopicsButton: TMenuButton = [
       i18n['ru'].button.editTopics(isChannel ? ctx.session.channel.name : undefined),

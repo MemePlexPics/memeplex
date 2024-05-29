@@ -22,6 +22,7 @@ export const handleInvoiceCreation = async (ctx: TTelegrafContext, amount: numbe
     publisherToCryptoPayCh.sendToQueue(AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL, buffer, {
       persistent: true,
     })
+    await ctx.reply(i18n['ru'].message.generatingPaymentLink())
   } catch (error) {
     await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
   }
