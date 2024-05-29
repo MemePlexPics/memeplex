@@ -32,12 +32,14 @@ export const handleInvoiceQueue = async (
         continue
       }
       cryptoPayToPublisherTimeout(600_000, logger, msg)
+      // TODO: type
       const payload: { userId: number } & (
         | { bot_invoice_url: string }
         | { status: 'paid'; amount: string }
       ) = JSON.parse(msg.content.toString())
       if ('bot_invoice_url' in payload) {
         await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentLink(), {
+          parse_mode: 'Markdown',
           reply_markup: {
             inline_keyboard: [
               [
