@@ -39,7 +39,8 @@ export const handleInvoiceCreation = async (cryptoPay: CryptoPay, logger: Logger
         currency_type: 'fiat',
         fiat: 'USD',
         amount: `${payload.amount}`,
-        description: `MemePush платный тариф для пользователя ${payload.user} (${payload.id})`,
+        // TODO: type as const
+        description: `MemePlexBot платный тариф для пользователя ${payload.user} (${payload.id})`,
         expires_in: CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS,
       })
       if (invoice.bot_invoice_url) {
