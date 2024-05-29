@@ -18,7 +18,7 @@ export async function loopRetrying(
 ) {
   for (;;) {
     if (options.abortSignal?.aborted) {
-      if (options.logger) options.logger.info('Loop aborted')
+      if (options.logger) options.logger.info({ info: 'Loop aborted' })
       break
     }
 

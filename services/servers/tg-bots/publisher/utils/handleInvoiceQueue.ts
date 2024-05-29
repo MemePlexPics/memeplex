@@ -23,7 +23,7 @@ export const handleInvoiceQueue = async (
   try {
     for (;;) {
       if (abortSignal.aborted) {
-        logger.info('Loop aborted')
+        logger.info({ info: 'Loop aborted' })
         break
       }
       const msg = await cryptoPayToPublisherCh.get(AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL)
