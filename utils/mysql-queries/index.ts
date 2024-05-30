@@ -75,7 +75,6 @@ export { insertBotTopicKeywordUnsubscription } from './insertBotTopicKeywordUnsu
 export { deleteBotTopicKeywordUnsubscription } from './deleteBotTopicKeywordUnsubscription'
 export { selectBotKeywordsByKeywords } from './selectBotKeywordsByKeywords'
 export { selectBotKeywordByIds } from './selectBotKeywordByIds'
-export { selectBotTopicByIds } from './selectBotTopicByIds'
 export { selectBotTopicNameByIds } from './selectBotTopicNameByIds'
 export { selectBotTopicWithKeywords } from './selectBotTopicWithKeywords'
 export { selectBotTopicKeywordUnsubscriptions } from './selectBotTopicKeywordUnsubscriptions'

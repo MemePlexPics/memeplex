@@ -72,7 +72,10 @@ export const handleInvoiceQueue = async (
         })
         await db.close()
         const dateString = timestampToYyyyMmDd(newDate)
-        await bot.telegram.sendMessage(payload.userId, i18n['ru'].message.paymentSuccessful(dateString))
+        await bot.telegram.sendMessage(
+          payload.userId,
+          i18n['ru'].message.paymentSuccessful(dateString),
+        )
       } else {
         cryptoPayToPublisherCh.nack(msg)
         continue

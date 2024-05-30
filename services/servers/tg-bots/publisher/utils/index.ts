@@ -19,3 +19,6 @@ export { getTopicSubscriptionsByKeywords } from './getTopicSubscriptionsByKeywor
 export { handleTopicKeywordAction } from './handleTopicKeywordAction'
 export { replaceInlineKeyboardButton } from './replaceInlineKeyboardButton'
 export { TelegrafWrapper } from './TelegrafWrapper'
+export { getTopicIdsByKeyword } from './getTopicIdsByKeyword'
+export { getUnsubscriptionKeywordsByChannelId } from './getUnsubscriptionKeywordsByChannelId'
+export { remapSetObjectValuesToArrays } from './remapSetObjectValuesToArrays'
