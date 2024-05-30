@@ -1,5 +1,5 @@
-import { KeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { TelegramClientWrapper } from '.'
+import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { TelegramClientWrapper } from '.'
 import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
 import { PREMIUM_PLANS } from '../../../constants/publisher'
 
@@ -40,7 +40,7 @@ export const goToOneMonthPremiumButton = async (tgClient: TelegramClientWrapper)
     throw new Error(`There is no updates after pressed «${i18n['ru'].button.subscribeToPremium()}»`)
   }
   const premiumMenuMessage = premiumUpdates.result.find(
-    update => update.message.text === i18n['ru'].message.premiumPlanFeatures(),
+    update => update.message.text.trim() === i18n['ru'].message.premiumPlanFeatures().trim(),
   )
   if (!premiumMenuMessage) {
     throw new Error(`There is no premium menu: ${JSON.stringify(premiumUpdates, null, 2)}`)

@@ -22,7 +22,7 @@ import {
   addChannelState,
   buyPremiumState,
   channelSettingState,
-  topicSelectState,
+  topicSettingState,
   keywordSettingsState,
   mainState,
   memeSearchState,
@@ -126,7 +126,7 @@ export const init = async (
     [EState.BUY_PREMIUM]: buyPremiumState,
     [EState.CHANNEL_SETTINGS]: channelSettingState,
     [EState.KEYWORD_SETTINGS]: keywordSettingsState,
-    [EState.TOPIC_SELECT]: topicSelectState,
+    [EState.TOPIC_SETTINGS]: topicSettingState,
     [EState.MAIN]: mainState,
     [EState.MEME_SEARCH]: memeSearchState,
   }

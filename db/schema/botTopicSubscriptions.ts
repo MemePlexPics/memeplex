@@ -1,5 +1,5 @@
 import { mysqlTable, int, unique, foreignKey, bigint } from 'drizzle-orm/mysql-core'
-import { botChannels, botTopics } from '.'
+import { botChannels, botTopicNames } from '.'
 
 export const botTopicSubscriptions = mysqlTable(
   'bot_topic_subscriptions',
@@ -10,9 +10,9 @@ export const botTopicSubscriptions = mysqlTable(
   },
   table => ({
     unique: unique('topic_id-channel_id').on(table.topicId, table.channelId),
-    keywordReference: foreignKey({
+    topicReference: foreignKey({
       columns: [table.topicId],
-      foreignColumns: [botTopics.id],
+      foreignColumns: [botTopicNames.id],
       name: 'bot_topic_subscriptions__topic_id_fk',
     }),
     channelReference: foreignKey({
