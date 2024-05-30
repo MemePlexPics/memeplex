@@ -1,4 +1,4 @@
-import { TAmqpNLPToPublisherChannelMessage } from '../../../services/types'
+import type { TAmqpNLPToPublisherChannelMessage } from '../../../services/types'
 
 export const mockAmqpNLPToPublisherChannelMessage: TAmqpNLPToPublisherChannelMessage = {
   memeId: 'bJ9jlY8B7st7u_yTVMYJ',
