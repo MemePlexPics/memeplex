@@ -7,7 +7,6 @@ import {
   insertBotTopicKeywordUnsubscription,
   insertBotSubscription,
   selectBotKeywordByIds,
-  selectBotTopicByIds,
   selectBotTopicNameByIds,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
@@ -25,7 +24,7 @@ export const handleTopicKeywordAction = async (
 ) => {
   const hasPremiumSubscription = await ctx.hasPremiumSubscription
   const db = await getDbConnection()
-  const [topic] = await selectBotTopicByIds(db, [topicId])
+  const [topic] = await selectBotTopicNameByIds(db, [topicId])
   if (!hasPremiumSubscription && command === EKeywordAction.DELETE) {
     await enterToState(ctx, buyPremiumState)
     return
@@ -59,7 +58,6 @@ export const handleTopicKeywordAction = async (
     await db.close()
     throw new Error(`Unknown operation in topic button: «${command}» for ${channelId}`)
   }
-  const [topicName] = await selectBotTopicNameByIds(db, [topic.id])
   const [keyword] = await selectBotKeywordByIds(db, [keywordId])
   await db.close()
 
@@ -81,11 +79,11 @@ export const handleTopicKeywordAction = async (
     command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
   const newText =
     command === EKeywordAction.DELETE
-      ? i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topicName.name)
+      ? i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topic.name)
       : i18n['ru'].button.premoderation.keywordFromTopic.unsubscribe(
         hasPremiumSubscription,
         keyword.keyword,
-        topicName.name,
+        topic.name,
       )
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),

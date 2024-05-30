@@ -5,7 +5,6 @@ import type { TDbConnection } from '../types'
 export const selectBotTopicWithKeywords = async (db: TDbConnection) => {
   return await db
     .select({
-      id: botTopics.id,
       nameId: botTopics.nameId,
       keywordId: botTopics.keywordId,
       keyword: botKeywords.keyword,

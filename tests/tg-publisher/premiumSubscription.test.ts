@@ -16,10 +16,10 @@ import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
 import { PREMIUM_PLANS } from '../../constants/publisher'
 import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
-import { botActions, type botInvoices } from '../../db/schema'
+import { telegrafSessions, type botInvoices } from '../../db/schema'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
 import { upsertBotPremiumUser } from '../../utils/mysql-queries'
-import { eq, sql } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 describe('Subscribed to premium', () => {
@@ -64,7 +64,6 @@ describe('Subscribed to premium', () => {
     await tgServer.stop()
     const db = await getDbConnection()
     await cleanUpPublisherPremium(db, cryptoPay)
-    await db.delete(botActions).where(eq(botActions.userId, 1))
     await cleanUpPublisherUser(db)
     await db.close()
 
@@ -79,9 +78,9 @@ describe('Subscribed to premium', () => {
     currentInvoice = await createInvoiceByButtons(tgClient)
   }, 60_000)
 
-  test(`Mocked paid invoice leads to «${i18n['ru'].message.paymentSuccessful()}» message`, async () => {
+  test(`Mocked paid invoice leads to «${i18n['ru'].message.paymentSuccessful('')}» message`, async () => {
     await awaitPremiumActivation(tgClient, currentInvoice.id)
-  })
+  }, 10_000)
 
   test(`Now it is a «${i18n['ru'].button.extendPremium()}» buttom in the main menu`, async () => {
     await backToMainMenuAfterBoughtPremium(tgClient)
@@ -89,7 +88,7 @@ describe('Subscribed to premium', () => {
 
   test('Premium expired correctly', async () => {
     const db = await getDbConnection()
-    await db.execute(sql`DELETE FROM telegraf_sessions WHERE \`key\` = '1:1'`)
+    await db.delete(telegrafSessions).where(eq(telegrafSessions.key, `1:1`))
     await upsertBotPremiumUser(db, {
       userId: 1,
       untilTimestamp: 0,

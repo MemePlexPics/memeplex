@@ -20,7 +20,12 @@ import type {
   TPrePublisherDistributionQueue,
   TPublisherDistributionQueueMsg,
 } from '../../../../types'
-import { getTopicSubscriptionsByKeywords } from '.'
+import {
+  getTopicIdsByKeyword,
+  getTopicSubscriptionsByKeywords,
+  getUnsubscriptionKeywordsByChannelId,
+  remapSetObjectValuesToArrays,
+} from '.'
 
 export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) => {
   let amqp: Connection | undefined,
@@ -37,15 +42,7 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
     const db = await getDbConnection()
     const topics = await selectBotTopicWithKeywords(db)
     await db.close()
-    const topicIdsByKeyword = topics.reduce<Record<string, number[]>>(
-      (obj, { nameId, keyword }) => {
-        if (!keyword) return obj
-        if (!obj[keyword]) obj[keyword] = []
-        obj[keyword]!.push(nameId)
-        return obj
-      },
-      {},
-    )
+    const topicIdsByKeyword = getTopicIdsByKeyword(topics)
 
     for (;;) {
       if (abortSignal.aborted) {
@@ -70,31 +67,20 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
       const channelIdsByKeyword: Record<number, Record<string, Set<number>>> = {}
       const channelIdsByTopic: Record<number, Record<string, Set<number>>> = {}
       const tariffPlanByUsers: Record<number, 'free' | 'premium'> = {}
+
       const { channelIds, topicSubscriptionsByKeyword } = await getTopicSubscriptionsByKeywords(
         db,
         payload.matchedKeywords,
         topicIdsByKeyword,
       )
-      const subscriptions =
-        payload.matchedKeywords.length !== 0
-          ? await selectBotSubscriptionsByKeywords(db, payload.matchedKeywords)
-          : []
+
       const unsubscriptions =
         channelIds.size !== 0 && payload.matchedKeywords.length !== 0
           ? await selectBotTopicKeywordUnsubscriptions(db, [...channelIds], payload.matchedKeywords)
           : []
-      const unsubscriptionKeywordsByChannelId = unsubscriptions.reduce<
-      Record<string, Record<number, true>>
-      >((obj, { channelId, keyword }) => {
-        if (!keyword) {
-          return obj
-        }
-        if (!obj[keyword]) {
-          obj[keyword] = {}
-        }
-        obj[keyword][channelId] = true
-        return obj
-      }, {})
+      const unsubscriptionKeywordsByChannelId =
+        getUnsubscriptionKeywordsByChannelId(unsubscriptions)
+
       for (const keyword of payload.matchedKeywords) {
         const topicSubscriptions = topicSubscriptionsByKeyword[keyword] ?? []
 
@@ -114,35 +100,27 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
           ) {
             continue
           }
-          if (!topicIdsByUser[userId]) {
-            topicIdsByUser[userId] = new Set<number>()
-          }
+          topicIdsByUser[userId] ??= new Set<number>()
           topicIdsByUser[userId].add(topicId)
 
-          if (!channelIdsByTopic[userId]) {
-            channelIdsByTopic[userId] = {}
-          }
-          if (!channelIdsByTopic[userId][topicId]) {
-            channelIdsByTopic[userId][topicId] = new Set<number>()
-          }
+          channelIdsByTopic[userId] ??= {}
+          channelIdsByTopic[userId][topicId] ??= new Set<number>()
           channelIdsByTopic[userId][topicId].add(channelId)
 
-          if (!channelIdsByKeyword[userId]) {
-            channelIdsByKeyword[userId] = {}
-          }
-          if (!channelIdsByKeyword[userId][keyword]) {
-            channelIdsByKeyword[userId][keyword] = new Set<number>()
-          }
+          channelIdsByKeyword[userId] ??= {}
+          channelIdsByKeyword[userId][keyword] ??= new Set<number>()
           channelIdsByKeyword[userId][keyword].add(channelId)
 
           queue[userId].channelIds.push(channelId)
-          if (!topicKeywordIdsByUser[userId]) {
-            topicKeywordIdsByUser[userId] = {}
-          }
+          topicKeywordIdsByUser[userId] ??= {}
           topicKeywordIdsByUser[userId][keyword] = topicId
         }
       }
 
+      const subscriptions =
+        payload.matchedKeywords.length !== 0
+          ? await selectBotSubscriptionsByKeywords(db, payload.matchedKeywords)
+          : []
       for (const { channelId, keyword } of subscriptions) {
         if (!keyword) {
           continue
@@ -158,22 +136,17 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
         if (
           tariffPlanByUsers[userId] === 'free' ||
           (topicKeywordIdsByUser[userId] && keyword in topicKeywordIdsByUser[userId])
-        )
+        ) {
           continue
+        }
 
-        if (!channelIdsByKeyword[userId]) {
-          channelIdsByKeyword[userId] = {}
-        }
-        if (!channelIdsByKeyword[userId][keyword]) {
-          channelIdsByKeyword[userId][keyword] = new Set<number>()
-        }
+        channelIdsByKeyword[userId] ??= {}
+        channelIdsByKeyword[userId][keyword] ??= new Set<number>()
         channelIdsByKeyword[userId][keyword].add(channelId)
 
-        if (!keywordsByUser[userId]) {
-          keywordsByUser[userId] = new Set<string>()
-        }
-        queue[userId].channelIds.push(channelId)
+        keywordsByUser[userId] ??= new Set<string>()
         keywordsByUser[userId].add(keyword)
+        queue[userId].channelIds.push(channelId)
       }
       await db.close()
 
@@ -191,22 +164,10 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
           topicIds: topicIdsByUser[userId] ? [...topicIdsByUser[userId]] : [],
           topicKeywords: topicKeywordIdsByUser[userId] ?? {},
           channelIdsByKeyword: channelIdsByKeyword[userId]
-            ? Object.entries(channelIdsByKeyword[userId]).reduce<Record<string, number[]>>(
-              (acc, [keyword, channelIds]) => {
-                acc[keyword] = [...channelIds]
-                return acc
-              },
-              {},
-            )
+            ? remapSetObjectValuesToArrays(channelIdsByKeyword[userId])
             : {},
           channelIdsByTopic: channelIdsByTopic[userId]
-            ? Object.entries(channelIdsByTopic[userId]).reduce<Record<string, number[]>>(
-              (acc, [topic, channelIds]) => {
-                acc[topic] = [...channelIds]
-                return acc
-              },
-              {},
-            )
+            ? remapSetObjectValuesToArrays(channelIdsByTopic[userId])
             : {},
         }
         const buffer = Buffer.from(JSON.stringify(content))
