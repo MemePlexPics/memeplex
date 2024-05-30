@@ -12,16 +12,17 @@ import {
   selectBotTopicNameByIds,
   selectBotTopicNames,
   deleteBotSubscription,
+  deleteBotTopicKeywordUnsubscription,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { Markup } from 'telegraf'
 import type { InlineKeyboardButton } from '@telegraf/types'
 
-export const topicSelectState: TState = {
-  stateName: EState.TOPIC_SELECT,
+export const topicSettingState: TState = {
+  stateName: EState.TOPIC_SETTINGS,
   inlineMenu: async ctx => {
     if (!ctx.session.channel) {
-      throw new Error(`ctx.session.channel is undefined in addKeywordsState`)
+      throw new Error(`ctx.session.channel is undefined in topicSettingState`)
     }
     const db = await getDbConnection()
     const topics = await selectBotTopicNames(db)
@@ -74,7 +75,7 @@ ${
   },
   onCallback: async (ctx: TTelegrafContext, callback: string) => {
     if (!ctx.session.channel) {
-      throw new Error(`ctx.session.channel is undefined in topicSelectState`)
+      throw new Error(`ctx.session.channel is undefined in topicSettingState`)
     }
     const [operation, topicNameIdString] = callback.split('|')
     const topicNameId = Number(topicNameIdString)
@@ -102,6 +103,7 @@ ${
       const keywordsForInsert = keywords?.map(keyword => ({ keyword: keyword.keyword }))
       await addSubscription(db, ctx.session.channel.id, keywordsForInsert)
     } else if (operation === ETopicAction.UNSUBSCRIBE) {
+      await deleteBotTopicKeywordUnsubscription(db, ctx.session.channel.id, keywordIds)
       await deleteBotTopicSubscription(db, ctx.session.channel.id, topic.id)
       await deleteBotSubscription(db, ctx.session.channel.id, keywordIds)
     } else {

@@ -1,6 +1,6 @@
-import { KeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
 import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
-import { TelegramClientWrapper } from '.'
+import type { TelegramClientWrapper } from '.'
 
 export const backToMainMenuAfterBoughtPremium = async (tgClient: TelegramClientWrapper) => {
   // await tgClient.executeMessage(i18n['ru'].button.back(), undefined, false)

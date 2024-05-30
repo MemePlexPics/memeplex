@@ -3,7 +3,7 @@ import type { TMenuButton, TState } from '../types'
 import { enterToState, onClickDeleteChannel } from '../utils'
 import {
   buyPremiumState,
-  topicSelectState,
+  topicSettingState,
   keywordSettingsState,
   mainState,
   memeSearchState,
@@ -37,7 +37,7 @@ export const channelSettingState: TState = {
     ]
     const editTopicsButton: TMenuButton = [
       i18n['ru'].button.editTopics(isChannel ? ctx.session.channel.name : undefined),
-      ctx => enterToState(ctx, topicSelectState),
+      ctx => enterToState(ctx, topicSettingState),
     ]
     const buyPremiumButton: TMenuButton = [
       i18n['ru'].button.premium(),

@@ -19,7 +19,9 @@ export const createInvoiceByButtons = async (tgClient: TelegramClientWrapper) =>
     oneMonthPremium.cost,
   )
 
-  const afterPressPremiumButtonUpdates = await tgClient.executeMessage(oneMonthPremiumButtonText)
+  await tgClient.executeMessage(oneMonthPremiumButtonText)
+  const afterPressPremiumButtonUpdates = await tgClient.getUpdates()
+  console.log(JSON.stringify(afterPressPremiumButtonUpdates, null, 2))
   if (!afterPressPremiumButtonUpdates) {
     throw new Error(`There is no updates after pressed «${oneMonthPremiumButtonText}» button`)
   }
@@ -41,7 +43,6 @@ export const createInvoiceByButtons = async (tgClient: TelegramClientWrapper) =>
     )
   }
   const paymentHash = linkForPaymentButton[0].url.split('=').at(-1)
-  await tgClient.executeMessage(i18n['ru'].button.goToPremiumPayment(), undefined, false)
   const db = await getDbConnection()
   const activeInvoices = await selectBotActiveInvoices(db)
   await db.close()
