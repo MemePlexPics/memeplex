@@ -6,5 +6,7 @@ export const deleteBotKeyword = async (db: TDbConnection, keyword: string) => {
   await db
     .delete(botKeywords)
     .where(eq(botKeywords.keyword, keyword))
-    .catch(e => console.error(e)) // TODO: handle the exact error (exist references)
+    .catch(e => {
+      if (e.code !== 'ER_ROW_IS_REFERENCED_2') throw e
+    })
 }
