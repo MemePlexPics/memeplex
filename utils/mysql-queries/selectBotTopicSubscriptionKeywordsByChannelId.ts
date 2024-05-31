@@ -1,6 +1,5 @@
 import {
   botKeywords,
-  botSubscriptions,
   botTopicNames,
   botTopicSubscriptions,
   botTopics,
@@ -23,6 +22,6 @@ export const selectBotTopicSubscriptionKeywordsByChannelId = (
     .where(eq(botTopicSubscriptions.channelId, channelId))
     .leftJoin(botTopicNames, eq(botTopicNames.id, botTopicSubscriptions.topicId))
     .leftJoin(botTopics, eq(botTopics.nameId, botTopicNames.id))
-    .leftJoin(botKeywords, eq(botSubscriptions.keywordId, botTopics.keywordId))
+    .leftJoin(botKeywords, eq(botTopics.keywordId, botTopics.keywordId))
     .orderBy(botTopicNames.name, botKeywords.keyword)
 }
