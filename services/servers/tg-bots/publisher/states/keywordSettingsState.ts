@@ -153,7 +153,6 @@ export const keywordSettingsState: TState = {
       throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
     }
     const [firstPartCb, ...restCb] = callback.split('|')
-    // const [command, argument] = callback.split('|')
     if (firstPartCb === EKeywordSettingKeywordType.KEYWORD) {
       const restCbData = restCb as TSplitCallback<
       ReturnType<typeof callbackData.premoderation.keywordButton>
@@ -170,11 +169,11 @@ export const keywordSettingsState: TState = {
       const restCbData = restCb as TSplitCallback<
       ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
       >
-      const [action, channelId, keywordId, topicId] = restCbData
+      const [action, keywordId, topicId] = restCbData
       await handleTopicKeywordAction(
         ctx,
         action as EKeywordAction,
-        Number(channelId),
+        ctx.session.channel.id,
         Number(keywordId),
         Number(topicId),
         false,
