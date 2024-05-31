@@ -123,7 +123,7 @@ export const keywordSettingsState: TState = {
           const callback_data =
             'topic' in keywordRow && keywordRow.topic && keywordRow.topicId
               ? callbackData.keywordSetting.topicKeyword(
-                EKeywordAction.DELETE,
+                keywordRow.unsubscribed ? EKeywordAction.SUBSCRIBE : EKeywordAction.DELETE,
                 keywordRow.keywordId as number,
                 keywordRow.topicId,
               )
