@@ -48,7 +48,7 @@ export const handleCallbackQuery = async (
     await handleTopicAction(ctx, action as EKeywordAction, Number(channelId), Number(topicId))
     return
   }
-  if (state === ECallback.GROUP_KEYWORD) {
+  if (state === ECallback.TOPIC_KEYWORD) {
     const restCbData = restCb as TSplitCallback<
     ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
     >
