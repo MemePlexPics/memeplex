@@ -38,6 +38,7 @@ import {
 import {
   insertBotUser,
   selectBotPremiumUser,
+  selectBotUserById,
   selectBotUserByUsername,
   upsertBotPremiumUser,
 } from '../../../../../utils/mysql-queries'
@@ -50,6 +51,7 @@ import {
   onBotCommandSuggestChannel,
   onInlineQuery,
 } from '../handlers'
+import { botUsers } from '../../../../../db/schema'
 
 const ADMIN_IDS = process.env.TELEGRAM_BOT_ADMIN_IDS.split(',').map(id => Number(id))
 
@@ -183,22 +185,27 @@ export const init = async (
     const timestamp = Number(new Date(date)) / 1000
     const notFoundedUsers = []
     const db = await getDbConnection()
-    for (const line in lines) {
+    for (const line of lines) {
+      if (line.trim().length === 0) {
+        continue
+      }
       const isId = /^[0-9]+$/.test(line)
-      let id: number
+      let user: typeof botUsers.$inferSelect
       if (!isId) {
         const username = line[0] === '@' ? line : `@${line}`
-        const [user] = await selectBotUserByUsername(db, username as `@${string}`)
-        if (!user) {
-          notFoundedUsers.push(line)
-          continue
-        }
-        id = user.id
+        const [userInDb] = await selectBotUserByUsername(db, username as `@${string}`)
+        user = userInDb
       } else {
-        id = Number(line)
+        const [userInDb] = await selectBotUserById(db, Number(line))
+        user = userInDb
       }
+      if (!user) {
+        notFoundedUsers.push(line)
+        continue
+      }
+      const userId = user.id
       await upsertBotPremiumUser(db, {
-        userId: id,
+        userId,
         untilTimestamp: timestamp,
       })
     }
