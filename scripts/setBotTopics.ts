@@ -45,21 +45,22 @@ export const setBotTopics = async () => {
     const oldTopicKeywordsInDb = await db
       .select({
         keyword: botKeywords.keyword,
-        keywordId: botKeywords.id,
+        keywordId: botTopics.keywordId,
       })
       .from(botTopics)
-      .where(eq(botTopics.nameId, topic.id))
       .leftJoin(botKeywords, eq(botKeywords.id, botTopics.keywordId))
+      .where(eq(botTopics.nameId, topic.id))
     const keywordsToDelete = oldTopicKeywordsInDb.filter(
-      oldKeyword => !topics[topic.name].includes(oldKeyword.keyword),
+      oldKeyword => !topics[topic.name].includes(oldKeyword.keyword as string),
     )
     const keywordIdsToDelete = keywordsToDelete.map(keyword => keyword.keywordId)
     if (keywordIdsToDelete.length !== 0) {
-      await db.delete(botTopics).where(inArray(botTopics.keywordId, keywordIdsToDelete))
-      try {
-        await db.delete(botKeywords).where(inArray(botKeywords.id, keywordIdsToDelete))
-      } catch (error) {
-        console.error('There were some other references to some keywords we tried to delete')
+      for (const keywordIdToDelete of keywordIdsToDelete) {
+        try {
+          await db.delete(botTopics).where(eq(botTopics.keywordId, keywordIdToDelete))
+        } catch (error) {
+          console.error('There were some other references to some keywords we tried to delete')
+        }
       }
     }
     // Insert new topic keywords

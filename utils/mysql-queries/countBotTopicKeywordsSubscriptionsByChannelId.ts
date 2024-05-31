@@ -1,4 +1,4 @@
-import { botKeywords, botTopicSubscriptions, botTopics } from '../../db/schema'
+import { botTopicSubscriptions, botTopics } from '../../db/schema'
 import { count, eq } from 'drizzle-orm'
 import type { TDbConnection } from '../types'
 
@@ -7,10 +7,9 @@ export const countBotTopicKeywordsSubscriptionsByChannelId = async (
   channelId: number,
 ) => {
   const [response] = await db
-    .select({ value: count() })
+    .select({ value: count(botTopics.keywordId) })
     .from(botTopicSubscriptions)
     .leftJoin(botTopics, eq(botTopics.nameId, botTopicSubscriptions.topicId))
-    .leftJoin(botKeywords, eq(botKeywords.id, botTopics.keywordId))
     .where(eq(botTopicSubscriptions.channelId, channelId))
   return response.value
 }
