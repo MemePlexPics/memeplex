@@ -177,15 +177,15 @@ export const init = async (
     const { payload } = ctx
     const lines = payload.split('\n')
     const date = lines.shift()
-    if (!date || /^\d\d\d\d-\d\d-\d\d$/.test(date)) {
+    if (!date || !/^\d\d\d\d-\d\d-\d\d$/.test(date)) {
       throw new Error('Incorrect date')
     }
     const timestamp = Number(new Date(date)) / 1000
     const notFoundedUsers = []
+    const db = await getDbConnection()
     for (const line in lines) {
       const isId = /^[0-9]+$/.test(line)
       let id: number
-      const db = await getDbConnection()
       if (!isId) {
         const username = line[0] === '@' ? line : `@${line}`
         const [user] = await selectBotUserByUsername(db, username as `@${string}`)
@@ -202,6 +202,8 @@ export const init = async (
         untilTimestamp: timestamp,
       })
     }
+    await db.close()
+    await ctx.reply(`It's done!`)
     if (notFoundedUsers.length !== 0) {
       await ctx.reply(
         `There are users not found in bot_users table:\n${notFoundedUsers.join('\n')}`,
