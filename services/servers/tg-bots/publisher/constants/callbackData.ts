@@ -1,12 +1,12 @@
 import type { EKeywordAction, ETopicAction, ELatestAction } from '../constants'
-import { ECallback } from '../constants'
+import { ECallback, EKeywordSettingKeywordType } from '../constants'
 
 export const callbackData = {
   keywordSetting: {
     keyword: (action: EKeywordAction, keywordId: number) =>
-      `${ECallback.KEY}|${action}|${keywordId}` as const,
+      `${EKeywordSettingKeywordType.KEYWORD}|${action}|${keywordId}` as const,
     topicKeyword: (action: EKeywordAction, keywordId: number, topicId: number) =>
-      `${ECallback.GROUP_KEYWORD}|${action}|${keywordId}|${topicId}` as const,
+      `${EKeywordSettingKeywordType.TOPIC_KEYWORD}|${action}|${keywordId}|${topicId}` as const,
   },
   premoderation: {
     postButton: (channelId: number, memeId: string) =>
@@ -20,7 +20,7 @@ export const callbackData = {
       channelId: number,
       keywordId: number,
       topicId: number,
-    ) => `${ECallback.GROUP_KEYWORD}|${action}|${channelId}|${keywordId}|${topicId}` as const,
+    ) => `${ECallback.TOPIC_KEYWORD}|${action}|${channelId}|${keywordId}|${topicId}` as const,
   },
   latest: {
     loadAnotherPage: (direction: ELatestAction) => `${ECallback.LATEST}|${direction}` as const,
