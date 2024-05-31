@@ -13,7 +13,7 @@ export const selectBotTopicSubscriptionKeywordsByChannelId = (
   channelId: number,
 ) => {
   return db
-    .selectDistinct({
+    .select({
       topic: botTopicNames.name,
       topicId: botTopics.nameId,
       keywordId: botTopics.keywordId,
