@@ -81,3 +81,5 @@ export { selectBotTopicKeywordUnsubscriptions } from './selectBotTopicKeywordUns
 export { selectBotTopicNames } from './selectBotTopicNames'
 export { deleteBotTopicKeywordUnsubscriptionByChannelId } from './deleteBotTopicKeywordUnsubscriptionByChannelId'
 export { selectBotUserByUsername } from './selectBotUserByUsername'
+export { countBotTopicKeywordsSubscriptionsByChannelId } from './countBotTopicKeywordsSubscriptionsByChannelId'
+export { selectBotTopicSubscriptionKeywordsByChannelId } from './selectBotTopicSubscriptionKeywordsByChannelId'
