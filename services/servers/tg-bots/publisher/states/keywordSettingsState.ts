@@ -99,17 +99,17 @@ export const keywordSettingsState: TState = {
       buttons: keywordRows
         .map(keywordRow => {
           const callback_data =
-            keywordRow.topicName && keywordRow.topicId
+            keywordRow.topic && keywordRow.topicId
               ? callbackData.keywordSetting.topicKeyword(
                 EKeywordAction.DELETE,
-                keywordRow.keywordId,
+                keywordRow.keywordId as number,
                 keywordRow.topicId,
               )
-              : callbackData.keywordSetting.keyword(EKeywordAction.DELETE, keywordRow.keywordId)
-          const text = keywordRow.topicName
+              : callbackData.keywordSetting.keyword(EKeywordAction.DELETE, keywordRow.keywordId as number)
+          const text = keywordRow.topic
             ? i18n['ru'].button.keywordSettings.topicKeyword.unsibscribe(
               keywordRow.keyword as string,
-              keywordRow.topicName,
+              keywordRow.topic,
             )
             : i18n['ru'].button.keywordSettings.keyword.unsibscribe(keywordRow.keyword as string)
           return [
