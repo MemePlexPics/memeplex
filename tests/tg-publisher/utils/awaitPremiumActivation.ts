@@ -1,7 +1,7 @@
 import type { TelegramClientWrapper } from '.'
 import { PREMIUM_PLANS } from '../../../constants/publisher'
 import { handlePaidInvoice } from '../../../services/servers/crypto-pay/utils'
-import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
+import { i18n } from '../../../services/servers/tg-bots/pics/i18n'
 import { delay } from '../../../utils'
 
 export const awaitPremiumActivation = async (

@@ -1,4 +1,4 @@
-import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
+import { i18n } from '../../../services/servers/tg-bots/pics/i18n'
 import { getDbConnection } from '../../../utils'
 import { selectBotKeywordsByKeywords } from '../../../utils/mysql-queries'
 import type { TelegramClientWrapper } from './TelegramClientWrapper'

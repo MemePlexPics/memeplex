@@ -1,5 +1,5 @@
 import TelegramServer from '@vishtar/telegram-test-api'
-import { init } from '../../services/servers/tg-bots/publisher/utils'
+import { init } from '../../services/servers/tg-bots/pics/utils'
 import { getTestLogger } from '../utils'
 import {
   TelegramClientWrapper,
@@ -13,13 +13,13 @@ import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
 import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
-import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
+import { i18n } from '../../services/servers/tg-bots/pics/i18n'
 import type { Channel, Connection } from 'amqplib'
 import amqplib from 'amqplib'
 import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { EKeywordAction, callbackData } from '../../services/servers/tg-bots/publisher/constants'
+import { EKeywordAction, callbackData } from '../../services/servers/tg-bots/pics/constants'
 import {
   deleteBotChannelById,
   deleteBotKeyword,

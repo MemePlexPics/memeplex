@@ -1,10 +1,10 @@
 import type { Channel, Connection } from 'amqplib'
 import amqplib from 'amqplib'
 import TelegramServer from '@vishtar/telegram-test-api'
-import { init } from '../../services/servers/tg-bots/publisher/utils'
-import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
+import { init } from '../../services/servers/tg-bots/pics/utils'
+import { i18n } from '../../services/servers/tg-bots/pics/i18n'
 import { TelegramClientWrapper, cleanUpPublisherUser } from './utils'
-import { ETopicAction, callbackData } from '../../services/servers/tg-bots/publisher/constants'
+import { ETopicAction, callbackData } from '../../services/servers/tg-bots/pics/constants'
 import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { getDbConnection } from '../../utils'
 import {
