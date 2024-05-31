@@ -148,10 +148,11 @@ ${keywords}`,
     memePosted: (channel: string) => `✅ Отправлено в @${channel}`,
     keywordSettings: {
       keyword: {
-        unsibscribe: (keyword: string) => `🔕 ${keyword}`,
+        unsubscribe: (keyword: string) => `🔕 ${keyword}`,
       },
       topicKeyword: {
-        unsibscribe: (keyword: string, topic: string) => `🔕 «${keyword}» из 📂 «${topic}»`,
+        subscribe: (keyword: string, topic: string) => `➕ «${keyword}» из 📂 «${topic}»`,
+        unsubscribe: (keyword: string, topic: string) => `🔕 «${keyword}» из 📂 «${topic}»`,
       },
     },
     premoderation: {
