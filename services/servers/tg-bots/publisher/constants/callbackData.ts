@@ -2,6 +2,12 @@ import type { EKeywordAction, ETopicAction, ELatestAction } from '../constants'
 import { ECallback } from '../constants'
 
 export const callbackData = {
+  keywordSetting: {
+    keyword: (action: EKeywordAction, keywordId: number) =>
+      `${ECallback.KEY}|${action}|${keywordId}` as const,
+    topicKeyword: (action: EKeywordAction, keywordId: number, topicId: number) =>
+      `${ECallback.GROUP_KEYWORD}|${action}|${keywordId}|${topicId}` as const,
+  },
   premoderation: {
     postButton: (channelId: number, memeId: string) =>
       `${ECallback.POST}|${channelId}|${memeId}` as const,
