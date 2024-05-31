@@ -74,16 +74,16 @@ export const keywordSettingsState: TState = {
       db,
       ctx.session.channel.id,
     )
-    const paginationButtons: InlineKeyboardButton[] = []
     const pageSize = 20
+    // const keywordTotalPages = Math.ceil(totalSubscriptions / pageSize)
+    const doesNextPageExist =
+      (totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize) / pageSize > 1
+    const paginationButtons: InlineKeyboardButton[] = []
     if (page > 1)
       paginationButtons.push({
         text: i18n['ru'].button.back(),
         callback_data: `page|back`,
       })
-    const keywordTotalPages = Math.ceil((totalSubscriptions - (page - 1) * pageSize) / pageSize)
-    const doesNextPageExist =
-      (totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize) / pageSize > 1
     if (doesNextPageExist)
       paginationButtons.push({
         text: i18n['ru'].button.forward(),
@@ -101,11 +101,14 @@ export const keywordSettingsState: TState = {
     >
     >[number][] = keywordRows
     if (keywordRows.length < pageSize && doesNextPageExist) {
-      const topicKeywordRows = await sqlWithPagination(
-        selectBotTopicSubscriptionKeywordsByChannelId(db, ctx.session.channel.id).$dynamic(),
-        page - keywordTotalPages || 1,
-        pageSize - keywordRows.length,
-      )
+      const topicKeywordRows = await selectBotTopicSubscriptionKeywordsByChannelId(db, ctx.session.channel.id)
+        .limit(pageSize - keywordRows.length)
+        .offset(pageSize * (page - 1) - totalSubscriptions)
+      // const topicKeywordRows = await sqlWithPagination(
+      //   selectBotTopicSubscriptionKeywordsByChannelId(db, ctx.session.channel.id).$dynamic(),
+      //   Math.max(page - keywordTotalPages + 1, 1),
+      //   pageSize - keywordRows.length,
+      // )
       topicKeywordRows.forEach(row => totalRows.push(row))
     }
     await db.close()
