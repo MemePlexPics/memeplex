@@ -11,7 +11,9 @@ import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
   countBotSubscriptionsByChannelId,
+  countBotTopicKeywordsSubscriptionsByChannelId,
   selectBotSubscriptionsByChannelId,
+  selectBotTopicSubscriptionKeywordsByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCommonMessage } from '../typeguards'
@@ -68,6 +70,10 @@ export const keywordSettingsState: TState = {
     const page = ctx.session.pagination.page
     const db = await getDbConnection()
     const totalSubscriptions = await countBotSubscriptionsByChannelId(db, ctx.session.channel.id)
+    const totalTopicSubscriptionKeywords = await countBotTopicKeywordsSubscriptionsByChannelId(
+      db,
+      ctx.session.channel.id,
+    )
     const paginationButtons: InlineKeyboardButton[] = []
     const pageSize = 20
     if (page > 1)
@@ -75,7 +81,9 @@ export const keywordSettingsState: TState = {
         text: i18n['ru'].button.back(),
         callback_data: `page|back`,
       })
-    if ((totalSubscriptions - (page - 1) * pageSize) / pageSize > 1)
+    const doesNextPageExist =
+      (totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize) / pageSize > 1
+    if (doesNextPageExist)
       paginationButtons.push({
         text: i18n['ru'].button.forward(),
         callback_data: `page|next`,
@@ -85,6 +93,20 @@ export const keywordSettingsState: TState = {
       page,
       pageSize,
     )
+    const totalRows: Awaited<
+    ReturnType<
+    | typeof selectBotSubscriptionsByChannelId
+    | typeof selectBotTopicSubscriptionKeywordsByChannelId
+    >
+    >[number][] = keywordRows
+    if (keywordRows.length < pageSize && doesNextPageExist) {
+      const topicKeywordRows = await sqlWithPagination(
+        selectBotTopicSubscriptionKeywordsByChannelId(db, ctx.session.channel.id).$dynamic(),
+        page,
+        pageSize - keywordRows.length,
+      )
+      topicKeywordRows.forEach(row => totalRows.push(row))
+    }
     await db.close()
     if (keywordRows.length === 0) {
       return false
@@ -96,22 +118,26 @@ export const keywordSettingsState: TState = {
     }`
     return {
       text,
-      buttons: keywordRows
+      buttons: totalRows
         .map(keywordRow => {
           const callback_data =
-            keywordRow.topic && keywordRow.topicId
+            'topic' in keywordRow && keywordRow.topic && keywordRow.topicId
               ? callbackData.keywordSetting.topicKeyword(
                 EKeywordAction.DELETE,
                 keywordRow.keywordId as number,
                 keywordRow.topicId,
               )
-              : callbackData.keywordSetting.keyword(EKeywordAction.DELETE, keywordRow.keywordId as number)
-          const text = keywordRow.topic
-            ? i18n['ru'].button.keywordSettings.topicKeyword.unsibscribe(
-              keywordRow.keyword as string,
-              keywordRow.topic,
-            )
-            : i18n['ru'].button.keywordSettings.keyword.unsibscribe(keywordRow.keyword as string)
+              : callbackData.keywordSetting.keyword(
+                EKeywordAction.DELETE,
+                keywordRow.keywordId as number,
+              )
+          const text =
+            'topic' in keywordRow && keywordRow.topic
+              ? i18n['ru'].button.keywordSettings.topicKeyword.unsibscribe(
+                keywordRow.keyword as string,
+                keywordRow.topic,
+              )
+              : i18n['ru'].button.keywordSettings.keyword.unsibscribe(keywordRow.keyword as string)
           return [
             {
               text,
