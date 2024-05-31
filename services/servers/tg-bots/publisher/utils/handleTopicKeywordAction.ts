@@ -8,6 +8,7 @@ import {
   insertBotSubscription,
   selectBotKeywordByIds,
   selectBotTopicNameByIds,
+  deleteBotKeyword,
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
 import type { TTelegrafContext } from '../types'
@@ -21,6 +22,7 @@ export const handleTopicKeywordAction = async (
   channelId: number,
   keywordId: number,
   topicId: number,
+  doUpdateButtons?: boolean,
 ) => {
   const hasPremiumSubscription = await ctx.hasPremiumSubscription
   const db = await getDbConnection()
@@ -29,8 +31,10 @@ export const handleTopicKeywordAction = async (
     await enterToState(ctx, buyPremiumState)
     return
   }
+  const [keyword] = await selectBotKeywordByIds(db, [keywordId])
   if (command === EKeywordAction.DELETE) {
     await deleteBotSubscription(db, channelId, [keywordId])
+    await deleteBotKeyword(db, keyword.keyword)
     await insertBotTopicKeywordUnsubscription(db, [
       {
         channelId,
@@ -58,9 +62,11 @@ export const handleTopicKeywordAction = async (
     await db.close()
     throw new Error(`Unknown operation in topic button: «${command}» for ${channelId}`)
   }
-  const [keyword] = await selectBotKeywordByIds(db, [keywordId])
   await db.close()
 
+  if (doUpdateButtons === false) {
+    return
+  }
   const callbackForUnsubscribe = callbackData.premoderation.topicKeywordsButton(
     EKeywordAction.DELETE,
     channelId,
