@@ -6,7 +6,7 @@ import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   deleteBotTopicSubscription,
   insertBotTopicSubscription,
-  selectBotTopicIdSubscriptionsByUserId,
+  selectBotTopicIdSubscriptionsByChannelId,
   selectBotKeywordByIds,
   selectBotTopicByNames,
   selectBotTopicNameByIds,
@@ -26,7 +26,7 @@ export const topicSettingState: TState = {
     }
     const db = await getDbConnection()
     const topics = await selectBotTopicNames(db)
-    const userTopicsRaw = await selectBotTopicIdSubscriptionsByUserId(db, ctx.from.id)
+    const userTopicsRaw = await selectBotTopicIdSubscriptionsByChannelId(db, ctx.session.channel.id)
     const userTopics = userTopicsRaw.reduce((acc, { topicId }) => {
       acc.add(topicId)
       return acc

@@ -155,7 +155,7 @@ app.get('/getFeaturedChannelList', async (req, res) => {
 
 app.post('/suggestChannel', async (req, res) => {
   const { channel } = req.body
-  if (!channel) return res.status(500).send()
+  if (!channel || !/^[a-z0-9_]{5,32}$/i.test(channel)) return res.status(500).send()
   const db = await getDbConnection()
   const response = await insertChannelSuggestion(db, channel)
   await db.close()

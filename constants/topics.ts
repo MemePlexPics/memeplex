@@ -119,7 +119,6 @@ export const topics: Record<string, string[]> = {
     'Kotlin',
     'Swift',
     'Go',
-    'C',
     'C++',
     'TypeScript',
     'PHP',
