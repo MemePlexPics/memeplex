@@ -5,7 +5,7 @@ import {
   botTopicSubscriptions,
   botTopics,
 } from '../../db/schema'
-import { count, eq } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import type { TDbConnection } from '../types'
 
 export const selectBotTopicSubscriptionKeywordsByChannelId = (
@@ -18,7 +18,7 @@ export const selectBotTopicSubscriptionKeywordsByChannelId = (
       topicId: botTopics.nameId,
       keywordId: botTopics.keywordId,
       keyword: botKeywords.keyword,
-      unsubscribed: count(botTopicKeywordUnsubscriptions.id),
+      unsubscribed: botTopicKeywordUnsubscriptions.id,
     })
     .from(botTopicSubscriptions)
     .leftJoin(botTopics, eq(botTopics.nameId, botTopicSubscriptions.topicId))
