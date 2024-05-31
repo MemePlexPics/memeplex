@@ -75,9 +75,10 @@ export const keywordSettingsState: TState = {
       ctx.session.channel.id,
     )
     const pageSize = 20
-    const doesNextPageExist = Math.ceil(
-      totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize / pageSize
-    ) > 1
+    const doesNextPageExist =
+      Math.ceil(
+        (totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize) / pageSize,
+      ) > 1
     const paginationButtons: InlineKeyboardButton[] = []
     if (page > 1)
       paginationButtons.push({
