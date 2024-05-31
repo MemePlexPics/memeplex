@@ -166,7 +166,6 @@ export const keywordSettingsState: TState = {
         Number(keywordId),
         false,
       )
-      return
     } else if (firstPartCb === EKeywordSettingKeywordType.TOPIC_KEYWORD) {
       const restCbData = restCb as TSplitCallback<
       ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
@@ -180,7 +179,6 @@ export const keywordSettingsState: TState = {
         Number(topicId),
         false,
       )
-      return
     } else if (firstPartCb === 'page') {
       if (!ctx.session.pagination) {
         throw new Error(`ctx.session.pagination is undefined in keywordSettingsState`)
