@@ -101,7 +101,7 @@ export const keywordSettingsState: TState = {
     | typeof selectBotTopicSubscriptionKeywordsByChannelId
     >
     >[number][] = keywordRows
-    if (keywordRows.length < pageSize && doesNextPageExist) {
+    if (keywordRows.length < pageSize) {
       const topicKeywordRows = await selectBotTopicSubscriptionKeywordsByChannelId(
         db,
         ctx.session.channel.id,
