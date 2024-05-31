@@ -3,22 +3,30 @@ import {
   botSubscriptions,
   botTopicNames,
   botTopicSubscriptions,
+  botTopics,
 } from '../../db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, or } from 'drizzle-orm'
 import type { TDbConnection } from '../types'
 
 export const selectBotSubscriptionsByChannelId = (db: TDbConnection, channelId: number) => {
   return db
     .select({
-      keywordId: botSubscriptions.keywordId,
       keyword: botKeywords.keyword,
-      topicId: botTopicSubscriptions.topicId,
-      topicName: botTopicNames.name,
+      keywordId: botKeywords.id,
+      topic: botTopicNames.name,
+      topicId: botTopicNames.id,
     })
     .from(botSubscriptions)
-    .leftJoin(botKeywords, eq(botSubscriptions.keywordId, botKeywords.id))
     .leftJoin(botTopicSubscriptions, eq(botTopicSubscriptions.channelId, channelId))
     .leftJoin(botTopicNames, eq(botTopicNames.id, botTopicSubscriptions.topicId))
-    .where(eq(botSubscriptions.channelId, channelId))
+    .leftJoin(botTopics, eq(botTopics.nameId, botTopicNames.id))
+    .leftJoin(botKeywords, or(
+      eq(botSubscriptions.keywordId, botKeywords.id),
+      eq(botTopics.keywordId, botKeywords.id),
+    ))
+    .where(or(
+      eq(botSubscriptions.channelId, channelId),
+      eq(botTopicSubscriptions.channelId, channelId)
+    ))
     .orderBy(botSubscriptions.keywordId)
 }
