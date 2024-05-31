@@ -75,10 +75,9 @@ export const keywordSettingsState: TState = {
       ctx.session.channel.id,
     )
     const pageSize = 20
-    const doesNextPageExist =
-      Math.ceil(
-        (totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize) / pageSize,
-      ) > 1
+    const doesNextPageExist = Math.ceil(
+      totalSubscriptions + totalTopicSubscriptionKeywords - (page - 1) * pageSize / pageSize
+    ) > 1
     const paginationButtons: InlineKeyboardButton[] = []
     if (page > 1)
       paginationButtons.push({
@@ -107,7 +106,7 @@ export const keywordSettingsState: TState = {
         ctx.session.channel.id,
       )
         .limit(pageSize - keywordRows.length)
-        .offset(pageSize * page - totalSubscriptions)
+        .offset(Math.max(pageSize * (page - 1) - totalSubscriptions, 0))
       topicKeywordRows.forEach(row => totalRows.push(row))
     }
     await db.close()
