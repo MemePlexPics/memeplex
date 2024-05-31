@@ -146,6 +146,14 @@ ${keywords}`,
     subscriptionSettings: () => '⚙️ Настройки подписок',
     postMeme: (channel: string) => `➡️ Отправить в @${channel}`,
     memePosted: (channel: string) => `✅ Отправлено в @${channel}`,
+    keywordSettings: {
+      keyword: {
+        unsibscribe: (keyword: string) => `🔕 ${keyword}`,
+      },
+      topicKeyword: {
+        unsibscribe: (keyword: string, topic: string) => `🔕 «${keyword}» из 📂 «${topic}»`,
+      },
+    },
     premoderation: {
       keyword: {
         base: (emoji: '🔕' | '➕', keyword: string, action: string) =>

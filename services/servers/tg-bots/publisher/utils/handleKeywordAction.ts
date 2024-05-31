@@ -2,6 +2,7 @@ import { Markup } from 'telegraf'
 import { logUserAction, replaceInlineKeyboardButton } from '.'
 import { getDbConnection } from '../../../../../utils'
 import {
+  deleteBotKeyword,
   deleteBotSubscription,
   insertBotSubscription,
   selectBotKeywordByIds,
@@ -16,11 +17,13 @@ export const handleKeywordAction = async (
   command: EKeywordAction,
   channelId: number,
   keywordId: number,
+  doUpdateButtons?: boolean,
 ) => {
   const db = await getDbConnection()
   const [keyword] = await selectBotKeywordByIds(db, [keywordId])
   if (command === EKeywordAction.DELETE) {
     await deleteBotSubscription(db, channelId, [keywordId])
+    await deleteBotKeyword(db, keyword.keyword)
     await logUserAction(ctx, {
       info: `Unsubscribe from a keyword`,
       keyword: keyword.keyword,
@@ -41,6 +44,10 @@ export const handleKeywordAction = async (
     throw new Error(`Unknown keyword operation «${command}» for ${channelId}`)
   }
   await db.close()
+
+  if (doUpdateButtons === false) {
+    return
+  }
 
   const callbackForUnsubscribe = callbackData.premoderation.keywordButton(
     EKeywordAction.DELETE,

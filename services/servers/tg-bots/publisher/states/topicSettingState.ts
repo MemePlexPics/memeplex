@@ -1,17 +1,15 @@
 import { ETopicAction, EState } from '../constants'
 import type { TMenuButton, TState, TTelegrafContext } from '../types'
-import { addSubscription, enterToState, logUserAction, replaceInlineKeyboardButton } from '../utils'
+import { enterToState, logUserAction, replaceInlineKeyboardButton } from '../utils'
 import { channelSettingState, memeSearchState } from '.'
 import { InfoMessage, getDbConnection } from '../../../../../utils'
 import {
   deleteBotTopicSubscription,
   insertBotTopicSubscription,
   selectBotTopicIdSubscriptionsByChannelId,
-  selectBotKeywordByIds,
   selectBotTopicByNames,
   selectBotTopicNameByIds,
   selectBotTopicNames,
-  deleteBotSubscription,
   deleteBotTopicKeywordUnsubscription,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
@@ -90,8 +88,6 @@ ${
       operation,
       topicId: topic.id,
     })
-    const keywordIds = topics.map(keyword => keyword.keywordId)
-    const keywords = await selectBotKeywordByIds(db, keywordIds)
 
     if (operation === ETopicAction.SUBSCRIBE) {
       await insertBotTopicSubscription(db, [
@@ -100,12 +96,10 @@ ${
           channelId: ctx.session.channel.id,
         },
       ])
-      const keywordsForInsert = keywords?.map(keyword => ({ keyword: keyword.keyword }))
-      await addSubscription(db, ctx.session.channel.id, keywordsForInsert)
     } else if (operation === ETopicAction.UNSUBSCRIBE) {
+      const keywordIds = topics.map(keyword => keyword.keywordId)
       await deleteBotTopicKeywordUnsubscription(db, ctx.session.channel.id, keywordIds)
       await deleteBotTopicSubscription(db, ctx.session.channel.id, topic.id)
-      await deleteBotSubscription(db, ctx.session.channel.id, keywordIds)
     } else {
       throw new InfoMessage(`Unknown menu state: ${callback}`)
     }
