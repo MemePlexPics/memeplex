@@ -3,9 +3,7 @@ import { enterToState, logUserAction, replaceInlineKeyboardButton } from '.'
 import { getDbConnection } from '../../../../../utils'
 import {
   deleteBotTopicKeywordUnsubscription,
-  deleteBotSubscription,
   insertBotTopicKeywordUnsubscription,
-  insertBotSubscription,
   selectBotKeywordByIds,
   selectBotTopicNameByIds,
   deleteBotKeyword,
@@ -33,7 +31,6 @@ export const handleTopicKeywordAction = async (
   }
   const [keyword] = await selectBotKeywordByIds(db, [keywordId])
   if (command === EKeywordAction.DELETE) {
-    await deleteBotSubscription(db, channelId, [keywordId])
     await deleteBotKeyword(db, keyword.keyword)
     await insertBotTopicKeywordUnsubscription(db, [
       {
@@ -47,12 +44,6 @@ export const handleTopicKeywordAction = async (
     })
   } else if (command === EKeywordAction.SUBSCRIBE) {
     const db = await getDbConnection()
-    await insertBotSubscription(db, [
-      {
-        channelId,
-        keywordId,
-      },
-    ])
     await deleteBotTopicKeywordUnsubscription(db, channelId, [keywordId])
     await logUserAction(ctx, {
       info: `Subscribe to a topic keyword`,
