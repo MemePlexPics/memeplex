@@ -1,17 +1,22 @@
-import { EKeywordAction, EState } from '../constants'
-import type { TMenuButton, TState, TTelegrafContext } from '../types'
-import { addSubscription, enterToState, logUserAction } from '../utils'
+import { ECallback, EKeywordAction, EState, callbackData } from '../constants'
+import type { TMenuButton, TSplitCallback, TState } from '../types'
+import {
+  addSubscription,
+  enterToState,
+  handleKeywordAction,
+  handleTopicKeywordAction,
+  logUserAction,
+} from '../utils'
 import { channelSettingState } from '.'
 import { InfoMessage, getDbConnection, sqlWithPagination } from '../../../../../utils'
 import {
   countBotSubscriptionsByChannelId,
-  deleteBotKeyword,
-  deleteBotSubscriptionsByKeywordId,
   selectBotSubscriptionsByChannelId,
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import { isCommonMessage } from '../typeguards'
 import { Markup } from 'telegraf'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
@@ -63,7 +68,7 @@ export const keywordSettingsState: TState = {
     const page = ctx.session.pagination.page
     const db = await getDbConnection()
     const totalSubscriptions = await countBotSubscriptionsByChannelId(db, ctx.session.channel.id)
-    const paginationButtons = []
+    const paginationButtons: InlineKeyboardButton[] = []
     const pageSize = 20
     if (page > 1)
       paginationButtons.push({
@@ -84,38 +89,78 @@ export const keywordSettingsState: TState = {
     if (keywordRows.length === 0) {
       return false
     }
+    const text = `${
+      ctx.session.channel?.id === ctx.from.id
+        ? i18n['ru'].message.unsubscribeFromKeywords()
+        : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
+    }`
     return {
-      text: `${
-        ctx.session.channel?.id === ctx.from.id
-          ? i18n['ru'].message.unsubscribeFromKeywords()
-          : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
-      }`,
+      text,
       buttons: keywordRows
-        .map(keywordRow => [
-          {
-            text: `🔕 ${keywordRow.keyword}`,
-            callback_data: `${EKeywordAction.DELETE}|${keywordRow.id}`,
-          },
-        ])
+        .map(keywordRow => {
+          const callback_data =
+            keywordRow.topicName && keywordRow.topicId
+              ? callbackData.keywordSetting.topicKeyword(
+                EKeywordAction.DELETE,
+                keywordRow.keywordId,
+                keywordRow.topicId,
+              )
+              : callbackData.keywordSetting.keyword(EKeywordAction.DELETE, keywordRow.keywordId)
+          const text = keywordRow.topicName
+            ? i18n['ru'].button.keywordSettings.topicKeyword.unsibscribe(
+              keywordRow.keyword as string,
+              keywordRow.topicName,
+            )
+            : i18n['ru'].button.keywordSettings.keyword.unsibscribe(keywordRow.keyword as string)
+          return [
+            {
+              text,
+              callback_data: callback_data,
+            } as InlineKeyboardButton,
+          ]
+        })
         .concat([paginationButtons]),
     }
   },
-  onCallback: async (ctx: TTelegrafContext, callback: string) => {
-    const [command, argument] = callback.split('|')
-    if (command === 'del' && argument) {
-      const db = await getDbConnection()
-      await deleteBotSubscriptionsByKeywordId(db, Number(argument))
-      await deleteBotKeyword(db, argument)
-      await db.close()
-      await logUserAction(ctx, {
-        error: `Deleted`,
-        keyword: argument,
-      })
-    } else if (command === 'page') {
+  onCallback: async (ctx, callback) => {
+    if (!ctx.session.channel) {
+      throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
+    }
+    const [firstPartCb, ...restCb] = callback.split('|')
+    // const [command, argument] = callback.split('|')
+    if (firstPartCb === ECallback.KEY) {
+      const restCbData = restCb as TSplitCallback<
+      ReturnType<typeof callbackData.premoderation.keywordButton>
+      >
+      const [action, keywordId] = restCbData
+      await handleKeywordAction(
+        ctx,
+        action as EKeywordAction,
+        ctx.session.channel.id,
+        Number(keywordId),
+        false,
+      )
+      return
+    } else if (firstPartCb === ECallback.GROUP_KEYWORD) {
+      const restCbData = restCb as TSplitCallback<
+      ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
+      >
+      const [action, channelId, keywordId, topicId] = restCbData
+      await handleTopicKeywordAction(
+        ctx,
+        action as EKeywordAction,
+        Number(channelId),
+        Number(keywordId),
+        Number(topicId),
+        false,
+      )
+      return
+    } else if (firstPartCb === 'page') {
       if (!ctx.session.pagination) {
         throw new Error(`ctx.session.pagination is undefined in keywordSettingsState`)
       }
-      if (argument === 'next') {
+      const command = restCb[0]
+      if (command === 'next') {
         ctx.session.pagination.page++
       } else {
         ctx.session.pagination.page--

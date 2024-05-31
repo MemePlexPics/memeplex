@@ -5,17 +5,13 @@ import {
   handleTopicAction,
   handleMemePost,
 } from '.'
-import type { TState, TTelegrafContext } from '../types'
+import type { TSplitCallback, TState, TTelegrafContext } from '../types'
 import type { EKeywordAction, callbackData } from '../constants'
 import { ECallback, ELatestAction } from '../constants'
 import { isDataQuery } from '../typeguards'
-import type { SplitString } from '../../../../../types'
 import { buyPremiumState } from '../states'
 import { onBotCommandGetLatest, onBotRecieveText } from '../handlers'
 import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
-
-type TSplitCallback<GCallback extends string> =
-  SplitString<GCallback, '|'> extends [infer _GFirst, ...infer GRest] ? GRest : never
 
 export const handleCallbackQuery = async (
   ctx: TTelegrafContext<Update.CallbackQueryUpdate<CallbackQuery>>,
