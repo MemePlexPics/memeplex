@@ -109,7 +109,7 @@ export const keywordSettingsState: TState = {
       topicKeywordRows.forEach(row => totalRows.push(row))
     }
     await db.close()
-    if (keywordRows.length === 0) {
+    if (totalRows.length === 0) {
       return false
     }
     const text = `${
