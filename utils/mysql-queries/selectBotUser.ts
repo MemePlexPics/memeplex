@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm'
 import { botUsers } from '../../db/schema'
 import type { TDbConnection } from '../types'
 
+// TODO: remove it after pics deletion
 export const selectBotUser = async (db: TDbConnection, id: number) => {
   const [response] = await db
     .select({

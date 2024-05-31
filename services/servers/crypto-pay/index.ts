@@ -14,11 +14,11 @@ const token = isTesting ? process.env.CRYPTOPAY_BOT_TEST_TOKEN : process.env.CRY
 const cryptoPay: CryptoPay = new CryptoPay(token, {
   hostname: isTesting ? ECryptoPayHostname.TEST : ECryptoPayHostname.MAIN,
   // TODO: since we don't use cryptoPay.on() anymore. Should we delete it?..
-  webhook: {
-    serverHostname: 'localhost',
-    serverPort: 3804,
-    path: `/${process.env.CRYPTOPAY_BOT_TEST_WEBHOOK_PATH}`,
-  },
+  // webhook: {
+  //   serverHostname: 'localhost',
+  //   serverPort: 3804,
+  //   path: `/${process.env.CRYPTOPAY_BOT_TEST_WEBHOOK_PATH}`,
+  // },
 })
 
 // cryptoPay.on('invoice_paid', async (update: { payload: TInvoice }) => {
