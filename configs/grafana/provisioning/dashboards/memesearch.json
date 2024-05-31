@@ -2007,253 +2007,6 @@
                 "properties": [
                   {
                     "id": "custom.width",
-                    "value": 159
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "message"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 610
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "error"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 116
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "user"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 207
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "query"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 326
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "action"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 101
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "page"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 52
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "from"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 98
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "to"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 101
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "channel"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 241
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 41
-          },
-          "id": 36,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true,
-            "sortBy": []
-          },
-          "pluginVersion": "10.3.3",
-          "targets": [
-            {
-              "datasource": "Loki",
-              "editorMode": "builder",
-              "expr": "{filename=\"/var/log/tg-publisher-bot.log\"} |= ``",
-              "queryType": "range",
-              "refId": "A"
-            }
-          ],
-          "title": "Publisher",
-          "transformations": [
-            {
-              "id": "extractFields",
-              "options": {
-                "format": "json",
-                "jsonPaths": [],
-                "keepTime": true,
-                "replace": true,
-                "source": "Line"
-              }
-            },
-            {
-              "id": "extractFields",
-              "options": {
-                "format": "json",
-                "source": "message"
-              }
-            },
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "id": true,
-                  "message": false,
-                  "service": true,
-                  "timestamp": true
-                },
-                "includeByName": {},
-                "indexByName": {
-                  "Time": 0,
-                  "action": 3,
-                  "channel": 12,
-                  "from": 10,
-                  "id": 8,
-                  "level": 1,
-                  "message": 6,
-                  "page": 9,
-                  "query": 4,
-                  "service": 7,
-                  "timestamp": 5,
-                  "to": 11,
-                  "user": 2
-                },
-                "renameByName": {
-                  "timestamp": "Time"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": "Loki",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "inspect": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": null
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unitScale": true
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "level"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 27
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
                     "value": 163
                   }
                 ]
@@ -2372,7 +2125,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 50
+            "y": 41
           },
           "id": 41,
           "options": {
@@ -2484,8 +2237,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2550,7 +2302,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 11
+            "y": 99
           },
           "id": 12,
           "options": {
@@ -2656,8 +2408,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2722,7 +2473,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 11
+            "y": 99
           },
           "id": 11,
           "options": {
@@ -2820,8 +2571,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -2886,7 +2636,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 19
+            "y": 107
           },
           "id": 5,
           "options": {
@@ -2984,8 +2734,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3050,7 +2799,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 19
+            "y": 107
           },
           "id": 13,
           "options": {
@@ -3129,8 +2878,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3195,7 +2943,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 27
+            "y": 115
           },
           "id": 18,
           "options": {
@@ -3294,8 +3042,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3408,7 +3155,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 27
+            "y": 115
           },
           "id": 34,
           "options": {
@@ -3501,8 +3248,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3567,7 +3313,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 35
+            "y": 123
           },
           "id": 17,
           "options": {
@@ -3691,8 +3437,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3708,7 +3453,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 35
+            "y": 123
           },
           "id": 14,
           "options": {
@@ -3820,8 +3565,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3898,7 +3642,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 12
+            "y": 100
           },
           "id": 1,
           "options": {
@@ -3973,8 +3717,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -3990,7 +3733,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 12
+            "y": 100
           },
           "id": 2,
           "options": {
@@ -4049,8 +3792,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4066,7 +3808,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 20
+            "y": 108
           },
           "id": 3,
           "options": {
@@ -4125,8 +3867,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4155,7 +3896,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 20
+            "y": 108
           },
           "id": 4,
           "options": {
@@ -4216,8 +3957,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4233,7 +3973,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 28
+            "y": 116
           },
           "id": 19,
           "options": {
@@ -4296,8 +4036,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4326,7 +4065,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 28
+            "y": 116
           },
           "id": 40,
           "options": {
@@ -4416,8 +4155,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4446,7 +4184,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 36
+            "y": 124
           },
           "id": 20,
           "options": {
@@ -4509,8 +4247,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4551,7 +4288,7 @@
             "h": 8,
             "w": 12,
             "x": 12,
-            "y": 36
+            "y": 124
           },
           "id": 21,
           "options": {
@@ -4683,8 +4420,7 @@
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green",
-                    "value": null
+                    "color": "green"
                   },
                   {
                     "color": "red",
@@ -4700,7 +4436,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 44
+            "y": 132
           },
           "id": 22,
           "options": {
@@ -4795,6 +4531,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 44,
+  "version": 45,
   "weekStart": ""
 }
