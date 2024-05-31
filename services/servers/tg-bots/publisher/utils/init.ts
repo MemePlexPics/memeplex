@@ -35,7 +35,12 @@ import {
   logInfo,
   loopRetrying,
 } from '../../../../../utils'
-import { insertBotUser, selectBotPremiumUser } from '../../../../../utils/mysql-queries'
+import {
+  insertBotUser,
+  selectBotPremiumUser,
+  selectBotUserByUsername,
+  upsertBotPremiumUser,
+} from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
@@ -45,6 +50,8 @@ import {
   onBotCommandSuggestChannel,
   onInlineQuery,
 } from '../handlers'
+
+const ADMIN_IDS = process.env.TELEGRAM_BOT_ADMIN_IDS.split(',').map(id => Number(id))
 
 export const init = async (
   token: string,
@@ -162,6 +169,45 @@ export const init = async (
   bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true))
 
   bot.command('suggest_channel', ctx => onBotCommandSuggestChannel(ctx))
+
+  bot.command('set_premium', async ctx => {
+    if (!ADMIN_IDS.includes(ctx.from.id)) {
+      return
+    }
+    const { payload } = ctx
+    const lines = payload.split('\n')
+    const date = lines.shift()
+    if (!date || /^\d\d\d\d-\d\d-\d\d$/.test(date)) {
+      throw new Error('Incorrect date')
+    }
+    const timestamp = Number(new Date(date)) / 1000
+    const notFoundedUsers = []
+    for (const line in lines) {
+      const isId = /^[0-9]+$/.test(line)
+      let id: number
+      const db = await getDbConnection()
+      if (!isId) {
+        const username = line[0] === '@' ? line : `@${line}`
+        const [user] = await selectBotUserByUsername(db, username as `@${string}`)
+        if (!user) {
+          notFoundedUsers.push(line)
+          continue
+        }
+        id = user.id
+      } else {
+        id = Number(line)
+      }
+      await upsertBotPremiumUser(db, {
+        userId: id,
+        untilTimestamp: timestamp,
+      })
+    }
+    if (notFoundedUsers.length !== 0) {
+      await ctx.reply(
+        `There are users not found in bot_users table:\n${notFoundedUsers.join('\n')}`,
+      )
+    }
+  })
 
   bot.on('callback_query', async ctx => {
     try {
