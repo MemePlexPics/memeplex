@@ -1,6 +1,0 @@
-export { onBotRecieveText } from './onBotRecieveText'
-export { onBotCommandGetLatest } from './onBotCommandGetLatest'
-export { onBotCommandSuggestChannel } from './onBotCommandSuggestChannel'
-export { onInlineQuery } from './onInlineQuery'
-export { handleMemeSearchRequest } from './handleMemeSearchRequest'
-export { onBotCommandSetPremium } from './onBotCommandSetPremium'

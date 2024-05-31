@@ -1,4 +1,4 @@
-import { handleNlpQueue } from '../../services/servers/tg-bots/publisher/utils/handleNlpQueue'
+import { handleNlpQueue } from '../../services/servers/tg-bots/pics/utils/handleNlpQueue'
 
 jest.mock('amqplib')
 jest.mock('../../services/utils')
@@ -10,8 +10,8 @@ jest.mock('../../utils', () => {
   }
 })
 jest.mock('../../utils/mysql-queries')
-jest.mock('../../services/servers/tg-bots/publisher/utils', () => {
-  const originalModules = jest.requireActual('../../services/servers/tg-bots/publisher/utils')
+jest.mock('../../services/servers/tg-bots/pics/utils', () => {
+  const originalModules = jest.requireActual('../../services/servers/tg-bots/pics/utils')
   return {
     ...originalModules,
     getTopicSubscriptionsByKeywords: jest.fn(),
@@ -21,7 +21,7 @@ jest.mock('../../services/servers/tg-bots/publisher/utils', () => {
 import process from 'process'
 import 'dotenv/config'
 import amqplib from 'amqplib'
-import { getTopicSubscriptionsByKeywords } from '../../services/servers/tg-bots/publisher/utils'
+import { getTopicSubscriptionsByKeywords } from '../../services/servers/tg-bots/pics/utils'
 import type { Logger } from 'winston'
 import { getAmqpQueue, getPublisherUserByChannelIdAndTariffPlan } from '../../services/utils'
 import { getDbConnection } from '../../utils'
