@@ -1,4 +1,4 @@
-import { ECallback, EKeywordAction, EState, callbackData } from '../constants'
+import { EKeywordAction, EKeywordSettingKeywordType, EState, callbackData } from '../constants'
 import type { TMenuButton, TSplitCallback, TState } from '../types'
 import {
   addSubscription,
@@ -154,7 +154,7 @@ export const keywordSettingsState: TState = {
     }
     const [firstPartCb, ...restCb] = callback.split('|')
     // const [command, argument] = callback.split('|')
-    if (firstPartCb === ECallback.KEY) {
+    if (firstPartCb === EKeywordSettingKeywordType.KEYWORD) {
       const restCbData = restCb as TSplitCallback<
       ReturnType<typeof callbackData.premoderation.keywordButton>
       >
@@ -167,7 +167,7 @@ export const keywordSettingsState: TState = {
         false,
       )
       return
-    } else if (firstPartCb === ECallback.GROUP_KEYWORD) {
+    } else if (firstPartCb === EKeywordSettingKeywordType.TOPIC_KEYWORD) {
       const restCbData = restCb as TSplitCallback<
       ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
       >

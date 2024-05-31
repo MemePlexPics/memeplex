@@ -12,16 +12,16 @@ export const selectBotTopicSubscriptionKeywordsByChannelId = (
   channelId: number,
 ) => {
   return db
-    .select({
+    .selectDistinct({
       keyword: botKeywords.keyword,
       keywordId: botTopics.keywordId,
       topic: botTopicNames.name,
       topicId: botTopicSubscriptions.topicId,
     })
     .from(botTopicSubscriptions)
-    .where(eq(botTopicSubscriptions.channelId, channelId))
     .leftJoin(botTopicNames, eq(botTopicNames.id, botTopicSubscriptions.topicId))
     .leftJoin(botTopics, eq(botTopics.nameId, botTopicNames.id))
     .leftJoin(botKeywords, eq(botTopics.keywordId, botTopics.keywordId))
+    .where(eq(botTopicSubscriptions.channelId, channelId))
     .orderBy(botTopicNames.name, botKeywords.keyword)
 }
