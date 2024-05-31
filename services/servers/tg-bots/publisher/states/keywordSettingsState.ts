@@ -133,11 +133,10 @@ export const keywordSettingsState: TState = {
               )
           const text =
             'topic' in keywordRow && keywordRow.topic
-              ? i18n['ru'].button.keywordSettings.topicKeyword.unsibscribe(
-                keywordRow.keyword as string,
-                keywordRow.topic,
-              )
-              : i18n['ru'].button.keywordSettings.keyword.unsibscribe(keywordRow.keyword as string)
+              ? i18n['ru'].button.keywordSettings.topicKeyword[
+                keywordRow.unsubscribed ? 'subscribe' : 'unsubscribe'
+              ](keywordRow.keyword as string, keywordRow.topic)
+              : i18n['ru'].button.keywordSettings.keyword.unsubscribe(keywordRow.keyword as string)
           return [
             {
               text,
