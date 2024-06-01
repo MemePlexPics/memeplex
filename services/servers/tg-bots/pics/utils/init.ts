@@ -168,7 +168,7 @@ export const init = async (
 
   bot.on('callback_query', async ctx => {
     try {
-      await handleCallbackQuery(ctx, states[ctx.session.state].onCallback)
+      await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)
       await ctx.answerCbQuery()
     } catch (error) {
       if (error instanceof InfoMessage) {
