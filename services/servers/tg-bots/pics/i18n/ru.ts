@@ -64,6 +64,7 @@ export const ru = {
     delimetersInsteadOfKeywords: () =>
       'В отправленном сообщении не обнаружено слов, только запятые и/или переносы строк.',
     addedKeywords: () => '✅ Ключевые слова добавлены!',
+    channelAlredyAdded: () => `Канал уже привязан к вашему аккаунту`,
     addedChannel: (channel: string) => `✅ Канал @${channel} успешно привязан!`,
     thereAreNoKeywords: () => `Вы ещё не добавили ключевые фразы.`,
     keywordSettings: () => `
