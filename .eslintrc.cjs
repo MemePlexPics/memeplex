@@ -101,8 +101,17 @@ module.exports = {
             'error',
             'always'
         ],
-        // TODO: remove these two after eslint-drizzle plugin will be tuned
-        'drizzle/enforce-delete-with-where': 'warn',
-        'drizzle/enforce-update-with-where': 'warn',
+        'drizzle/enforce-delete-with-where': [
+            'error',
+            {
+                'drizzleObjectName': 'db',
+            },
+        ],
+        'drizzle/enforce-update-with-where': [
+            'error',
+            {
+                'drizzleObjectName': 'db',
+            },
+        ],
     }
 };
