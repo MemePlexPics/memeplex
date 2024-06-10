@@ -47,8 +47,6 @@ export const handleMemePost = async (
       await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
       return
     }
-    // @ts-expect-error ololo
-    console.log(error.message)
   }
   const meme = await getMeme(ctx.elastic, memeId)
   try {
