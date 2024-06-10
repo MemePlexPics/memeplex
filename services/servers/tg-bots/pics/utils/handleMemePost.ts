@@ -20,18 +20,7 @@ export const handleMemePost = async (
   chatId: number,
   memeId: string,
 ) => {
-  const subscribers = await ctx.telegram.getChatMembersCount(chatId)
   const db = await getDbConnection()
-  await updateBotChannelById(db, { subscribers }, chatId)
-  const [channel] = await selectBotChannelById(db, chatId)
-  if (subscribers > MAX_FREE_USER_CHANNEL_SUBS) {
-    const paywalText = i18n['ru'].message.channelSubscribersLimitForFreePlan(channel.username)
-    const doesPassedPaywall = await handlePaywall(ctx, paywalText)
-    if (!doesPassedPaywall) {
-      return
-    }
-  }
-  const meme = await getMeme(ctx.elastic, memeId)
   const replyToMeme = ctx.callbackQuery?.message
     ? {
       reply_parameters: {
@@ -39,6 +28,29 @@ export const handleMemePost = async (
       },
     }
     : undefined
+  try {
+    const subscribers = await ctx.telegram.getChatMembersCount(chatId)
+    await updateBotChannelById(db, { subscribers }, chatId)
+    const [channel] = await selectBotChannelById(db, chatId)
+    if (subscribers > MAX_FREE_USER_CHANNEL_SUBS) {
+      const paywalText = i18n['ru'].message.channelSubscribersLimitForFreePlan(channel.username)
+      const doesPassedPaywall = await handlePaywall(ctx, paywalText)
+      if (!doesPassedPaywall) {
+        return
+      }
+    }
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message === '400: Bad Request: chat not found'
+    ) {
+      await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
+      return
+    }
+    // @ts-expect-error ololo
+    console.log(error.message)
+  }
+  const meme = await getMeme(ctx.elastic, memeId)
   try {
     const postedMeme = await ctx.telegram.sendPhoto(chatId, {
       source: await fs.readFile(meme.fileName),
@@ -82,10 +94,7 @@ ${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${po
   } catch (error) {
     if (
       error instanceof Error &&
-      [
-        '400: Bad Request: need administrator rights in the channel chat',
-        '400: Bad Request: chat not found at Telegram.callApi',
-      ].includes(error.message)
+      error.message === '400: Bad Request: need administrator rights in the channel chat'
     ) {
       await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
       return
