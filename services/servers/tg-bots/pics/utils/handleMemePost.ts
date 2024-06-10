@@ -82,7 +82,10 @@ ${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${po
   } catch (error) {
     if (
       error instanceof Error &&
-      error.message === '400: Bad Request: need administrator rights in the channel chat'
+      [
+        '400: Bad Request: need administrator rights in the channel chat',
+        '400: Bad Request: chat not found at Telegram.callApi',
+      ].includes(error.message)
     ) {
       await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
       return

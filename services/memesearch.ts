@@ -31,4 +31,4 @@ const main = async () => {
   await startServices(loggerMain)
 }
 
-await main()
+main()
