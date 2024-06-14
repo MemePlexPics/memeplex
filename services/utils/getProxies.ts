@@ -26,7 +26,7 @@ export const getProxies = async () => {
   }
   return Object.entries(proxiesByProtocol).reduce<
   {
-    port: string
+    port: number
     ip: string
     protocol: string
   }[]
@@ -35,7 +35,7 @@ export const getProxies = async () => {
       const [ip, port] = proxy.split(':')
       acc.push({
         ip,
-        port,
+        port: Number(port),
         protocol,
       })
     })
