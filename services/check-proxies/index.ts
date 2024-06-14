@@ -3,7 +3,7 @@ import type { Channel, Connection, GetMessage } from 'amqplib'
 import amqplib from 'amqplib'
 import process from 'process'
 import { AMQP_CHECK_PROXY_CHANNEL, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
-import { delay, getDbConnection, getMysqlClient } from '../../utils'
+import { delay, getDbConnection } from '../../utils'
 import { handleAddingProxy, maintaneProxies } from './utils'
 import type { Logger } from 'winston'
 import { getAmqpQueue } from '../utils'
@@ -25,9 +25,9 @@ export const checkProxies = async (logger: Logger) => {
     const ipWithoutProxy = await ipWithoutProxyResponse.text()
 
     for (;;) {
-      const mysql = await getMysqlClient()
-      await maintaneProxies(mysql, ipWithoutProxy, logger)
-      await mysql.end()
+      const db = await getDbConnection()
+      await maintaneProxies(db, ipWithoutProxy, logger)
+      await db.close()
       const msg = await checkProxyCh.get(AMQP_CHECK_PROXY_CHANNEL)
       if (!msg) {
         await delay(EMPTY_QUEUE_RETRY_DELAY)
