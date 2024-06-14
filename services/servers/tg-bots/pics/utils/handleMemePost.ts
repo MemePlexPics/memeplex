@@ -40,10 +40,7 @@ export const handleMemePost = async (
       }
     }
   } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message === '400: Bad Request: chat not found'
-    ) {
+    if (error instanceof Error && error.message === '400: Bad Request: chat not found') {
       await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
       return
     }
