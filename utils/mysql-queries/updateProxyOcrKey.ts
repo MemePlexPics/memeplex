@@ -5,7 +5,7 @@ import type { TDbConnection } from '../types'
 export const updateProxyOcrKey = async (
   db: TDbConnection,
   ocrKey: string,
-  proxy: string,
+  proxy: `${string}:${number}`,
   protocol: string,
 ) => {
   await db
