@@ -5,7 +5,7 @@ import { selectBlackList } from '../../../utils/mysql-queries'
 export const blackListChecker = async (text: string) => {
   const db = await getDbConnection()
   const blackListRows = await selectBlackList(db)
-  if (!blackListRows.length) {
+  if (!blackListRows.length || !blackListRows[0].words) {
     throw new Error(
       'There is no blacklist in the database. Please add them to the words cell from the words_blacklist table (one row, separated by lines)',
     )
