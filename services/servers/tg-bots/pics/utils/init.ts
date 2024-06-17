@@ -17,6 +17,7 @@ import {
   handleInvoiceQueue,
   handleNlpQueue,
   logUserAction,
+  onPhotoMessage,
 } from '../utils'
 import {
   addChannelState,
@@ -171,16 +172,8 @@ export const init = async (
   bot.command('set_premium', onBotCommandSetPremium)
 
   bot.on('callback_query', async ctx => {
-    try {
-      await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)
-      await ctx.answerCbQuery()
-    } catch (error) {
-      if (error instanceof InfoMessage) {
-        await logInfo(ctx.logger, error)
-      } else if (error instanceof Error) {
-        await logError(ctx.logger, error, { update: ctx.update })
-      }
-    }
+    await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)
+    await ctx.answerCbQuery()
   })
 
   bot.on('inline_query', async ctx => {
@@ -216,6 +209,8 @@ export const init = async (
     })
   })
 
+  bot.on(message('photo'), onPhotoMessage)
+
   bot.on(message('text'), async ctx => {
     const text = ctx.update.message.text
     const state = states[ctx.session.state]
@@ -235,6 +230,10 @@ export const init = async (
   })
 
   bot.catch(async (err, ctx) => {
+    if (err instanceof InfoMessage) {
+      await logInfo(ctx.logger, err)
+      return
+    }
     const error =
       err instanceof Error
         ? err
