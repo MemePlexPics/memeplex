@@ -52,7 +52,7 @@ export const rus = {
     channelUnfeatured: 'Канал «{{channel}}» был успешно удален из избранных',
     channelFeatured: 'Канал «{{channel}}» был успешно добавлен к избранным',
     removeFeatured: 'Удалить избранный',
-    pagesLeft: 'Еще {{number}} страниц',
+    memesLeft: 'Еще {{number}} мемов',
     removeChannelMemes: 'Удалить все мемы канала @{{channel}}?',
     blacklistUpdated: 'Черный список успешно обновлен',
   },
