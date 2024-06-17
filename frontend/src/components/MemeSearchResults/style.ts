@@ -8,26 +8,26 @@ const mobilePortrait =
 export const s = stylex.create({
   results: {
     display: 'grid',
-    gridTemplateColumns: {
-      default: 'repeat(auto-fill, minmax(300px, 1fr))',
-      [mobilePortrait]: 'initial',
-    },
     flexWrap: 'wrap',
     gap: {
       default: '14px',
       [mobilePortrait]: '3vw',
     },
+    gridTemplateColumns: {
+      default: 'repeat(auto-fill, minmax(300px, 1fr))',
+      [mobilePortrait]: 'initial',
+    },
     justifyContent: 'center',
     paddingBottom: '80px',
   },
   result: {
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
+    display: 'flex',
     height: {
       default: size.memeEntity,
       [mobilePortrait]: 'initial',
     },
+    justifyContent: 'center',
     width: {
       default: size.memeEntity,
       [mobilePortrait]: '100%',

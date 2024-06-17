@@ -6,45 +6,45 @@ const mediaPortrait = '@media (orientation: portrait)'
 
 export const s = stylex.create({
   meme: {
-    paddingBottom: '50px',
     display: 'grid',
-    width: '100%',
     gap: '20px',
     gridTemplateAreas: {
       default: '"m d"',
       [mediaPortrait]: '"m" "d"',
     },
+    paddingBottom: '50px',
+    width: '100%',
   },
   memeImageContainer: {
-    gridArea: 'm',
-    position: 'relative',
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'start',
+    display: 'flex',
+    gridArea: 'm',
+    justifyContent: 'center',
+    position: 'relative',
   },
   memeImage: {
     width: '100%',
   },
   memeActions: {
-    position: 'absolute',
-    padding: '20px',
+    alignSelf: 'center',
     backgroundColor: color.black_1,
     borderRadius: '14px',
-    alignSelf: 'center',
+    padding: '20px',
+    position: 'absolute',
   },
   trashIcon: {
-    height: '100px',
     cursor: 'pointer',
+    height: '100px',
   },
   memeTextLang: {
     display: 'flex',
     flexDirection: 'column',
   },
   memeDescription: {
-    gridArea: 'd',
     color: color.white,
-    width: '100%',
     fontSize: size.fontNormal,
+    gridArea: 'd',
+    width: '100%',
   },
   linkSource: {
     color: 'inherit',
