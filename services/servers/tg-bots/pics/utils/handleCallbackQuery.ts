@@ -4,10 +4,11 @@ import {
   handleKeywordAction,
   handleTopicAction,
   handleMemePost,
+  handleSuggestedMemePremoderation,
 } from '.'
 import type { TSplitCallback, TState, TTelegrafContext } from '../types'
-import type { EKeywordAction, callbackData } from '../constants'
-import { ECallback, ELatestAction } from '../constants'
+import type { EKeywordAction, EMemeSuggestionCallback, callbackData } from '../constants'
+import { ECallback, ELatestAction, chatIds } from '../constants'
 import { isDataQuery } from '../typeguards'
 import { buyPremiumState } from '../states'
 import { onBotCommandGetLatest, onBotRecieveText } from '../handlers'
@@ -20,6 +21,14 @@ export const handleCallbackQuery = async (
   if (!isDataQuery(ctx.update.callback_query)) return
   const callbackQuery = ctx.update.callback_query.data
   const [firstPartCb, ...restCb] = callbackQuery.split('|')
+  if (ctx.chat?.id === chatIds.premoderation) {
+    if (firstPartCb === ECallback.IGNORE) {
+      return
+    }
+    const action = firstPartCb as EMemeSuggestionCallback
+    const fileOrMessageId = restCb[0]
+    await handleSuggestedMemePremoderation(ctx, action, fileOrMessageId)
+  }
   const state = firstPartCb as ECallback
   if (state === ECallback.IGNORE) {
     return

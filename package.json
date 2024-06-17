@@ -1,11 +1,10 @@
 {
   "name": "memeplex",
-  "private": true,
   "version": "1.0.0",
   "description": "MemePlex is a search engine for memes with a focus on Russian underground Telegram / это поисковая система для мемов нижнего Телеграма",
-  "main": "services/memesearch.js",
+  "main": "services/memesearch.ts",
   "scripts": {
-    "eslint": "eslint services/ scripts/ utils/ constants/ --fix",
+    "lint": "eslint services/ scripts/ utils/ constants/ --fix",
     "init": "npm install && npm --prefix ./frontend install && mkdir -p logs data/{media,avatars,elastic,grafana,loki,mysql,promtail,rabbitmq,nlp} backup/elastic && cp -n .env.example .env && cp -n .mysql.env.example .mysql.env",
     "build:back": "npx webpack --progress",
     "build:front": "npm --prefix ./frontend run build",
@@ -66,6 +65,9 @@
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4"
+  },
+  "peerDependencies": {
+    "kysely": "^0.27.2"
   },
   "jest": {
     "testMatch": [
