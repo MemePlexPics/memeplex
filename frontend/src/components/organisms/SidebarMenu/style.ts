@@ -8,14 +8,14 @@ const portrait = '@media (orientation:portrait)'
 export const s = stylex.create({
   sidebar: {
     display: 'flex',
+    height: '100vh',
+    left: 0,
     position: {
       default: 'relative',
       [mobile]: 'fixed',
       [portrait]: 'fixed',
     },
-    left: 0,
     top: 0,
-    height: '100vh',
     zIndex: 1,
   },
   isActive: {
@@ -32,54 +32,54 @@ export const s = stylex.create({
   },
   list: {
     listStyle: 'none',
-    padding: 0,
     margin: 0,
+    padding: 0,
   },
   menu: {
     alignSelf: {
       default: 'center',
       [mobile]: 'initial',
     },
+    display: 'flex',
+    flexDirection: 'column',
     fontSize: {
       default: size.fontNormal,
       [mobile]: size.fontBig,
     },
-    display: 'flex',
-    flexDirection: 'column',
     width: '100%',
   },
   link: {
-    display: 'flex',
+    alignItems: 'center',
+    backgroundColor: {
+      ':hover': color.darkGray,
+    },
     color: color.white,
-    textDecoration: 'none',
-    whiteSpace: 'nowrap',
+    display: 'flex',
+    gap: '6px',
     padding: '4px 20px',
     paddingBottom: '6px',
-    gap: '6px',
-    alignItems: 'center',
+    textDecoration: 'none',
     transition: `
       background-color .3s,
       color .3s
     `,
-    backgroundColor: {
-      ':hover': color.darkGray,
-    },
+    whiteSpace: 'nowrap',
   },
   activeLink: {
-    color: color.black_1,
     backgroundColor: color.lightGray,
+    color: color.black_1,
   },
   hamburger: {
-    padding: '20px',
-    cursor: 'pointer',
     color: color.gray,
+    cursor: 'pointer',
     fontSize: size.fontHamburgerMenuIcon,
+    padding: '20px',
   },
   languageSelectorContainer: {
-    fontSize: size.fontNormal,
     color: color.white,
     display: 'flex',
     flexDirection: 'column',
+    fontSize: size.fontNormal,
     gap: '4px',
     padding: '20px',
   },

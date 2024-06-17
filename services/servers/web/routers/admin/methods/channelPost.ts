@@ -30,14 +30,13 @@ export const channelPost: TRequestHandler<{
     setLogAction(res, `⬆️ Updated the avialability of @${name}`)
     await updateChannelAvailability(db, {
       name,
-      availability: 1,
+      status: null,
       withText,
     })
   } else {
     setLogAction(res, `➕ Added @${name}`)
     await insertChannel(db, {
       name,
-      availability: 1,
       withText,
       langs: languages.join(','),
       timestamp: TG_API_PARSE_FROM_DATE,

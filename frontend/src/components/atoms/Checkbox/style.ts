@@ -4,18 +4,18 @@ import { color, size } from '@/styles/variables.stylex'
 
 export const s = stylex.create({
   container: {
-    display: 'flex',
     alignContent: 'center',
-    justifyContent: 'flex-end',
-    gap: '6px',
+    display: 'flex',
     flexDirection: 'row-reverse',
+    gap: '6px',
+    justifyContent: 'flex-end',
   },
   label: {
     color: color.white,
     fontSize: size.fontBig,
   },
   checkbox: {
-    width: '20px',
     height: '20px',
+    width: '20px',
   },
 })

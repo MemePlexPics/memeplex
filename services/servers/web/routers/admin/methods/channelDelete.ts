@@ -11,7 +11,7 @@ export const channelDelete: TRequestHandler<{
   const db = await getDbConnection()
   await updateChannelAvailability(db, {
     name: channel,
-    availability: 0,
+    status: 'DISABLED',
   })
   await db.close()
   setLogAction(res, `🗑 ${channel}`)

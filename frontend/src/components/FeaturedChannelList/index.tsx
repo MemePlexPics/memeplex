@@ -16,7 +16,7 @@ export const FeaturedChannelList = (props: {
   const request = useFetch<TGetFeaturedChannelList>(
     () =>
       getUrl('/getFeaturedChannelList', {
-        page: '' + page,
+        page: page,
       }),
     {
       deps: [page, props.updateSwitch],

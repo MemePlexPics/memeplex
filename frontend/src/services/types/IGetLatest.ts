@@ -1,6 +1,6 @@
 import { IGetSearch } from '.'
 
-export interface IGetLatest extends IGetSearch {
+export type IGetLatest = {
   from: number | undefined
   to: number | undefined
-}
+} & IGetSearch

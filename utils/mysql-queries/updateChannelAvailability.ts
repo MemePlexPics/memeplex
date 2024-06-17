@@ -2,12 +2,12 @@ import { eq } from 'drizzle-orm'
 import { channels } from '../../db/schema'
 import type { TDbConnection } from '../types'
 
-type TChannel = Pick<typeof channels.$inferInsert, 'name' | 'availability'> &
+type TChannel = Pick<typeof channels.$inferInsert, 'name' | 'status'> &
 Partial<Pick<typeof channels.$inferInsert, 'withText'>>
 
 export const updateChannelAvailability = async (db: TDbConnection, channel: TChannel) => {
   const value: Omit<TChannel, 'name'> = {
-    availability: channel.availability,
+    status: channel.status,
   }
   if (channel.withText !== undefined) {
     value.withText = channel.withText

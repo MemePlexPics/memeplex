@@ -5,12 +5,14 @@ const mobilePortrait =
   '@media only screen and (hover: none) and (pointer: coarse) and (orientation:portrait)'
 
 export const color = stylex.defineVars({
-  white: '#EEE',
+  white: '#eee',
   gray: '#b5b5b5',
   darkGray: '#746c5f',
   lightGray: '#d3d3d3',
   black_1: '#151617',
   black_2: '#222',
+  orange: '#ff7700',
+  orangeRed: '#ff4500',
 })
 
 export const size = stylex.defineVars({

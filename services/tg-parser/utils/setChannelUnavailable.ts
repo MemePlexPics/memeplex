@@ -6,7 +6,7 @@ export const setChannelUnavailable = async (name: string) => {
   const db = await getDbConnection()
   await updateChannelAvailability(db, {
     name,
-    availability: 0,
+    status: 'NOT_AVAILABLE',
   })
   await db.close()
 }

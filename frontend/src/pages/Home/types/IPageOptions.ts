@@ -1,4 +1,4 @@
-export interface IPageOptions {
+export type IPageOptions = {
   query: string
   currentPage: number
   totalPages: number
