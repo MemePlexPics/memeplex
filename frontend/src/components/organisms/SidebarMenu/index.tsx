@@ -18,6 +18,7 @@ export const SidebarMenu = () => {
   const sidebarRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
   const isFoldable = isMobile || isOrientationPortrait
+  const isAdmin = !!localStorage.getItem('isAdmin')
 
   useClickOutside(sidebarRef, () => {
     if (isFoldable) setIsFolded(true)
@@ -40,6 +41,7 @@ export const SidebarMenu = () => {
     {
       to: '/admin',
       text: t('page.admin'),
+      isHidden: !isAdmin,
     },
     {
       to: '/channelList',
