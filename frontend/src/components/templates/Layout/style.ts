@@ -2,22 +2,22 @@ import stylex from '@stylexjs/stylex'
 
 export const s = stylex.create({
   content: {
-    display: 'flex',
     alignItems: 'center',
+    display: 'flex',
     flexDirection: 'column',
-    padding: '40px 5vw 14px 5vw',
-    width: '100%',
     height: '100vh',
     overflowY: 'scroll',
+    padding: '40px 5vw 14px 5vw',
+    width: '100%',
   },
   main: {
-    display: 'flex',
     alignItems: 'center',
-    paddingTop: '40px',
-    maxWidth: '90vw',
-    width: '100%',
+    display: 'flex',
     flexDirection: 'column',
-    maxHeight: 'calc(100% - 54px)',
     height: '100%',
+    maxHeight: 'calc(100% - 54px)',
+    maxWidth: '90vw',
+    paddingTop: '40px',
+    width: '100%',
   },
 })

@@ -3,11 +3,11 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 
 import './style.css'
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+type ButtonProps = {
   className?: string
   isActive?: boolean
   children?: ReactNode
-}
+} & ButtonHTMLAttributes<HTMLButtonElement>
 
 export const Button = ({ className, isActive, children, ...props }: ButtonProps) => {
   return (

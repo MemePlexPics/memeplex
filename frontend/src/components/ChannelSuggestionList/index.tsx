@@ -14,7 +14,7 @@ export const ChannelSuggestionList = (props: {
   const request = useFetch<TGetChannelList>(
     () =>
       getUrl('/getChannelSuggestionList', {
-        page: '' + page,
+        page: page,
         filter: props.filter,
       }),
     {

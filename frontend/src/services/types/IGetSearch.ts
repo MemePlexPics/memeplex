@@ -1,6 +1,6 @@
 import { IMeme } from '../../types'
 
-export interface IGetSearch {
+export type IGetSearch = {
   result: IMeme[]
   totalPages: number
 }
