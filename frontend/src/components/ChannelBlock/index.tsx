@@ -6,19 +6,21 @@ import {
   faPen,
   faTrashCan,
 } from '@fortawesome/free-solid-svg-icons'
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import classNames from 'classnames'
+import stylex from '@stylexjs/stylex'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import './style.css'
+import { s } from './style'
 
-import noAvatarChannel from './assets/no_avatar_channel.jpg'
+import noAvatarChannel from '@/assets/images/no_avatar_channel.jpg'
 
 export const ChannelBlock = (props: {
   isAdmin?: boolean
   isBrowserPreview?: boolean
   username: string
-  availability?: number
+  status?: 'NOT_AVAILABLE' | 'DISABLED' | null
   title?: string
   size?: 'normal' | 'small'
   id?: string
@@ -30,6 +32,7 @@ export const ChannelBlock = (props: {
   onClickView?: (username: string) => unknown
   onClickRemove?: (username: string) => unknown
 }) => {
+  const [isHovered, setIsHovered] = useState(false)
   const imgSrc = `/data/avatars/${props.username}.jpg`
   const channelLink = props.isBrowserPreview ? `s/${props.username}` : props.username
   const telegramLink = ['https://t.me', channelLink, props.id].join('/')
@@ -65,35 +68,41 @@ export const ChannelBlock = (props: {
 
   return (
     <div
-      className={classNames(
-        'channel-block',
-        {
-          isAdmin: props.isAdmin,
-          isUnavailable: props.availability === 0 ? true : false,
-        },
-        props.className,
-        props.size,
+      {...stylex.props(
+        s.channelBlock,
+        props.status === 'NOT_AVAILABLE'
+          ? s.isUnavailable
+          : props.status === 'DISABLED'
+            ? s.isDisabled
+            : undefined,
       )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <Link
         to={telegramLink}
         target='_blank'
-        className='channel-info'
+        {...stylex.props(s.channelInfo)}
       >
         <img
-          className='avatar'
+          {...stylex.props(s.avatar, props.size === 'small' ? s.smallAvatar : undefined)}
           src={imgSrc}
-          onError={e => {
-            onError(e)
-          }}
+          onError={onError}
         />
-        <span className='channel-name'>{props.title ? props.title : `@${props.username}`}</span>
+        <span
+          {...stylex.props(s.channelName, props.size === 'small' ? s.smallChannelName : undefined)}
+        >
+          {props.title ? props.title : `@${props.username}`}
+        </span>
       </Link>
-      <div className='channel-actions'>
+      <div
+        {...stylex.props(isHovered && props.isAdmin ? s.channelActionsVisible : s.channelActions)}
+      >
         {props.onClickImages ? (
           <FontAwesomeIcon
             icon={faImages}
             color='cyan'
+            {...stylex.props(s.actionIcon)}
             onClick={onClickImages}
           />
         ) : null}
@@ -101,6 +110,7 @@ export const ChannelBlock = (props: {
           <FontAwesomeIcon
             icon={faCheck}
             color='green'
+            {...stylex.props(s.actionIcon)}
             onClick={onClickCheck}
           />
         ) : null}
@@ -108,12 +118,14 @@ export const ChannelBlock = (props: {
           <FontAwesomeIcon
             icon={faPen}
             color='blue'
+            {...stylex.props(s.actionIcon)}
             onClick={onClickEdit}
           />
         ) : null}
         {props.onClickView ? (
           <FontAwesomeIcon
             icon={faEye}
+            {...stylex.props(s.actionIcon)}
             onClick={onClickView}
           />
         ) : null}
@@ -121,6 +133,7 @@ export const ChannelBlock = (props: {
           <FontAwesomeIcon
             icon={faEraser}
             color='darkorange'
+            {...stylex.props(s.actionIcon)}
             onClick={onClickEraser}
           />
         ) : null}
@@ -128,6 +141,7 @@ export const ChannelBlock = (props: {
           <FontAwesomeIcon
             icon={faTrashCan}
             color='red'
+            {...stylex.props(s.actionIcon)}
             onClick={onClickRemove}
           />
         ) : null}
