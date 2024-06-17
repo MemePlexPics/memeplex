@@ -19,6 +19,7 @@ export const s = stylex.create({
     alignItems: 'start',
     display: 'flex',
     gridArea: 'm',
+    height: 'fit-content',
     justifyContent: 'center',
     position: 'relative',
   },
