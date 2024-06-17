@@ -18,7 +18,7 @@ export const MemeContainer = (props: { meme: IMeme }) => {
       >
         <img
           className='result-image'
-          src={'http://localhost:3080/' + props.meme.fileName}
+          src={'/' + props.meme.fileName}
           alt={props.meme.text.eng}
           onLoad={() => {
             setIsLoading(false)
