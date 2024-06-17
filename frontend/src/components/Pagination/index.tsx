@@ -7,7 +7,7 @@ import { Button } from '@/components/atoms'
 
 import './style.css'
 
-export interface PaginationProps {
+export type PaginationProps = {
   page: number
   pagesTotal: number
   pagesAtTime: number

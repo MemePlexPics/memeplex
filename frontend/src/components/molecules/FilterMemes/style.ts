@@ -4,16 +4,16 @@ import { color, size } from '@/styles/variables.stylex'
 
 export const s = stylex.create({
   filter: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     paddingBottom: '30px',
   },
   content: {
+    alignItems: 'center',
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
     gap: '6px',
   },
   label: {
