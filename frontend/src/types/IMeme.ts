@@ -1,4 +1,4 @@
-export interface IMeme {
+export type IMeme = {
   id: string
   channel: string
   message: string

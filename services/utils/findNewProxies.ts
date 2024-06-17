@@ -24,7 +24,7 @@ export const findNewProxies = async (logger: Logger) => {
       await checkProxyCh.purgeQueue(AMQP_CHECK_PROXY_CHANNEL)
     }
     for (const proxy of proxies) {
-      const proxyString = `${proxy.ip}:${proxy.port}`
+      const proxyString = `${proxy.ip}:${proxy.port}` as const
       const found = await selectExistedProxy(db, proxyString, proxy.protocol)
       if (found.length !== 0) {
         notCheckedProxiesCount--

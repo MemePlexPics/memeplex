@@ -1,6 +1,6 @@
 import { ENotificationType } from '../constants'
 
-export interface INotificationProps {
+export type INotificationProps = {
   text: string
   type: ENotificationType
   timeMs?: number

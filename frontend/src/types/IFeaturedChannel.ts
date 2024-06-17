@@ -1,4 +1,4 @@
-export interface IFeaturedChannel {
+export type IFeaturedChannel = {
   username: string
   title: string
   timestamp: number

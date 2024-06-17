@@ -1,31 +1,46 @@
+import type { Logger } from 'winston'
 import { checkProxyArray } from '.'
+import type { TDbConnection } from '../../../utils/types'
+import { proxies } from '../../../db/schema'
+import { and, desc, eq, ne, sql } from 'drizzle-orm'
 
-export const maintaneProxies = async (mysql, ipWithoutProxy, logger) => {
-  const [proxiesForRecheck] = await mysql.execute(`
-        SELECT * FROM proxies
-        WHERE
-            anonymity != 'transparent'
-            AND availability = 1
-            AND last_check_datetime <= DATE_SUB(NOW(), INTERVAL 1 HOUR)
-        ORDER BY
-            last_check_datetime asc,
-            ocr_key desc,
-            last_activity_datetime desc,
-            speed asc
-        LIMIT 1
-    `)
-  const [proxiesForResurrection] = await mysql.execute(`
-        SELECT * FROM proxies
-        WHERE
-            anonymity != 'transparent'
-            AND availability = 0
-        ORDER BY
-            last_check_datetime asc,
-            ocr_key desc,
-            last_activity_datetime desc,
-            speed asc
-        LIMIT 1
-    `)
-  const proxies = [...proxiesForRecheck, ...proxiesForResurrection]
-  await checkProxyArray(mysql, proxies, ipWithoutProxy, logger)
+export const maintaneProxies = async (
+  db: TDbConnection,
+  ipWithoutProxy: string,
+  logger: Logger,
+) => {
+  const proxiesForRecheck = await db
+    .select()
+    .from(proxies)
+    .where(
+      and(
+        ne(proxies.anonymity, 'transparent'),
+        eq(proxies.availability, 1),
+        sql`${proxies.lastCheckDatetime} <= DATE_SUB(NOW(), INTERVAL 1 HOUR)`,
+      ),
+    )
+    .orderBy(
+      proxies.lastCheckDatetime,
+      desc(proxies.ocrKey),
+      desc(proxies.lastActivityDatetime),
+      proxies.speed,
+    )
+    .limit(1)
+  const proxiesForResurrection = await db
+    .select()
+    .from(proxies)
+    .where(and(ne(proxies.anonymity, 'transparent'), eq(proxies.availability, 0)))
+    .orderBy(
+      proxies.lastCheckDatetime,
+      desc(proxies.ocrKey),
+      desc(proxies.lastActivityDatetime),
+      proxies.speed,
+    )
+    .limit(1)
+  await checkProxyArray(
+    db,
+    [...proxiesForRecheck, ...proxiesForResurrection],
+    ipWithoutProxy,
+    logger,
+  )
 }

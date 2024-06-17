@@ -1,5 +1,5 @@
 import { channels } from '../../db/schema'
-import { and, asc, desc, eq, like } from 'drizzle-orm'
+import { and, isNull, like } from 'drizzle-orm'
 import type { TDbConnection } from '../types'
 
 export const getChannels = async (
@@ -11,18 +11,18 @@ export const getChannels = async (
   return await db
     .select({
       name: channels.name,
-      availability: channels.availability,
+      status: channels.status,
     })
     .from(channels)
     .where(
       and(
-        onlyAvailable === 'true' ? eq(channels.availability, 1) : undefined,
+        onlyAvailable === 'true' ? isNull(channels.status) : undefined,
         name && /[0-9a-zA-Z_]+/.test(name)
           ? like(channels.name, `%${name}%`) // LIKE is case-insensetive in MariaDB
           : undefined,
       ),
     )
-    .orderBy(desc(channels.availability), asc(channels.name))
+    .orderBy(channels.status, channels.name)
     .limit(size)
     .offset((page - 1) * size)
 }

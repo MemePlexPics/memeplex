@@ -7,13 +7,13 @@ import styleX from 'vite-plugin-stylex'
 export default defineConfig({
   root: '.',
   build: {
-    outDir: './dist'
+    outDir: './dist',
   },
   publicDir: './src/public',
   plugins: [react(), styleX()],
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src')
-    }
-  }
+      '@': resolve(__dirname, 'src'),
+    },
+  },
 })

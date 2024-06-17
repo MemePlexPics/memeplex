@@ -2,20 +2,20 @@ import { selectExistedProxy, insertProxies } from '../../../utils/mysql-queries'
 import { checkProxy } from '.'
 import type { TDbConnection } from '../../../utils/types'
 import type { Logger } from 'winston'
+import type { proxies } from '../../../db/schema'
 
 export const handleAddingProxy = async (
   db: TDbConnection,
-  proxy: { speed: number; ip: string; port: number; protocol: string },
+  proxy: typeof proxies.$inferSelect,
   ipWithoutProxy: string,
   logger: Logger,
 ) => {
-  const proxyString = `${proxy.ip}:${proxy.port}`
-  const found = await selectExistedProxy(db, proxyString, proxy.protocol)
+  const found = await selectExistedProxy(db, proxy.address, proxy.protocol)
   if (found.length === 0) {
     const result = await checkProxy(proxy, ipWithoutProxy, logger)
     await insertProxies(db, [
       {
-        address: `${proxy.ip}:${proxy.port}`,
+        address: proxy.address,
         protocol: proxy.protocol,
         availability: Number(result.availability),
         anonymity: result.anonymity,

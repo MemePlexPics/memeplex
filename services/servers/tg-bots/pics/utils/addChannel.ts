@@ -1,7 +1,7 @@
 import type { Chat } from 'telegraf/typings/core/types/typegram'
-import { enterToState, logUserAction } from '.'
+import { enterToState, logUserAction, onClickDeleteChannel } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
-import { upsertBotChannel } from '../../../../../utils/mysql-queries'
+import { selectBotChannelById, upsertBotChannel } from '../../../../../utils/mysql-queries'
 import { channelSettingState } from '../states'
 import { i18n } from '../i18n'
 import type { TTelegrafContext } from '../types'
@@ -88,6 +88,12 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
     }
 
     const db = await getDbConnection()
+    const [channelInDb] = await selectBotChannelById(db, chat.id)
+    if (channelInDb && channelInDb.userId === ctx.from.id) {
+      await ctx.reply(i18n['ru'].message.channelAlredyAdded())
+      return
+    }
+    await onClickDeleteChannel(ctx)
     const timestamp = Date.now() / 1000
     await upsertBotChannel(db, {
       id: chat.id,

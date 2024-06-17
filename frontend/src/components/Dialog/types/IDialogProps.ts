@@ -1,4 +1,4 @@
-export interface IDialogProps {
+export type IDialogProps = {
   isOpen: boolean
   text?: string
   rejectText?: string | false

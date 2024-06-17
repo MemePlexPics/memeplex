@@ -16,13 +16,13 @@ export const s = stylex.create({
   },
   actionButtons: {
     display: 'flex',
-    justifyContent: 'flex-end',
     gap: '4px',
+    justifyContent: 'flex-end',
   },
   text: {
+    color: color.black_2,
     display: 'flex',
     flexDirection: 'column',
-    color: color.black_2,
     fontSize: size.fontNormal,
     margin: 0,
   },

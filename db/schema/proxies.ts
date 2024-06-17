@@ -4,10 +4,10 @@ export const proxies = mysqlTable(
   'proxies',
   {
     id: int('id').autoincrement().primaryKey(),
-    address: varchar('address', { length: 255 }).notNull(),
+    address: varchar('address', { length: 255 }).notNull().$type<`${string}:${number}`>(),
     protocol: varchar('protocol', { length: 10 }).notNull(),
     availability: tinyint('availability').notNull(),
-    anonymity: varchar('anonymity', { length: 12 }),
+    anonymity: varchar('anonymity', { length: 12, enum: ['transparent', 'anonymous', 'elite'] }),
     ocrKey: varchar('ocr_key', { length: 255 }),
     speed: int('speed'),
     lastActivityDatetime: datetime('last_activity_datetime', {

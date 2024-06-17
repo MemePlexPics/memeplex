@@ -1,4 +1,4 @@
-export interface IPagedResult<GResult> {
+export type IPagedResult<GResult> = {
   result: GResult[]
   totalPages: number
 }

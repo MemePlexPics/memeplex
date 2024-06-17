@@ -35,7 +35,11 @@ import {
   logInfo,
   loopRetrying,
 } from '../../../../../utils'
-import { insertBotUser, selectBotPremiumUser } from '../../../../../utils/mysql-queries'
+import {
+  insertBotInlineAction,
+  insertBotUser,
+  selectBotPremiumUser,
+} from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
@@ -193,6 +197,23 @@ export const init = async (
         500,
       )
     } else await onInlineQuery(ctx, page, sessionInMemory)
+  })
+
+  bot.on('chosen_inline_result', async ctx => {
+    const { query, result_id } = ctx.update.chosen_inline_result
+    const db = await getDbConnection()
+    await insertBotInlineAction(db, {
+      action: 'select',
+      userId: ctx.from.id,
+      query,
+      selectedId: result_id,
+    })
+    await db.close()
+    await logUserAction(ctx, {
+      action: 'inline_select',
+      query,
+      id: result_id,
+    })
   })
 
   bot.on(message('text'), async ctx => {

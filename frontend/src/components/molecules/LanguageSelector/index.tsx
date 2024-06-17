@@ -4,7 +4,7 @@ import { languageAtom } from '../../../store/atoms'
 import { Select } from '../../atoms'
 
 export const LanguageSelector = (props: {
-  languageOpetions: { [langCode: string]: string }
+  languageOpetions: Record<string, string>
   className?: string
 }) => {
   const [language, setLanguage] = useAtom(languageAtom)

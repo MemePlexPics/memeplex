@@ -5,7 +5,7 @@ export const getUrl = (path: string, params?: Record<string, string | number | u
   if (params)
     Object.keys(params).forEach(param => {
       const value = params[param]
-      if (value) url.searchParams.append(param, '' + value)
+      if (value) url.searchParams.append(param, `${value}`)
     })
   return url
 }

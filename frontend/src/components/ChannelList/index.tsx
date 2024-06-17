@@ -27,7 +27,7 @@ export const ChannelList = (props: TChannelListProps) => {
   const request = useFetch<TGetChannelList>(
     () =>
       getUrl('/getChannelList', {
-        page: '' + page,
+        page: page,
         onlyAvailable: `${props.isAdmin !== true}`,
         filter: props.filter,
       }),
@@ -66,7 +66,7 @@ export const ChannelList = (props: TChannelListProps) => {
             <ChannelBlock
               isAdmin={props.isAdmin}
               username={channel.name}
-              availability={channel.availability}
+              status={channel.status}
               onClickImages={props.isAdmin ? () => onClickImages(channel.name) : undefined}
               onClickEraser={props.isAdmin ? () => onClickEraser(channel.name) : undefined}
               onClickRemove={props.isAdmin ? () => onClickRemove(channel.name) : undefined}

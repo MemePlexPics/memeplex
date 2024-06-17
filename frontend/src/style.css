@@ -1,3 +1,5 @@
+@stylex stylesheet;
+
 :root {
     --loader-size: 100px;
     --scroll-to-top-size: 60px;

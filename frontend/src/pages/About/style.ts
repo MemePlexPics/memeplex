@@ -4,10 +4,10 @@ import { color, size } from '@/styles/variables.stylex'
 
 export const s = stylex.create({
   about: {
-    display: 'flex',
-    gap: '2vw',
     color: color.white,
+    display: 'flex',
     fontSize: size.fontBig,
+    gap: '2vw',
   },
   link: {
     color: color.white,

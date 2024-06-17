@@ -1,5 +1,5 @@
 import { channels } from '../../db/schema'
-import { and, count, eq, like } from 'drizzle-orm'
+import { and, count, isNull, like } from 'drizzle-orm'
 import type { TDbConnection } from '../types'
 
 export const getChannelsCount = async (
@@ -11,7 +11,7 @@ export const getChannelsCount = async (
     .from(channels)
     .where(
       and(
-        onlyAvailable === 'true' ? eq(channels.availability, 1) : undefined,
+        onlyAvailable === 'true' ? isNull(channels.status) : undefined,
         name && /[0-9a-zA-Z_]+/.test(name)
           ? like(channels.name, `%${name}%`) // LIKE is case-insensetive in MariaDB
           : undefined,

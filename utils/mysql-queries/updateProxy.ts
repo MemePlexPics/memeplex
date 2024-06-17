@@ -1,24 +1,14 @@
-export async function updateProxy(
-  mysql,
-  address,
-  protocol,
-  availability,
-  anonymity,
-  speed,
-  lastCheckDatetime,
-) {
-  await mysql.query(
-    `
-        UPDATE proxies
-        SET
-            availability = ?,
-            speed = ?,
-            anonymity = ?,
-            last_check_datetime = ?
-        WHERE
-            address = ?
-            AND protocol = ?
-    `,
-    [availability, speed, anonymity, lastCheckDatetime, address, protocol],
-  )
+import { and, eq } from 'drizzle-orm'
+import { proxies } from '../../db/schema'
+import type { TDbConnection } from '../types'
+
+export const updateProxy = async (
+  db: TDbConnection,
+  values: Partial<typeof proxies.$inferInsert> &
+  Pick<typeof proxies.$inferInsert, 'address' | 'protocol'>,
+) => {
+  await db
+    .update(proxies)
+    .set(values)
+    .where(and(eq(proxies.address, values.address), eq(proxies.protocol, values.protocol)))
 }
