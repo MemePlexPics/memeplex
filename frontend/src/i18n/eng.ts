@@ -54,7 +54,7 @@ export const eng: TI18nLocalization = {
     channelUnfeatured: 'The «{{channel}}» has been successfully unfeatured',
     channelFeatured: 'The «{{channel}}» has been successfully featured',
     removeFeatured: 'Remove the featured',
-    pagesLeft: 'There are {{number}} more pages',
+    memesLeft: 'There are {{number}} more memes',
     removeChannelMemes: 'Delete all memes from @{{channel}}?',
     blacklistUpdated: 'Blacklist successfully updated',
   },

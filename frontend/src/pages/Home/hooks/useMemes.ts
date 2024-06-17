@@ -31,6 +31,7 @@ export const useMemes = (query: string) => {
         ? {
             result: memes,
             totalPages: pageOptions.totalPages,
+            total: pageOptions.totalPages,
             from: pageOptions.from,
             to: pageOptions.to,
           }
@@ -58,7 +59,7 @@ export const useMemes = (query: string) => {
   const searchByQuery = () => {
     const url = getUrl('/search', {
       query,
-      page: '' + pageOptions.currentPage,
+      page: pageOptions.currentPage,
     })
     setUrl(url)
   }
@@ -113,7 +114,7 @@ export const useMemes = (query: string) => {
       if (operation === EMemesOperation.INIT || operation === EMemesOperation.REINIT) {
         if (query && request.data.totalPages > 1) {
           setNotification({
-            text: t('notification.pagesLeft', { number: request.data.totalPages }),
+            text: t('notification.memesLeft', { number: request.data.total }),
             type: ENotificationType.OK,
           })
         }
