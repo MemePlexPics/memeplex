@@ -51,6 +51,7 @@ import {
   onBotCommandSuggestChannel,
   onInlineQuery,
 } from '../handlers'
+import { ADMIN_IDS } from '../../../../../constants/publisher'
 
 export const init = async (
   token: string,
@@ -119,7 +120,10 @@ export const init = async (
       rateLimit<TTelegrafContext>({
         window: 3_000,
         limit: 3,
-        onLimitExceeded: async (ctx: TTelegrafContext) => {
+        onLimitExceeded: async (ctx, next) => {
+          if (ADMIN_IDS.includes(ctx.from.id)) {
+            return next()
+          }
           await logUserAction(ctx, { info: 'exceeded rate limit' })
           await ctx.reply(i18n['ru'].message.rateLimit())
         },
