@@ -1,3 +1,8 @@
-export async function insertPHash(mysql, pHash) {
-  await mysql.query('INSERT INTO phashes (phash) VALUES (?)', pHash)
+import { phashes } from '../../db/schema'
+import type { TDbConnection } from '../types'
+
+export async function insertPHash(db: TDbConnection, pHash: string) {
+  await db.insert(phashes).values({
+    phash: pHash,
+  })
 }
