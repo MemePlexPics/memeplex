@@ -241,6 +241,11 @@ export const init = async (
       return
     }
     await onPhotoMessage(ctx)
+    await ctx.reply(i18n['ru'].message.memeSuggested(), {
+      reply_parameters: {
+        message_id: ctx.update.message.message_id,
+      }
+    })
   })
 
   bot.on(message('text'), async ctx => {
