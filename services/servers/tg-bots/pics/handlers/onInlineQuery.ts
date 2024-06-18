@@ -4,7 +4,7 @@ import 'dotenv/config'
 import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
 import { i18n } from '../i18n'
-import type { TSessionInMemory, TTelegrafContext } from '../types'
+import type { TTelegrafContext } from '../types'
 import { getDbConnection } from '../../../../../utils'
 import { insertBotInlineAction, upsertBotInlineUser } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
@@ -14,7 +14,6 @@ import type { Update } from 'telegraf/typings/core/types/typegram'
 export const onInlineQuery = async (
   ctx: TTelegrafContext<Update.InlineQueryUpdate>,
   page: number,
-  sessionInMemory: TSessionInMemory,
 ) => {
   const query = ctx.inlineQuery.query
 
@@ -34,12 +33,12 @@ export const onInlineQuery = async (
   })
   await db.close()
 
-  const oldAbortController = sessionInMemory[ctx.inlineQuery.from.id].abortController
+  const oldAbortController = ctx.sessionInMemory.abortController
   if (oldAbortController) {
     oldAbortController.abort()
   }
   const abortController = new AbortController()
-  sessionInMemory[ctx.inlineQuery.from.id].abortController = abortController
+  ctx.sessionInMemory.abortController = abortController
 
   const response = query
     ? await searchMemes(ctx.elastic, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
@@ -63,7 +62,7 @@ export const onInlineQuery = async (
   })
 
   // If they are not equal, then there is at least one more new request from the same user
-  if (abortController === sessionInMemory[ctx.inlineQuery.from.id].abortController) {
+  if (abortController === ctx.sessionInMemory.abortController) {
     if (results.length) {
       await ctx.answerInlineQuery(results, {
         next_offset: response.totalPages - page > 0 ? page + 1 + '' : '',
@@ -80,7 +79,7 @@ export const onInlineQuery = async (
         },
       ])
     }
-    sessionInMemory[ctx.inlineQuery.from.id].debounce = undefined
-    sessionInMemory[ctx.inlineQuery.from.id].abortController = undefined
+    ctx.sessionInMemory.debounce = undefined
+    ctx.sessionInMemory.abortController = undefined
   }
 }

@@ -59,17 +59,17 @@ export const init = async (
 ) => {
   const bot = new TelegrafWrapper<TTelegrafContext>(token, options)
   const elastic = await getElasticClient()
-
-  // TODO: move into ctx
-  const sessionInMemory: TSessionInMemory = {}
+  const sessionInMemory: Record<number, TSessionInMemory> = {}
 
   bot.use(async (ctx, next) => {
-    if (!ctx.logger) {
-      ctx.logger = logger
-    }
-    if (!ctx.elastic) {
-      ctx.elastic = elastic
-    }
+    ctx.logger ??= logger
+    ctx.elastic ??= elastic
+    Object.defineProperty(ctx, 'sessionInMemory', {
+      get() {
+        sessionInMemory[ctx.from.id] ??= {}
+        return sessionInMemory[ctx.from.id]
+      },
+    })
     Object.defineProperty(ctx, 'hasPremiumSubscription', {
       async get() {
         if (ctx.session.premiumUntil && ctx.session.premiumUntil > Date.now() / 1000) {
@@ -204,19 +204,13 @@ export const init = async (
   })
 
   bot.on('inline_query', async ctx => {
-    if (!sessionInMemory[ctx.inlineQuery.from.id]) {
-      sessionInMemory[ctx.inlineQuery.from.id] = {}
-    }
     const page = Number(ctx.inlineQuery.offset) || 1
-    if (sessionInMemory[ctx.inlineQuery.from.id]?.debounce) {
-      clearTimeout(sessionInMemory[ctx.inlineQuery.from.id].debounce)
+    if (ctx.sessionInMemory.debounce) {
+      clearTimeout(ctx.sessionInMemory.debounce)
     }
     if (page === 1) {
-      sessionInMemory[ctx.inlineQuery.from.id].debounce = setTimeout(
-        () => onInlineQuery(ctx, page, sessionInMemory),
-        500,
-      )
-    } else await onInlineQuery(ctx, page, sessionInMemory)
+      ctx.sessionInMemory.debounce = setTimeout(() => onInlineQuery(ctx, page), 500)
+    } else await onInlineQuery(ctx, page)
   })
 
   bot.on('chosen_inline_result', async ctx => {
@@ -244,7 +238,7 @@ export const init = async (
     await ctx.reply(i18n['ru'].message.memeSuggested(), {
       reply_parameters: {
         message_id: ctx.update.message.message_id,
-      }
+      },
     })
   })
 
