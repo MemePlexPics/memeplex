@@ -1,4 +1,4 @@
 export enum EMemeSuggestionCallback {
-  PHOTO = 'photo',
-  MESSAGE = 'message',
+  APPROVE = 'approve',
+  DECLINE = 'decline',
 }
