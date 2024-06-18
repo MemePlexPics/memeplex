@@ -19,7 +19,7 @@ const client = getElasticClient()
 //   }
 // }
 
-async function createIndex(indexName) {
+async function createIndex(indexName: string) {
   try {
     const response = await (
       await client

@@ -5,9 +5,9 @@ export type TPublisherDistributionQueueMsg = {
   memeId: string
   document: Pick<TMemeEntity, 'fileName' | 'channelName' | 'messageId'>
   keywords: string[]
-  keywordGroupIds: number[]
-  groupKeywords: Record<string, number>
+  topicIds: number[]
+  topicKeywords: Record<string, number>
   channelIdsByKeyword: Record<string, number[]>
-  channelIdsByKeywordGroup: Record<string, number[]>
+  channelIdsByTopic: Record<string, number[]>
   channelIds: number[]
 }

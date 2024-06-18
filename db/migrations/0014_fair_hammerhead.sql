@@ -1,0 +1,2 @@
+ALTER TABLE `bot_actions` ADD `chat_id` bigint;--> statement-breakpoint
+ALTER TABLE `bot_actions` ADD CONSTRAINT `bot_actions__chat_id_fk` FOREIGN KEY (`chat_id`) REFERENCES `bot_channels`(`id`) ON DELETE no action ON UPDATE no action;

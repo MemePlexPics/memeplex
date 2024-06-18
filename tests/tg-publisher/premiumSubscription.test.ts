@@ -1,6 +1,6 @@
 import TelegramServer from '@vishtar/telegram-test-api'
-import { init } from '../../services/servers/tg-bots/publisher/utils'
-import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
+import { init } from '../../services/servers/tg-bots/pics/utils'
+import { i18n } from '../../services/servers/tg-bots/pics/i18n'
 import { getTestLogger } from '../utils'
 import {
   TelegramClientWrapper,
@@ -16,11 +16,11 @@ import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
 import { PREMIUM_PLANS } from '../../constants/publisher'
 import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
-import { botPublisherInvoices } from '../../db/schema'
+import { telegrafSessions, type botInvoices } from '../../db/schema'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
-import { upsertPublisherPremiumUser } from '../../utils/mysql-queries'
-import { sql } from 'drizzle-orm'
-import { KeyboardButton } from 'telegraf/typings/core/types/typegram'
+import { upsertBotPremiumUser } from '../../utils/mysql-queries'
+import { eq } from 'drizzle-orm'
+import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 describe('Subscribed to premium', () => {
   const serverConfig = { port: 0 }
@@ -44,7 +44,7 @@ describe('Subscribed to premium', () => {
       path: `/${process.env.CRYPTOPAY_BOT_TEST_WEBHOOK_PATH}`,
     },
   })
-  let currentInvoice: typeof botPublisherInvoices.$inferSelect
+  let currentInvoice: typeof botInvoices.$inferSelect
   // TODO: close it gentlier than deleten queue at cleanup
   handleInvoiceCreation(cryptoPay, logger)
 
@@ -78,9 +78,9 @@ describe('Subscribed to premium', () => {
     currentInvoice = await createInvoiceByButtons(tgClient)
   }, 60_000)
 
-  test(`Mocked paid invoice leads to «${i18n['ru'].message.paymentSuccessful()}» message`, async () => {
+  test(`Mocked paid invoice leads to «${i18n['ru'].message.paymentSuccessful('')}» message`, async () => {
     await awaitPremiumActivation(tgClient, currentInvoice.id)
-  })
+  }, 10_000)
 
   test(`Now it is a «${i18n['ru'].button.extendPremium()}» buttom in the main menu`, async () => {
     await backToMainMenuAfterBoughtPremium(tgClient)
@@ -88,11 +88,12 @@ describe('Subscribed to premium', () => {
 
   test('Premium expired correctly', async () => {
     const db = await getDbConnection()
-    await db.execute(sql`DELETE FROM telegraf_publisher_sessions WHERE \`key\` = '1:1'`)
-    await upsertPublisherPremiumUser(db, {
+    await db.delete(telegrafSessions).where(eq(telegrafSessions.key, `1:1`))
+    await upsertBotPremiumUser(db, {
       userId: 1,
       untilTimestamp: 0,
     })
+    await db.close()
     const updates = await tgClient.executeCommand('/start')
     const mainMenuMessage = updates!.result.find(
       update => update.message.text === i18n['ru'].message.mainMenu(),

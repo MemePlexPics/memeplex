@@ -1,7 +1,7 @@
-import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
+import { i18n } from '../../../services/servers/tg-bots/pics/i18n'
 import { getDbConnection } from '../../../utils'
-import { selectPublisherKeywordsByKeywords } from '../../../utils/mysql-queries'
-import { TelegramClientWrapper } from './TelegramClientWrapper'
+import { selectBotKeywordsByKeywords } from '../../../utils/mysql-queries'
+import type { TelegramClientWrapper } from './TelegramClientWrapper'
 
 export const subscribeToKeyword = async (tgClient: TelegramClientWrapper, testKeyword: string) => {
   const mySubscriptionMenuUpdates = await tgClient.executeMessage(
@@ -21,7 +21,7 @@ export const subscribeToKeyword = async (tgClient: TelegramClientWrapper, testKe
   await tgClient.executeMessage(i18n['ru'].button.editKeywords())
   await tgClient.executeMessage(testKeyword)
   const db = await getDbConnection()
-  const [keyword] = await selectPublisherKeywordsByKeywords(db, [testKeyword])
+  const [keyword] = await selectBotKeywordsByKeywords(db, [testKeyword])
   await db.close()
   return keyword
 }

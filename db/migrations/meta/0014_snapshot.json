@@ -1,0 +1,1018 @@
+{
+  "version": "5",
+  "dialect": "mysql",
+  "id": "56d1ba2a-014e-4013-b56e-9b38dca1c4b8",
+  "prevId": "b8f46ce7-8bdb-4e26-b786-7c1ba62357fd",
+  "tables": {
+    "bot_actions": {
+      "name": "bot_actions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "query": {
+          "name": "query",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "page": {
+          "name": "page",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "user_id": {
+          "name": "user_id",
+          "columns": ["user_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "bot_actions_user_id_bot_users_id_fk": {
+          "name": "bot_actions_user_id_bot_users_id_fk",
+          "tableFrom": "bot_actions",
+          "tableTo": "bot_users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "restrict"
+        },
+        "bot_actions__chat_id_fk": {
+          "name": "bot_actions__chat_id_fk",
+          "tableFrom": "bot_actions",
+          "tableTo": "bot_channels",
+          "columnsFrom": ["chat_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_actions_id": {
+          "name": "bot_actions_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "bot_channels": {
+      "name": "bot_channels",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "subscribers": {
+          "name": "subscribers",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_channels_user_id_fk": {
+          "name": "bot_channels_user_id_fk",
+          "tableFrom": "bot_channels",
+          "tableTo": "bot_users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_channels_id": {
+          "name": "bot_channels_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "bot_inline_actions": {
+      "name": "bot_inline_actions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "action": {
+          "name": "action",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "query": {
+          "name": "query",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "selected_id": {
+          "name": "selected_id",
+          "type": "varchar(32)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "page": {
+          "name": "page",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "chat_type": {
+          "name": "chat_type",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "user_id": {
+          "name": "user_id",
+          "columns": ["user_id"],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "bot_inline_actions_user_id_bot_inline_users_id_fk": {
+          "name": "bot_inline_actions_user_id_bot_inline_users_id_fk",
+          "tableFrom": "bot_inline_actions",
+          "tableTo": "bot_inline_users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "restrict"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_inline_actions_id": {
+          "name": "bot_inline_actions_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "bot_inline_users": {
+      "name": "bot_inline_users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "bot_inline_users_id": {
+          "name": "bot_inline_users_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "bot_invoices": {
+      "name": "bot_invoices",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "hash": {
+          "name": "hash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_invoices_user_id_fk": {
+          "name": "bot_invoices_user_id_fk",
+          "tableFrom": "bot_invoices",
+          "tableTo": "bot_users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_invoices_id": {
+          "name": "bot_invoices_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "bot_keywords": {
+      "name": "bot_keywords",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "keyword": {
+          "name": "keyword",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "bot_keywords_id": {
+          "name": "bot_keywords_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "bot_keywords_keyword_unique": {
+          "name": "bot_keywords_keyword_unique",
+          "columns": ["keyword"]
+        }
+      }
+    },
+    "bot_subscriptions": {
+      "name": "bot_subscriptions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "keyword_id": {
+          "name": "keyword_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_subscriptions_keyword_id_fk": {
+          "name": "bot_subscriptions_keyword_id_fk",
+          "tableFrom": "bot_subscriptions",
+          "tableTo": "bot_keywords",
+          "columnsFrom": ["keyword_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bot_subscriptions__channel_id_fk": {
+          "name": "bot_subscriptions__channel_id_fk",
+          "tableFrom": "bot_subscriptions",
+          "tableTo": "bot_channels",
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_subscriptions_id": {
+          "name": "bot_subscriptions_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "subscription_keyword_id-channel_id": {
+          "name": "subscription_keyword_id-channel_id",
+          "columns": ["keyword_id", "channel_id"]
+        }
+      }
+    },
+    "bot_topic_keyword_unsubscriptions": {
+      "name": "bot_topic_keyword_unsubscriptions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "keyword_id": {
+          "name": "keyword_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_topic_keyword_unsubscriptions_keyword_id_fk": {
+          "name": "bot_topic_keyword_unsubscriptions_keyword_id_fk",
+          "tableFrom": "bot_topic_keyword_unsubscriptions",
+          "tableTo": "bot_keywords",
+          "columnsFrom": ["keyword_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bot_topic_keyword_unsubscriptions__channel_id_fk": {
+          "name": "bot_topic_keyword_unsubscriptions__channel_id_fk",
+          "tableFrom": "bot_topic_keyword_unsubscriptions",
+          "tableTo": "bot_channels",
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_topic_keyword_unsubscriptions_id": {
+          "name": "bot_topic_keyword_unsubscriptions_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "unsubscription__keyword_id-channel_id": {
+          "name": "unsubscription__keyword_id-channel_id",
+          "columns": ["keyword_id", "channel_id"]
+        }
+      }
+    },
+    "bot_topic_names": {
+      "name": "bot_topic_names",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "bot_topic_names_id": {
+          "name": "bot_topic_names_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "bot_topic_names_name_unique": {
+          "name": "bot_topic_names_name_unique",
+          "columns": ["name"]
+        }
+      }
+    },
+    "bot_topic_subscriptions": {
+      "name": "bot_topic_subscriptions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "topic_id": {
+          "name": "topic_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "channel_id": {
+          "name": "channel_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_topic_subscriptions__topic_id_fk": {
+          "name": "bot_topic_subscriptions__topic_id_fk",
+          "tableFrom": "bot_topic_subscriptions",
+          "tableTo": "bot_topics",
+          "columnsFrom": ["topic_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bot_topic_subscriptions__channel_id_fk": {
+          "name": "bot_topic_subscriptions__channel_id_fk",
+          "tableFrom": "bot_topic_subscriptions",
+          "tableTo": "bot_channels",
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_topic_subscriptions_id": {
+          "name": "bot_topic_subscriptions_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "topic_id-channel_id": {
+          "name": "topic_id-channel_id",
+          "columns": ["topic_id", "channel_id"]
+        }
+      }
+    },
+    "bot_topics": {
+      "name": "bot_topics",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "name_id": {
+          "name": "name_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "keyword_id": {
+          "name": "keyword_id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_topics_name_id_fk": {
+          "name": "bot_topics_name_id_fk",
+          "tableFrom": "bot_topics",
+          "tableTo": "bot_topic_names",
+          "columnsFrom": ["name_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bot_topics_keyword_id_fk": {
+          "name": "bot_topics_keyword_id_fk",
+          "tableFrom": "bot_topics",
+          "tableTo": "bot_keywords",
+          "columnsFrom": ["keyword_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_topics_id": {
+          "name": "bot_topics_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "name_id-keyword_id": {
+          "name": "name_id-keyword_id",
+          "columns": ["name_id", "keyword_id"]
+        }
+      }
+    },
+    "bot_user_premiums": {
+      "name": "bot_user_premiums",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "until_timestamp": {
+          "name": "until_timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bot_user_premiums__user_id_fk": {
+          "name": "bot_user_premiums__user_id_fk",
+          "tableFrom": "bot_user_premiums",
+          "tableTo": "bot_users",
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "bot_user_premiums_user_id": {
+          "name": "bot_user_premiums_user_id",
+          "columns": ["user_id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "bot_users": {
+      "name": "bot_users",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "user": {
+          "name": "user",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "bot_users_id": {
+          "name": "bot_users_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "channel_suggestions": {
+      "name": "channel_suggestions",
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "processed": {
+          "name": "processed",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "channel_suggestions_name": {
+          "name": "channel_suggestions_name",
+          "columns": ["name"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "channels": {
+      "name": "channels",
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "availability": {
+          "name": "availability",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "with_text": {
+          "name": "with_text",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "langs": {
+          "name": "langs",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "channels_name": {
+          "name": "channels_name",
+          "columns": ["name"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "featured_channels": {
+      "name": "featured_channels",
+      "columns": {
+        "username": {
+          "name": "username",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timestamp": {
+          "name": "timestamp",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "comment": {
+          "name": "comment",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "featured_channels_username": {
+          "name": "featured_channels_username",
+          "columns": ["username"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "ocr_keys": {
+      "name": "ocr_keys",
+      "columns": {
+        "ocr_key": {
+          "name": "ocr_key",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timeout": {
+          "name": "timeout",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "ocr_keys_ocr_key": {
+          "name": "ocr_keys_ocr_key",
+          "columns": ["ocr_key"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "ocr_keys_pro": {
+      "name": "ocr_keys_pro",
+      "columns": {
+        "ocr_key": {
+          "name": "ocr_key",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "timeout": {
+          "name": "timeout",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "ocr_keys_pro_ocr_key": {
+          "name": "ocr_keys_pro_ocr_key",
+          "columns": ["ocr_key"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "phashes": {
+      "name": "phashes",
+      "columns": {
+        "phash": {
+          "name": "phash",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "phashes_phash": {
+          "name": "phashes_phash",
+          "columns": ["phash"]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "proxies": {
+      "name": "proxies",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "protocol": {
+          "name": "protocol",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "availability": {
+          "name": "availability",
+          "type": "tinyint",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "anonymity": {
+          "name": "anonymity",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "ocr_key": {
+          "name": "ocr_key",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "speed": {
+          "name": "speed",
+          "type": "int",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_activity_datetime": {
+          "name": "last_activity_datetime",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "last_check_datetime": {
+          "name": "last_check_datetime",
+          "type": "datetime",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {
+        "proxies_id": {
+          "name": "proxies_id",
+          "columns": ["id"]
+        }
+      },
+      "uniqueConstraints": {
+        "unique_address_protocol": {
+          "name": "unique_address_protocol",
+          "columns": ["address", "protocol"]
+        }
+      }
+    },
+    "words_blacklist": {
+      "name": "words_blacklist",
+      "columns": {
+        "words": {
+          "name": "words",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

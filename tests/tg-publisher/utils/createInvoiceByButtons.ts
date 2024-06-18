@@ -1,8 +1,8 @@
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { i18n } from '../../../services/servers/tg-bots/publisher/i18n'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import { i18n } from '../../../services/servers/tg-bots/pics/i18n'
 import { getDbConnection } from '../../../utils'
-import { selectPublisherActiveInvoices } from '../../../utils/mysql-queries'
-import { TelegramClientWrapper } from '.'
+import { selectBotActiveInvoices } from '../../../utils/mysql-queries'
+import type { TelegramClientWrapper } from '.'
 import { PREMIUM_PLANS } from '../../../constants/publisher'
 
 export const createInvoiceByButtons = async (tgClient: TelegramClientWrapper) => {
@@ -19,7 +19,9 @@ export const createInvoiceByButtons = async (tgClient: TelegramClientWrapper) =>
     oneMonthPremium.cost,
   )
 
-  const afterPressPremiumButtonUpdates = await tgClient.executeMessage(oneMonthPremiumButtonText)
+  await tgClient.executeMessage(oneMonthPremiumButtonText)
+  const afterPressPremiumButtonUpdates = await tgClient.getUpdates()
+  console.log(JSON.stringify(afterPressPremiumButtonUpdates, null, 2))
   if (!afterPressPremiumButtonUpdates) {
     throw new Error(`There is no updates after pressed «${oneMonthPremiumButtonText}» button`)
   }
@@ -41,9 +43,9 @@ export const createInvoiceByButtons = async (tgClient: TelegramClientWrapper) =>
     )
   }
   const paymentHash = linkForPaymentButton[0].url.split('=').at(-1)
-  await tgClient.executeMessage(i18n['ru'].button.goToPremiumPayment(), undefined, false)
   const db = await getDbConnection()
-  const activeInvoices = await selectPublisherActiveInvoices(db)
+  const activeInvoices = await selectBotActiveInvoices(db)
+  await db.close()
   const findedInvoice = activeInvoices.find(invoice => invoice.hash === paymentHash)
   if (!findedInvoice) {
     throw new Error(`There is no active invoice for us: ${JSON.stringify(activeInvoices, null, 2)}`)

@@ -1,7 +1,8 @@
 import TelegramServer from '@vishtar/telegram-test-api'
-import { TelegramServerConfig } from '@vishtar/telegram-test-api/lib/telegramServer'
+import type { TelegramServerConfig } from '@vishtar/telegram-test-api/lib/telegramServer'
 import { getChat, getChatAdministrators, getChatMembersCount } from '.'
-import { ChatFromGetChat, ChatMemberAdministrator } from '@telegraf/types'
+import type { ChatFromGetChat, ChatMemberAdministrator } from '@telegraf/types'
+import type { Route } from '@vishtar/telegram-test-api/lib/routes/route'
 
 export class TelegramServerWrapper extends TelegramServer<{
   getChat: Record<number | string, Partial<ChatFromGetChat>>
@@ -10,7 +11,7 @@ export class TelegramServerWrapper extends TelegramServer<{
 }> {
   constructor(config?: Partial<TelegramServerConfig>) {
     super(config, {
-      routes: [getChat, getChatAdministrators, getChatMembersCount],
+      routes: [getChat as Route, getChatAdministrators as Route, getChatMembersCount as Route],
     })
   }
 }

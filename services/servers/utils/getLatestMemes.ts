@@ -69,8 +69,17 @@ export const getLatestMemes = async (
     },
   })
 
-  const total = typeof elasticRes.hits.total !== 'number' ? elasticRes.hits.total?.value : undefined
-  const response = {
+  const total =
+    typeof elasticRes.hits.total === 'object' && 'value' in elasticRes.hits.total
+      ? elasticRes.hits.total.value
+      : 0
+  const response: {
+    result: ReturnType<typeof getMemeResponseEntity>[]
+    from: number | undefined
+    to: number | undefined
+    total: number
+    totalPages: number
+  } = {
     result: [],
     from: undefined,
     to: undefined,
@@ -78,6 +87,7 @@ export const getLatestMemes = async (
     totalPages: Math.ceil(total / size),
   }
   for (const hit of elasticRes.hits.hits) {
+    if (!hit._source) continue
     const timestamp = hit._source.timestamp
     if (!response.from || timestamp < response.from) response.from = timestamp
     if (!response.to || timestamp > response.to) response.to = timestamp

@@ -2,7 +2,7 @@ import { initPublisherDistributionQueueMsg } from '../ocr/utils'
 import { getPublisherUserTariffPlan } from '.'
 import type { TDbConnection } from '../../utils/types'
 import type { TMemeEntity, TPrePublisherDistributionQueue } from '../types'
-import { selectPublisherChannelById } from '../../utils/mysql-queries'
+import { selectBotChannelById } from '../../utils/mysql-queries'
 
 export const getPublisherUserByChannelIdAndTariffPlan = async (
   db: TDbConnection,
@@ -14,7 +14,7 @@ export const getPublisherUserByChannelIdAndTariffPlan = async (
 ) => {
   // TODO: why getPublisherUserByChannelId()?
   // const userId = await getPublisherUserByChannelId(db, channelId)
-  const [channel] = await selectPublisherChannelById(db, channelId)
+  const [channel] = await selectBotChannelById(db, channelId)
   initPublisherDistributionQueueMsg(queue, channel.userId, memeId, document)
   if (!tariffPlanByUsers[channel.userId]) {
     tariffPlanByUsers[channel.userId] = await getPublisherUserTariffPlan(db, channel.userId)

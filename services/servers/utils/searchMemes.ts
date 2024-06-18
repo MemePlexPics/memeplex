@@ -73,14 +73,21 @@ export const searchMemes = async (
     abortController ? { signal: abortController.signal } : {},
   )
 
-  if (typeof elasticRes.hits.total === 'number') return
-
-  const response = {
+  const total =
+    typeof elasticRes.hits.total === 'object' && 'value' in elasticRes.hits.total
+      ? elasticRes.hits.total.value
+      : 0
+  const response: {
+    result: ReturnType<typeof getMemeResponseEntity>[]
+    total: number
+    totalPages: number
+  } = {
     result: [],
-    total: elasticRes.hits.total.value,
-    totalPages: Math.ceil(elasticRes.hits.total.value / size),
+    total,
+    totalPages: Math.ceil(total / size),
   }
   for (const hit of elasticRes.hits.hits) {
+    if (!hit._source) continue
     response.result.push(getMemeResponseEntity(hit._id, hit._source))
   }
 

@@ -3,51 +3,57 @@ import 'dotenv/config'
 
 import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
-import { logUserAction } from '../utils'
 import { i18n } from '../i18n'
 import type { TSessionInMemory, TTelegrafContext } from '../types'
-import type { Client } from '@elastic/elasticsearch'
-import type { Logger } from 'winston'
+import { getDbConnection } from '../../../../../utils'
+import { insertBotInlineAction, upsertBotInlineUser } from '../../../../../utils/mysql-queries'
+import { getTelegramUser } from '../../utils'
+import type { Update } from 'telegraf/typings/core/types/typegram'
 
+// TODO: -> handleInlineQuery
 export const onInlineQuery = async (
-  ctx: TTelegrafContext,
+  ctx: TTelegrafContext<Update.InlineQueryUpdate>,
   page: number,
-  client: Client,
   sessionInMemory: TSessionInMemory,
-  logger: Logger,
 ) => {
   const query = ctx.inlineQuery.query
 
-  await logUserAction(
-    ctx.inlineQuery.from,
-    {
-      inline_search: {
-        query,
-        page,
-        chat_type: ctx.inlineQuery.chat_type,
-      },
-    },
-    logger,
-  )
-  if (sessionInMemory[ctx.inlineQuery.from.id].abortController) {
-    sessionInMemory[ctx.inlineQuery.from.id].abortController.abort()
+  const db = await getDbConnection()
+  const { id, user } = getTelegramUser(ctx.from)
+  await upsertBotInlineUser(db, {
+    id,
+    user,
+  })
+  await insertBotInlineAction(db, {
+    userId: ctx.from.id,
+    action: 'search',
+    query: query,
+    selectedId: null,
+    page: page + '',
+    chatType: ctx.inlineQuery.chat_type,
+  })
+  await db.close()
+
+  const oldAbortController = sessionInMemory[ctx.inlineQuery.from.id].abortController
+  if (oldAbortController) {
+    oldAbortController.abort()
   }
   const abortController = new AbortController()
   sessionInMemory[ctx.inlineQuery.from.id].abortController = abortController
 
   const response = query
-    ? await searchMemes(client, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
+    ? await searchMemes(ctx.elastic, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
     : {
-      result: await getLatestInlineSelectedMemes(client, abortController),
+      result: await getLatestInlineSelectedMemes(ctx.elastic, abortController),
       totalPages: 1,
     }
 
   const results = response.result.map(meme => {
-    const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme.fileName}`)
+    const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme!.fileName}`)
       .href
     return {
       type: 'photo' as const,
-      id: meme.id,
+      id: meme!.id,
       photo_url,
       thumbnail_url: photo_url,
       // caption: meme.text.eng.substring(0, 1024),

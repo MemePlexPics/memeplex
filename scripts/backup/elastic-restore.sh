@@ -7,8 +7,6 @@ set +a
 EXCLUDED_INDICES=".security-7"
 SNAPSHOTS=$(curl --user "$ELASTIC_USERNAME:$ELASTIC_PASSWORD" -sXGET "$ELASTIC_ENDPOINT/_snapshot/elastic/_all" | jq -r '.snapshots[].snapshot')
 
-
-
 for SNAPSHOT in $SNAPSHOTS; do
     INDICES=$(curl --user "$ELASTIC_USERNAME:$ELASTIC_PASSWORD" -sXGET "$ELASTIC_ENDPOINT/_snapshot/elastic/$SNAPSHOT" | jq -r '.snapshots[].indices[]')
 

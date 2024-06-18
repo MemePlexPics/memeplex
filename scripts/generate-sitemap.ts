@@ -16,7 +16,7 @@ const getOldestEntityTimestamp = async (client: Client) => {
     sort: { timestamp: 'asc' },
   })
   if (elasticRes.hits.hits.length > 0) {
-    return elasticRes.hits.hits[0]._source.timestamp
+    return elasticRes.hits.hits[0]._source?.timestamp
   }
   return null
 }
@@ -87,7 +87,7 @@ const generateSitemaps = async (client: Client) => {
   const timeZoneCorrection = new Date().getTimezoneOffset() < 0 ? 1 : -1
   let currentTimestamp: Date
   if (sitemaps.length) {
-    const lastDateStr = sitemaps.at(-1).replace('.xml', '')
+    const lastDateStr = sitemaps.at(-1)!.replace('.xml', '')
     currentTimestamp = new Date(lastDateStr)
     currentTimestamp.setDate(currentTimestamp.getDate() + 1 + timeZoneCorrection)
   } else {

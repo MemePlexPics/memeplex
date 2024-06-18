@@ -1,5 +1,5 @@
+import type { TelegramClientWrapper } from '.'
 import {
-  TelegramClientWrapper,
   awaitPremiumActivation,
   backToMainMenuAfterBoughtPremium,
   createInvoiceByButtons,

@@ -1,0 +1,7 @@
+export { isAccessibleMessage } from './isAccessibleMessage'
+export { isCommonMessage } from './isCommonMessage'
+export { isCallbackButton } from './isCallbackButton'
+export { isCallbackQueryUpdate } from './isCallbackQueryUpdate'
+export { isDataQuery } from './isDataQuery'
+export { isTextMessage } from './isTextMessage'
+export { isMessageUpdate } from './isMessageUpdate'

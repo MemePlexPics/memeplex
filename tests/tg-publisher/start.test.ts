@@ -1,6 +1,6 @@
 import TelegramServer from '@vishtar/telegram-test-api'
-import { init } from '../../services/servers/tg-bots/publisher/utils'
-import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
+import { init } from '../../services/servers/tg-bots/pics/utils'
+import { i18n } from '../../services/servers/tg-bots/pics/i18n'
 import { TelegramClientWrapper, cleanUpPublisherUser } from './utils'
 import { getDbConnection } from '../../utils'
 
@@ -25,7 +25,6 @@ describe('/start', () => {
     const db = await getDbConnection()
     await cleanUpPublisherUser(db)
     await db.close()
-    // why()
   })
 
   test('Recieved /start message', async () => {

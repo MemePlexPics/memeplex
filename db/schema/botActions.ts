@@ -1,4 +1,4 @@
-import { mysqlTable, index, int, varchar } from 'drizzle-orm/mysql-core'
+import { mysqlTable, index, int, varchar, bigint } from 'drizzle-orm/mysql-core'
 import { botUsers } from '.'
 
 export const botActions = mysqlTable(
@@ -11,9 +11,13 @@ export const botActions = mysqlTable(
         onDelete: 'restrict',
         onUpdate: 'restrict',
       }),
-    action: varchar('action', { length: 32 }).notNull(),
+    action: varchar('action', {
+      length: 32,
+      enum: ['search', 'latest', 'inline_search', 'inline_select', 'meme_post'],
+    }).notNull(),
     query: varchar('query', { length: 255 }),
     page: varchar('page', { length: 128 }).notNull(),
+    chatId: bigint('chat_id', { mode: 'number' }),
     timestamp: int('timestamp').notNull(),
   },
   table => {

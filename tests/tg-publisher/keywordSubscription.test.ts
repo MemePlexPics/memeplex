@@ -1,5 +1,5 @@
 import TelegramServer from '@vishtar/telegram-test-api'
-import { init } from '../../services/servers/tg-bots/publisher/utils'
+import { init } from '../../services/servers/tg-bots/pics/utils'
 import { getTestLogger } from '../utils'
 import {
   TelegramClientWrapper,
@@ -13,16 +13,21 @@ import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
 import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
 import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
-import { i18n } from '../../services/servers/tg-bots/publisher/i18n'
-import amqplib, { Channel, Connection } from 'amqplib'
+import { i18n } from '../../services/servers/tg-bots/pics/i18n'
+import type { Channel, Connection } from 'amqplib'
+import amqplib from 'amqplib'
 import { AMQP_NLP_TO_PUBLISHER_CHANNEL } from '../../constants'
 import { mockAmqpNLPToPublisherChannelMessage } from './constants'
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
-import { EKeywordAction, callbackData } from '../../services/servers/tg-bots/publisher/constants'
+import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
+import { EKeywordAction, callbackData } from '../../services/servers/tg-bots/pics/constants'
 import {
-  deletePublisherKeyword,
-  deletePublisherSubscriptionsByChannelId,
+  deleteBotChannelById,
+  deleteBotKeyword,
+  deleteBotSubscriptionsByChannelId,
+  selectBotChannelsByUserId,
 } from '../../utils/mysql-queries'
+import { botActions } from '../../db/schema'
+import { eq } from 'drizzle-orm'
 
 describe('Keyword subscribtion', () => {
   const serverConfig = { port: 0 }
@@ -70,15 +75,21 @@ describe('Keyword subscribtion', () => {
 
   afterAll(async () => {
     const db = await getDbConnection()
+    await db.delete(botActions).where(eq(botActions.userId, 1))
     await cleanUpPublisherPremium(db, cryptoPay)
     await cleanUpPublisherPremium(db, cryptoPay, 2)
+
+    await deleteBotSubscriptionsByChannelId(db, 1)
+    await deleteBotSubscriptionsByChannelId(db, 2)
+
+    const channels = await selectBotChannelsByUserId(db, 1)
+    for (const channel of channels) {
+      await deleteBotChannelById(db, channel.id)
+    }
     await cleanUpPublisherUser(db)
     await cleanUpPublisherUser(db, 2)
-
-    await deletePublisherSubscriptionsByChannelId(db, 1)
-    await deletePublisherSubscriptionsByChannelId(db, 2)
-    await deletePublisherKeyword(db, keywordFirstUser)
-    await deletePublisherKeyword(db, keywordSecondUser)
+    await deleteBotKeyword(db, keywordFirstUser)
+    await deleteBotKeyword(db, keywordSecondUser)
     await db.close()
 
     await cleanUpTestAmqpQueues()
@@ -118,7 +129,7 @@ describe('Keyword subscribtion', () => {
             button =>
               'callback_data' in button &&
               button.callback_data ===
-                callbackData.premoderationKeywordButton(
+                callbackData.premoderation.keywordButton(
                   EKeywordAction.DELETE,
                   1,
                   keywordFirstUserId,
@@ -169,7 +180,9 @@ describe('Keyword subscribtion', () => {
         `There is no update with «${keywordFirstUser}» keyword: ${JSON.stringify(commaSeparatedKeywordUpdates, null, 2)}`,
       )
     }
-    const keywordSettingsUpdates = await tgClient.executeMessage(i18n['ru'].button.editKeywords())
+    const keywordSettingsUpdates = await tgClient.executeMessage(
+      i18n['ru'].button.editKeywords('✏️'),
+    )
     const keywordSettingsMenu = keywordSettingsUpdates!.result.find(
       update => update.message.text === i18n['ru'].message.unsubscribeFromKeywords(),
     )

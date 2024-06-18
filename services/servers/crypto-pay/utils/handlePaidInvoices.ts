@@ -1,8 +1,5 @@
 import type { CryptoPay } from '@foile/crypto-pay-api'
-import {
-  selectPublisherActiveInvoices,
-  updatePublisherInvoiceStatus,
-} from '../../../../utils/mysql-queries'
+import { selectBotActiveInvoices, updateBotInvoiceStatus } from '../../../../utils/mysql-queries'
 import { getDbConnection } from '../../../../utils'
 import type { TInvoice } from '../types'
 import { handlePaidInvoice } from '.'
@@ -10,7 +7,7 @@ import { CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS } from '../../../../constants'
 
 export const handlePaidInvoices = async (cryptoPay: CryptoPay) => {
   const db = await getDbConnection()
-  const activeInvoices = await selectPublisherActiveInvoices(db)
+  const activeInvoices = await selectBotActiveInvoices(db)
   if (activeInvoices.length === 0) {
     return
   }
@@ -33,9 +30,10 @@ export const handlePaidInvoices = async (cryptoPay: CryptoPay) => {
         const expiredAt = new Date(activeInvoice.createdAt)
         expiredAt.setSeconds(expiredAt.getSeconds() + CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS)
         if (expiredAt < new Date()) {
-          await updatePublisherInvoiceStatus(db, activeInvoice.id, 'expired')
+          await updateBotInvoiceStatus(db, activeInvoice.id, 'expired')
         }
       }
     })
   }
+  await db.close()
 }
