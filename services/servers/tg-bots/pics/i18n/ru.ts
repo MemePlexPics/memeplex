@@ -1,6 +1,5 @@
 import { MAX_FREE_USER_CHANNEL_SUBS } from '../../../../../constants'
 import type { PREMIUM_PLANS } from '../../../../../constants/publisher'
-import { chatIds } from '../constants'
 
 export const ru = {
   message: {
@@ -129,7 +128,7 @@ ${keywords}`,
     channelSubscribersLimitForFreePlan: (channel: string) => `
 Ваш канал @${channel} достиг ${MAX_FREE_USER_CHANNEL_SUBS} подписчиков.
 Получите премиум, чтобы использовать бота в больших каналах.`,
-    memeSuggested: () => `🙏 Благодарю! Мем будет добавлен в базу после ручной проверки (опубликованные мемы вы можете увидеть в ${chatIds.memes}).`,
+    memeSuggested: () => `🙏 Мем отправлен на модерацию. Спасибо!`,
     nothingFound: () => 'Ничего не найдено',
   },
   button: {

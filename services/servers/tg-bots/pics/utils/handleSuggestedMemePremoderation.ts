@@ -1,6 +1,11 @@
 import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
 import type { TTelegrafContext } from '../types'
-import { ECallback, EMemeSuggestionCallback, chatIds } from '../constants'
+import {
+  ECallback,
+  EMemeSuggestionCallback,
+  chatIds,
+  memeSuggestionStatusByAction,
+} from '../constants'
 import { Markup } from 'telegraf'
 import { getTelegramUser } from '../../utils'
 import { getDbConnection } from '../../../../../utils'
@@ -18,9 +23,16 @@ export const handleSuggestedMemePremoderation = async <GAction extends EMemeSugg
     .select()
     .from(botMemeSuggestions)
     .where(eq(botMemeSuggestions.id, suggestionId))
-  if (action === EMemeSuggestionCallback.APPROVE) {
+  if (
+    action === EMemeSuggestionCallback.APPROVE ||
+    action === EMemeSuggestionCallback.APPROVE_WITHOUT_TEXT
+  ) {
+    const caption =
+      action === EMemeSuggestionCallback.APPROVE_WITHOUT_TEXT || !suggestedMeme.text
+        ? undefined
+        : suggestedMeme.text
     await ctx.telegram.sendPhoto(chatIds.memes, suggestedMeme.fileId, {
-      caption: suggestedMeme.text || undefined,
+      caption,
     })
     await ctx.editMessageReplyMarkup({
       inline_keyboard: [[Markup.button.callback(`✅ by ${user}`, ECallback.IGNORE)]],
@@ -30,6 +42,11 @@ export const handleSuggestedMemePremoderation = async <GAction extends EMemeSugg
       inline_keyboard: [[Markup.button.callback(`❌ by ${user}`, ECallback.IGNORE)]],
     })
   }
-  await db.delete(botMemeSuggestions).where(eq(botMemeSuggestions.id, suggestionId))
+  await db
+    .update(botMemeSuggestions)
+    .set({
+      status: memeSuggestionStatusByAction[action],
+    })
+    .where(eq(botMemeSuggestions.id, suggestionId))
   await db.close()
 }
