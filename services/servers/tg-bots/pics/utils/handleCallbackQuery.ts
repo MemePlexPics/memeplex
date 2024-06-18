@@ -26,8 +26,8 @@ export const handleCallbackQuery = async (
       return
     }
     const action = firstPartCb as EMemeSuggestionCallback
-    const fileOrMessageId = restCb[0]
-    await handleSuggestedMemePremoderation(ctx, action, fileOrMessageId)
+    const suggestionId = Number(restCb[0])
+    await handleSuggestedMemePremoderation(ctx, action, suggestionId)
   }
   const state = firstPartCb as ECallback
   if (state === ECallback.IGNORE) {
