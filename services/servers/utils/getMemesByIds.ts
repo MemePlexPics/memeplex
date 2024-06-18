@@ -4,7 +4,7 @@ import type { Client } from '@elastic/elasticsearch'
 import type { TElasticMemeEntity } from '../../types'
 import type { GetGetResult } from '@elastic/elasticsearch/lib/api/types'
 
-export const getMemesById = async (
+export const getMemesByIds = async (
   client: Client,
   ids: string[],
   abortController?: AbortController,
@@ -18,7 +18,8 @@ export const getMemesById = async (
   )
 
   return elasticRes.docs.map(doc => {
-    if (!Object.hasOwn(doc, 'found')) return
-    return getMemeResponseEntity(doc._id, (doc as GetGetResult<TElasticMemeEntity>)._source)
+    const meme = doc as GetGetResult<TElasticMemeEntity>
+    if (!meme._source) return
+    return getMemeResponseEntity(doc._id, meme._source)
   })
 }

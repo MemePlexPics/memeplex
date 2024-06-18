@@ -1,10 +1,7 @@
-export const removeFeaturedChannel = async (mysql, name) => {
-  const [results] = await mysql.query(
-    `
-        DELETE FROM featured_channels
-        WHERE username = ?
-    `,
-    [name],
-  )
-  return results?.[0]
+import { eq } from 'drizzle-orm'
+import { featuredChannels } from '../../db/schema'
+import type { TDbConnection } from '../types'
+
+export const removeFeaturedChannel = async (db: TDbConnection, name: string) => {
+  await db.delete(featuredChannels).where(eq(featuredChannels.username, name))
 }
