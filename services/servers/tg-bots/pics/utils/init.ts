@@ -6,7 +6,7 @@ import rateLimit from 'telegraf-ratelimit'
 import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../../utils'
-import { EState } from '../constants'
+import { EState, chatIds } from '../constants'
 import type { TSessionInMemory, TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
   TelegrafWrapper,
@@ -138,6 +138,9 @@ export const init = async (
   }
 
   bot.start(async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     await ctx.reply(i18n['ru'].message.start())
     await enterToState(ctx, mainState)
 
@@ -154,24 +157,48 @@ export const init = async (
   })
 
   bot.command('menu', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     const reappliableState =
       ctx.session.state === EState.MEME_SEARCH ? states[EState.MAIN] : states[ctx.session.state]
     await enterToState(ctx, reappliableState)
   })
 
   bot.command('help', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     await ctx.reply(i18n['ru'].message.help(), {
       parse_mode: 'Markdown',
     })
   })
 
-  bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true))
+  bot.command('get_latest', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandGetLatest(ctx, true)
+  })
 
-  bot.command('suggest_channel', ctx => onBotCommandSuggestChannel(ctx))
+  bot.command('suggest_channel', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandSuggestChannel(ctx)
+  })
 
-  bot.command('set_premium', onBotCommandSetPremium)
+  bot.command('set_premium', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandSetPremium(ctx)
+  })
 
   bot.on('callback_query', async ctx => {
+    if (ctx.chat?.id && ![ctx.from.id, chatIds.premoderation].includes(ctx.chat.id)) {
+      return
+    }
     await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)
     await ctx.answerCbQuery()
   })
@@ -209,9 +236,17 @@ export const init = async (
     })
   })
 
-  bot.on(message('photo'), onPhotoMessage)
+  bot.on(message('photo'), async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onPhotoMessage(ctx)
+  })
 
   bot.on(message('text'), async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     const text = ctx.update.message.text
     const state = states[ctx.session.state]
     if (state.menu) {
