@@ -235,11 +235,13 @@ export const init = async (
       return
     }
     await onPhotoMessage(ctx)
-    await ctx.reply(i18n['ru'].message.memeSuggested(), {
-      reply_parameters: {
-        message_id: ctx.update.message.message_id,
-      },
-    })
+    if (ctx.update.message.media_group_id !== ctx.sessionInMemory.suggestedMemeTextByMediaGroupId?.[0]) {
+      await ctx.reply(i18n['ru'].message.memeSuggested(), {
+        reply_parameters: {
+          message_id: ctx.update.message.message_id,
+        },
+      })
+    }
   })
 
   bot.on(message('text'), async ctx => {
