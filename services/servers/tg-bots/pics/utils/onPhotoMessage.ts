@@ -17,13 +17,18 @@ export const onPhotoMessage = async (
       if (!caption) {
         if (mediaGroupData[0] === media_group_id) {
           text = mediaGroupData[1]
+        } else {
+          ctx.sessionInMemory.suggestedMemeTextByMediaGroupId = undefined
         }
-      } else {
-        ctx.sessionInMemory.suggestedMemeTextByMediaGroupId = [media_group_id, caption]
       }
+    } else if (caption) {
+      ctx.sessionInMemory.suggestedMemeTextByMediaGroupId = [media_group_id, caption]
     }
   }
-  const photoEntity = photo.sort((a, b) => b.width - a.width)[0]
+  const photoEntity = photo.at(-1)
+  if (!photoEntity) {
+    return
+  }
   const db = await getDbConnection()
   // TODO: move it out
   await db.insert(botMemeSuggestions).ignore().values({
