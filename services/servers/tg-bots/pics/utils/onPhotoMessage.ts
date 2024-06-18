@@ -23,36 +23,35 @@ export const onPhotoMessage = async (
       }
     }
   }
+  const photoEntity = photo.sort((a, b) => b.width - a.width)[0]
   const db = await getDbConnection()
-  for (const photoEntity of photo) {
-    // TODO: move it out
-    await db.insert(botMemeSuggestions).ignore().values({
-      userId: ctx.from.id,
-      fileId: photoEntity.file_id,
-      text,
-    })
-    const [suggestedMeme] = await db
-      .select({ id: botMemeSuggestions.id })
-      .from(botMemeSuggestions)
-      .where(eq(botMemeSuggestions.fileId, photoEntity.file_id))
-    const approveMemeButton = Markup.button.callback(
-      '👍 Опубликовать',
-      `${EMemeSuggestionCallback.APPROVE}|${suggestedMeme.id}`,
-    )
-    const approveWithoutTextMemeButton = Markup.button.callback(
-      '🖼 Без текста',
-      `${EMemeSuggestionCallback.APPROVE_WITHOUT_TEXT}|${suggestedMeme.id}`,
-    )
-    const declineMemeButton = Markup.button.callback(
-      '👎 Отклонить',
-      `${EMemeSuggestionCallback.DECLINE}|${suggestedMeme.id}`,
-    )
-    await ctx.telegram.sendPhoto(chatIds.premoderation, photoEntity.file_id, {
-      caption: text,
-      reply_markup: {
-        inline_keyboard: [[approveMemeButton, approveWithoutTextMemeButton], [declineMemeButton]],
-      },
-    })
-  }
+  // TODO: move it out
+  await db.insert(botMemeSuggestions).ignore().values({
+    userId: ctx.from.id,
+    fileId: photoEntity.file_id,
+    text,
+  })
+  const [suggestedMeme] = await db
+    .select({ id: botMemeSuggestions.id })
+    .from(botMemeSuggestions)
+    .where(eq(botMemeSuggestions.fileId, photoEntity.file_id))
+  const approveMemeButton = Markup.button.callback(
+    '👍 Опубликовать',
+    `${EMemeSuggestionCallback.APPROVE}|${suggestedMeme.id}`,
+  )
+  const approveWithoutTextMemeButton = Markup.button.callback(
+    '🖼 Без текста',
+    `${EMemeSuggestionCallback.APPROVE_WITHOUT_TEXT}|${suggestedMeme.id}`,
+  )
+  const declineMemeButton = Markup.button.callback(
+    '👎 Отклонить',
+    `${EMemeSuggestionCallback.DECLINE}|${suggestedMeme.id}`,
+  )
+  await ctx.telegram.sendPhoto(chatIds.premoderation, photoEntity.file_id, {
+    caption: text,
+    reply_markup: {
+      inline_keyboard: [[approveMemeButton, approveWithoutTextMemeButton], [declineMemeButton]],
+    },
+  })
   await db.close()
 }
