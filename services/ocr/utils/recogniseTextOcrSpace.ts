@@ -6,9 +6,10 @@ import {
   handleProxyError,
   ocrSpace,
 } from '.'
-import { InfoMessage, getMysqlClient } from '../../../utils'
+import { InfoMessage, getDbConnection } from '../../../utils'
 import { updateProxyAvailability } from '../../../utils/mysql-queries'
 import { OCR_SPACE_PRO_API_USA } from '../../../constants'
+import { AxiosError } from 'axios'
 
 export const recogniseTextOcrSpace = async (fileName: string, language: string) => {
   const { key: apiKey, proxy, protocol } = await chooseRandomOCRSpaceKey()
@@ -18,25 +19,26 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string) 
       ocrUrl: proxy ? undefined : OCR_SPACE_PRO_API_USA,
       apiKey,
       language,
-      proxy: proxy
-        ? {
-          host,
-          port: Number(port),
-          protocol,
-        }
-        : undefined,
+      proxy:
+        proxy && host
+          ? {
+            host,
+            port: Number(port),
+            protocol,
+          }
+          : undefined,
       OCREngine: language == 'eng' ? '2' : '1',
       // see here for engine descriptions: http://ocr.space/OCRAPI
     })
     console.log('💬', res)
 
     if (res.IsErroredOnProcessing) throw new Error(res?.ErrorMessage?.join())
-    await handleDeadProxy(res, proxy, protocol)
 
     if (proxy) {
-      const mysql = await getMysqlClient()
-      await updateProxyAvailability(mysql, proxy, protocol, true)
-      await mysql.end()
+      await handleDeadProxy(res, proxy, protocol)
+      const db = await getDbConnection()
+      await updateProxyAvailability(db, proxy, protocol, 1)
+      await db.close()
     }
 
     const text = []
@@ -46,15 +48,17 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string) 
 
     return text.join(' ')
   } catch (error) {
-    await handle403(error, apiKey)
-    if (proxy) {
+    if (error instanceof AxiosError) {
+      await handle403(error, apiKey)
+    }
+    if (proxy && error instanceof AxiosError) {
       await handleProxyError(error, proxy, protocol)
-    } else {
+    } else if (error instanceof Error) {
       await handleProKeyError(error, apiKey)
     }
     if (
-      error.message.startsWith('E301') ||
-      error.message.startsWith('Unable to process the file')
+      error instanceof Error &&
+      (error.message.startsWith('E301') || error.message.startsWith('Unable to process the file'))
     ) {
       throw new InfoMessage(`E301: Unable to process the file`)
     }

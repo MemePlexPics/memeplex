@@ -1,17 +1,18 @@
-import { dateToYyyyMmDdHhMmSs } from '..'
+import { and, eq, sql } from 'drizzle-orm'
+import { proxies } from '../../db/schema'
+import type { TDbConnection } from '../types'
 
-export async function updateProxyAvailability(mysql, proxy, protocol, availability) {
-  const lastActivityDatetime = dateToYyyyMmDdHhMmSs(new Date())
-  await mysql.execute(
-    `
-        UPDATE proxies
-        SET
-            availability = ?
-            AND last_activity_datetime = ?
-        WHERE
-            address = ?
-            AND protocol = ?
-    `,
-    [availability, lastActivityDatetime, proxy, protocol],
-  )
+export async function updateProxyAvailability(
+  db: TDbConnection,
+  proxy: `${string}:${number}`,
+  protocol: string,
+  availability: 0 | 1,
+) {
+  await db
+    .update(proxies)
+    .set({
+      availability,
+      lastActivityDatetime: sql`SELECT now()`,
+    })
+    .where(and(eq(proxies.address, proxy), eq(proxies.protocol, protocol)))
 }
