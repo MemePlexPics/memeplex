@@ -49,12 +49,12 @@ export const ocr = async (logger: Logger) => {
         }
         throw error
       }
-      if (!texts.eng) {
+      if (!texts.eng && !payload.sourceText) {
         receiveImageFileCh.ack(msg)
         fs.unlink(payload.fileName)
         return
       }
-      const didStopWordsCheckPassed = await blackListChecker(texts.eng)
+      const didStopWordsCheckPassed = await blackListChecker([texts.eng, payload.sourceText].join(' '))
       if (didStopWordsCheckPassed) {
         const document = getNewDoc(payload, texts)
         const meme = await elastic.index({
