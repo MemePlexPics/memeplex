@@ -36,9 +36,9 @@ export const FeaturedChannelList = (props: {
       orientation={props.isAdmin ? 'vertical' : 'horizontal'}
       onChangePage={setPage}
     >
-      {request.isLoaded && !request.data?.result.length ? (
+      {request.isLoaded && !request.data?.result.length && props.isAdmin ? (
         <h3 style={{ color: 'white' }}>
-          {props.isAdmin ? 'Nothing found' : 'Make your channel the first, click on the button'}
+          Nothing found
         </h3>
       ) : request.data ? (
         request.data.result.map(channel => (
