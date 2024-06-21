@@ -6,7 +6,7 @@ import rateLimit from 'telegraf-ratelimit'
 import { MySQL } from '@telegraf/session/mysql'
 import { message } from 'telegraf/filters'
 import { getLogger, getTelegramUser } from '../../utils'
-import { EState, chatIds } from '../constants'
+import { EState } from '../constants'
 import type { TSessionInMemory, TState, TTelegrafContext, TTelegrafSession } from '../types'
 import {
   TelegrafWrapper,
@@ -43,7 +43,7 @@ import {
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import type { Logger } from 'winston'
-import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
+import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY, telegramChat } from '../../../../../constants'
 import {
   handleMemeSearchRequest,
   onBotCommandGetLatest,
@@ -200,7 +200,7 @@ export const init = async (
   })
 
   bot.on('callback_query', async ctx => {
-    if (ctx.chat?.id && ![ctx.from.id, chatIds.premoderation].includes(ctx.chat.id)) {
+    if (ctx.chat?.id && ![ctx.from.id, telegramChat.premoderation].includes(ctx.chat.id)) {
       return
     }
     await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)

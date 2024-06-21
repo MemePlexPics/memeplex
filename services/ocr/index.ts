@@ -3,9 +3,14 @@ import fs from 'fs/promises'
 import type { Connection, Channel, GetMessage } from 'amqplib'
 import amqplib from 'amqplib'
 import process from 'process'
-import { AMQP_IMAGE_FILE_CHANNEL, ELASTIC_INDEX, EMPTY_QUEUE_RETRY_DELAY } from '../../constants'
-import { getElasticClient, delay, logError, InfoMessage } from '../../utils'
-import { recogniseText, getNewDoc, blackListChecker } from './utils'
+import {
+  AMQP_IMAGE_FILE_CHANNEL,
+  ELASTIC_INDEX,
+  EMPTY_QUEUE_RETRY_DELAY,
+  telegramChat,
+} from '../../constants'
+import { getElasticClient, delay, InfoMessage, logError } from '../../utils'
+import { recogniseText, getNewDoc, blackListChecker, handleAcceptedMemeSuggestion } from './utils'
 import type { Client } from '@elastic/elasticsearch'
 import { getAmqpQueue } from '../utils'
 import { handlePublisherDistribution } from './utils'
@@ -58,6 +63,9 @@ export const ocr = async (logger: Logger) => {
         })
         try {
           await handlePublisherDistribution(document, meme._id)
+          if (document.channelName === telegramChat.memes) {
+            await handleAcceptedMemeSuggestion(document.messageId)
+          }
         } catch (error) {
           if (error instanceof Error) {
             await logError(logger, error)
