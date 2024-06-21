@@ -1,15 +1,16 @@
 import { Markup } from 'telegraf'
-import { EMemeSuggestionCallback, chatIds } from '../constants'
+import { EMemeSuggestionCallback } from '../constants'
 import type { TTelegrafContext } from '../types'
 import type { Message, Update } from 'telegraf/typings/core/types/typegram'
 import { getDbConnection } from '../../../../../utils'
 import { botMemeSuggestions } from '../../../../../db/schema'
 import { eq } from 'drizzle-orm'
+import { telegramChat } from '../../../../../constants'
 
 export const onPhotoMessage = async (
   ctx: TTelegrafContext<Update.MessageUpdate<Message.PhotoMessage>>,
 ) => {
-  const { caption, photo, media_group_id } = ctx.update.message
+  const { caption, photo, media_group_id, message_id } = ctx.update.message
   let text = caption
   if (media_group_id) {
     const mediaGroupData = ctx.sessionInMemory.suggestedMemeTextByMediaGroupId
@@ -34,6 +35,7 @@ export const onPhotoMessage = async (
   await db.insert(botMemeSuggestions).ignore().values({
     userId: ctx.from.id,
     fileId: photoEntity.file_id,
+    messageId: message_id,
     text,
   })
   const [suggestedMeme] = await db
@@ -52,7 +54,7 @@ export const onPhotoMessage = async (
     '👎 Отклонить',
     `${EMemeSuggestionCallback.DECLINE}|${suggestedMeme.id}`,
   )
-  await ctx.telegram.sendPhoto(chatIds.premoderation, photoEntity.file_id, {
+  await ctx.telegram.sendPhoto(telegramChat.premoderation, photoEntity.file_id, {
     caption: text,
     reply_markup: {
       inline_keyboard: [[approveMemeButton, approveWithoutTextMemeButton], [declineMemeButton]],

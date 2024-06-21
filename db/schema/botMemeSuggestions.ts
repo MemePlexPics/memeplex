@@ -9,4 +9,6 @@ export const botMemeSuggestions = mysqlTable('bot_meme_suggestions', {
   fileId: varchar('file_id', { length: 255 }).unique().notNull(),
   text: text('text'),
   status: varchar('status', { length: 16, enum: ['approved', 'declined'] }),
+  messageId: int('message_id').notNull(),
+  publishedId: int('published_id'),
 })

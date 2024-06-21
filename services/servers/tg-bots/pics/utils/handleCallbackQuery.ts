@@ -8,11 +8,12 @@ import {
 } from '.'
 import type { TSplitCallback, TState, TTelegrafContext } from '../types'
 import type { EKeywordAction, EMemeSuggestionCallback, callbackData } from '../constants'
-import { ECallback, ELatestAction, chatIds } from '../constants'
+import { ECallback, ELatestAction } from '../constants'
 import { isDataQuery } from '../typeguards'
 import { buyPremiumState } from '../states'
 import { onBotCommandGetLatest, onBotRecieveText } from '../handlers'
 import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
+import { telegramChat } from '../../../../../constants'
 
 export const handleCallbackQuery = async (
   ctx: TTelegrafContext<Update.CallbackQueryUpdate<CallbackQuery>>,
@@ -21,7 +22,7 @@ export const handleCallbackQuery = async (
   if (!isDataQuery(ctx.update.callback_query)) return
   const callbackQuery = ctx.update.callback_query.data
   const [firstPartCb, ...restCb] = callbackQuery.split('|')
-  if (ctx.chat?.id === chatIds.premoderation) {
+  if (ctx.chat?.id === telegramChat.premoderation) {
     if (firstPartCb === ECallback.IGNORE) {
       return
     }
