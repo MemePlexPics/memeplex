@@ -9,7 +9,7 @@
     "build:back": "npx webpack --progress",
     "build:front": "npm --prefix ./frontend run build",
     "build:all": "npm run build:back && npm run build:front",
-    "pretty": "npx prettier --write ./{db,scripts,utils,services,tests,frontend/src}",
+    "pretty": "npx prettier --write ./{db,scripts,utils,services,tests,constants,frontend/src}",
     "migrations": "npx drizzle-kit",
     "drizzle:check-api-changes": "npm run migrations up",
     "migrations:run": "npx tsx scripts/db-migrate.ts",
