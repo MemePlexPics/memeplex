@@ -41,6 +41,8 @@ declare global {
       GF_AUTH_ANONYMOUS_ENABLED?: string
       GF_AUTH_ANONYMOUS_ORG_ROLE?: string
       GF_AUTH_DISABLE_LOGIN_FORM?: string
+      TELEGRAM_CHAT_MEME_PREMODERATION: `${number}` | `@${string}`
+      TELEGRAM_CHAT_MEME_PUBLICATION: `${number}` | `@${string}`
     }
   }
 }

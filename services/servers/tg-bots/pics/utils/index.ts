@@ -24,3 +24,4 @@ export { getUnsubscriptionKeywordsByChannelId } from './getUnsubscriptionKeyword
 export { remapSetObjectValuesToArrays } from './remapSetObjectValuesToArrays'
 export { onPhotoMessage } from './onPhotoMessage'
 export { handleSuggestedMemePremoderation } from './handleSuggestedMemePremoderation'
+export { sendMessageToIds } from './sendMessageToIds'
