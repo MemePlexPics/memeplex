@@ -30,3 +30,5 @@ export const QUERY_REDUNDANT_WORDS = [
   'reels',
   'рилс',
 ]
+
+export const ADMIN_IDS = process.env.TELEGRAM_BOT_ADMIN_IDS.split(',').map(id => Number(id))

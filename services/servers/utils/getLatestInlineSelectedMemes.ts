@@ -1,7 +1,7 @@
 import type { Client } from '@elastic/elasticsearch'
 import { getDbConnection } from '../../../utils'
 import { selectLatestInlineSelectedMemes } from '../../../utils/mysql-queries'
-import { getMemesById } from './getMemesById'
+import { getMemesByIds } from './getMemesByIds'
 
 export const getLatestInlineSelectedMemes = async (
   client: Client,
@@ -14,7 +14,7 @@ export const getLatestInlineSelectedMemes = async (
     if (meme.selectedId) acc.push(meme.selectedId)
     return acc
   }, [])
-  const memeEntities = await getMemesById(client, latestMemeIds, abortController)
+  const memeEntities = await getMemesByIds(client, latestMemeIds, abortController)
 
   return memeEntities
 }

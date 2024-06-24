@@ -16,11 +16,11 @@ import type { Logger } from 'winston'
 import type { TAmqpImageDataChannelMessage } from '../types'
 
 export const downloader = async (logger: Logger) => {
-  let amqp: Connection,
-    sendImageFileCh: Channel,
-    receiveImageDataCh: Channel,
-    receiveImageDataChTimeout: (ms: number, logger: Logger, msg: GetMessage) => void,
-    receiveImageDataChClearTimeout: () => void
+  let amqp: Connection | undefined,
+    sendImageFileCh: Channel | undefined,
+    receiveImageDataCh: Channel | undefined,
+    receiveImageDataChTimeout: ((ms: number, logger: Logger, msg: GetMessage) => void) | undefined,
+    receiveImageDataChClearTimeout: (() => void) | undefined
 
   try {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -53,7 +53,7 @@ export const downloader = async (logger: Logger) => {
       receiveImageDataCh.ack(msg)
     }
   } finally {
-    receiveImageDataChClearTimeout()
+    if (receiveImageDataChClearTimeout) receiveImageDataChClearTimeout()
     if (sendImageFileCh) await sendImageFileCh.close()
     if (receiveImageDataCh) await receiveImageDataCh.close()
     if (amqp) await amqp.close()

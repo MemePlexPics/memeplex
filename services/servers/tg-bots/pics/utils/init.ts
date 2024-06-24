@@ -17,6 +17,7 @@ import {
   handleInvoiceQueue,
   handleNlpQueue,
   logUserAction,
+  onPhotoMessage,
 } from '../utils'
 import {
   addChannelState,
@@ -42,14 +43,16 @@ import {
 } from '../../../../../utils/mysql-queries'
 import { i18n } from '../i18n'
 import type { Logger } from 'winston'
-import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY } from '../../../../../constants'
+import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY, telegramChat } from '../../../../../constants'
 import {
+  handleIndexedMemeSuggestion,
   handleMemeSearchRequest,
   onBotCommandGetLatest,
   onBotCommandSetPremium,
   onBotCommandSuggestChannel,
   onInlineQuery,
 } from '../handlers'
+import { ADMIN_IDS } from '../../../../../constants/publisher'
 
 export const init = async (
   token: string,
@@ -58,17 +61,17 @@ export const init = async (
 ) => {
   const bot = new TelegrafWrapper<TTelegrafContext>(token, options)
   const elastic = await getElasticClient()
-
-  // TODO: move into ctx
-  const sessionInMemory: TSessionInMemory = {}
+  const sessionInMemory: Record<number, TSessionInMemory> = {}
 
   bot.use(async (ctx, next) => {
-    if (!ctx.logger) {
-      ctx.logger = logger
-    }
-    if (!ctx.elastic) {
-      ctx.elastic = elastic
-    }
+    ctx.logger ??= logger
+    ctx.elastic ??= elastic
+    Object.defineProperty(ctx, 'sessionInMemory', {
+      get() {
+        sessionInMemory[ctx.from.id] ??= {}
+        return sessionInMemory[ctx.from.id]
+      },
+    })
     Object.defineProperty(ctx, 'hasPremiumSubscription', {
       async get() {
         if (ctx.session.premiumUntil && ctx.session.premiumUntil > Date.now() / 1000) {
@@ -118,7 +121,10 @@ export const init = async (
       rateLimit<TTelegrafContext>({
         window: 3_000,
         limit: 3,
-        onLimitExceeded: async (ctx: TTelegrafContext) => {
+        onLimitExceeded: async (ctx, next) => {
+          if (ADMIN_IDS.includes(ctx.from.id)) {
+            return next()
+          }
           await logUserAction(ctx, { info: 'exceeded rate limit' })
           await ctx.reply(i18n['ru'].message.rateLimit())
         },
@@ -137,6 +143,9 @@ export const init = async (
   }
 
   bot.start(async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     await ctx.reply(i18n['ru'].message.start())
     await enterToState(ctx, mainState)
 
@@ -153,50 +162,60 @@ export const init = async (
   })
 
   bot.command('menu', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     const reappliableState =
       ctx.session.state === EState.MEME_SEARCH ? states[EState.MAIN] : states[ctx.session.state]
     await enterToState(ctx, reappliableState)
   })
 
   bot.command('help', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     await ctx.reply(i18n['ru'].message.help(), {
       parse_mode: 'Markdown',
     })
   })
 
-  bot.command('get_latest', ctx => onBotCommandGetLatest(ctx, true))
+  bot.command('get_latest', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandGetLatest(ctx, true)
+  })
 
-  bot.command('suggest_channel', ctx => onBotCommandSuggestChannel(ctx))
+  bot.command('suggest_channel', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandSuggestChannel(ctx)
+  })
 
-  bot.command('set_premium', onBotCommandSetPremium)
+  bot.command('set_premium', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandSetPremium(ctx)
+  })
 
   bot.on('callback_query', async ctx => {
-    try {
-      await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)
-      await ctx.answerCbQuery()
-    } catch (error) {
-      if (error instanceof InfoMessage) {
-        await logInfo(ctx.logger, error)
-      } else if (error instanceof Error) {
-        await logError(ctx.logger, error, { update: ctx.update })
-      }
+    if (ctx.chat?.id && ![ctx.from.id, telegramChat.premoderation].includes(ctx.chat.id)) {
+      return
     }
+    await handleCallbackQuery(ctx, states[ctx.session.state]?.onCallback)
+    await ctx.answerCbQuery()
   })
 
   bot.on('inline_query', async ctx => {
-    if (!sessionInMemory[ctx.inlineQuery.from.id]) {
-      sessionInMemory[ctx.inlineQuery.from.id] = {}
-    }
     const page = Number(ctx.inlineQuery.offset) || 1
-    if (sessionInMemory[ctx.inlineQuery.from.id]?.debounce) {
-      clearTimeout(sessionInMemory[ctx.inlineQuery.from.id].debounce)
+    if (ctx.sessionInMemory.debounce) {
+      clearTimeout(ctx.sessionInMemory.debounce)
     }
     if (page === 1) {
-      sessionInMemory[ctx.inlineQuery.from.id].debounce = setTimeout(
-        () => onInlineQuery(ctx, page, sessionInMemory),
-        500,
-      )
-    } else await onInlineQuery(ctx, page, sessionInMemory)
+      ctx.sessionInMemory.debounce = setTimeout(() => onInlineQuery(ctx, page), 500)
+    } else await onInlineQuery(ctx, page)
   })
 
   bot.on('chosen_inline_result', async ctx => {
@@ -216,7 +235,22 @@ export const init = async (
     })
   })
 
+  bot.on(message('photo'), async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onPhotoMessage(ctx)
+    await ctx.reply(i18n['ru'].message.memeSuggested(), {
+      reply_parameters: {
+        message_id: ctx.update.message.message_id,
+      },
+    })
+  })
+
   bot.on(message('text'), async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
     const text = ctx.update.message.text
     const state = states[ctx.session.state]
     if (state.menu) {
@@ -235,6 +269,10 @@ export const init = async (
   })
 
   bot.catch(async (err, ctx) => {
+    if (err instanceof InfoMessage) {
+      await logInfo(ctx.logger, err)
+      return
+    }
     const error =
       err instanceof Error
         ? err
@@ -268,6 +306,7 @@ export const init = async (
     catchDelayMs: LOOP_RETRYING_DELAY,
     abortSignal: bot.abortController.signal,
   })
+  handleIndexedMemeSuggestion(bot)
 
   return bot
 }

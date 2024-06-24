@@ -3,7 +3,7 @@ import 'dotenv/config'
 import type { Channel, Connection } from 'amqplib'
 import amqplib from 'amqplib'
 import { AMQP_IMAGE_DATA_CHANNEL } from '../../constants'
-import { getDbConnection, getMysqlClient } from '../../utils'
+import { getDbConnection } from '../../utils'
 import { selectAvailableChannels, updateChannelTimestamp } from '../../utils/mysql-queries'
 import process from 'process'
 import { getMessagesAfter } from './utils'
@@ -23,16 +23,12 @@ export const tgParser = async (logger: Logger) => {
     for (const { name, timestamp, withText } of channels) {
       for await (const message of getMessagesAfter(name, timestamp, withText, logger)) {
         logger.verbose(`new post image: ${JSON.stringify(message)}`)
-        const imageData = Buffer.from(
-          JSON.stringify({
-            ...message,
-          }),
-        )
+        const imageData = Buffer.from(JSON.stringify(message))
         sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true })
         if (message.date > timestamp) {
-          const mysql = await getMysqlClient()
-          await updateChannelTimestamp(mysql, name, message.date)
-          await mysql.end()
+          const db = await getDbConnection()
+          await updateChannelTimestamp(db, name, message.date)
+          await db.close()
         }
       }
     }

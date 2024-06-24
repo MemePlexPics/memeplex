@@ -7,3 +7,4 @@ export { TPublisherDistributionQueueMsg } from './TPublisherDistributionQueueMsg
 export { TPrePublisherDistributionQueue } from './TPrePublisherDistributionQueue'
 export { TAmqpNLPToPublisherChannelMessage } from './TAmqpNLPToPublisherChannelMessage'
 export { TAmqpPublisherToCryptoPayChannelMessage } from './TAmqpPublisherToCryptoPayChannelMessage'
+export { TAmqpIndexedSuggestedMemeToBotChannelMessage } from './TAmqpIndexedSuggestedMemeToBotChannelMessage'

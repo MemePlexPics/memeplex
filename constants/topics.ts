@@ -1,5 +1,5 @@
 export const topics: Record<string, string[]> = {
-  'Отношения': [
+  Отношения: [
     '14 февраля',
     'boys',
     'date idea',
@@ -124,7 +124,7 @@ export const topics: Record<string, string[]> = {
     'файл',
     'хакер',
   ],
-  'Общество': [
+  Общество: [
     'будни',
     'выходной',
     'День рождения',
@@ -175,7 +175,7 @@ export const topics: Record<string, string[]> = {
     'эмоции',
     'Ютуб',
   ],
-  'Крипта': [
+  Крипта: [
     'Aave',
     'Algorand',
     'Binance',
@@ -244,5 +244,5 @@ export const topics: Record<string, string[]> = {
     'фьючерс',
     'экономика',
     'экономист',
-  ]
+  ],
 }

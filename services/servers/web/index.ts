@@ -1,3 +1,4 @@
+import type { ErrorRequestHandler } from 'express'
 import express from 'express'
 import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
@@ -26,7 +27,8 @@ import {
 import { searchMemes, getLatestMemes, getMeme, downloadTelegramChannelAvatar } from '../utils'
 import winston from 'winston'
 import { adminRouter } from './routers'
-import type { TRequestHandler } from './routers/admin/types'
+import type { TRequestHandler, TResponseLocals } from './routers/admin/types'
+import type { ParamsDictionary, Query } from 'express-serve-static-core'
 
 const app = express()
 
@@ -75,11 +77,19 @@ const handle404: TRequestHandler = async (req, res) => {
   return res.status(404).send()
 }
 
-app.use(async (err, req, res, next) => {
+const handleError: ErrorRequestHandler<
+ParamsDictionary,
+unknown,
+unknown,
+Query,
+TResponseLocals
+> = async (err, req, res, next) => {
   if (err.message === '404') return handle404(req, res, next)
   await handleMethodError(err)
   return res.status(500).send()
-})
+}
+
+app.use(handleError)
 
 app.get('/search', async (req, res) => {
   if (typeof req.query.query !== 'string' || typeof req.query.page !== 'string')
@@ -134,6 +144,7 @@ app.get('/getMeme', async (req, res) => {
     const meme = await getMeme(client, id)
     return res.send(meme)
   } catch (e) {
+    // @ts-expect-error 'e' is of type 'unknown'
     if (e.meta.statusCode === 404) {
       const error = new Error()
       error.message = `Meme with id "${id}" not found`

@@ -9,5 +9,9 @@ export const getMeme = async (client: Client, id: string) => {
     id,
   })
 
+  if (!elasticRes._source) {
+    throw new Error(`There is no meme «${id}» in ${ELASTIC_INDEX}`)
+  }
+
   return getMemeResponseEntity(id, elasticRes._source)
 }

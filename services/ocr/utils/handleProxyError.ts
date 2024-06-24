@@ -1,8 +1,12 @@
 import type { AxiosError } from 'axios'
-import { InfoMessage, getMysqlClient } from '../../../utils'
+import { InfoMessage, getDbConnection } from '../../../utils'
 import { updateProxyAvailability } from '../../../utils/mysql-queries'
 
-export const handleProxyError = async (error: AxiosError, proxy: string, protocol: string) => {
+export const handleProxyError = async (
+  error: AxiosError,
+  proxy: `${string}:${number}`,
+  protocol: string,
+) => {
   if (
     error.name === 'AxiosError' ||
     error.code === 'ECONNREFUSED' ||
@@ -18,9 +22,9 @@ export const handleProxyError = async (error: AxiosError, proxy: string, protoco
     error.message.startsWith('read ECONNRESET') || // the same as above
     error.message.startsWith('connect EHOSTUNREACH') // ...
   ) {
-    const mysql = await getMysqlClient()
-    await updateProxyAvailability(mysql, proxy, protocol, false)
-    await mysql.end()
+    const db = await getDbConnection()
+    await updateProxyAvailability(db, proxy, protocol, 0)
+    await db.close()
     throw new InfoMessage(`Proxy error:, «${error.code}» ${error.name} ${error.message}`)
   }
 }

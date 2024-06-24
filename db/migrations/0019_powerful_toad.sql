@@ -1,0 +1,1 @@
+ALTER TABLE `bot_meme_suggestions` ADD `status` varchar(16);

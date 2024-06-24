@@ -4,7 +4,9 @@ export const getNewDoc = (
   payload: TAmqpImageFileChannelMessage,
   texts: Record<'eng', string>,
 ): TMemeEntity => {
-  const eng = payload.sourceText ? `${texts.eng}\n${payload.sourceText}`.slice(0, 1024) : texts.eng
+  const eng = payload.sourceText
+    ? [payload.sourceText, texts.eng].join('\n').slice(0, 1024)
+    : texts.eng
   const doc = {
     timestamp: Math.floor(Date.now() / 1000),
     fileName: payload.fileName,

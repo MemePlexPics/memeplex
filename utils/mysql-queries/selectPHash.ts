@@ -1,11 +1,8 @@
-export async function selectPHash(mysql, pHash) {
-  const [results] = await mysql.query(
-    `
-        SELECT phash FROM phashes
-        WHERE phash = ?
-        LIMIT 1
-    `,
-    pHash,
-  )
-  return results?.[0]
+import { eq } from 'drizzle-orm'
+import { phashes } from '../../db/schema'
+import type { TDbConnection } from '../types'
+
+export async function selectPHash(db: TDbConnection, pHash: string) {
+  const [result] = await db.select().from(phashes).where(eq(phashes.phash, pHash))
+  return result
 }

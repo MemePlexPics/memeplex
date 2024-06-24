@@ -86,8 +86,7 @@
                 "value": 80
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": []
       },
@@ -190,8 +189,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": []
       },
@@ -251,6 +249,7 @@
                 "cryptopay_to_publisher",
                 "image_data",
                 "image_files",
+                "indexed_suggested_meme_to_bot",
                 "memes_to_nlp",
                 "nlp_to_publisher",
                 "publisher_distibution",
@@ -278,8 +277,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": []
       },
@@ -304,7 +302,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "alias": "",
@@ -350,8 +348,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": []
       },
@@ -378,7 +375,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -460,8 +457,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": [
           {
@@ -504,7 +500,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -512,7 +508,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT COUNT(*) as Active FROM MadelineProto.channels WHERE availability = 1",
+          "rawSql": "SELECT COUNT(*) as Active FROM MadelineProto.channels WHERE status is NULL",
           "refId": "A",
           "sql": {
             "columns": [
@@ -611,8 +607,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": []
       },
@@ -638,7 +633,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -703,8 +698,7 @@
                 "value": 80
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": [
           {
@@ -789,7 +783,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "datasource": "Loki",
@@ -883,8 +877,7 @@
                 "value": 80
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": [
           {
@@ -946,7 +939,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -1001,8 +994,7 @@
                 "value": null
               }
             ]
-          },
-          "unitScale": true
+          }
         },
         "overrides": [
           {
@@ -1060,7 +1052,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "10.3.3",
+      "pluginVersion": "10.4.2",
       "targets": [
         {
           "dataset": "MadelineProto",
@@ -1194,8 +1186,7 @@
                     "value": 85
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": []
           },
@@ -1222,7 +1213,7 @@
             "textMode": "auto",
             "wideLayout": true
           },
-          "pluginVersion": "10.3.3",
+          "pluginVersion": "10.4.2",
           "targets": [
             {
               "dataset": "MadelineProto",
@@ -1312,7 +1303,8 @@
                 "lineWidth": 1,
                 "pointSize": 5,
                 "scaleDistribution": {
-                  "type": "linear"
+                  "log": 2,
+                  "type": "log"
                 },
                 "showPoints": "auto",
                 "spanNulls": false,
@@ -1333,8 +1325,7 @@
                     "value": null
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": []
           },
@@ -1524,7 +1515,8 @@
                 "lineWidth": 1,
                 "pointSize": 5,
                 "scaleDistribution": {
-                  "type": "linear"
+                  "log": 2,
+                  "type": "log"
                 },
                 "showPoints": "auto",
                 "spanNulls": false,
@@ -1545,8 +1537,7 @@
                     "value": null
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": []
           },
@@ -1736,8 +1727,7 @@
                     "value": 80
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": [
               {
@@ -1894,7 +1884,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.3",
+          "pluginVersion": "10.4.2",
           "targets": [
             {
               "datasource": "Loki",
@@ -1983,8 +1973,7 @@
                     "value": 80
                   }
                 ]
-              },
-              "unitScale": true
+              }
             },
             "overrides": [
               {
@@ -2141,7 +2130,7 @@
             "showHeader": true,
             "sortBy": []
           },
-          "pluginVersion": "10.3.3",
+          "pluginVersion": "10.4.2",
           "targets": [
             {
               "datasource": "Loki",
@@ -4531,6 +4520,6 @@
   "timezone": "",
   "title": "MemeSearch",
   "uid": "e5951ce2-e4de-403b-bf3c-43b3af09f474",
-  "version": 45,
+  "version": 81,
   "weekStart": ""
 }

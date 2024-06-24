@@ -128,6 +128,9 @@ ${keywords}`,
     channelSubscribersLimitForFreePlan: (channel: string) => `
 Ваш канал @${channel} достиг ${MAX_FREE_USER_CHANNEL_SUBS} подписчиков.
 Получите премиум, чтобы использовать бота в больших каналах.`,
+    memeSuggested: () => `🙏 Мем отправлен на модерацию. Спасибо!`,
+    memeSuggestionIndexed: () =>
+      `😎 Добавленный вами мем прошёл модерацию! Теперь он доступен для поиска.`,
     nothingFound: () => 'Ничего не найдено',
   },
   button: {

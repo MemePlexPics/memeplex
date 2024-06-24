@@ -47,7 +47,9 @@ const start = async () => {
   // bot.telegram.setMyDescription(`
   //   Это description
   // `)
-  bot.telegram.setMyShortDescription(`MemePlex Bot - Поиск мемов по тексту с картинки`)
+  bot.telegram.setMyShortDescription(`
+Этот бот ищет мемы по тексту. Работает в чатах: введите @MemePlexBot и текст.
+Анонсы: @memeplex_pics`)
   logger.info({ info: 'Telegram bot started' })
 
   process.once('SIGINT', async () => {

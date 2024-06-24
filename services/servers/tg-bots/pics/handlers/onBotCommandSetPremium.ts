@@ -7,9 +7,9 @@ import {
   selectBotUserByUsername,
   upsertBotPremiumUser,
 } from '../../../../../utils/mysql-queries'
+import { ADMIN_IDS } from '../../../../../constants/publisher'
 
 export const onBotCommandSetPremium = async (ctx: TTelegrafContext & CommandContextExtn) => {
-  const ADMIN_IDS = process.env.TELEGRAM_BOT_ADMIN_IDS.split(',').map(id => Number(id))
   if (!ADMIN_IDS.includes(ctx.from.id)) {
     return
   }
