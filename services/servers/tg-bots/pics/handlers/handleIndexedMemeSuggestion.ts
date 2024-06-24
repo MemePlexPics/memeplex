@@ -36,5 +36,6 @@ export const handleIndexedMemeSuggestion = async (bot: Telegraf<TTelegrafContext
         },
       },
     )
+    indexedMemeSuggestionCh.ack(msg)
   })
 }

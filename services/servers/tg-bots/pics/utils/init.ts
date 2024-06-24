@@ -45,6 +45,7 @@ import { i18n } from '../i18n'
 import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY, telegramChat } from '../../../../../constants'
 import {
+  handleIndexedMemeSuggestion,
   handleMemeSearchRequest,
   onBotCommandGetLatest,
   onBotCommandSetPremium,
@@ -305,6 +306,7 @@ export const init = async (
     catchDelayMs: LOOP_RETRYING_DELAY,
     abortSignal: bot.abortController.signal,
   })
+  handleIndexedMemeSuggestion(bot)
 
   return bot
 }
