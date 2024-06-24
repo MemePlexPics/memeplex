@@ -54,7 +54,9 @@ export const ocr = async (logger: Logger) => {
         fs.unlink(payload.fileName)
         return
       }
-      const didStopWordsCheckPassed = await blackListChecker([texts.eng, payload.sourceText].join(' '))
+      const didStopWordsCheckPassed = await blackListChecker(
+        [texts.eng, payload.sourceText].join(' '),
+      )
       if (didStopWordsCheckPassed) {
         const document = getNewDoc(payload, texts)
         const meme = await elastic.index({
