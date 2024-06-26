@@ -8,6 +8,7 @@ import {
   upsertBotPremiumUser,
 } from '../../../../../utils/mysql-queries'
 import { ADMIN_IDS } from '../../../../../constants/publisher'
+import { logUserAction } from '../utils'
 
 export const onBotCommandSetPremium = async (ctx: TTelegrafContext & CommandContextExtn) => {
   if (!ADMIN_IDS.includes(ctx.from.id)) {
@@ -48,6 +49,11 @@ export const onBotCommandSetPremium = async (ctx: TTelegrafContext & CommandCont
   }
   await db.close()
   await ctx.reply(`It's done!`)
+  await logUserAction(ctx, {
+    action: 'set_premium',
+    date,
+    users: JSON.stringify(lines),
+  })
   if (notFoundedUsers.length !== 0) {
     await ctx.reply(`There are users not found in bot_users table:\n${notFoundedUsers.join('\n')}`)
   }
