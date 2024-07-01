@@ -8,7 +8,7 @@ import {
   AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
   EMPTY_QUEUE_RETRY_DELAY,
 } from '../../../../../constants'
-import { delay, getDbConnection, logError } from '../../../../../utils'
+import { delay, getDbConnection, logError, logInfo } from '../../../../../utils'
 import type { Logger } from 'winston'
 import fs from 'fs/promises'
 import {
@@ -191,6 +191,11 @@ export const handleDistributionQueue = async (
         distributionCh.ack(msg)
       } catch (e) {
         if (e instanceof Error) {
+          if (e.message === '403: Forbidden: bot was blocked by the user') {
+            await logInfo(logger, e)
+            distributionCh.ack(msg)
+            continue
+          }
           await logError(logger, e)
         }
         distributionCh.nack(msg)
