@@ -100,7 +100,7 @@ services:
     env_file:
       - ./.env
     environment:
-      AMQP_ENDPOINT: 'amqp://rabbitmq:5672'
+      # AMQP_ENDPOINT: ${AMQP_ENDPOINT}
       PYTHONUNBUFFERED: 1
       NLTK_DATA: /app/nltk_data
     build:

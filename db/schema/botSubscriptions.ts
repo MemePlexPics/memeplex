@@ -1,4 +1,4 @@
-import { mysqlTable, int, unique, foreignKey, bigint } from 'drizzle-orm/mysql-core'
+import { mysqlTable, int, foreignKey, unique } from 'drizzle-orm/mysql-core'
 import { botChannels, botKeywords } from '.'
 
 export const botSubscriptions = mysqlTable(
@@ -6,7 +6,7 @@ export const botSubscriptions = mysqlTable(
   {
     id: int('id').autoincrement().primaryKey(),
     keywordId: int('keyword_id').notNull(),
-    channelId: bigint('channel_id', { mode: 'number' }).notNull(),
+    channelId: int('channel_id').notNull(),
   },
   table => ({
     unique: unique('subscription_keyword_id-channel_id').on(table.keywordId, table.channelId),

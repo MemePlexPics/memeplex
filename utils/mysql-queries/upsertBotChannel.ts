@@ -1,16 +1,15 @@
 import { botChannels } from '../../db/schema'
 import type { TDbConnection } from '../types'
 
-export const upsertBotChannel = async (
+export const upsertBotChannel = (
   db: TDbConnection,
   values: typeof botChannels.$inferInsert,
 ) => {
-  await db
+  return db
     .insert(botChannels)
     .values(values)
     .onDuplicateKeyUpdate({
       set: {
-        userId: values.userId,
         username: values.username,
       },
     })

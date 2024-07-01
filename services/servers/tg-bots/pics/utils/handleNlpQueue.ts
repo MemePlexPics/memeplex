@@ -178,7 +178,7 @@ export const handleNlpQueue = async (logger: Logger, abortSignal: AbortSignal) =
       receiveNlpMessageCh.ack(msg)
     }
   } finally {
-    receiveNlpMessageClearTimeout?.()
+    if (receiveNlpMessageClearTimeout) receiveNlpMessageClearTimeout()
     if (receiveNlpMessageCh) await receiveNlpMessageCh.close()
     if (sendToPublisherDistributionCh) await sendToPublisherDistributionCh.close()
     if (amqp) await amqp.close()

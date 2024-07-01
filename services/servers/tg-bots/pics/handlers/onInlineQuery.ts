@@ -9,6 +9,7 @@ import { getDbConnection } from '../../../../../utils'
 import { insertBotInlineAction, upsertBotInlineUser } from '../../../../../utils/mysql-queries'
 import { getTelegramUser } from '../../utils'
 import type { Update } from 'telegraf/typings/core/types/typegram'
+import { logUserAction } from '../utils'
 
 // TODO: -> handleInlineQuery
 export const onInlineQuery = async (
@@ -32,6 +33,12 @@ export const onInlineQuery = async (
     chatType: ctx.inlineQuery.chat_type,
   })
   await db.close()
+  await logUserAction(ctx, {
+    action: 'inline_search',
+    query: query,
+    page: page,
+    chatType: ctx.inlineQuery.chat_type || '',
+  })
 
   const oldAbortController = ctx.sessionInMemory.abortController
   if (oldAbortController) {

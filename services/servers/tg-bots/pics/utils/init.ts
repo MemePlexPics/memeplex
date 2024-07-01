@@ -231,7 +231,7 @@ export const init = async (
     await logUserAction(ctx, {
       action: 'inline_select',
       query,
-      id: result_id,
+      selected_id: result_id,
     })
   })
 

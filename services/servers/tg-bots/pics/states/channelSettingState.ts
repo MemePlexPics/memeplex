@@ -19,7 +19,7 @@ export const channelSettingState: TState = {
       throw new Error(`ctx.session.channel is undefined in channelSettingState`)
     }
     const hasPremiumSubscription = await ctx.hasPremiumSubscription
-    const isChannel = ctx.session.channel.id !== ctx.from.id
+    const isChannel = ctx.session.channel.telegramId !== ctx.from.id
     const db = await getDbConnection()
     await db.close()
     const editKeywordsButton: TMenuButton = [
@@ -79,7 +79,7 @@ export const channelSettingState: TState = {
       buttons.push([editTopicsButton])
       buttons.push([editKeywordsButton])
     }
-    if (ctx.session.channel.id !== ctx.from?.id) {
+    if (ctx.session.channel.telegramId !== ctx.from?.id) {
       buttons.push([buyPremiumButton, unlinkChannelButton])
     } else {
       buttons.push([buyPremiumButton])
@@ -93,7 +93,6 @@ export const channelSettingState: TState = {
   onCallback: async (ctx, callback) => {
     if (callback === 'unlink') {
       await onClickDeleteChannel(ctx)
-      // await ctx.deleteMessage()
       ctx.session.channel = undefined
       await ctx.reply(i18n['ru'].message.youCanDemoteBotFromAdmin())
       await enterToState(ctx, mainState)

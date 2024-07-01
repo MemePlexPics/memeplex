@@ -3,8 +3,8 @@ import type { TTelegrafContext } from '../types'
 
 export const logUserAction = async (
   ctx: TTelegrafContext,
-  logEntity: Record<string, string | number>,
+  logEntity: Omit<Record<string, string | number>, 'id' | 'user'>,
 ) => {
   const { id, user } = getTelegramUser(ctx.from)
-  ctx.logger.info({ id, user, state: ctx.session?.state, ...logEntity })
+  ctx.logger.info({ state: ctx.session?.state, ...logEntity, id, user })
 }

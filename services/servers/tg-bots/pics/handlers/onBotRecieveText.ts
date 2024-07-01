@@ -10,6 +10,7 @@ import { i18n } from '../i18n'
 import type { TTelegrafContext } from '../types'
 import { insertBotAction, upsertBotUser } from '../../../../../utils/mysql-queries'
 import { ECallback } from '../constants'
+import { logUserAction } from '../utils'
 
 export const onBotRecieveText = async (ctx: TTelegrafContext, query: string) => {
   const page = ctx.session.search.nextPage || 1
@@ -27,6 +28,11 @@ export const onBotRecieveText = async (ctx: TTelegrafContext, query: string) => 
     page: page + '',
   })
   await db.close()
+  await logUserAction(ctx, {
+    action: 'search',
+    query: query,
+    page: page,
+  })
   const response = await searchMemes(ctx.elastic, query, page, TG_BOT_PAGE_SIZE)
 
   if (response.totalPages === 0) {

@@ -115,7 +115,7 @@ export const keywordSettingsState: TState = {
       return false
     }
     const text = `${
-      ctx.session.channel?.id === ctx.from.id
+      ctx.session.channel?.telegramId === ctx.from.id
         ? i18n['ru'].message.unsubscribeFromKeywords()
         : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
     }`

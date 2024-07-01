@@ -1,6 +1,7 @@
 import type { Telegraf } from 'telegraf'
 import type { TTelegrafContext } from '../types'
 import type { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
+import { delay } from '../../../../../utils'
 
 export const sendMessageToIds = async (
   bot: Telegraf<TTelegrafContext>,
@@ -9,9 +10,10 @@ export const sendMessageToIds = async (
   options?: ExtraReplyMessage,
 ) => {
   const failed = []
-  for (const id in ids) {
+  for (const id of ids) {
     try {
       await bot.telegram.sendMessage(id, text, options)
+      await delay(50)
     } catch (error) {
       if (error instanceof Error) {
         failed.push({

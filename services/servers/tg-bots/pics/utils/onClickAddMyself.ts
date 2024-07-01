@@ -5,15 +5,10 @@ import type { TTelegrafContext } from '../types'
 
 export const onClickAddMyself = async (ctx: TTelegrafContext) => {
   const username = getTelegramUser(ctx.from, '')
-  ctx.session.channel = {
-    name: username.user,
-    id: ctx.from.id,
-    type: 'private',
-  }
   const db = await getDbConnection()
   const timestamp = Date.now() / 1000
-  await upsertBotChannel(db, {
-    id: ctx.from.id,
+  const [channelInDb] = await upsertBotChannel(db, {
+    telegramId: ctx.from.id,
     userId: ctx.from.id,
     username: username.user,
     subscribers: 0,
@@ -21,4 +16,10 @@ export const onClickAddMyself = async (ctx: TTelegrafContext) => {
     timestamp,
   })
   await db.close()
+  ctx.session.channel = {
+    id: channelInDb.insertId,
+    name: username.user,
+    telegramId: ctx.from.id,
+    type: 'private',
+  }
 }

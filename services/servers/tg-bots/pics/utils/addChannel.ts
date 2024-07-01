@@ -1,5 +1,5 @@
 import type { Chat } from 'telegraf/typings/core/types/typegram'
-import { enterToState, logUserAction, onClickDeleteChannel } from '.'
+import { enterToState, logUserAction } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { selectBotChannelById, upsertBotChannel } from '../../../../../utils/mysql-queries'
 import { channelSettingState } from '../states'
@@ -79,37 +79,35 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
     })
     return
   }
-  const subscribers = await ctx.telegram.getChatMembersCount(`@${channel}`)
-  if (chat) {
-    ctx.session.channel = {
-      id: chat.id,
-      name: channel,
-      type: chat.type,
-    }
 
-    const db = await getDbConnection()
-    const [channelInDb] = await selectBotChannelById(db, chat.id)
-    if (channelInDb && channelInDb.userId === ctx.from.id) {
-      await ctx.reply(i18n['ru'].message.channelAlredyAdded())
-      return
-    }
-    await onClickDeleteChannel(ctx)
-    const timestamp = Date.now() / 1000
-    await upsertBotChannel(db, {
-      id: chat.id,
-      userId: ctx.from.id,
-      username: channel,
-      subscribers,
-      type: chat.type,
-      timestamp,
-    })
-    await db.close()
-    await ctx.reply(i18n['ru'].message.addedChannel(channel))
-    await logUserAction(ctx, {
-      info: `Added`,
-      channel,
-    })
-    await enterToState(ctx, channelSettingState)
+  const subscribers = await ctx.telegram.getChatMembersCount(`@${channel}`)
+  const db = await getDbConnection()
+  const [channelInDb] = await selectBotChannelById(db, chat.id)
+  if (channelInDb && channelInDb.userId === ctx.from.id) {
+    await ctx.reply(i18n['ru'].message.channelAlredyAdded())
     return
   }
+  const timestamp = Date.now() / 1000
+  const [newChannelInDb] = await upsertBotChannel(db, {
+    telegramId: chat.id,
+    userId: ctx.from.id,
+    username: channel,
+    subscribers,
+    type: chat.type,
+    timestamp,
+  })
+  await db.close()
+  ctx.session.channel = {
+    id: newChannelInDb.insertId,
+    telegramId: chat.id,
+    name: channel,
+    type: chat.type,
+  }
+  await ctx.reply(i18n['ru'].message.addedChannel(channel))
+  await logUserAction(ctx, {
+    info: `Added`,
+    channel,
+  })
+  await enterToState(ctx, channelSettingState)
+  return
 }

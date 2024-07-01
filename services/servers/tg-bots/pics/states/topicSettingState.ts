@@ -33,7 +33,7 @@ export const topicSettingState: TState = {
     const text = `
 ${i18n['ru'].message.topicDescription()}
 ${
-  ctx.session.channel.id === ctx.from.id
+  ctx.session.channel.telegramId === ctx.from.id
     ? i18n['ru'].message.youEditingSubscriptionsForUser()
     : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel.name)
 }`

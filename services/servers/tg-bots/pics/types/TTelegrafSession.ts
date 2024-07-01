@@ -3,8 +3,9 @@ import type { EState } from '../constants'
 
 export type TTelegrafSession = {
   channel?: {
-    name: string
     id: number
+    telegramId: number
+    name: string
     type: ChatFromGetChat['type']
   }
   state: EState
