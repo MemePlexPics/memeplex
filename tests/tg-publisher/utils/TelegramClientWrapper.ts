@@ -1,12 +1,13 @@
-import {
+import type {
   CallbackQueryRequest,
   ClientOptions,
   CommandOptions,
   DeepPartial,
-  MessageOptions,
+  MessageOptions} from '@vishtar/telegram-test-api/lib/modules/telegramClient'
+import {
   TelegramClient,
 } from '@vishtar/telegram-test-api/lib/modules/telegramClient'
-import { GetUpdatesResponse } from '@vishtar/telegram-test-api/lib/routes/client/getUpdates'
+import type { GetUpdatesResponse } from '@vishtar/telegram-test-api/lib/routes/client/getUpdates'
 
 export class TelegramClientWrapper extends TelegramClient {
   public latestUpdates?: GetUpdatesResponse
