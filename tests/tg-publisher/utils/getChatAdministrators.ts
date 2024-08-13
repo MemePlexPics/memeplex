@@ -1,5 +1,5 @@
 import { handle } from '@vishtar/telegram-test-api/lib/routes/bot/utils'
-import { TExpressRoute } from '../types'
+import type { TExpressRoute } from '../types'
 
 export const getChatAdministrators: TExpressRoute = (app, telegramServer) => {
   handle(app, '/bot:token/getChatAdministrators', (req, res, _next) => {
