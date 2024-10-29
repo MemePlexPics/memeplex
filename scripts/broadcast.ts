@@ -2,7 +2,8 @@ import process from 'process'
 import 'dotenv/config'
 import { init, sendMessageToIds } from '../services/servers/tg-bots/pics/utils'
 import { getLogger } from '../services/servers/tg-bots/utils'
-import { getDbConnection, selectAllBotUsers } from '../utils/mysql-queries'
+import { selectAllBotUsers } from '../utils/mysql-queries'
+import { getDbConnection } from '../utils'
 
 const start = async () => {
   const db = await getDbConnection();
