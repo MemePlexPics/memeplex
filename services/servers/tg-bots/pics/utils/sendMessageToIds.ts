@@ -9,7 +9,7 @@ export const sendMessageToIds = async (
   options?: ExtraReplyMessage,
 ) => {
   const failed = []
-  for (const id in ids) {
+  for (const id of ids) {
     console.log('trying ', id);
     try {
       await bot.telegram.sendMessage(id, text, options)
