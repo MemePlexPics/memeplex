@@ -10,9 +10,11 @@ export const sendMessageToIds = async (
 ) => {
   const failed = []
   for (const id in ids) {
+    console.log('trying ', id);
     try {
       await bot.telegram.sendMessage(id, text, options)
     } catch (error) {
+      console.log('failed', id, error);
       if (error instanceof Error) {
         failed.push({
           id,
