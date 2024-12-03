@@ -192,7 +192,6 @@ export const handleDistributionQueue = async (
       } catch (e) {
         if (e instanceof Error) {
           if (e.message.includes('403')) {
-            await logInfo(logger, e)
             distributionCh.ack(msg)
             continue
           }
