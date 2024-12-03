@@ -198,7 +198,7 @@ export const handleDistributionQueue = async (
           }
           await logError(logger, e)
         }
-        distributionCh.nack(msg)
+        distributionCh.ack(msg)
         await delay(1000)
       }
     }
