@@ -191,14 +191,14 @@ export const handleDistributionQueue = async (
         distributionCh.ack(msg)
       } catch (e) {
         if (e instanceof Error) {
-          if (e.message === '403: Forbidden: bot was blocked by the user') {
+          if (e.message.includes('403')) {
             await logInfo(logger, e)
             distributionCh.ack(msg)
             continue
           }
           await logError(logger, e)
         }
-        distributionCh.ack(msg)
+        distributionCh.nack(msg)
         await delay(1000)
       }
     }
