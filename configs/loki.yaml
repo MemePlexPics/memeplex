@@ -27,6 +27,7 @@ schema_config:
 limits_config:
   split_queries_by_interval: 24h
   max_query_parallelism: 100
+  allow_structured_metadata: false
 
 query_scheduler:
   max_outstanding_requests_per_tenant: 4096
