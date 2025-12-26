@@ -15,7 +15,7 @@ services:
       # cluster.routing.allocation.disk.threshold_enabled: false
     mem_limit: 10GB
     ports:
-      - 9200:9200
+      - 127.0.0.1:9200:9200
     volumes:
       - ./data/elastic:/usr/share/elasticsearch/data
       - ./backup/elastic/:/usr/share/elasticsearch/backup/elastic/
@@ -27,7 +27,7 @@ services:
     container_name: memesearch-rabbitmq
     restart: unless-stopped
     ports:
-      - 5672:5672
+      - 127.0.0.1:5672:5672
     volumes:
       - ./data/rabbitmq:/var/lib/rabbitmq/mnesia
 
@@ -37,7 +37,7 @@ services:
     hostname: loki
     restart: unless-stopped
     ports:
-      - 3100:3100
+      - 127.0.0.1:3100:3100
     command: -config.file=/etc/loki/local-config.yaml
     volumes:
       - ./configs/loki.yaml:/etc/loki/local-config.yaml
@@ -64,7 +64,7 @@ services:
     hostname: grafana
     restart: unless-stopped
     ports:
-      - 3001:3000
+      - 127.0.0.1:3001:3000
     environment:
       ELASTIC_USERNAME: ${ELASTIC_USERNAME}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
