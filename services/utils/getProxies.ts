@@ -19,7 +19,8 @@ export const getProxies = async () => {
     if (!proxiesByProtocol[protocol]) proxiesByProtocol[protocol] = new Set()
     for (const proxyList of proxyLists) {
       const proxies = await getProxyList(proxyList)
-      if (proxies === null) return
+      // A single dead source must not discard the proxies gathered from the others.
+      if (proxies === null) continue
       const matches = proxies.match(regex)
       matches?.forEach(proxy => proxiesByProtocol[protocol].add(proxy))
     }

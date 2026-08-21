@@ -39,9 +39,13 @@ export const checkProxies = async (logger: Logger) => {
 
       if (action === 'add') {
         const { proxy } = payload
-        const db = await getDbConnection()
-        await handleAddingProxy(db, proxy, ipWithoutProxy, logger)
-        await db.close()
+        if (typeof proxy?.address === 'string') {
+          const db = await getDbConnection()
+          await handleAddingProxy(db, proxy, ipWithoutProxy, logger)
+          await db.close()
+        } else {
+          logger.warn(`skipping malformed proxy message: ${msg.content.toString()}`)
+        }
       }
       checkProxyCh.ack(msg)
     }

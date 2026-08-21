@@ -31,7 +31,12 @@ export const findNewProxies = async (logger: Logger) => {
         continue
       }
 
-      const proxyData = Buffer.from(JSON.stringify({ action: 'add', proxy }))
+      const proxyData = Buffer.from(
+        JSON.stringify({
+          action: 'add',
+          proxy: { address: proxyString, protocol: proxy.protocol },
+        }),
+      )
       checkProxyCh.sendToQueue(AMQP_CHECK_PROXY_CHANNEL, proxyData, {
         persistent: true,
       })
