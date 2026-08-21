@@ -1,6 +1,6 @@
 services:
   elastic:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.19.20
     container_name: memesearch-elastic
     restart: unless-stopped
     environment:
@@ -22,7 +22,7 @@ services:
       - ./certs:/usr/share/elasticsearch/config/certs
 
   rabbitmq:
-    image: rabbitmq:3
+    image: rabbitmq:4.3.5
     hostname: rabbitmq
     container_name: memesearch-rabbitmq
     restart: unless-stopped
@@ -32,7 +32,7 @@ services:
       - ./data/rabbitmq:/var/lib/rabbitmq/mnesia
 
   loki:
-    image: grafana/loki
+    image: grafana/loki:3.7.6
     container_name: loki
     hostname: loki
     restart: unless-stopped
@@ -43,15 +43,20 @@ services:
       - ./configs/loki.yaml:/etc/loki/local-config.yaml
       - ./data/loki/chunks:/loki/chunks
 
-  promtail:
-    image: grafana/promtail
-    container_name: promtail
-    hostname: promtail
+  alloy:
+    image: grafana/alloy:v1.18.1
+    container_name: alloy
+    hostname: alloy
     restart: unless-stopped
-    command: -config.file=/etc/promtail/docker-config.yaml
+    user: root
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - /etc/alloy/config.alloy
     volumes:
-      - ./data/promtail:/var/lib/promtail
-      - ./configs/promtail.yaml:/etc/promtail/docker-config.yaml
+      - ./data/alloy:/var/lib/alloy/data
+      - ./configs/alloy.alloy:/etc/alloy/config.alloy
       - /var/lib/docker/containers:/var/lib/docker/containers:ro
       - /var/run/docker.sock:/var/run/docker.sock
       - ./logs:/var/log
@@ -59,7 +64,7 @@ services:
       - loki
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:13.1.4
     container_name: grafana
     hostname: grafana
     restart: unless-stopped
@@ -76,7 +81,7 @@ services:
       - loki
 
   mysql:
-    image: mariadb:11.1
+    image: mariadb:11.4
     container_name: memesearch-mysql
     restart: unless-stopped
     ports:

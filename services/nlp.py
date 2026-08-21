@@ -2,15 +2,17 @@ import json
 import os
 from dotenv import load_dotenv
 import pika
-import pymorphy2
+import pymorphy3
 import nltk
 from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 
 load_dotenv()
-nltk.download('punkt')
+# NLTK 3.9 renamed both of these resources; the old names no longer satisfy
+# word_tokenize and pos_tag.
+nltk.download('punkt_tab')
 nltk.download('wordnet')
-nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger_eng')
 
 ENVIRONMENT = os.getenv('ENVIRONMENT')
 postfix = '_test' if ENVIRONMENT == 'TESTING' else ''
@@ -18,7 +20,7 @@ AMQP_ENDPOINT = os.getenv('AMQP_ENDPOINT')
 AMQP_MEMES_TO_NLP_CHANNEL = os.getenv('AMQP_MEMES_TO_NLP_CHANNEL', '') + postfix
 AMQP_NLP_TO_PUBLISHER_CHANNEL = os.getenv('AMQP_NLP_TO_PUBLISHER_CHANNEL', '') + postfix
 
-morph_analyzer_ru = pymorphy2.MorphAnalyzer()
+morph_analyzer_ru = pymorphy3.MorphAnalyzer()
 lemmatizer = WordNetLemmatizer()
 
 def get_wordnet_pos(nltk_tag):

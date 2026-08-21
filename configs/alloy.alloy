@@ -1,0 +1,61 @@
+// Replaces promtail, which Grafana no longer supports. The `container`, `job` and
+// `filename` labels below are the ones the memesearch dashboard queries, so they have to
+// keep their promtail-era values.
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// Alloy inherits no read positions from promtail, so on a first run it replays every
+// container log from the beginning. Loki rejects those entries as too old and the retries
+// exhaust the ingestion rate limit, starving current logs.
+loki.process "recent_only" {
+  forward_to = [loki.write.default.receiver]
+
+  stage.drop {
+    older_than          = "1h"
+    drop_counter_reason = "backfill"
+  }
+}
+
+discovery.docker "containers" {
+  host             = "unix:///var/run/docker.sock"
+  refresh_interval = "15s"
+}
+
+discovery.relabel "containers" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "containers" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.containers.output
+  labels     = {job = "containers"}
+  forward_to = [loki.process.recent_only.receiver]
+}
+
+local.file_match "services" {
+  path_targets = [{
+    __path__ = "/var/log/*.log",
+    job      = "services",
+  }]
+  sync_period = "15s"
+  // The directory holds 2000+ rotated pm2 logs totalling tens of gigabytes; only a handful
+  // are still being written to, and opening the rest buries Loki's ingestion limit.
+  ignore_older_than = "24h"
+}
+
+loki.source.file "services" {
+  targets = local.file_match.services.targets
+  // promtail already shipped the existing contents of these files.
+  tail_from_end = true
+  forward_to    = [loki.process.recent_only.receiver]
+}

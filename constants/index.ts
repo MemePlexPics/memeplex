@@ -20,6 +20,16 @@ export { MAX_FREE_USER_CHANNEL_SUBS } from './publisher'
 
 // TODO: split into files?
 
+// RabbitMQ 4 refuses any connection negotiating a frame_max below 8192, and amqplib asks
+// for 4096 by default. The twenty-odd call sites all read process.env directly, so the
+// tuning parameter is patched in here rather than threaded through every one of them.
+const AMQP_MIN_FRAME_MAX = 8192
+if (process.env.AMQP_ENDPOINT && !process.env.AMQP_ENDPOINT.includes('frameMax=')) {
+  const separator = process.env.AMQP_ENDPOINT.includes('?') ? '&' : '?'
+  process.env.AMQP_ENDPOINT += `${separator}frameMax=${AMQP_MIN_FRAME_MAX}`
+}
+export const AMQP_ENDPOINT = process.env.AMQP_ENDPOINT
+
 // how much time to sleep between fetching all data, ms
 export const CYCLE_SLEEP_TIMEOUT = Number(process.env.CYCLE_SLEEP_TIMEOUT) * 1 || 30_000
 export const OCR_SPACE_403_DELAY = 1_800_000 // 3600 / 180, the limit is 180 per hour

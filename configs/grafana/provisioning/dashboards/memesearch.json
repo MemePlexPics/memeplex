@@ -4445,12 +4445,12 @@
             {
               "datasource": "Loki",
               "editorMode": "builder",
-              "expr": "{container=\"promtail\"} |= `` | logfmt",
+              "expr": "{container=\"alloy\"} |= `` | logfmt",
               "queryType": "range",
               "refId": "A"
             }
           ],
-          "title": "Promtail",
+          "title": "Alloy",
           "transformations": [
             {
               "id": "extractFields",
