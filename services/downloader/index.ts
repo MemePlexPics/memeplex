@@ -35,20 +35,27 @@ export const downloader = async (logger: Logger) => {
         continue
       }
       receiveImageDataChTimeout(600_000, logger, msg)
-      const payload: TAmqpImageDataChannelMessage = JSON.parse(msg.content.toString())
-      const destination = await buildImagePath(payload)
+      try {
+        const payload: TAmqpImageDataChannelMessage = JSON.parse(msg.content.toString())
+        const destination = await buildImagePath(payload)
 
-      const isIgnored = await isFileIgnored(logger, destination, payload)
-      if (!isIgnored) {
-        const content = Buffer.from(
-          JSON.stringify({
-            ...payload,
-            fileName: destination,
-          }),
-        )
-        sendImageFileCh.sendToQueue(AMQP_IMAGE_FILE_CHANNEL, content, {
-          persistent: true,
-        })
+        const isIgnored = await isFileIgnored(logger, destination, payload)
+        if (!isIgnored) {
+          const content = Buffer.from(
+            JSON.stringify({
+              ...payload,
+              fileName: destination,
+            }),
+          )
+          sendImageFileCh.sendToQueue(AMQP_IMAGE_FILE_CHANNEL, content, {
+            persistent: true,
+          })
+        }
+      } catch (e) {
+        // Leaving this unacked hands it back on the next restart, so one undownloadable
+        // image would block every image queued behind it.
+        const reason = e instanceof Error ? e.message : String(e)
+        logger.error(`dropping ${msg.content.toString()}: ${reason}`)
       }
       receiveImageDataCh.ack(msg)
     }
