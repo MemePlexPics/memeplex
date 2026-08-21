@@ -17,7 +17,7 @@ export const getMessagesAfter = async function* (
   loop: while (true) {
     const url =
       process.env.TG_API_ENDPOINT +
-      '/getHistory/?data[peer]=@' +
+      '/messages.getHistory/?data[peer]=@' +
       channelName +
       '&data[limit]=' +
       TG_API_PAGE_LIMIT +

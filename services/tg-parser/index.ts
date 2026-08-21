@@ -2,8 +2,8 @@
 import 'dotenv/config'
 import type { Channel, Connection } from 'amqplib'
 import amqplib from 'amqplib'
-import { AMQP_IMAGE_DATA_CHANNEL } from '../../constants'
-import { getDbConnection } from '../../utils'
+import { AMQP_IMAGE_DATA_CHANNEL, TG_API_RATE_LIMIT } from '../../constants'
+import { delay, getDbConnection } from '../../utils'
 import { selectAvailableChannels, updateChannelTimestamp } from '../../utils/mysql-queries'
 import process from 'process'
 import { getMessagesAfter } from './utils'
@@ -21,16 +21,30 @@ export const tgParser = async (logger: Logger) => {
     logger.info(`fetching ${channels.length} channels`)
 
     for (const { name, timestamp, withText } of channels) {
-      for await (const message of getMessagesAfter(name, timestamp, withText, logger)) {
-        logger.verbose(`new post image: ${JSON.stringify(message)}`)
-        const imageData = Buffer.from(JSON.stringify(message))
-        sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true })
-        if (message.date > timestamp) {
-          const db = await getDbConnection()
-          await updateChannelTimestamp(db, name, message.date)
-          await db.close()
+      try {
+        for await (const message of getMessagesAfter(name, timestamp, withText, logger)) {
+          logger.verbose(`new post image: ${JSON.stringify(message)}`)
+          const imageData = Buffer.from(JSON.stringify(message))
+          sendImageDataCh.sendToQueue(AMQP_IMAGE_DATA_CHANNEL, imageData, { persistent: true })
+          if (message.date > timestamp) {
+            const db = await getDbConnection()
+            await updateChannelTimestamp(db, name, message.date)
+            await db.close()
+          }
+        }
+      } catch (e) {
+        // Aborting the whole cycle here would restart it from the first channel, so a single
+        // unreachable or rate-limited channel would starve every channel after it.
+        const message = e instanceof Error ? e.message : String(e)
+        logger.error(message)
+        const floodWait = message.match(/FLOOD_WAIT_(\d+)/)
+        if (floodWait) {
+          const backoffMs = (Number(floodWait[1]) + 1) * 1000
+          logger.warn(`${name}: Telegram asked to wait ${backoffMs}ms`)
+          await delay(backoffMs)
         }
       }
+      await delay(TG_API_RATE_LIMIT)
     }
   } finally {
     if (sendImageDataCh) sendImageDataCh.close()
