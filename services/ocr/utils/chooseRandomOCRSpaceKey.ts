@@ -5,11 +5,12 @@ import { selectRandomOcrKey, selectRandomOcrKeyPro } from '../../../utils/mysql-
 type TOcrKey = {
   key: string
   timeout: string | null
+  isPro: boolean
   proxy: undefined
   protocol: undefined
 }
 
-type TOcrKeyWithProxy = Pick<TOcrKey, 'key' | 'timeout'> & {
+type TOcrKeyWithProxy = Pick<TOcrKey, 'key' | 'timeout' | 'isPro'> & {
   proxy: `${string}:${number}`
   protocol: string
 }
@@ -23,6 +24,7 @@ export async function chooseRandomOCRSpaceKey(): Promise<TOcrKey | TOcrKeyWithPr
     return {
       key: keysPro.ocrKey,
       timeout: keysPro.timeout,
+      isPro: true,
       proxy: undefined,
       protocol: undefined,
     }
@@ -36,11 +38,19 @@ export async function chooseRandomOCRSpaceKey(): Promise<TOcrKey | TOcrKeyWithPr
 
   const foundProxy = await getProxyForKey(db, keys.ocrKey)
   await db.close()
-  if (!foundProxy) throw new Error('There are no available free proxies')
-  if (!foundProxy.address) throw new Error(`❌ Proxy for ${keys.ocrKey} isn't found`)
+  if (!foundProxy?.address) {
+    return {
+      key: keys.ocrKey,
+      timeout: keys.timeout,
+      isPro: false,
+      proxy: undefined,
+      protocol: undefined,
+    }
+  }
   return {
     key: keys.ocrKey,
     timeout: keys.timeout,
+    isPro: false,
     proxy: foundProxy.address,
     protocol: foundProxy.protocol,
   }

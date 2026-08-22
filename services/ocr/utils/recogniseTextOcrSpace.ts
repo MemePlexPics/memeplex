@@ -12,11 +12,11 @@ import { OCR_SPACE_PRO_API_USA } from '../../../constants'
 import { AxiosError } from 'axios'
 
 export const recogniseTextOcrSpace = async (fileName: string, language: string) => {
-  const { key: apiKey, proxy, protocol } = await chooseRandomOCRSpaceKey()
+  const { key: apiKey, proxy, protocol, isPro } = await chooseRandomOCRSpaceKey()
   try {
     const [host, port] = proxy ? proxy.split(':') : [null, null]
     const res = await ocrSpace(fileName, {
-      ocrUrl: proxy ? undefined : OCR_SPACE_PRO_API_USA,
+      ocrUrl: isPro ? OCR_SPACE_PRO_API_USA : undefined,
       apiKey,
       language,
       proxy:
@@ -49,7 +49,7 @@ export const recogniseTextOcrSpace = async (fileName: string, language: string) 
     return text.join(' ')
   } catch (error) {
     if (error instanceof AxiosError) {
-      await handle403(error, apiKey)
+      await handle403(error, apiKey, isPro)
     }
     if (proxy && error instanceof AxiosError) {
       await handleProxyError(error, proxy, protocol)

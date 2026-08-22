@@ -12,7 +12,7 @@ export async function updateProxyAvailability(
     .update(proxies)
     .set({
       availability,
-      lastActivityDatetime: sql`SELECT now()`,
+      lastActivityDatetime: sql`now()`,
     })
     .where(and(eq(proxies.address, proxy), eq(proxies.protocol, protocol)))
 }
