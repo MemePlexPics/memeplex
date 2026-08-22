@@ -12,8 +12,10 @@ import {
   channelSuggestionProceedPost,
   memeStatePut,
   channelMemesStatePut,
+  blacklistPut,
+  premiumPut,
+  premiumDelete,
 } from './methods'
-import { blacklistPut } from './methods'
 
 export const adminRouter = express.Router()
 
@@ -80,3 +82,6 @@ adminRouter.post('/channelSuggestion/proceed', channelSuggestionProceedPost)
 adminRouter.put('/meme/state', memeStatePut)
 
 adminRouter.put('/blacklist', blacklistPut)
+
+adminRouter.put('/premium', premiumPut)
+adminRouter.delete('/premium', premiumDelete)

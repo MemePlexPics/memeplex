@@ -1,52 +1,26 @@
 import TelegramServer from '@vishtar/telegram-test-api'
 import { init } from '../../services/servers/tg-bots/pics/utils'
 import { i18n } from '../../services/servers/tg-bots/pics/i18n'
-import { getTestLogger } from '../utils'
+import { PREMIUM_REQUEST_URL } from '../../constants/publisher'
 import {
   TelegramClientWrapper,
-  awaitPremiumActivation,
-  backToMainMenuAfterBoughtPremium,
   cleanUpPublisherPremium,
   cleanUpPublisherUser,
-  cleanUpTestAmqpQueues,
-  createInvoiceByButtons,
-  goToOneMonthPremiumButton,
+  goToAskForPremium,
+  grantPremium,
 } from './utils'
-import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
-import { PREMIUM_PLANS } from '../../constants/publisher'
-import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
-import { telegrafSessions, type botInvoices } from '../../db/schema'
-import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
+import { telegrafSessions } from '../../db/schema'
 import { upsertBotPremiumUser } from '../../utils/mysql-queries'
 import { eq } from 'drizzle-orm'
-import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
+import type { InlineKeyboardButton, KeyboardButton } from 'telegraf/typings/core/types/typegram'
 
-describe('Subscribed to premium', () => {
+describe('Ask for premium', () => {
   const serverConfig = { port: 0 }
   const token = '123456'
   let tgServer: TelegramServer
   let bot: Awaited<ReturnType<typeof init>>
   let tgClient: TelegramClientWrapper
-
-  const oneMonthPremium = PREMIUM_PLANS.find(plan => plan.months === 1)
-  if (!oneMonthPremium) {
-    throw new Error(
-      `There is no premium plan for one month: ${JSON.stringify(PREMIUM_PLANS, null, 2)}`,
-    )
-  }
-  const logger = getTestLogger('cryptopay-bot')
-  const cryptoPay: CryptoPay = new CryptoPay(process.env.CRYPTOPAY_BOT_TEST_TOKEN, {
-    hostname: ECryptoPayHostname.TEST,
-    webhook: {
-      serverHostname: 'localhost',
-      serverPort: 8804, // random port
-      path: `/${process.env.CRYPTOPAY_BOT_TEST_WEBHOOK_PATH}`,
-    },
-  })
-  let currentInvoice: typeof botInvoices.$inferSelect
-  // TODO: close it gentlier than deleten queue at cleanup
-  handleInvoiceCreation(cryptoPay, logger)
 
   beforeAll(async () => {
     tgServer = new TelegramServer(serverConfig)
@@ -55,36 +29,64 @@ describe('Subscribed to premium', () => {
     bot.launch()
     tgClient = new TelegramClientWrapper(tgServer.config.apiURL, token, { timeout: 5000 })
     const db = await getDbConnection()
-    await cleanUpPublisherPremium(db, cryptoPay)
+    await cleanUpPublisherPremium(db)
     await db.close()
   })
 
   afterAll(async () => {
-    bot.stop()
-    await tgServer.stop()
+    bot?.stop()
+    await tgServer?.stop()
     const db = await getDbConnection()
-    await cleanUpPublisherPremium(db, cryptoPay)
+    await cleanUpPublisherPremium(db)
     await cleanUpPublisherUser(db)
     await db.close()
-
-    await cleanUpTestAmqpQueues()
   })
 
-  test('There is a button to buy a premium', async () => {
-    await goToOneMonthPremiumButton(tgClient)
+  test('There is a button to ask for premium', async () => {
+    await goToAskForPremium(tgClient)
   })
 
-  test('The button creates an invoice', async () => {
-    currentInvoice = await createInvoiceByButtons(tgClient)
-  }, 60_000)
+  test(`«${i18n['ru'].button.askForPremium()}» sends a link to request premium`, async () => {
+    const updates = await tgClient.executeMessage(i18n['ru'].button.askForPremium())
+    if (!updates) {
+      throw new Error(`There is no updates after pressed «${i18n['ru'].button.askForPremium()}»`)
+    }
+    const requestMessage = updates.result.find(
+      update => update.message.text === i18n['ru'].message.askForPremium(),
+    )
+    if (!requestMessage) {
+      throw new Error(`There is no premium request message: ${JSON.stringify(updates, null, 2)}`)
+    }
+    const requestButton = requestMessage.message.reply_markup.inline_keyboard
+      .flat()
+      .find(
+        (button: InlineKeyboardButton) =>
+          'url' in button &&
+          button.url === PREMIUM_REQUEST_URL &&
+          button.text === i18n['ru'].button.goToPremiumRequest(),
+      )
+    if (!requestButton) {
+      throw new Error(
+        `There is no link to ${PREMIUM_REQUEST_URL}: ${JSON.stringify(requestMessage, null, 2)}`,
+      )
+    }
+  })
 
-  test(`Mocked paid invoice leads to «${i18n['ru'].message.paymentSuccessful('')}» message`, async () => {
-    await awaitPremiumActivation(tgClient, currentInvoice.id)
-  }, 10_000)
-
-  test(`Now it is a «${i18n['ru'].button.extendPremium()}» buttom in the main menu`, async () => {
-    await backToMainMenuAfterBoughtPremium(tgClient)
-  }, 10_000)
+  test(`Premium can be granted without a payment`, async () => {
+    await grantPremium(tgClient)
+    const updates = await tgClient.executeCommand('/start')
+    const mainMenuMessage = updates!.result.find(
+      update => update.message.text === i18n['ru'].message.mainMenu(),
+    )
+    const askPremiumButton = mainMenuMessage!.message.reply_markup.keyboard.find(
+      (row: KeyboardButton[]) => row.find(button => button === i18n['ru'].button.extendPremium()),
+    )
+    if (!askPremiumButton) {
+      throw new Error(
+        `There is no premium button after grant: ${JSON.stringify(mainMenuMessage, null, 2)}`,
+      )
+    }
+  })
 
   test('Premium expired correctly', async () => {
     const db = await getDbConnection()

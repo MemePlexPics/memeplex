@@ -1,5 +1,4 @@
 import { MAX_FREE_USER_CHANNEL_SUBS } from '../../../../../constants'
-import type { PREMIUM_PLANS } from '../../../../../constants/publisher'
 
 export const ru = {
   message: {
@@ -103,16 +102,7 @@ ${keywords}`,
     enterChannelNameInFormat: () =>
       'Введитие название канала в формате @name или https://t.me/name',
     somethingWentWrongTryLater: () => 'Что-то пошло не так. Пожалуйста, повторите попытку позже.',
-    paymentSuccessful: (date: string) =>
-      `🎉 Оплата успешно произведена. Премиум активирован до ${date}!`,
-    paymentLink: () => `Ссылка для оплаты.
-
-ℹ️ *Если вам потребуется пополнить кошелек*:
-
-Платёжная система не фиксирует курс.
-Пополните ваш кошелек на несколько центов больше, чтобы избежать необходимости отправлять вторую транзакцию в случае изменения курса обмена к моменту совершения платежа.
-При ненадобности эти центы останутся в вашем распоряжении на счету в @CryptoBot.`,
-    generatingPaymentLink: () => `⌛️ Генерируем ссылку для оплаты. Пожалуйста, ожидайте...`,
+    askForPremium: () => `Чтобы получить премиум, напишите нам в комментариях к этому посту:`,
     channelSuggestion: {
       format: () => `
     Необходимо отправить канал в следующем формате:
@@ -189,29 +179,18 @@ ${keywords}`,
     // postWithText: () => '📝 Добавить текстовое сообщение',
     subscribeKeyword: (keyword: string) => `➕ Подписаться на «${keyword}»`,
     unsubscribeKeyword: (keyword: string) => `➖ Отписаться от «${keyword}»`,
-    subscribeToPremium: () => '✨ Подключить премиум',
+    subscribeToPremium: () => '✨ Запросить премиум',
     extendPremium: () => '✨ Продлить премиум',
     premium: () => '✨ Премиум',
     channelSubscriptions: (name: string) => `📢 Подписки @${name}`,
-    buyPremium: (
-      emoji: (typeof PREMIUM_PLANS)[number]['emoji'],
-      months: (typeof PREMIUM_PLANS)[number]['months'],
-      cost: (typeof PREMIUM_PLANS)[number]['cost'],
-    ) => `${emoji} Премиум на ${ru.date.month[months]()} — ${cost}$`,
-    goToPremiumPayment: () => `✨ Перейти для оплаты премиума`,
+    askForPremium: () => '✨ Запросить премиум',
+    goToPremiumRequest: () => '✨ Запросить премиум',
     search: () => `🔎 Поиск`,
     searchMemes: () => `🔎 Поиск мемов`,
     load: {
       newer: () => 'Загрузить новые',
       older: () => 'Загрузить старые',
       more: () => 'Загрузить больше',
-    },
-  },
-  date: {
-    month: {
-      1: () => `один месяц`,
-      3: () => `три месяца`,
-      12: () => `один год`,
     },
   },
   command: {

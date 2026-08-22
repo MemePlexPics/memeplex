@@ -10,6 +10,7 @@ export const rus = {
     additionalInformation: 'Дополнительная информация',
     readableTitle: 'Человекочитаемое название',
     channelFilter: 'Введите название и нажмите Enter',
+    botUsername: '@username',
   },
   label: {
     featuredChannels: 'Избранные каналы',
@@ -28,12 +29,14 @@ export const rus = {
     from: 'От',
     comment: 'Комментарий',
     filter: 'Фильтр',
+    premiumUntil: 'Действует до',
   },
   tab: {
     channels: 'Каналы',
     suggested: 'Предложенные',
     featured: 'Избранные',
     blacklist: 'Черный список',
+    premium: 'Премиум',
   },
   notification: {
     removeChannel: 'Удалить канал',
@@ -55,6 +58,9 @@ export const rus = {
     memesLeft: 'Еще {{number}} мемов',
     removeChannelMemes: 'Удалить все мемы канала @{{channel}}?',
     blacklistUpdated: 'Черный список успешно обновлен',
+    premiumSet: 'Премиум для @{{username}} назначен до {{date}}',
+    premiumUnset: 'Премиум для @{{username}} снят',
+    userNotFound: 'Пользователь @{{username}} не найден',
   },
   button: {
     search: 'Поиск',
@@ -65,6 +71,8 @@ export const rus = {
     back: 'Назад',
     next: 'Вперед',
     submit: 'Добавить',
+    setPremium: 'Назначить премиум',
+    unsetPremium: 'Снять премиум',
   },
   page: {
     home: 'Главная',

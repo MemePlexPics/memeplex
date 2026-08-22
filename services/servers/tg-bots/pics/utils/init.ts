@@ -14,7 +14,6 @@ import {
   getMenuButtonsAndHandlers,
   handleCallbackQuery,
   handleDistributionQueue,
-  handleInvoiceQueue,
   handleNlpQueue,
   logUserAction,
   onPhotoMessage,
@@ -295,12 +294,6 @@ export const init = async (
     abortSignal: bot.abortController.signal,
   })
   loopRetrying(() => handleDistributionQueue(bot, logger, bot.abortController.signal), {
-    logger: logger,
-    afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
-    catchDelayMs: LOOP_RETRYING_DELAY,
-    abortSignal: bot.abortController.signal,
-  })
-  loopRetrying(() => handleInvoiceQueue(bot, logger, bot.abortController.signal), {
     logger: logger,
     afterCallbackDelayMs: CYCLE_SLEEP_TIMEOUT,
     catchDelayMs: LOOP_RETRYING_DELAY,

@@ -5,18 +5,15 @@ export { PROXY_LIST_API_URLS } from './PROXY_LIST_API_URLS'
 export { OCR_SPACE_PRO_API_USA } from './OCR_SPACE_PRO_API'
 export { OCR_SPACE_PRO_API_EU } from './OCR_SPACE_PRO_API'
 export { wordsForElasticEntititesCounter } from './wordsForElasticEntititesCounter'
-export { CRYPTOPAY_INVOICE_EXPIRES_IN_SECONDS } from './delays'
 export {
   AMQP_IMAGE_DATA_CHANNEL,
   AMQP_IMAGE_FILE_CHANNEL,
   AMQP_CHECK_PROXY_CHANNEL,
   AMQP_PUBLISHER_DISTRIBUTION_CHANNEL,
-  AMQP_PUBLISHER_TO_CRYPTOPAY_CHANNEL,
-  AMQP_CRYPTOPAY_TO_PUBLISHER_CHANNEL,
   AMQP_MEMES_TO_NLP_CHANNEL,
   AMQP_NLP_TO_PUBLISHER_CHANNEL,
 } from './amqpChannels'
-export { MAX_FREE_USER_CHANNEL_SUBS } from './publisher'
+export { MAX_FREE_USER_CHANNEL_SUBS, PREMIUM_REQUEST_URL } from './publisher'
 
 // TODO: split into files?
 

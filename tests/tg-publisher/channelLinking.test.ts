@@ -1,17 +1,13 @@
-import { CryptoPay } from '@foile/crypto-pay-api'
 import { init } from '../../services/servers/tg-bots/pics/utils'
-import { getTestLogger } from '../utils'
 import {
   TelegramClientWrapper,
   TelegramServerWrapper,
-  buyPremium,
+  grantPremium,
   cleanUpPublisherPremium,
   cleanUpPublisherUser,
   cleanUpTestAmqpQueues,
 } from './utils'
 import { getDbConnection } from '../../utils'
-import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
-import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
 import { i18n } from '../../services/servers/tg-bots/pics/i18n'
 import type { Channel, Connection } from 'amqplib'
 import amqplib from 'amqplib'
@@ -40,18 +36,6 @@ describe('Keyword subscribtion', () => {
   const keywordFirst = 'donuts'
   const testChannel = 'testChannel'
 
-  const logger = getTestLogger('cryptopay-bot')
-  const cryptoPay: CryptoPay = new CryptoPay(process.env.CRYPTOPAY_BOT_TEST_TOKEN, {
-    hostname: ECryptoPayHostname.TEST,
-    webhook: {
-      serverHostname: 'localhost',
-      serverPort: 8804, // random port
-      path: `/${process.env.CRYPTOPAY_BOT_TEST_WEBHOOK_PATH}`,
-    },
-  })
-  // TODO: close it gentlier than deleten queue at cleanup
-  handleInvoiceCreation(cryptoPay, logger)
-
   beforeAll(async () => {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     sendToPublisherDistributionCh = await amqp.createChannel()
@@ -61,7 +45,7 @@ describe('Keyword subscribtion', () => {
     bot.launch()
     tgClient = new TelegramClientWrapper(tgServer.config.apiURL, token, { timeout: 5000 })
     const db = await getDbConnection()
-    await cleanUpPublisherPremium(db, cryptoPay)
+    await cleanUpPublisherPremium(db)
     await db.close()
   })
 
@@ -69,7 +53,7 @@ describe('Keyword subscribtion', () => {
     bot.stop()
     await tgServer.stop()
     const db = await getDbConnection()
-    await cleanUpPublisherPremium(db, cryptoPay)
+    await cleanUpPublisherPremium(db)
 
     await deleteBotSubscriptionsByChannelId(db, 1)
     await deleteBotSubscriptionsByChannelId(db, 111)
@@ -85,9 +69,9 @@ describe('Keyword subscribtion', () => {
     await cleanUpTestAmqpQueues()
   })
 
-  test('Buy a premium for a user', async () => {
-    await buyPremium(tgClient)
-  }, 60_000)
+  test('Grant a premium for a user', async () => {
+    await grantPremium(tgClient)
+  })
 
   test('Not added a channel without admin rights for bot', async () => {
     await tgClient.executeMessage(i18n['ru'].button.linkYourChannel())

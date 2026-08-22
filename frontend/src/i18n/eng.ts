@@ -12,6 +12,7 @@ export const eng: TI18nLocalization = {
     additionalInformation: 'Additional information',
     readableTitle: 'Readable title',
     channelFilter: 'Enter a name and press Enter',
+    botUsername: '@username',
   },
   label: {
     featuredChannels: 'Featured channels',
@@ -30,12 +31,14 @@ export const eng: TI18nLocalization = {
     from: 'From',
     comment: 'Comment',
     filter: 'Filter',
+    premiumUntil: 'Until',
   },
   tab: {
     channels: 'Channels',
     suggested: 'Suggested',
     featured: 'Featured',
     blacklist: 'Black list',
+    premium: 'Premium',
   },
   notification: {
     removeChannel: 'Remove the channel',
@@ -57,6 +60,9 @@ export const eng: TI18nLocalization = {
     memesLeft: 'There are {{number}} more memes',
     removeChannelMemes: 'Delete all memes from @{{channel}}?',
     blacklistUpdated: 'Blacklist successfully updated',
+    premiumSet: 'Premium for @{{username}} has been set until {{date}}',
+    premiumUnset: 'Premium for @{{username}} has been removed',
+    userNotFound: 'User @{{username}} was not found',
   },
   button: {
     search: 'Search',
@@ -67,6 +73,8 @@ export const eng: TI18nLocalization = {
     back: 'Back',
     next: 'Next',
     submit: 'Submit',
+    setPremium: 'Set premium',
+    unsetPremium: 'Unset premium',
   },
   page: {
     home: 'Home',

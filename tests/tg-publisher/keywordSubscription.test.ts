@@ -1,18 +1,14 @@
 import TelegramServer from '@vishtar/telegram-test-api'
 import { init } from '../../services/servers/tg-bots/pics/utils'
-import { getTestLogger } from '../utils'
 import {
   TelegramClientWrapper,
-  buyPremium,
+  grantPremium,
   cleanUpPublisherPremium,
   cleanUpPublisherUser,
   cleanUpTestAmqpQueues,
   subscribeToKeyword,
 } from './utils'
-import { CryptoPay } from '@foile/crypto-pay-api'
 import { getDbConnection } from '../../utils'
-import { ECryptoPayHostname } from '../../services/servers/crypto-pay/constants'
-import { handleInvoiceCreation } from '../../services/servers/crypto-pay/utils'
 import { i18n } from '../../services/servers/tg-bots/pics/i18n'
 import type { Channel, Connection } from 'amqplib'
 import amqplib from 'amqplib'
@@ -44,18 +40,6 @@ describe('Keyword subscribtion', () => {
   const keywordFirstUser = 'donuts'
   const keywordSecondUser = 'walnuts'
 
-  const logger = getTestLogger('cryptopay-bot')
-  const cryptoPay: CryptoPay = new CryptoPay(process.env.CRYPTOPAY_BOT_TEST_TOKEN, {
-    hostname: ECryptoPayHostname.TEST,
-    webhook: {
-      serverHostname: 'localhost',
-      serverPort: 8804, // random port
-      path: `/${process.env.CRYPTOPAY_BOT_TEST_WEBHOOK_PATH}`,
-    },
-  })
-  // TODO: close it gentlier than deleten queue at cleanup
-  handleInvoiceCreation(cryptoPay, logger)
-
   beforeAll(async () => {
     amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
     sendToPublisherDistributionCh = await amqp.createChannel()
@@ -69,15 +53,15 @@ describe('Keyword subscribtion', () => {
     //   timeout: 5000,
     // })
     const db = await getDbConnection()
-    await cleanUpPublisherPremium(db, cryptoPay)
+    await cleanUpPublisherPremium(db)
     await db.close()
   })
 
   afterAll(async () => {
     const db = await getDbConnection()
     await db.delete(botActions).where(eq(botActions.userId, 1))
-    await cleanUpPublisherPremium(db, cryptoPay)
-    await cleanUpPublisherPremium(db, cryptoPay, 2)
+    await cleanUpPublisherPremium(db)
+    await cleanUpPublisherPremium(db, 2)
 
     await deleteBotSubscriptionsByChannelId(db, 1)
     await deleteBotSubscriptionsByChannelId(db, 2)
@@ -95,13 +79,9 @@ describe('Keyword subscribtion', () => {
     await cleanUpTestAmqpQueues()
   })
 
-  test('Buy a premium for a first user', async () => {
-    await buyPremium(tgClient)
-  }, 60_000)
-
-  // test('Buy a premium for a second user', async () => {
-  //   await buyPremium(tgClientSecond)
-  // }, 60_000)
+  test('Grant a premium for a first user', async () => {
+    await grantPremium(tgClient)
+  })
 
   test('Keyword menu works', async () => {
     const keyword = await subscribeToKeyword(tgClient, keywordFirstUser)

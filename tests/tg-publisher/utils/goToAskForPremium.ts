@@ -1,22 +1,8 @@
 import type { KeyboardButton } from 'telegraf/typings/core/types/typegram'
 import type { TelegramClientWrapper } from '.'
 import { i18n } from '../../../services/servers/tg-bots/pics/i18n'
-import { PREMIUM_PLANS } from '../../../constants/publisher'
 
-export const goToOneMonthPremiumButton = async (tgClient: TelegramClientWrapper) => {
-  // TODO: DRY...
-  const oneMonthPremium = PREMIUM_PLANS.find(plan => plan.months === 1)
-  if (!oneMonthPremium) {
-    throw new Error(
-      `There is no premium plan for one month: ${JSON.stringify(PREMIUM_PLANS, null, 2)}`,
-    )
-  }
-  const oneMonthPremiumButtonText = i18n['ru'].button.buyPremium(
-    oneMonthPremium.emoji,
-    oneMonthPremium.months,
-    oneMonthPremium.cost,
-  )
-
+export const goToAskForPremium = async (tgClient: TelegramClientWrapper) => {
   const startUpdates = await tgClient.executeCommand('/start')
   if (!startUpdates) {
     throw new Error(`There is no updates after /start`)
@@ -45,12 +31,22 @@ export const goToOneMonthPremiumButton = async (tgClient: TelegramClientWrapper)
   if (!premiumMenuMessage) {
     throw new Error(`There is no premium menu: ${JSON.stringify(premiumUpdates, null, 2)}`)
   }
-  const oneMonthPremiumButton = premiumMenuMessage.message.reply_markup.keyboard.find(
-    (row: KeyboardButton[]) => row.find(button => button === oneMonthPremiumButtonText),
+  const keyboardButtons = premiumMenuMessage.message.reply_markup.keyboard.flat() as string[]
+  const durationButton = keyboardButtons.find(
+    button => /\$/.test(button) || /\d+\s*\$/.test(button),
   )
-  if (!oneMonthPremiumButton) {
+  if (durationButton) {
     throw new Error(
-      `There is no button for one month subscription: ${JSON.stringify(premiumMenuMessage, null, 2)}`,
+      `Premium duration selection should be removed: ${JSON.stringify(premiumMenuMessage, null, 2)}`,
     )
   }
+  const askForPremiumButton = keyboardButtons.find(
+    button => button === i18n['ru'].button.askForPremium(),
+  )
+  if (!askForPremiumButton) {
+    throw new Error(
+      `There is no «${i18n['ru'].button.askForPremium()}» button: ${JSON.stringify(premiumMenuMessage, null, 2)}`,
+    )
+  }
+  return premiumMenuMessage
 }

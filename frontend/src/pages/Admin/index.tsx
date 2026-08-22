@@ -9,6 +9,7 @@ import {
   BlaclListSettings,
   Channels,
   FeaturedChannels,
+  PremiumSettings,
   SuggestedChannels,
 } from '@/components/organisms'
 import { useMeta, useTitle, useTranslatedState } from '@/hooks'
@@ -22,6 +23,7 @@ export const AdminPage = () => {
     t('tab.suggested'),
     t('tab.featured'),
     t('tab.blacklist'),
+    t('tab.premium'),
   ])
   const [currentTab, setCurrentTab] = useState<string>('')
 
@@ -57,6 +59,10 @@ export const AdminPage = () => {
         />
         <BlaclListSettings
           key={t('tab.blacklist')}
+          password={password}
+        />
+        <PremiumSettings
+          key={t('tab.premium')}
           password={password}
         />
       </Tabs>
