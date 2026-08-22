@@ -10,7 +10,7 @@ export const MemeContainer = (props: { meme: IMeme }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   return (
-    <>
+    <div className='meme-container'>
       <Loader state={isLoading} />
       <Link
         to={`/memes/${props.meme.id}`}
@@ -25,6 +25,6 @@ export const MemeContainer = (props: { meme: IMeme }) => {
           }}
         />
       </Link>
-    </>
+    </div>
   )
 }

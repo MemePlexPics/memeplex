@@ -28,6 +28,7 @@ export const s = stylex.create({
       [mobilePortrait]: 'initial',
     },
     justifyContent: 'center',
+    position: 'relative',
     width: {
       default: size.memeEntity,
       [mobilePortrait]: '100%',
