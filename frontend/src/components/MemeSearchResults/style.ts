@@ -18,6 +18,7 @@ export const s = stylex.create({
       [mobilePortrait]: 'initial',
     },
     justifyContent: 'center',
+    overflow: 'visible',
     paddingBottom: '80px',
   },
   result: {
@@ -28,10 +29,15 @@ export const s = stylex.create({
       [mobilePortrait]: 'initial',
     },
     justifyContent: 'center',
+    overflow: 'visible',
     position: 'relative',
     width: {
       default: size.memeEntity,
       [mobilePortrait]: '100%',
+    },
+    zIndex: {
+      default: 0,
+      ':hover': 3,
     },
   },
 })

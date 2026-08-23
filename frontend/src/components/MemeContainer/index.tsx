@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 import { Loader } from '..'
@@ -8,6 +8,11 @@ import './style.css'
 
 export const MemeContainer = (props: { meme: IMeme }) => {
   const [isLoading, setIsLoading] = useState(true)
+  const imgRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    setIsLoading(!imgRef.current?.complete)
+  }, [props.meme.fileName])
 
   return (
     <div className='meme-container'>
@@ -17,6 +22,7 @@ export const MemeContainer = (props: { meme: IMeme }) => {
         className='meme-link'
       >
         <img
+          ref={imgRef}
           className='result-image'
           src={'/' + props.meme.fileName}
           alt={props.meme.text.eng}
