@@ -30,6 +30,12 @@ services:
       - 127.0.0.1:5672:5672
     volumes:
       - ./data/rabbitmq:/var/lib/rabbitmq/mnesia
+    # Soft default is 1024; classic-queue segment files then hit emfile and
+    # leave image_data as a zombie (dead PID, live metadata).
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
 
   loki:
     image: grafana/loki:3.7.6
