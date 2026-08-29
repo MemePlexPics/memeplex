@@ -27,7 +27,7 @@ const countMemesSince = async (client: Client, timestamp?: number) => {
     query: {
       range: {
         timestamp: {
-          gte: timestamp,
+          gte: String(timestamp),
         },
       },
     },
