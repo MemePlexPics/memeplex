@@ -122,6 +122,31 @@ ${keywords}`,
     memeSuggestionIndexed: () =>
       `😎 Добавленный вами мем прошёл модерацию! Теперь он доступен для поиска.`,
     nothingFound: () => 'Ничего не найдено',
+    stats: (
+      users: { inline: number; inBot: number; total: number },
+      memes: {
+        total: number
+        lastHour: number
+        last24Hours: number
+        lastWeek: number
+        last30Days: number
+      },
+      freeSpaceGb: number,
+    ) => `📊 Статистика
+
+Мемов в базе: ${memes.total.toLocaleString('ru-RU')}
+Свободное место на сервере: ≈${freeSpaceGb.toLocaleString('ru-RU')} ГБ
+
+Уникальных пользователей сегодня:
+- inline: ${users.inline.toLocaleString('ru-RU')}
+- в боте: ${users.inBot.toLocaleString('ru-RU')}
+- всего: ${users.total.toLocaleString('ru-RU')}
+
+Добавлено мемов:
+- за час: ${memes.lastHour.toLocaleString('ru-RU')}
+- за 24 часа: ${memes.last24Hours.toLocaleString('ru-RU')}
+- за неделю: ${memes.lastWeek.toLocaleString('ru-RU')}
+- за 30 дней: ${memes.last30Days.toLocaleString('ru-RU')}`,
   },
   button: {
     back: () => '⬅️ Назад',
@@ -197,6 +222,7 @@ ${keywords}`,
     callCurrentMenu: () => 'Вызвать текущее меню',
     getLatest: () => 'Загрузить последние мемы',
     suggestChannel: () => 'Предложить канал',
+    stats: () => 'Показать статистику',
     help: () => 'Вывести справку',
   },
 } as const

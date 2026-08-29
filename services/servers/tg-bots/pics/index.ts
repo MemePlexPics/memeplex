@@ -43,6 +43,10 @@ const start = async () => {
       command: 'help',
       description: i18n['ru'].command.help(),
     },
+    {
+      command: 'stats',
+      description: i18n['ru'].command.stats(),
+    },
   ])
   // bot.telegram.setMyDescription(`
   //   Это description

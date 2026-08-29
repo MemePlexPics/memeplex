@@ -1,4 +1,5 @@
 export { countBotChannelsByUserId } from './countBotChannelsByUserId'
+export { getTodayBotUserStats } from './getTodayBotUserStats'
 export { countBotSubscriptionsByChannelId } from './countBotSubscriptionsByChannelId'
 export { deleteBotChannelById } from './deleteBotChannelById'
 export { deleteBotKeyword } from './deleteBotKeyword'

@@ -48,6 +48,7 @@ import {
   handleMemeSearchRequest,
   onBotCommandGetLatest,
   onBotCommandSetPremium,
+  onBotCommandStats,
   onBotCommandSuggestChannel,
   onInlineQuery,
 } from '../handlers'
@@ -176,6 +177,13 @@ export const init = async (
     await ctx.reply(i18n['ru'].message.help(), {
       parse_mode: 'Markdown',
     })
+  })
+
+  bot.command('stats', async ctx => {
+    if (ctx.from.id !== ctx.chat.id) {
+      return
+    }
+    await onBotCommandStats(ctx)
   })
 
   bot.command('get_latest', async ctx => {

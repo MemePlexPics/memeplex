@@ -1,5 +1,7 @@
 export { classifyQueryLanguage } from './classifyQueryLanguage'
 export { searchMemes } from './searchMemes'
+export { getMemeStats } from './getMemeStats'
+export { getServerFreeSpaceGb } from './getServerFreeSpaceGb'
 export { getLatestMemes } from './getLatestMemes'
 export { getMeme } from './getMeme'
 export { getMemeResponseEntity } from './getMemeResponseEntity'

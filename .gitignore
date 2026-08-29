@@ -1,3 +1,4 @@
+DEPLOYMENT.md
 *.env
 /node_modules/
 /.venv/
