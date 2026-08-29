@@ -134,7 +134,7 @@ ${keywords}`,
       freeSpaceGb: number,
     ) => `📊 Статистика
 
-Мемов в базе: ${memes.total.toLocaleString('ru-RU')}
+Мемов всего: ${memes.total.toLocaleString('ru-RU')}
 Свободное место на сервере: ≈${freeSpaceGb.toLocaleString('ru-RU')} ГБ
 
 Уникальных пользователей сегодня:
