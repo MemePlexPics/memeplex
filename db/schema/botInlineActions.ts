@@ -21,6 +21,7 @@ export const botInlineActions = mysqlTable(
   table => {
     return {
       userId: index('user_id').on(table.userId),
+      timestampUserId: index('timestamp_user_id').on(table.timestamp, table.userId),
     }
   },
 )
