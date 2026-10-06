@@ -2,7 +2,7 @@ import { memeSearchState } from '.'
 import { getDbConnection, timestampToYyyyMmDd } from '../../../../../utils'
 import { selectBotPremiumUser } from '../../../../../utils/mysql-queries'
 import { EState } from '../constants'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TMenuButton, TState } from '../types'
 import { enterToState, handleAskForPremium } from '../utils'
 import { mainState } from './mainState'
@@ -17,23 +17,23 @@ export const buyPremiumState: TState = {
       ctx.session.premiumUntil = userPremium.untilTimestamp
     }
     const askForPremiumButton: TMenuButton = [
-      i18n['ru'].button.askForPremium(),
+      getTranslation(ctx.from.language_code).button.askForPremium(),
       ctx => handleAskForPremium(ctx),
     ]
     const memeSearchButton: TMenuButton = [
-      i18n['ru'].button.search(),
+      getTranslation(ctx.from.language_code).button.search(),
       async ctx => {
         await enterToState(ctx, memeSearchState)
       },
     ]
     const backButton: TMenuButton = [
-      i18n['ru'].button.back(),
+      getTranslation(ctx.from.language_code).button.back(),
       async ctx => {
         await enterToState(ctx, mainState)
       },
     ]
-    const text = `${userPremium ? i18n['ru'].message.premiumUntilDate(timestampToYyyyMmDd(userPremium.untilTimestamp)) + '\n' : ''}
-${i18n['ru'].message.premiumPlanFeatures()}`
+    const text = `${userPremium ? getTranslation(ctx.from.language_code).message.premiumUntilDate(timestampToYyyyMmDd(userPremium.untilTimestamp)) + '\n' : ''}
+${getTranslation(ctx.from.language_code).message.premiumPlanFeatures()}`
     return {
       text,
       buttons: [[askForPremiumButton], [memeSearchButton, backButton]],

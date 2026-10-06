@@ -3,10 +3,9 @@ import type {
   ClientOptions,
   CommandOptions,
   DeepPartial,
-  MessageOptions} from '@vishtar/telegram-test-api/lib/modules/telegramClient'
-import {
-  TelegramClient,
+  MessageOptions,
 } from '@vishtar/telegram-test-api/lib/modules/telegramClient'
+import { TelegramClient } from '@vishtar/telegram-test-api/lib/modules/telegramClient'
 import type { GetUpdatesResponse } from '@vishtar/telegram-test-api/lib/routes/client/getUpdates'
 
 export class TelegramClientWrapper extends TelegramClient {
@@ -23,6 +22,7 @@ export class TelegramClientWrapper extends TelegramClient {
   ) {
     console.log(this.userId, messageText)
     const command = this.makeMessage(messageText, options)
+    Object.assign(command.from, { language_code: options?.from?.language_code ?? 'ru' })
     const response = await this.sendMessage(command)
     if (!response.ok) {
       throw new Error(
@@ -44,6 +44,7 @@ export class TelegramClientWrapper extends TelegramClient {
   ) {
     console.log(this.userId, messageText)
     const command = this.makeCommand(messageText, options)
+    Object.assign(command.from, { language_code: options?.from?.language_code ?? 'ru' })
     const response = await this.sendCommand(command)
     if (!response.ok) {
       throw new Error(
@@ -65,6 +66,7 @@ export class TelegramClientWrapper extends TelegramClient {
   ) {
     console.log(this.userId, data)
     const command = this.makeCallbackQuery(data, options)
+    Object.assign(command.from, { language_code: options?.from?.language_code ?? 'ru' })
     const response = await this.sendCallback(command)
     if (!response.ok) {
       throw new Error(`Callback response for «${data}» is not ok: ${JSON.stringify(response)}`)

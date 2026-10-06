@@ -2,7 +2,7 @@ import process from 'process'
 import 'dotenv/config'
 import { init } from './utils'
 import { getElasticClient } from '../../../../utils'
-import { i18n } from './i18n'
+import { getTranslation } from './i18n'
 import { getLogger } from '../utils'
 
 const start = async () => {
@@ -26,34 +26,21 @@ const start = async () => {
     },
   })
 
-  bot.telegram.setMyCommands([
-    {
-      command: 'menu',
-      description: i18n['ru'].command.callCurrentMenu(),
-    },
-    {
-      command: 'get_latest',
-      description: i18n['ru'].command.getLatest(),
-    },
-    {
-      command: 'suggest_channel',
-      description: i18n['ru'].command.suggestChannel(),
-    },
-    {
-      command: 'help',
-      description: i18n['ru'].command.help(),
-    },
-    {
-      command: 'stats',
-      description: i18n['ru'].command.stats(),
-    },
-  ])
-  // bot.telegram.setMyDescription(`
-  //   Это description
-  // `)
-  bot.telegram.setMyShortDescription(`
-Этот бот ищет мемы по тексту. Работает в чатах: введите @MemePlexBot и текст.
-Анонсы: @memeplex_pics`)
+  for (const language of ['', 'en', 'ru'] as const) {
+    const t = getTranslation(language)
+    await bot.telegram.setMyCommands(
+      [
+        { command: 'menu', description: t.command.callCurrentMenu() },
+        { command: 'get_latest', description: t.command.getLatest() },
+        { command: 'suggest_channel', description: t.command.suggestChannel() },
+        { command: 'help', description: t.command.help() },
+        { command: 'stats', description: t.command.stats() },
+      ],
+      { language_code: language },
+    )
+    await bot.telegram.setMyDescription(t.profile.description(), language)
+    await bot.telegram.setMyShortDescription(t.profile.shortDescription(), language)
+  }
   logger.info({ info: 'Telegram bot started' })
 
   process.once('SIGINT', async () => {

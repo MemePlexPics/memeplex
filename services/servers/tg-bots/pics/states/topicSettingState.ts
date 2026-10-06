@@ -12,7 +12,7 @@ import {
   selectBotTopicNames,
   deleteBotTopicKeywordUnsubscription,
 } from '../../../../../utils/mysql-queries'
-import { i18n } from '../i18n'
+import { getTranslation, translateTopic } from '../i18n'
 import { Markup } from 'telegraf'
 import type { InlineKeyboardButton } from '@telegraf/types'
 
@@ -31,11 +31,13 @@ export const topicSettingState: TState = {
     }, new Set<number>())
     await db.close()
     const text = `
-${i18n['ru'].message.topicDescription()}
+${getTranslation(ctx.from.language_code).message.topicDescription()}
 ${
   ctx.session.channel.id === ctx.from.id
-    ? i18n['ru'].message.youEditingSubscriptionsForUser()
-    : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel.name)
+    ? getTranslation(ctx.from.language_code).message.youEditingSubscriptionsForUser()
+    : getTranslation(ctx.from.language_code).message.youEditingSubscriptionsForChannel(
+        ctx.session.channel.name,
+      )
 }`
 
     const buttons: InlineKeyboardButton[][] = []
@@ -45,8 +47,12 @@ ${
       }
       const isSubscribed = userTopics.has(id)
       const buttonText = isSubscribed
-        ? i18n['ru'].button.unsubscribeKeyword(name)
-        : i18n['ru'].button.subscribeKeyword(name)
+        ? getTranslation(ctx.from.language_code).button.unsubscribeKeyword(
+            translateTopic(name, ctx.from.language_code),
+          )
+        : getTranslation(ctx.from.language_code).button.subscribeKeyword(
+            translateTopic(name, ctx.from.language_code),
+          )
       const keyAction = isSubscribed ? ETopicAction.UNSUBSCRIBE : ETopicAction.SUBSCRIBE
       buttons.push([Markup.button.callback(buttonText, `${keyAction}|${id}`)])
     })
@@ -55,19 +61,19 @@ ${
       buttons,
     }
   },
-  menu: async () => {
+  menu: async ctx => {
     const memeSearchButton: TMenuButton = [
-      i18n['ru'].button.search(),
+      getTranslation(ctx.from.language_code).button.search(),
       async ctx => {
         await enterToState(ctx, memeSearchState)
       },
     ]
     const backButton: TMenuButton = [
-      i18n['ru'].button.back(),
+      getTranslation(ctx.from.language_code).button.back(),
       ctx => enterToState(ctx, channelSettingState),
     ]
     return {
-      text: i18n['ru'].message.topicsMenu(),
+      text: getTranslation(ctx.from.language_code).message.topicsMenu(),
       buttons: [[memeSearchButton, backButton]],
     }
   },
@@ -107,8 +113,12 @@ ${
 
     const newText =
       operation === ETopicAction.UNSUBSCRIBE
-        ? i18n['ru'].button.subscribeKeyword(topic.name)
-        : i18n['ru'].button.unsubscribeKeyword(topic.name)
+        ? getTranslation(ctx.from.language_code).button.subscribeKeyword(
+            translateTopic(topic.name, ctx.from.language_code),
+          )
+        : getTranslation(ctx.from.language_code).button.unsubscribeKeyword(
+            translateTopic(topic.name, ctx.from.language_code),
+          )
     const newOperation =
       operation === ETopicAction.UNSUBSCRIBE ? ETopicAction.SUBSCRIBE : ETopicAction.UNSUBSCRIBE
     await replaceInlineKeyboardButton(ctx, {

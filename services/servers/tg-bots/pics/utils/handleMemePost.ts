@@ -8,7 +8,7 @@ import {
   selectBotChannelById,
   updateBotChannelById,
 } from '../../../../../utils/mysql-queries'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import { isCallbackButton, isCommonMessage } from '../typeguards'
 import { ECallback, callbackData } from '../constants'
 import { Markup } from 'telegraf'
@@ -23,17 +23,19 @@ export const handleMemePost = async (
   const db = await getDbConnection()
   const replyToMeme = ctx.callbackQuery?.message
     ? {
-      reply_parameters: {
-        message_id: ctx.callbackQuery.message.message_id,
-      },
-    }
+        reply_parameters: {
+          message_id: ctx.callbackQuery.message.message_id,
+        },
+      }
     : undefined
   try {
     const subscribers = await ctx.telegram.getChatMembersCount(chatId)
     await updateBotChannelById(db, { subscribers }, chatId)
     const [channel] = await selectBotChannelById(db, chatId)
     if (subscribers > MAX_FREE_USER_CHANNEL_SUBS) {
-      const paywalText = i18n['ru'].message.channelSubscribersLimitForFreePlan(channel.username)
+      const paywalText = getTranslation(
+        ctx.from.language_code,
+      ).message.channelSubscribersLimitForFreePlan(channel.username)
       const doesPassedPaywall = await handlePaywall(ctx, paywalText)
       if (!doesPassedPaywall) {
         return
@@ -41,7 +43,10 @@ export const handleMemePost = async (
     }
   } catch (error) {
     if (error instanceof Error && error.message === '400: Bad Request: chat not found') {
-      await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
+      await ctx.reply(
+        getTranslation(ctx.from.language_code).message.adminRightForPost(),
+        replyToMeme,
+      )
       return
     }
   }
@@ -59,7 +64,10 @@ export const handleMemePost = async (
               column.callback_data === callbackData.premoderation.postButton(chatId, memeId)
             ) {
               const [_, channel] = column.text.split('@')
-              return Markup.button.callback(i18n['ru'].button.memePosted(channel), ECallback.IGNORE)
+              return Markup.button.callback(
+                getTranslation(ctx.from.language_code).button.memePosted(channel),
+                ECallback.IGNORE,
+              )
             }
             return column
           }),
@@ -68,7 +76,7 @@ export const handleMemePost = async (
     }
     await ctx.reply(
       `
-${i18n['ru'].message.memePostedSuccessfully()}
+${getTranslation(ctx.from.language_code).message.memePostedSuccessfully()}
 ${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${postedMeme.message_id}` : ''}
 `,
       replyToMeme,
@@ -91,7 +99,10 @@ ${'username' in postedMeme.chat ? `https://t.me/${postedMeme.chat.username}/${po
       error instanceof Error &&
       error.message === '400: Bad Request: need administrator rights in the channel chat'
     ) {
-      await ctx.reply(i18n['ru'].message.adminRightForPost(), replyToMeme)
+      await ctx.reply(
+        getTranslation(ctx.from.language_code).message.adminRightForPost(),
+        replyToMeme,
+      )
       return
     }
     await ctx.answerCbQuery()

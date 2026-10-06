@@ -6,7 +6,7 @@ import { TG_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getDbConnection } from '../../../../../utils'
 import { getLatestMemes } from '../../../utils'
 import { getBotAnswerString, getTelegramUser } from '../../utils'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TTelegrafContext } from '../types'
 import { insertBotAction, upsertBotUser } from '../../../../../utils/mysql-queries'
 import { ELatestAction, callbackData } from '../constants'
@@ -47,16 +47,18 @@ export const onBotCommandGetLatest = async (ctx: TTelegrafContext, isUpdate: boo
   const isLastNewPage = isUpdate && response.totalPages === 0
   const pagesLeft = response.totalPages - 1
   const pageLeftText = isUpdate
-    ? i18n['ru'].message.memeSearch.pagesCount.new(pagesLeft)
-    : i18n['ru'].message.memeSearch.pagesCount.old(pagesLeft)
-  const finalReplyText = isLastNewPage ? i18n['ru'].message.memeSearch.noNewMemes() : pageLeftText
+    ? getTranslation(ctx.from.language_code).message.memeSearch.pagesCount.new(pagesLeft)
+    : getTranslation(ctx.from.language_code).message.memeSearch.pagesCount.old(pagesLeft)
+  const finalReplyText = isLastNewPage
+    ? getTranslation(ctx.from.language_code).message.memeSearch.noNewMemes()
+    : pageLeftText
   const buttons = Markup.inlineKeyboard([
     Markup.button.callback(
-      i18n['ru'].button.load.newer(),
+      getTranslation(ctx.from.language_code).button.load.newer(),
       callbackData.latest.loadAnotherPage(ELatestAction.NEWER),
     ),
     Markup.button.callback(
-      i18n['ru'].button.load.older(),
+      getTranslation(ctx.from.language_code).button.load.older(),
       callbackData.latest.loadAnotherPage(ELatestAction.NEWER),
     ),
   ])

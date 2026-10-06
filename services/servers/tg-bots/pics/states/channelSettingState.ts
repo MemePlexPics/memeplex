@@ -9,7 +9,7 @@ import {
   memeSearchState,
 } from '.'
 import { getDbConnection } from '../../../../../utils'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import { Markup } from 'telegraf'
 
 export const channelSettingState: TState = {
@@ -23,7 +23,7 @@ export const channelSettingState: TState = {
     const db = await getDbConnection()
     await db.close()
     const editKeywordsButton: TMenuButton = [
-      i18n['ru'].button.editKeywords(
+      getTranslation(ctx.from.language_code).button.editKeywords(
         hasPremiumSubscription ? '✏️' : '✨',
         isChannel ? ctx.session.channel.name : undefined,
       ),
@@ -36,36 +36,48 @@ export const channelSettingState: TState = {
       },
     ]
     const editTopicsButton: TMenuButton = [
-      i18n['ru'].button.editTopics(isChannel ? ctx.session.channel.name : undefined),
+      getTranslation(ctx.from.language_code).button.editTopics(
+        isChannel ? ctx.session.channel.name : undefined,
+      ),
       ctx => enterToState(ctx, topicSettingState),
     ]
     const buyPremiumButton: TMenuButton = [
-      i18n['ru'].button.premium(),
+      getTranslation(ctx.from.language_code).button.premium(),
       ctx => enterToState(ctx, buyPremiumState),
     ]
     const unlinkChannelButton: TMenuButton = [
-      i18n['ru'].button.unlinkChannel(ctx.session.channel.name),
+      getTranslation(ctx.from.language_code).button.unlinkChannel(ctx.session.channel.name),
       async ctx => {
         if (!ctx.session.channel) {
           throw new Error(`ctx.session.channel is undefined in channelSettingState`)
         }
-        await ctx.reply(i18n['ru'].message.doYouWantToUnlinkChannel(ctx.session.channel.name), {
-          reply_markup: {
-            inline_keyboard: [
-              [Markup.button.callback(i18n['ru'].button.unlinkChannelConfirm(), 'unlink')],
-            ],
+        await ctx.reply(
+          getTranslation(ctx.from.language_code).message.doYouWantToUnlinkChannel(
+            ctx.session.channel.name,
+          ),
+          {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  Markup.button.callback(
+                    getTranslation(ctx.from.language_code).button.unlinkChannelConfirm(),
+                    'unlink',
+                  ),
+                ],
+              ],
+            },
           },
-        })
+        )
       },
     ]
     const memeSearchButton: TMenuButton = [
-      i18n['ru'].button.search(),
+      getTranslation(ctx.from.language_code).button.search(),
       async ctx => {
         await enterToState(ctx, memeSearchState)
       },
     ]
     const backButton: TMenuButton = [
-      i18n['ru'].button.back(),
+      getTranslation(ctx.from.language_code).button.back(),
       async ctx => {
         ctx.session.channel = undefined
         await enterToState(ctx, mainState)
@@ -86,7 +98,7 @@ export const channelSettingState: TState = {
     }
     buttons.push([memeSearchButton, backButton])
     return {
-      text: i18n['ru'].message.thereTopicsAndKeywords(),
+      text: getTranslation(ctx.from.language_code).message.thereTopicsAndKeywords(),
       buttons,
     }
   },
@@ -95,7 +107,7 @@ export const channelSettingState: TState = {
       await onClickDeleteChannel(ctx)
       // await ctx.deleteMessage()
       ctx.session.channel = undefined
-      await ctx.reply(i18n['ru'].message.youCanDemoteBotFromAdmin())
+      await ctx.reply(getTranslation(ctx.from.language_code).message.youCanDemoteBotFromAdmin())
       await enterToState(ctx, mainState)
     }
   },

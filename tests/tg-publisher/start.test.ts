@@ -27,11 +27,12 @@ describe('/start', () => {
     await db.close()
   })
 
-  test('Recieved /start message', async () => {
-    const updates = await tgClient.executeCommand('/start')
-    if (!updates) {
-      throw new Error(`There is no updates after /start`)
-    }
-    expect(updates.result[0].message.text).toEqual(i18n['ru'].message.start())
+  test.each(['ru', 'en', 'uk'])('/start follows interface language %s', async language_code => {
+    const updates = await tgClient.executeCommand('/start', {
+      from: { id: 1, is_bot: false, first_name: 'Test', language_code },
+    })
+    if (!updates) throw new Error('No updates after /start')
+    const language = language_code === 'ru' ? 'ru' : 'en'
+    expect(updates.result[0].message.text).toEqual(i18n[language].message.start())
   })
 })

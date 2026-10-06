@@ -38,7 +38,7 @@ export const ru = {
         new: (count: number) => `${count} страниц новых мемов`,
         old: (count: number) => `${count} страниц старых мемов`,
       },
-      pageXOfN: (page: number, totalPages: number) => `Page ${page} of ${totalPages}`,
+      pageXOfN: (page: number, totalPages: number) => `Страница ${page} из ${totalPages}`,
     },
     channelUnlinked: () => 'Канал успешно отвязан.',
     memePostedSuccessfully: () => 'Мем успешно опубликован.',
@@ -121,6 +121,7 @@ ${keywords}`,
     memeSuggested: () => `🙏 Мем отправлен на модерацию. Спасибо!`,
     memeSuggestionIndexed: () =>
       `😎 Добавленный вами мем прошёл модерацию! Теперь он доступен для поиска.`,
+    source: () => 'источник',
     nothingFound: () => 'Ничего не найдено',
     stats: (
       users: { inline: number; inBot: number; total: number },
@@ -149,6 +150,9 @@ ${keywords}`,
 - за 30 дней: ${memes.last30Days.toLocaleString('ru-RU')}`,
   },
   button: {
+    approve: () => '👍 Опубликовать',
+    approveWithoutText: () => '🖼 Без текста',
+    decline: () => '👎 Отклонить',
     back: () => '⬅️ Назад',
     ready: () => '✅ Готово',
     forward: () => '➡️ Вперед',
@@ -217,6 +221,12 @@ ${keywords}`,
       older: () => 'Загрузить старые',
       more: () => 'Загрузить больше',
     },
+  },
+  profile: {
+    description: () =>
+      'Ищите мемы по тексту на картинках. Поиск в чатах: @MemePlexBot. Подписывайтесь на ключевые слова и публикуйте находки в свой канал.',
+    shortDescription: () =>
+      'Поиск мемов по тексту. В чатах: @MemePlexBot и запрос. Анонсы: @memeplex_pics',
   },
   command: {
     callCurrentMenu: () => 'Вызвать текущее меню',

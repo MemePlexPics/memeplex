@@ -6,7 +6,8 @@ import type { TTelegrafContext } from '../types'
 import { getDbConnection } from '../../../../../utils'
 import { botMemeSuggestions } from '../../../../../db/schema'
 import type { TAmqpIndexedSuggestedMemeToBotChannelMessage } from '../../../../types'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
+import { getUserLanguage } from '../i18n/userLanguage'
 
 export const handleIndexedMemeSuggestion = async (bot: Telegraf<TTelegrafContext>) => {
   const amqp = await amqplib.connect(process.env.AMQP_ENDPOINT)
@@ -27,9 +28,11 @@ export const handleIndexedMemeSuggestion = async (bot: Telegraf<TTelegrafContext
       .select()
       .from(botMemeSuggestions)
       .where(eq(botMemeSuggestions.publishedId, payload.publishedId))
+    const language = await getUserLanguage(db, memeSuggestion.userId)
+    await db.close()
     await bot.telegram.sendMessage(
       memeSuggestion.userId,
-      i18n['ru'].message.memeSuggestionIndexed(),
+      getTranslation(language).message.memeSuggestionIndexed(),
       {
         reply_parameters: {
           message_id: memeSuggestion.messageId,

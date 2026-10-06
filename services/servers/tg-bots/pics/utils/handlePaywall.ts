@@ -1,6 +1,6 @@
 import { enterToState } from '.'
 import { ECallback } from '../constants'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TState, TTelegrafContext } from '../types'
 
 export const handlePaywall = async (
@@ -17,7 +17,7 @@ export const handlePaywall = async (
         inline_keyboard: [
           [
             {
-              text: i18n['ru'].button.subscribeToPremium(),
+              text: getTranslation(ctx.from.language_code).button.subscribeToPremium(),
               callback_data: ECallback.PAY,
             },
           ],

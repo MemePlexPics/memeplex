@@ -1,15 +1,22 @@
 import { mainState } from '.'
 import { EState } from '../constants'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TState } from '../types'
 import { addChannel, enterToState } from '../utils'
 
 export const addChannelState: TState = {
   stateName: EState.ADD_CHANNEL,
-  menu: async () => {
+  menu: async ctx => {
     return {
-      text: i18n['ru'].message.enterChannelNameInFormat(),
-      buttons: [[[i18n['ru'].button.back(), ctx => enterToState(ctx, mainState)]]],
+      text: getTranslation(ctx.from.language_code).message.enterChannelNameInFormat(),
+      buttons: [
+        [
+          [
+            getTranslation(ctx.from.language_code).button.back(),
+            ctx => enterToState(ctx, mainState),
+          ],
+        ],
+      ],
     }
   },
   onText: async (ctx, text) => {

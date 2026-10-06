@@ -108,3 +108,23 @@ bash ./scripts/backup/elastic-restore.sh
 ```bash
 ssh user@host "cd ./path_to_project && bash ./scripts/backup/mysql.sh" | gzip > memeplex_$(date +%Y%m%d-%H%M%S).sql.gz
 ```
+
+## Telegram bot languages
+
+The bot supports English and Russian. It uses the user's Telegram interface
+language for replies and inline search; unsupported or missing languages fall
+back to English. There is no language command or manual language preference.
+Topic labels are translated, while search queries and subscription keywords
+remain unchanged.
+
+The last detected language is stored in `bot_user_languages` for subscription
+notifications and meme approval messages. Users without a stored language receive
+English notifications until their next interaction. After updating an existing
+installation, run `npm run migrations:run` before restarting the bot.
+
+Bot startup registers localized commands, descriptions, and short descriptions
+with Telegram, using English as the default. To add another language, implement
+the `Translation` type in `services/servers/tg-bots/pics/i18n`, register it in the
+language resolver, and include it in the startup metadata registration.
+
+Run the standalone localization checks with `npx jest tests/i18n.test.ts --runInBand`.

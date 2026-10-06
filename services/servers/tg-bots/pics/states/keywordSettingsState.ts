@@ -15,16 +15,16 @@ import {
   selectBotSubscriptionsByChannelId,
   selectBotTopicSubscriptionKeywordsByChannelId,
 } from '../../../../../utils/mysql-queries'
-import { i18n } from '../i18n'
+import { getTranslation, translateTopic } from '../i18n'
 import { isCommonMessage } from '../typeguards'
 import { Markup } from 'telegraf'
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 
 export const keywordSettingsState: TState = {
   stateName: EState.KEYWORD_SETTINGS,
-  menu: async _ctx => {
+  menu: async ctx => {
     const sendKeywordsButton: TMenuButton = [
-      i18n['ru'].button.sendKeywords(),
+      getTranslation(ctx.from.language_code).button.sendKeywords(),
       async ctx => {
         if (!ctx.session.channel) {
           throw new Error(`ctx.session.channel is undefined in keywordSettingsState`)
@@ -33,7 +33,7 @@ export const keywordSettingsState: TState = {
         const keywordRows = await selectBotSubscriptionsByChannelId(db, ctx.session.channel.id)
         await db.close()
         if (keywordRows.length === 0) {
-          await ctx.reply(i18n['ru'].message.thereAreNoKeywords())
+          await ctx.reply(getTranslation(ctx.from.language_code).message.thereAreNoKeywords())
           return
         }
         const keywords = keywordRows.reduce((acc, keywordRow) => {
@@ -47,14 +47,14 @@ export const keywordSettingsState: TState = {
       },
     ]
     const backButton: TMenuButton = [
-      i18n['ru'].button.back(),
+      getTranslation(ctx.from.language_code).button.back(),
       async ctx => {
         ctx.session.pagination = undefined
         await enterToState(ctx, channelSettingState)
       },
     ]
     return {
-      text: i18n['ru'].message.keywordSettings(),
+      text: getTranslation(ctx.from.language_code).message.keywordSettings(),
       buttons: [[sendKeywordsButton], [backButton]],
     }
   },
@@ -82,12 +82,12 @@ export const keywordSettingsState: TState = {
     const paginationButtons: InlineKeyboardButton[] = []
     if (page > 1)
       paginationButtons.push({
-        text: i18n['ru'].button.back(),
+        text: getTranslation(ctx.from.language_code).button.back(),
         callback_data: `page|back`,
       })
     if (doesNextPageExist)
       paginationButtons.push({
-        text: i18n['ru'].button.forward(),
+        text: getTranslation(ctx.from.language_code).button.forward(),
         callback_data: `page|next`,
       })
     const keywordRows = await sqlWithPagination(
@@ -96,10 +96,10 @@ export const keywordSettingsState: TState = {
       pageSize,
     )
     const totalRows: Awaited<
-    ReturnType<
-    | typeof selectBotSubscriptionsByChannelId
-    | typeof selectBotTopicSubscriptionKeywordsByChannelId
-    >
+      ReturnType<
+        | typeof selectBotSubscriptionsByChannelId
+        | typeof selectBotTopicSubscriptionKeywordsByChannelId
+      >
     >[number][] = keywordRows
     if (keywordRows.length < pageSize) {
       const topicKeywordRows = await selectBotTopicSubscriptionKeywordsByChannelId(
@@ -116,8 +116,10 @@ export const keywordSettingsState: TState = {
     }
     const text = `${
       ctx.session.channel?.id === ctx.from.id
-        ? i18n['ru'].message.unsubscribeFromKeywords()
-        : i18n['ru'].message.youEditingSubscriptionsForChannel(ctx.session.channel?.name)
+        ? getTranslation(ctx.from.language_code).message.unsubscribeFromKeywords()
+        : getTranslation(ctx.from.language_code).message.youEditingSubscriptionsForChannel(
+            ctx.session.channel?.name,
+          )
     }`
     return {
       text,
@@ -126,20 +128,25 @@ export const keywordSettingsState: TState = {
           const callback_data =
             'topic' in keywordRow && keywordRow.topic && keywordRow.topicId
               ? callbackData.keywordSetting.topicKeyword(
-                keywordRow.unsubscribed ? EKeywordAction.SUBSCRIBE : EKeywordAction.DELETE,
-                keywordRow.keywordId as number,
-                keywordRow.topicId,
-              )
+                  keywordRow.unsubscribed ? EKeywordAction.SUBSCRIBE : EKeywordAction.DELETE,
+                  keywordRow.keywordId as number,
+                  keywordRow.topicId,
+                )
               : callbackData.keywordSetting.keyword(
-                EKeywordAction.DELETE,
-                keywordRow.keywordId as number,
-              )
+                  EKeywordAction.DELETE,
+                  keywordRow.keywordId as number,
+                )
           const text =
             'topic' in keywordRow && keywordRow.topic
-              ? i18n['ru'].button.keywordSettings.topicKeyword[
-                keywordRow.unsubscribed ? 'subscribe' : 'unsubscribe'
-              ](keywordRow.keyword as string, keywordRow.topic)
-              : i18n['ru'].button.keywordSettings.keyword.unsubscribe(keywordRow.keyword as string)
+              ? getTranslation(ctx.from.language_code).button.keywordSettings.topicKeyword[
+                  keywordRow.unsubscribed ? 'subscribe' : 'unsubscribe'
+                ](
+                  keywordRow.keyword as string,
+                  translateTopic(keywordRow.topic, ctx.from.language_code),
+                )
+              : getTranslation(ctx.from.language_code).button.keywordSettings.keyword.unsubscribe(
+                  keywordRow.keyword as string,
+                )
           return [
             {
               text,
@@ -157,7 +164,7 @@ export const keywordSettingsState: TState = {
     const [firstPartCb, ...restCb] = callback.split('|')
     if (firstPartCb === EKeywordSettingKeywordType.KEYWORD) {
       const restCbData = restCb as TSplitCallback<
-      ReturnType<typeof callbackData.premoderation.keywordButton>
+        ReturnType<typeof callbackData.premoderation.keywordButton>
       >
       const [action, keywordId] = restCbData
       await handleKeywordAction(
@@ -169,7 +176,7 @@ export const keywordSettingsState: TState = {
       )
     } else if (firstPartCb === EKeywordSettingKeywordType.TOPIC_KEYWORD) {
       const restCbData = restCb as TSplitCallback<
-      ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
+        ReturnType<typeof callbackData.premoderation.topicKeywordsButton>
       >
       const [action, keywordId, topicId] = restCbData
       await handleTopicKeywordAction(
@@ -221,7 +228,7 @@ export const keywordSettingsState: TState = {
     })
     const keywordValuesNotEmpty = keywordValues.filter(keywordObj => keywordObj.keyword.length)
     if (keywordValuesNotEmpty.length === 0) {
-      await ctx.reply(i18n['ru'].message.delimetersInsteadOfKeywords())
+      await ctx.reply(getTranslation(ctx.from.language_code).message.delimetersInsteadOfKeywords())
       return
     }
 
@@ -229,7 +236,7 @@ export const keywordSettingsState: TState = {
     await addSubscription(db, ctx.session.channel.id, keywordValuesNotEmpty)
     await db.close()
 
-    await ctx.reply(i18n['ru'].message.addedKeywords())
+    await ctx.reply(getTranslation(ctx.from.language_code).message.addedKeywords())
     await logUserAction(ctx, {
       info: `Added`,
       keywords: keywordValuesNotEmpty.map(keywordRow => keywordRow.keyword).join(', '),

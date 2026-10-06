@@ -1,6 +1,6 @@
 import type { Message, Update } from 'telegraf/typings/core/types/typegram'
 import { onBotRecieveText } from '.'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TTelegrafContext } from '../types'
 import { MAX_SEARCH_QUERY_LENGTH } from '../../../../../constants'
 import { QUERY_REDUNDANT_WORDS } from '../../../../../constants/publisher'
@@ -22,13 +22,17 @@ export const handleMemeSearchRequest = async (
   )
   if (isTooLong || isContainRedundantWords) {
     const aviceText = [
-      isContainRedundantWords ? i18n['ru'].message.doNotAddToQuery() : undefined,
-      isTooLong ? i18n['ru'].message.shortQueriesWorkBetter() : undefined,
+      isContainRedundantWords
+        ? getTranslation(ctx.from.language_code).message.doNotAddToQuery()
+        : undefined,
+      isTooLong
+        ? getTranslation(ctx.from.language_code).message.shortQueriesWorkBetter()
+        : undefined,
     ]
       .filter(el => el)
       .join('\n')
     await ctx.reply(`
-  ${i18n['ru'].message.questinableQueryAdvice()}
+  ${getTranslation(ctx.from.language_code).message.questinableQueryAdvice()}
   ${aviceText}`)
   }
 }

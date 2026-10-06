@@ -10,7 +10,7 @@ import {
 } from '../../../../../utils/mysql-queries'
 import { EKeywordAction, callbackData } from '../constants'
 import type { TTelegrafContext } from '../types'
-import { i18n } from '../i18n'
+import { getTranslation, translateTopic } from '../i18n'
 import type { CallbackQuery, Update } from 'telegraf/typings/core/types/typegram'
 import { buyPremiumState } from '../states'
 
@@ -76,12 +76,15 @@ export const handleTopicKeywordAction = async (
     command === EKeywordAction.DELETE ? callbackForSubscribe : callbackForUnsubscribe
   const newText =
     command === EKeywordAction.DELETE
-      ? i18n['ru'].button.premoderation.keywordFromTopic.subscribe(keyword.keyword, topic.name)
-      : i18n['ru'].button.premoderation.keywordFromTopic.unsubscribe(
-        hasPremiumSubscription,
-        keyword.keyword,
-        topic.name,
-      )
+      ? getTranslation(ctx.from.language_code).button.premoderation.keywordFromTopic.subscribe(
+          keyword.keyword,
+          translateTopic(topic.name, ctx.from.language_code),
+        )
+      : getTranslation(ctx.from.language_code).button.premoderation.keywordFromTopic.unsubscribe(
+          hasPremiumSubscription,
+          keyword.keyword,
+          translateTopic(topic.name, ctx.from.language_code),
+        )
   await replaceInlineKeyboardButton(ctx, {
     [oldCallback]: Markup.button.callback(newText, newCallback),
   })

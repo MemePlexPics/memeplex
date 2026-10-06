@@ -6,7 +6,7 @@ import { TG_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getDbConnection } from '../../../../../utils'
 import { searchMemes } from '../../../utils/searchMemes'
 import { getBotAnswerString, getTelegramUser } from '../../utils'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TTelegrafContext } from '../types'
 import { insertBotAction, upsertBotUser } from '../../../../../utils/mysql-queries'
 import { ECallback } from '../constants'
@@ -30,7 +30,7 @@ export const onBotRecieveText = async (ctx: TTelegrafContext, query: string) => 
   const response = await searchMemes(ctx.elastic, query, page, TG_BOT_PAGE_SIZE)
 
   if (response.totalPages === 0) {
-    await ctx.reply(i18n['ru'].message.nothingFound())
+    await ctx.reply(getTranslation(ctx.from.language_code).message.nothingFound())
     return
   }
   for (const meme of response.result) {
@@ -43,9 +43,12 @@ export const onBotRecieveText = async (ctx: TTelegrafContext, query: string) => 
   }
   if (page < response.totalPages) {
     await ctx.reply(
-      i18n['ru'].message.memeSearch.pageXOfN(page, response.totalPages),
+      getTranslation(ctx.from.language_code).message.memeSearch.pageXOfN(page, response.totalPages),
       Markup.inlineKeyboard([
-        Markup.button.callback(i18n['ru'].button.load.more(), ECallback.SEARCH_NEXT_PAGE),
+        Markup.button.callback(
+          getTranslation(ctx.from.language_code).button.load.more(),
+          ECallback.SEARCH_NEXT_PAGE,
+        ),
       ]),
     )
     ctx.session.search = {

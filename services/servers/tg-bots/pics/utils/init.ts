@@ -1,3 +1,4 @@
+import { saveUserLanguage } from '../i18n/userLanguage'
 import process from 'process'
 import 'dotenv/config'
 import type { Telegraf } from 'telegraf'
@@ -11,7 +12,7 @@ import type { TSessionInMemory, TState, TTelegrafContext, TTelegrafSession } fro
 import {
   TelegrafWrapper,
   enterToState,
-  getMenuButtonsAndHandlers,
+  getMenuTextHandler,
   handleCallbackQuery,
   handleDistributionQueue,
   handleNlpQueue,
@@ -40,7 +41,7 @@ import {
   insertBotUser,
   selectBotPremiumUser,
 } from '../../../../../utils/mysql-queries'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { Logger } from 'winston'
 import { CYCLE_SLEEP_TIMEOUT, LOOP_RETRYING_DELAY, telegramChat } from '../../../../../constants'
 import {
@@ -65,6 +66,14 @@ export const init = async (
 
   bot.use(async (ctx, next) => {
     ctx.logger ??= logger
+    if (ctx.from) {
+      const db = await getDbConnection()
+      try {
+        await saveUserLanguage(db, ctx.from.id, ctx.from.language_code)
+      } finally {
+        await db.close()
+      }
+    }
     ctx.elastic ??= elastic
     Object.defineProperty(ctx, 'sessionInMemory', {
       get() {
@@ -87,7 +96,7 @@ export const init = async (
         return true
       },
     })
-    next()
+    await next()
   })
 
   bot.use(
@@ -126,7 +135,7 @@ export const init = async (
             return next()
           }
           await logUserAction(ctx, { info: 'exceeded rate limit' })
-          await ctx.reply(i18n['ru'].message.rateLimit())
+          await ctx.reply(getTranslation(ctx.from.language_code).message.rateLimit())
         },
       }),
     )
@@ -146,7 +155,7 @@ export const init = async (
     if (ctx.from.id !== ctx.chat.id) {
       return
     }
-    await ctx.reply(i18n['ru'].message.start())
+    await ctx.reply(getTranslation(ctx.from.language_code).message.start())
     await enterToState(ctx, mainState)
 
     const db = await getDbConnection()
@@ -174,7 +183,7 @@ export const init = async (
     if (ctx.from.id !== ctx.chat.id) {
       return
     }
-    await ctx.reply(i18n['ru'].message.help(), {
+    await ctx.reply(getTranslation(ctx.from.language_code).message.help(), {
       parse_mode: 'Markdown',
     })
   })
@@ -247,7 +256,7 @@ export const init = async (
       return
     }
     await onPhotoMessage(ctx)
-    await ctx.reply(i18n['ru'].message.memeSuggested(), {
+    await ctx.reply(getTranslation(ctx.from.language_code).message.memeSuggested(), {
       reply_parameters: {
         message_id: ctx.update.message.message_id,
       },
@@ -261,8 +270,7 @@ export const init = async (
     const text = ctx.update.message.text
     const state = states[ctx.session.state]
     if (state.menu) {
-      const { onTextHandlers } = await getMenuButtonsAndHandlers(ctx, states[ctx.session.state])
-      const handler = onTextHandlers[text]
+      const handler = await getMenuTextHandler(ctx, states[ctx.session.state], text)
       if (handler) {
         await handler(ctx, text)
         return
@@ -284,12 +292,12 @@ export const init = async (
       err instanceof Error
         ? err
         : {
-          name: 'Unknown error',
-          message: JSON.stringify(err),
-        }
+            name: 'Unknown error',
+            message: JSON.stringify(err),
+          }
     // In case we catch errors when sending messages
     try {
-      await ctx.reply(i18n['ru'].message.somethingWentWrongTryLater())
+      await ctx.reply(getTranslation(ctx.from.language_code).message.somethingWentWrongTryLater())
     } finally {
       await logError(ctx.logger, error, { ctx: JSON.stringify(ctx.update) })
     }

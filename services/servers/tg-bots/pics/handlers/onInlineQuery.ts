@@ -3,7 +3,7 @@ import 'dotenv/config'
 
 import { TG_INLINE_BOT_PAGE_SIZE } from '../../../../../constants'
 import { getLatestInlineSelectedMemes, searchMemes } from '../../../utils'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TTelegrafContext } from '../types'
 import { getDbConnection } from '../../../../../utils'
 import { insertBotInlineAction, upsertBotInlineUser } from '../../../../../utils/mysql-queries'
@@ -43,9 +43,9 @@ export const onInlineQuery = async (
   const response = query
     ? await searchMemes(ctx.elastic, query, page, TG_INLINE_BOT_PAGE_SIZE, abortController)
     : {
-      result: await getLatestInlineSelectedMemes(ctx.elastic, abortController),
-      totalPages: 1,
-    }
+        result: await getLatestInlineSelectedMemes(ctx.elastic, abortController),
+        totalPages: 1,
+      }
 
   const results = response.result.map(meme => {
     const photo_url = new URL(`https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/${meme!.fileName}`)
@@ -72,9 +72,9 @@ export const onInlineQuery = async (
         {
           type: 'article',
           id: query,
-          title: i18n['ru'].message.nothingFound(),
+          title: getTranslation(ctx.from.language_code).message.nothingFound(),
           input_message_content: {
-            message_text: i18n['ru'].message.nothingFound(),
+            message_text: getTranslation(ctx.from.language_code).message.nothingFound(),
           },
         },
       ])

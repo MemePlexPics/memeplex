@@ -20,3 +20,4 @@ export { botTopicKeywordUnsubscriptions } from './botTopicKeywordUnsubscriptions
 export { botTopicNames } from './botTopicNames'
 export { telegrafSessions } from './telegrafSessions'
 export { botMemeSuggestions } from './botMemeSuggestions'
+export { botUserLanguages } from './botUserLanguages'

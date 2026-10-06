@@ -3,13 +3,13 @@ import { enterToState, logUserAction, onClickDeleteChannel } from '.'
 import { getDbConnection, getTgChannelName, logInfo } from '../../../../../utils'
 import { selectBotChannelById, upsertBotChannel } from '../../../../../utils/mysql-queries'
 import { channelSettingState } from '../states'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TTelegrafContext } from '../types'
 
 export const addChannel = async (ctx: TTelegrafContext, text: string) => {
   const channel = getTgChannelName(text)
   if (!channel) {
-    await ctx.reply(i18n['ru'].message.checkChannelNameFormat())
+    await ctx.reply(getTranslation(ctx.from.language_code).message.checkChannelNameFormat())
     await logUserAction(ctx, {
       error: `Incorrect channel link`,
       channel: text,
@@ -21,7 +21,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       inline_keyboard: [
         [
           {
-            text: i18n['ru'].button.ready(),
+            text: getTranslation(ctx.from.language_code).button.ready(),
             callback_data: channel,
           },
         ],
@@ -34,7 +34,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
     if ('title' in result && 'accent_color_id' in result) {
       chat = result
     } else {
-      await ctx.reply(i18n['ru'].message.addedUserInsteadOfChannel())
+      await ctx.reply(getTranslation(ctx.from.language_code).message.addedUserInsteadOfChannel())
 
       await logUserAction(ctx, {
         error: `Adding a private channel`,
@@ -43,7 +43,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       return
     }
   } catch (error) {
-    await ctx.reply(i18n['ru'].message.checkChannelName())
+    await ctx.reply(getTranslation(ctx.from.language_code).message.checkChannelName())
     return
   }
   let isOurUserAnAdmin: true | undefined
@@ -59,12 +59,15 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       return isOurUserAnAdmin && isOurBotAnAdmin
     })
   } catch (error) {
-    await ctx.reply(i18n['ru'].message.botMustBeInTheChannelAndHaveAdminRights(), readyButton)
+    await ctx.reply(
+      getTranslation(ctx.from.language_code).message.botMustBeInTheChannelAndHaveAdminRights(),
+      readyButton,
+    )
     if (error instanceof Error) await logInfo(ctx.logger, error)
     return
   }
   if (!isOurUserAnAdmin) {
-    await ctx.reply(i18n['ru'].message.onlyAdminCanSubscribeChannel())
+    await ctx.reply(getTranslation(ctx.from.language_code).message.onlyAdminCanSubscribeChannel())
     await logUserAction(ctx, {
       error: `The user not an admin`,
       channel,
@@ -72,7 +75,10 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
     return
   }
   if (!isOurBotAnAdmin) {
-    await ctx.reply(i18n['ru'].message.botMustHaveAdminRights(), readyButton)
+    await ctx.reply(
+      getTranslation(ctx.from.language_code).message.botMustHaveAdminRights(),
+      readyButton,
+    )
     await logUserAction(ctx, {
       error: `Admin rights not granted`,
       channel,
@@ -90,7 +96,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
     const db = await getDbConnection()
     const [channelInDb] = await selectBotChannelById(db, chat.id)
     if (channelInDb && channelInDb.userId === ctx.from.id) {
-      await ctx.reply(i18n['ru'].message.channelAlredyAdded())
+      await ctx.reply(getTranslation(ctx.from.language_code).message.channelAlredyAdded())
       return
     }
     await onClickDeleteChannel(ctx)
@@ -104,7 +110,7 @@ export const addChannel = async (ctx: TTelegrafContext, text: string) => {
       timestamp,
     })
     await db.close()
-    await ctx.reply(i18n['ru'].message.addedChannel(channel))
+    await ctx.reply(getTranslation(ctx.from.language_code).message.addedChannel(channel))
     await logUserAction(ctx, {
       info: `Added`,
       channel,

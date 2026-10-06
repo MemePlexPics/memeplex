@@ -20,7 +20,8 @@ import {
 import { EKeywordAction, ETopicAction, callbackData } from '../constants'
 import type { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram'
 import type { TPublisherDistributionQueueMsg } from '../../../../types'
-import { i18n } from '../i18n'
+import { getTranslation, translateTopic } from '../i18n'
+import { getUserLanguage } from '../i18n/userLanguage'
 import type { ExtraReplyMessage } from 'telegraf/typings/telegram-types'
 
 export const handleDistributionQueue = async (
@@ -51,6 +52,8 @@ export const handleDistributionQueue = async (
 
       const buttons: InlineKeyboardButton.CallbackButton[][] = []
       const db = await getDbConnection()
+      const language = await getUserLanguage(db, payload.userId)
+      const t = getTranslation(language)
       const channels = await selectBotChannelsById(db, payload.channelIds)
       const [userPremium] = await selectBotPremiumUser(db, payload.userId)
 
@@ -58,7 +61,7 @@ export const handleDistributionQueue = async (
         if (channel.id === Number(payload.userId)) return null
         buttons.push([
           {
-            text: i18n['ru'].button.postMeme(channel.username),
+            text: t.button.postMeme(channel.username),
             callback_data: callbackData.premoderation.postButton(channel.id, payload.memeId),
           },
         ])
@@ -77,7 +80,7 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderation.keyword.unsubscribe(keyword),
+              text: t.button.premoderation.keyword.unsubscribe(keyword),
               callback_data: callbackData.premoderation.keywordButton(
                 EKeywordAction.DELETE,
                 channelId,
@@ -103,7 +106,7 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderation.topic.unsubscribe(topicName),
+              text: t.button.premoderation.topic.unsubscribe(translateTopic(topicName, language)),
               callback_data: callbackData.premoderation.topicButton(
                 ETopicAction.UNSUBSCRIBE,
                 channelId,
@@ -145,10 +148,10 @@ export const handleDistributionQueue = async (
           }
           buttons.push([
             {
-              text: i18n['ru'].button.premoderation.keywordFromTopic.unsubscribe(
+              text: t.button.premoderation.keywordFromTopic.unsubscribe(
                 userPremium !== undefined,
                 keyword,
-                topicNameById[topicId],
+                translateTopic(topicNameById[topicId], language),
               ),
               callback_data: callbackData.premoderation.topicKeywordsButton(
                 EKeywordAction.DELETE,
@@ -163,7 +166,7 @@ export const handleDistributionQueue = async (
       await db.close()
 
       try {
-        const sourceLink = `[источник](https://t.me/${payload.document.channelName}/${payload.document.messageId})`
+        const sourceLink = `[${t.message.source()}](https://t.me/${payload.document.channelName}/${payload.document.messageId})`
         const webLink = `[web](https://${process.env.MEMEPLEX_WEBSITE_DOMAIN}/memes/${payload.memeId})`
         const botLink = `[bot](https://t.me/MemePlexPublisherBot?start=fw)`
         const text = [sourceLink, webLink, botLink].join('            /            ')

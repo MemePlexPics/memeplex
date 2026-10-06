@@ -1,7 +1,7 @@
 import { getDbConnection } from '../../../../../utils'
 import { getTodayBotUserStats } from '../../../../../utils/mysql-queries'
 import { getMemeStats, getServerFreeSpaceGb } from '../../../utils'
-import { i18n } from '../i18n'
+import { getTranslation } from '../i18n'
 import type { TTelegrafContext } from '../types'
 
 export const onBotCommandStats = async (ctx: TTelegrafContext) => {
@@ -20,5 +20,7 @@ export const onBotCommandStats = async (ctx: TTelegrafContext) => {
     await db.close()
   }
 
-  await ctx.reply(i18n['ru'].message.stats(userStats, memeStats, freeSpaceGb))
+  await ctx.reply(
+    getTranslation(ctx.from.language_code).message.stats(userStats, memeStats, freeSpaceGb),
+  )
 }

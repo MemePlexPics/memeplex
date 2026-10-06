@@ -1,3 +1,4 @@
+import { getTranslation } from '../i18n'
 import { Markup } from 'telegraf'
 import { EMemeSuggestionCallback } from '../constants'
 import type { TTelegrafContext } from '../types'
@@ -43,15 +44,15 @@ export const onPhotoMessage = async (
     .from(botMemeSuggestions)
     .where(eq(botMemeSuggestions.fileId, photoEntity.file_id))
   const approveMemeButton = Markup.button.callback(
-    '👍 Опубликовать',
+    getTranslation(ctx.from.language_code).button.approve(),
     `${EMemeSuggestionCallback.APPROVE}|${suggestedMeme.id}`,
   )
   const approveWithoutTextMemeButton = Markup.button.callback(
-    '🖼 Без текста',
+    getTranslation(ctx.from.language_code).button.approveWithoutText(),
     `${EMemeSuggestionCallback.APPROVE_WITHOUT_TEXT}|${suggestedMeme.id}`,
   )
   const declineMemeButton = Markup.button.callback(
-    '👎 Отклонить',
+    getTranslation(ctx.from.language_code).button.decline(),
     `${EMemeSuggestionCallback.DECLINE}|${suggestedMeme.id}`,
   )
   await ctx.telegram.sendPhoto(telegramChat.premoderation, photoEntity.file_id, {
